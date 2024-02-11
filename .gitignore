@@ -1,0 +1,9 @@
+# env file containing the OpenAI key
+.env
+
+# R Profile (containing the OpenAI key as well)
+.Rprofile
+.Rproj.user/
+
+# Other attempts folder
+other_attempts/
