@@ -3,3 +3,4 @@ openai==0.28.0
 pandas==2.2.0
 python-dotenv==1.0.1
 streamlit==1.31.0
+tiktoken==0.6.0
