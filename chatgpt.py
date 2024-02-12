@@ -1,4 +1,4 @@
-"""
+﻿"""
 ChatISA App
 -----------
 
@@ -117,6 +117,24 @@ def calculate_cost(chat_messages, model_name="gpt-4-1106-preview"):
 
     return total_input_tokens, total_output_tokens, total_cost
 
+# create a Latin-1 encoded friendly text for the PDF
+def clean_text(input_text):
+    replacements = {
+        '\u2014': '--',  # em dash
+        '\u2013': '-',   # en dash
+        '\u2018': '\'',  # left single quotation mark
+        '\u2019': '\'',  # right single quotation mark
+        '\u201C': '"',   # left double quotation mark
+        '\u201D': '"',   # right double quotation mark
+        '\u2026': '...', # ellipsis
+        '\u00A0': ' ',   # non-breaking space
+        '\U0001f60a': ':)',  # smiling face emoji
+        # Add more replacements as needed
+    }
+    for original, replacement in replacements.items():
+        input_text = input_text.replace(original, replacement)
+    return input_text.encode('latin-1', 'ignore').decode('latin-1')
+
 def create_pdf(chat_messages, student_name, course_name):
     # Calculate costs and token counts
     total_input_tokens, total_output_tokens, total_cost = calculate_cost(chat_messages)
@@ -163,7 +181,7 @@ def create_pdf(chat_messages, student_name, course_name):
     pdf.multi_cell(0, 10, "ChatISA's PDF Output Style and Layout", 0, 'L', 1)
     pdf.set_font('Arial', '', 11)
     pdf.set_text_color(0, 0, 0)  # Black text
-    layout_text = f"The PDF is designed to provide a clear and organized record of the interaction between the student and ChatISA. Specifically, student prompts are highlighted in light red boxes. ChatISA's responses are formatted with a light gray background for code snippets and a white background for text. This formatting is intended to improve readability and provide a clear visual distinction between the student's messages and ChatISA's responses. The PDF is intended to be used for educational and reference purposes related to the coursework for {course_name}."
+    layout_text = f"The PDF is designed to provide a clear and organized record of the interaction between the student and ChatISA. Specifically, student prompts are highlighted in light red boxes. ChatISA's responses are formatted with a light gray background for code snippets and a white background for text. This formatting is intended to improve readability and provide a clear visual distinction between the student's messages and ChatISA's responses. The PDF is intended to be used for educational and reference purposes related to the coursework for {course_name}.\n{student_name}'s queries and ChatISA's responses are included starting from Page 2. In addition, the custom instructions that are used to guide ChatISA's responses are included in the last page of the PDF in the appendix"
     pdf.multi_cell(0, 10, layout_text, 0, 'L', 1)
   
     line_y_position = pdf.get_y() + 4  # Small gap after the text
@@ -184,6 +202,11 @@ def create_pdf(chat_messages, student_name, course_name):
     pdf.ln(6)  # Space after the line
     
     
+    # Page break before the student's interaction:
+    # -------------------------------------------
+    pdf.add_page()
+    
+    
     # ChatISA's Interaction with the Student
     # --------------------------------------
     pdf.set_fill_color(255, 255, 255)  # White background
@@ -196,8 +219,8 @@ def create_pdf(chat_messages, student_name, course_name):
     for message in chat_messages[2:]:
         role = message["role"]
         content = message["content"]
-        content = content.replace("\n\n", "\n")  # Remove double new lines
-        content = content.replace("\n\n", "\n")  # Remove double new lines again
+        content = re.sub(r'\n\s*\n', '\n', content) # Remove double new lines
+        content = clean_text(content)
 
         parts = re.split(r'(```\w+?\n.*?```)', content, flags=re.DOTALL)
         for part in parts:
@@ -222,6 +245,10 @@ def create_pdf(chat_messages, student_name, course_name):
     pdf.line(margin, line_y_position, page_width - margin, line_y_position)
     pdf.ln(6)  # Space after the line
     
+    # Page break before the appendix:
+    # --------------------------------
+    pdf.add_page()
+    
     
     # Custom Instructions and Default Message:
     # ---------------------------------------
@@ -236,6 +263,7 @@ def create_pdf(chat_messages, student_name, course_name):
         role = message["role"]
         content = message["content"]
         content = re.sub(r'\n\s*\n', '\n', content) # Remove double new lines
+        content = clean_text(content)
 
         parts = re.split(r'(```\w+?\n.*?```)', content, flags=re.DOTALL)
         for part in parts:
