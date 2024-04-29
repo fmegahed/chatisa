@@ -7,3 +7,6 @@
 
 # Other attempts folder
 other_attempts/
+
+# Mac temp file
+.DS_Store
