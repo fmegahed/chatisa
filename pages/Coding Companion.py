@@ -32,17 +32,11 @@ import streamlit as st
 # -------
 models = [
   'gpt-4-turbo-preview', 'gpt-3.5-turbo', 
-  'claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307',
+  'claude-3-haiku-20240307', 'claude-3-sonnet-20240229', 'claude-3-opus-20240229',
   'command-r-plus',
-  # We do not support Gemini Pro for now since it produces this error
-  # "Invalid argument provided to Gemini: 400 Please ensure that multiturn requests ends with a user role or a function response."
-  # This will, hopefully, be fixed in our future release.
-  # 'gemini-pro',
-  # same for mistral models which produce:
-  #  Error response 400 while fetching https://api.mistral.ai/v1/chat/completions: {"object":"error","message":"Assistant message must have either content or tool_calls, but not both.","type":"invalid_request_error","param":null,"code":null}
-  # 'mistral-small-latest', 'mistral-medium-latest', 'mistral-large-latest',
-  'llama3-8b-8192', 'llama3-70b-8192',
-  'gemma-7b-it'
+  'gemma-7b-it',
+  'llama3-8b-8192',
+  'llama3-70b-8192' 
   ]
 # -----------------------------------------------------------------------------
 
@@ -54,8 +48,6 @@ load_dotenv()
 openai_api_key = os.getenv('OPENAI_API_KEY')
 anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
 cohere_api_key = os.getenv('COHERE_API_KEY')
-# google_api_key = os.getenv('GOOGLE_API_KEY')
-# mistral_api_key = os.getenv('MISTRAL_API_KEY')
 groq_api_key = os.getenv('GROQ_API_KEY')
 # -----------------------------------------------------------------------------
 
@@ -103,11 +95,11 @@ if "messages" not in st.session_state:
 
 # Streamlit Title:
 # ----------------
-st.markdown("## 🤖 ChatISA")
+st.markdown("## 🤖 ChatISA: Coding Companion 🤖")
 
 # Dropdown to Select Model:
 # -------------------------
-st.sidebar.markdown("### Choose Your LLM:")
+st.sidebar.markdown("### Choose Your LLM")
 model_choice = st.sidebar.selectbox(
     "Choose your LLM",
     models,
@@ -167,7 +159,7 @@ for message in st.session_state.messages[2:]:
     st.markdown(message["content"])
 
 # Display chatbox input & process user input
-if prompt := st.chat_input("Ask me for help on business topics."):
+if prompt := st.chat_input("Ask me to help you with your code and/or to explain analytical concepts."):
   # Store the user's prompt to memory
   st.session_state.messages.append({"role": "user", "content": prompt})
   # Display the user's prompt to the chat window

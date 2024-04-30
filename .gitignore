@@ -10,3 +10,6 @@ other_attempts/
 
 # Mac temp file
 .DS_Store
+
+# pycache
+__pycache__/

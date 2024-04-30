@@ -109,6 +109,7 @@ SQLAlchemy==2.0.29
 stack-data==0.2.0
 streamlit==1.31.0
 tenacity==8.2.3
+tiktoken==0.6.0
 tokenizers==0.15.2
 toml==0.10.2
 toolz==0.12.1
