@@ -22,10 +22,27 @@ from lib import chatpdf, chatgeneration
 
 # Third-Party Libraries
 from dotenv import load_dotenv
-import streamlit as st
 
+import streamlit as st
+from streamlit_lottie import st_lottie
+from streamlit_option_menu import option_menu
+from streamlit_extras.switch_page_button import switch_page
 
 # -----------------------------------------------------------------------------
+
+# Change page names within the file:
+# ----------------------------------
+# Based on https://stackoverflow.com/a/74418483
+pages = st.source_util.get_pages('chatgpt.py')
+new_page_names = {
+  'chatgpt': '🤖 ChatISA',
+  'coding_companion': '🖥 Coding Companion',
+  'project_coach': '👩‍🏫 Project Coach'
+}
+
+for key, page in pages.items():
+  if page['page_name'] in new_page_names:
+    page['page_name'] = new_page_names[page['page_name']]
 
 
 # Models:
@@ -34,13 +51,6 @@ models = [
   'gpt-4-turbo-preview', 'gpt-3.5-turbo', 
   'claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307',
   'command-r-plus',
-  # We do not support Gemini Pro for now since it produces this error
-  # "Invalid argument provided to Gemini: 400 Please ensure that multiturn requests ends with a user role or a function response."
-  # This will, hopefully, be fixed in our future release.
-  # 'gemini-pro',
-  # same for mistral models which produce:
-  #  Error response 400 while fetching https://api.mistral.ai/v1/chat/completions: {"object":"error","message":"Assistant message must have either content or tool_calls, but not both.","type":"invalid_request_error","param":null,"code":null}
-  # 'mistral-small-latest', 'mistral-medium-latest', 'mistral-large-latest',
   'llama3-8b-8192', 'llama3-70b-8192',
   'gemma-7b-it'
   ]
@@ -54,47 +64,7 @@ load_dotenv()
 openai_api_key = os.getenv('OPENAI_API_KEY')
 anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
 cohere_api_key = os.getenv('COHERE_API_KEY')
-# google_api_key = os.getenv('GOOGLE_API_KEY')
-# mistral_api_key = os.getenv('MISTRAL_API_KEY')
 groq_api_key = os.getenv('GROQ_API_KEY')
-# -----------------------------------------------------------------------------
-
-
-# Constant Values:
-# ----------------
-TEMPERATURE = 0
-
-
-SYSTEM_PROMPT = f"""
-You are an upbeat, encouraging tutor who helps undergraduate students majoring in business analytics understand concepts by explaining ideas and asking students questions. Start by introducing yourself to the student as their ChatISA Assistant who is happy to help them with any questions.
-
-Only ask one question at a time. Ask them about the subject title and topic they want to learn about. Wait for their response.  Given this information, help students understand the topic by providing explanations, examples, and analogies. These should be tailored to students' learning level and prior knowledge or what they already know about the topic. When appropriate also provide them with code in both R (use tidyverse styling) and Python (use pandas whenever possible), showing them how to implement whatever concept they are asking about.
-
-When you show R code, you must use:
-  (a) library_name::function_name() syntax as this avoids conflicts in function names and makes it clear to the student where the function is imported from when there are multiple packages loaded. Based on this, do NOT use library() in the beginning of your code chunk and use if(require(library)==FALSE) install.packages(library), and
-  (b) use the native pipe |> as your pipe operator.
-
-On the other hand for Python, break chained methods into multiple lines using parentheses; for example, do NOT write df.groupby('Region')['Sales'].agg('sum') on one line.
-"""
-# -----------------------------------------------------------------------------
-
-
-# Initializing the Session State:
-# -------------------------------
-if 'token_counts' not in st.session_state:
-    st.session_state.token_counts = {model: {'input_tokens': 0, 'output_tokens': 0} for model in models}
-
-if 'model_choice' not in st.session_state:
-    st.session_state.model_choice = models[0]
-    
-if "messages" not in st.session_state:
-  st.session_state.messages = [{
-    "role": "system",
-    "content": SYSTEM_PROMPT
-  }, {
-    "role": "user", 
-    "content": "Hi, I am an undergraduate student studying business analytics."
-    }]
 # -----------------------------------------------------------------------------
 
 
@@ -103,18 +73,62 @@ if "messages" not in st.session_state:
 
 # Streamlit Title:
 # ----------------
-st.markdown("## 🤖 ChatISA")
 
-# Dropdown to Select Model:
-# -------------------------
-st.sidebar.markdown("### Choose Your LLM:")
-model_choice = st.sidebar.selectbox(
-    "Choose your LLM",
-    models,
-    index=models.index(st.session_state.model_choice),
-    key='model_choice',
-    label_visibility='collapsed'
-)
+st.set_page_config(page_title = "ChatISA", layout = "centered",page_icon='🤖')
+st_lottie('https://lottie.host/49ad1924-ffe8-4fc0-895c-78fb5a5c8223/wsQgGsWJuV.json', speed=1, key='welcome',loop=True, quality="high", height=100)
+st.markdown("## to Your ChatISA Assistant 🤖")
+# st.markdown("""
+# ChatISA is your personal, free, and prompt-engineered chatbot, where you can chat with one of nine LLMs.
+# The chatbot consists of two main pages:
+#   1. **Coding Companion:** A chatbot that helps you with coding-related questions, taking into account your educational background and coding sytles used at Miami University.  
+#   2. **Project Coach:** A chatbot that helps you with project-related questions, where the AI can take one of four roles:  
+#       - **Premortem Coach** to help the team perform a project premortem by encouraging them to envision possible failures and how to avoid them.  
+#       - **Team Structuring Coach** to help the team recognize and make use of the resources and expertise within the team.  
+#       - **Devil's Advocate** to challenge your ideas and assumptions at various stages of your project.  
+#       - **Reflection Coach** to assist the team in reflecting on their experiences in a structured way to derive lessons and insights.
+# 
+# For each page, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF.
+# """)
+st.markdown("""
+ChatISA is your personal, free, and prompt-engineered chatbot, where you can chat with one of nine LLMs.
+The chatbot consists of **two main pages:** (a) Coding Companion, and (b) Project Coach. 
+
+They can be accessed by clicking on the buttons below or by toggling their names on the sidebar.
+""")
+
+st.markdown("#### Select one of the following options to start chatting!")
+
+# Select the page to switch to:
+# -----------------------------
+# Based on https://github.com/jiatastic/GPTInterviewer/blob/main/Homepage.py
+selected = option_menu(
+        menu_title= None,
+        options=["Coding Companion", "Project Coach"],
+        icons = ["filetype-py", "kanban"],
+        menu_icon="list",
+        default_index=0,
+        orientation="horizontal",
+    )
+if selected == 'Coding Companion':
+    st.info("""
+        📚 The coding companion can help you with coding-related questions, taking into account your educational background and coding sytles used at Miami University. 
+        
+        Here, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF.""")
+    if st.button("Go to Coding Companion"):
+        switch_page("🖥 Coding Companion")
+if selected == 'Project Coach':
+    st.info("""
+    📚 The Project Coach can help you with project-related questions, where the AI can take one of four roles:  
+      - **Premortem Coach** to help the team perform a project premortem by encouraging them to envision possible failures and how to avoid them.  
+      - **Team Structuring Coach** to help the team recognize and make use of the resources and expertise within the team.  
+      - **Devil's Advocate** to challenge your ideas and assumptions at various stages of your project.  
+      - **Reflection Coach** to assist the team in reflecting on their experiences in a structured way to derive lessons and insights. 
+      
+      Here, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF. """
+    )
+    if st.button("Go to Project Coach"):
+        switch_page("👩‍🏫 Project Coach")
+
 
 # Sidebar Markdown:
 # -----------------
@@ -158,64 +172,5 @@ if st.session_state.show_info:
     - **Streamlit App:** Adapted from [ChatGPT Apps with Streamlit](https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps#build-a-chatgpt-like-app)
     - **Our Code Repo:** [![Click here to access](https://img.shields.io/badge/view_source_code-gray?logo=github)](https://github.com/fmegahed/chatisa)
     """)
-    
-
-# Main Window: Where the Chat is Invoked, Displayed, and Stored:
-# --------------------------------------------------------------
-for message in st.session_state.messages[2:]:
-  with st.chat_message(message["role"]):
-    st.markdown(message["content"])
-
-# Display chatbox input & process user input
-if prompt := st.chat_input("Ask me for help on business topics."):
-  # Store the user's prompt to memory
-  st.session_state.messages.append({"role": "user", "content": prompt})
-  # Display the user's prompt to the chat window
-  st.chat_message("user").markdown(prompt)
-  # Stream response from the LLM
-  with st.chat_message("assistant"):
-    
-    # initializing the response objects
-    message_placeholder = st.empty()
-    full_response = ""
-    input_token_count = 0
-    output_token_count = 0
-    
-    # generating the response
-    outputs = chatgeneration.generate_chat_completion(
-      model = st.session_state.model_choice,
-      messages = [
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages
-            ],
-      temp = TEMPERATURE,
-      max_num_tokens = 1000
-    )
-    
-    # extracting the response, input tokens, and output tokens
-    response, input_tokens, output_tokens = outputs
-    full_response += response
-    message_placeholder.markdown(full_response + "▌")
-    
-    # Update the token counts for the specific model in session state
-    st.session_state.token_counts[st.session_state.model_choice]['input_tokens'] += input_tokens
-    st.session_state.token_counts[st.session_state.model_choice]['output_tokens'] += output_tokens
-  
-  # Store the full response from the LLM in memory
-  st.session_state.messages.append({"role": "assistant", "content": full_response})
-
-
-# Generating the PDF from the Chat:
-# ---------------------------------
-with st.expander("Export Chat to PDF"):
-  row = st.columns([2, 2])
-  user_name = row[0].text_input("Enter your name:")
-  user_course = row[1].text_input("Enter your course name:")
-  if user_name != "" and user_course != "":
-    pdf_output_path = chatpdf.create_pdf(chat_messages=st.session_state.messages, models = models, token_counts = st.session_state.token_counts, user_name=user_name, user_course=user_course)
-
-    with open(pdf_output_path, "rb") as file:
-      st.download_button(label="Download PDF", data=file, file_name=f"{user_course}_{user_name}_chatisa.pdf", mime="application/pdf", use_container_width=True)
-
 
 # -----------------------------------------------------------------------------

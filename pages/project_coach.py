@@ -138,10 +138,14 @@ reflective_prompt = (
     "especially thoughtful or demonstrate progress. Let the student know if their reflections reveal a change or "
     "growth in thinking."
 )
-
-
-
 # -----------------------------------------------------------------------------
+
+# Streamlit Title:
+# ----------------
+
+st.set_page_config(page_title = "ChatISA Project Coach", layout = "centered",page_icon='🤖')
+# -----------------------------------------------------------------------------
+
 
 # Radio Button to Select Role:
 # ----------------------------

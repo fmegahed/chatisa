@@ -95,6 +95,7 @@ if "messages" not in st.session_state:
 
 # Streamlit Title:
 # ----------------
+st.set_page_config(page_title = "ChatISA Coding Companion", layout = "centered",page_icon='🤖')
 st.markdown("## 🤖 ChatISA: Coding Companion 🤖")
 
 # Dropdown to Select Model:
