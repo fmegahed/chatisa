@@ -16,6 +16,7 @@
 # Import required libraries:
 # --------------------------
 import os # Standard Library
+from collections import OrderedDict
 
 # Our Own Modules
 from lib import chatpdf, chatgeneration
@@ -34,10 +35,13 @@ from streamlit_extras.switch_page_button import switch_page
 # ----------------------------------
 # Based on https://stackoverflow.com/a/74418483
 pages = st.source_util.get_pages('chatgpt.py')
+
+# New page names
 new_page_names = {
-  'chatgpt': '🤖 ChatISA',
+  'chatgpt': '🏠 Home',
   'coding_companion': '🖥 Coding Companion',
-  'project_coach': '👩‍🏫 Project Coach'
+  'project_coach': '👩‍🏫 Project Coach',
+  'interview_buddy': '👔 Interview Mentor',
 }
 
 for key, page in pages.items():
@@ -71,27 +75,17 @@ groq_api_key = os.getenv('GROQ_API_KEY')
 # The Streamlit Interface:
 # ------------------------
 
-# Streamlit Title:
+# Streamlit Text
 # ----------------
-
 st.set_page_config(page_title = "ChatISA", layout = "centered",page_icon='🤖')
+
 st_lottie('https://lottie.host/49ad1924-ffe8-4fc0-895c-78fb5a5c8223/wsQgGsWJuV.json', speed=1, key='welcome',loop=True, quality="high", height=100)
+
 st.markdown("## to Your ChatISA Assistant 🤖")
-# st.markdown("""
-# ChatISA is your personal, free, and prompt-engineered chatbot, where you can chat with one of nine LLMs.
-# The chatbot consists of two main pages:
-#   1. **Coding Companion:** A chatbot that helps you with coding-related questions, taking into account your educational background and coding sytles used at Miami University.  
-#   2. **Project Coach:** A chatbot that helps you with project-related questions, where the AI can take one of four roles:  
-#       - **Premortem Coach** to help the team perform a project premortem by encouraging them to envision possible failures and how to avoid them.  
-#       - **Team Structuring Coach** to help the team recognize and make use of the resources and expertise within the team.  
-#       - **Devil's Advocate** to challenge your ideas and assumptions at various stages of your project.  
-#       - **Reflection Coach** to assist the team in reflecting on their experiences in a structured way to derive lessons and insights.
-# 
-# For each page, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF.
-# """)
+
 st.markdown("""
 ChatISA is your personal, free, and prompt-engineered chatbot, where you can chat with one of nine LLMs.
-The chatbot consists of **two main pages:** (a) Coding Companion, and (b) Project Coach. 
+The chatbot consists of **three main pages:** (a) Coding Companion, (b) Project Coach, and (c) Interview Mentor.
 
 They can be accessed by clicking on the buttons below or by toggling their names on the sidebar.
 """)
@@ -103,15 +97,15 @@ st.markdown("#### Select one of the following options to start chatting!")
 # Based on https://github.com/jiatastic/GPTInterviewer/blob/main/Homepage.py
 selected = option_menu(
         menu_title= None,
-        options=["Coding Companion", "Project Coach"],
-        icons = ["filetype-py", "kanban"],
+        options=["Coding Companion", "Project Coach", "Interview Mentor"],
+        icons = ["filetype-py", "kanban", "briefcase"],
         menu_icon="list",
         default_index=0,
         orientation="horizontal",
     )
 if selected == 'Coding Companion':
     st.info("""
-        📚 The coding companion can help you with coding-related questions, taking into account your educational background and coding sytles used at Miami University. 
+        📚 The coding companion can help you with coding-related questions, taking into account your educational background and coding styles used at Miami University. 
         
         Here, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF.""")
     if st.button("Go to Coding Companion"):
@@ -128,7 +122,16 @@ if selected == 'Project Coach':
     )
     if st.button("Go to Project Coach"):
         switch_page("👩‍🏫 Project Coach")
-
+if selected == 'Interview Mentor':
+    st.info("""
+    📚 The Interview Mentor is designed to help you prepare for technical interviews by generating interview questions based on information extracted from: (a) a job description that you will provide, and (b) a PDF of your resume. 
+    
+    Here, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF.
+    
+    P.S.: We do not store any of your data on our servers.
+    """)
+    if st.button("Go to Interview Mentor"):
+        switch_page("👔 Interview Mentor")
 
 # Sidebar Markdown:
 # -----------------
@@ -138,7 +141,7 @@ st.sidebar.markdown("""
   - [Joshua Ferris](https://miamioh.edu/fsb/directory/?up=/directory/ferrisj2)
 
 ### Version 
-  1.2.0 (April 30, 2024)
+  1.2.1 (May 1, 2024)
 
 ### Key Features
   - Free to use
