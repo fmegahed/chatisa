@@ -117,7 +117,7 @@ st.sidebar.markdown("""
   - [Joshua Ferris](https://miamioh.edu/fsb/directory/?up=/directory/ferrisj2)
 
 ### Version 
-  1.2.1 (May 1, 2024)
+  1.2.2 (May 10, 2024)
 
 ### Key Features
   - Free to use

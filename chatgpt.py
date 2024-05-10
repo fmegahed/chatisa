@@ -41,7 +41,8 @@ new_page_names = {
   'chatgpt': '🏠 Home',
   'coding_companion': '🖥 Coding Companion',
   'project_coach': '👩‍🏫 Project Coach',
-  'interview_buddy': '👔 Interview Mentor',
+  'exam_ally': '📝 Exam Ally',
+  'interview_mentor': '👔 Interview Mentor',
 }
 
 for key, page in pages.items():
@@ -85,7 +86,7 @@ st.markdown("## to Your ChatISA Assistant 🤖")
 
 st.markdown("""
 ChatISA is your personal, free, and prompt-engineered chatbot, where you can chat with one of nine LLMs.
-The chatbot consists of **three main pages:** (a) Coding Companion, (b) Project Coach, and (c) Interview Mentor.
+The chatbot consists of **three main pages:** (a) Coding Companion, (b) Project Coach, (c) Exam Ally, and (d) Interview Mentor.
 
 They can be accessed by clicking on the buttons below or by toggling their names on the sidebar.
 """)
@@ -97,8 +98,8 @@ st.markdown("#### Select one of the following options to start chatting!")
 # Based on https://github.com/jiatastic/GPTInterviewer/blob/main/Homepage.py
 selected = option_menu(
         menu_title= None,
-        options=["Coding Companion", "Project Coach", "Interview Mentor"],
-        icons = ["filetype-py", "kanban", "briefcase"],
+        options=["Coding Companion", "Project Coach", "Exam Ally", "Interview Mentor"],
+        icons = ["filetype-py", "kanban", "list-task", "briefcase"],
         menu_icon="list",
         default_index=0,
         orientation="horizontal",
@@ -122,6 +123,16 @@ if selected == 'Project Coach':
     )
     if st.button("Go to Project Coach"):
         switch_page("👩‍🏫 Project Coach")
+if selected == 'Exam Ally':
+    st.info("""
+    📚 The Exam Ally can help you prepare for exams by generating exam questions based on information extracted from a PDF that you upload and your choice of exam question type. 
+    
+    Here, you can select the model you want to chat with and type of exam questions. Note that the LLM grades and feedback can be wrong, so always double-check the answers. You can also export the entire conversation to a PDF.
+    
+    P.S.: We do not store any of your data on our servers.
+    """)
+    if st.button("Go to Exam Ally"):
+        switch_page("📝 Exam Ally")
 if selected == 'Interview Mentor':
     st.info("""
     📚 The Interview Mentor is designed to help you prepare for technical interviews by generating interview questions based on information extracted from: (a) a job description that you will provide, and (b) a PDF of your resume. 
@@ -141,7 +152,7 @@ st.sidebar.markdown("""
   - [Joshua Ferris](https://miamioh.edu/fsb/directory/?up=/directory/ferrisj2)
 
 ### Version 
-  1.2.1 (May 1, 2024)
+  1.2.2 (May 10, 2024)
 
 ### Key Features
   - Free to use
