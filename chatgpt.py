@@ -86,7 +86,7 @@ st.markdown("## to Your ChatISA Assistant 🤖")
 
 st.markdown("""
 ChatISA is your personal, free, and prompt-engineered chatbot, where you can chat with one of nine LLMs.
-The chatbot consists of **three main pages:** (a) Coding Companion, (b) Project Coach, (c) Exam Ally, and (d) Interview Mentor.
+The chatbot consists of **four main pages:** (a) Coding Companion, (b) Project Coach, (c) Exam Ally, and (d) Interview Mentor.
 
 They can be accessed by clicking on the buttons below or by toggling their names on the sidebar.
 """)
@@ -152,7 +152,7 @@ st.sidebar.markdown("""
   - [Joshua Ferris](https://miamioh.edu/fsb/directory/?up=/directory/ferrisj2)
 
 ### Version 
-  1.2.2 (May 10, 2024)
+  1.3.0 (May 13, 2024)
 
 ### Key Features
   - Free to use

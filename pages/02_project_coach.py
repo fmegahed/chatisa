@@ -24,6 +24,8 @@ from lib import chatpdf, chatgeneration
 from dotenv import load_dotenv
 import streamlit as st
 
+import fitz # PyMuPDF
+from pdf4llm import to_markdown
 
 # -----------------------------------------------------------------------------
 
@@ -31,7 +33,7 @@ import streamlit as st
 # Models:
 # -------
 models = [
-  'gpt-4-turbo-preview', 'gpt-3.5-turbo', 
+  'gpt-4o', 'gpt-3.5-turbo', 
   'claude-3-haiku-20240307', 'claude-3-sonnet-20240229', 'claude-3-opus-20240229',
   'command-r-plus',
   'gemma-7b-it',
@@ -55,6 +57,8 @@ groq_api_key = os.getenv('GROQ_API_KEY')
 # Constant Values:
 # ----------------
 TEMPERATURE = 0
+
+project_scoping_document = to_markdown('assets/project_scoping_worksheet.pdf')
 
 devils_advocate_prompt = (
     "You are a friendly helpful team member who helps their teammates think through decisions. Your "
@@ -138,6 +142,70 @@ reflective_prompt = (
     "especially thoughtful or demonstrate progress. Let the student know if their reflections reveal a change or "
     "growth in thinking."
 )
+
+project_scoping_prompt = (
+    "You are an AI assistant designed to interactively guide users through defining "
+    "an analytics project using a project scoping document template. Your goal is to "
+    "help the user provide detailed information for each section of the document, "
+    "offer feedback, and refine their inputs to create a comprehensive project scope. "
+    "Each section corresponds to a question in arabic numerals in the scoping document.\n\n"
+    "Here is the project scoping document template you will be working with:\n\n"
+    "{project_scoping_document}\n\n"
+    "To begin, ask the user to provide a short description of their project. Respond with "
+    "the following response:\n\n"
+    "Thank you for choosing to scope your analytics project with me. To get started, please "
+    "provide a brief description of your project in a few sentences.\n\n"
+    "Once the user provides their project description, respond with:\n\n"
+    "Great! Let's now walk through each section of the project scoping document to define "
+    "your project in more detail. We'll start with Section 1 and work our way through the "
+    "document. For each section, I'll ask you to provide the necessary information and offer "
+    "feedback to help refine your inputs.\n\n"
+    "Then, iterate through each section of the project scoping document:\n\n"
+    "1. Identify the current section number and title.\n"
+    "2. Prompt the user to answer the required question for each section, providing hints "
+    "and subquestions, if they were provided in the project scoping template. The user "
+    "does not have the project scoping document so you need to provide them with each question.\n"
+    "3. Once the user provides their input, offer feedback and suggestions to help refine their "
+    "response per the following guidelines: \n"
+    "   - reflect on the user's input and identify areas that may need clarification or improvement.\n"
+    "   - provide specific suggestions or questions to help the user enhance their input for the section.\n"
+    "4. Iterate with the user until the section is completed to mutual satisfaction.\n"
+    "5. Store the finalized answer for the section, along with its section number and information.\n"
+    "6. Move on to the next section and repeat steps 1-5 until all sections are completed.\n\n"
+    "For the timeline section, if the user's response is not very specific: \n"
+    "<timeline_guidance>"
+    "  - Help them identify the tasks and how they should be broken down over time.\n"
+    "  - Provide suggestions on creating a more detailed timeline.\n"
+    "</timeline_guidance>\n\n"
+    "Once all sections of the project scoping document have been completed, present the user "
+    "with the fully scoped project document in the following format:\n\n"
+    "Ensure that the final output mimics the structure of the uploaded project_scoping_document, "
+    "including a mix of questions and answers. Provide an appropriate title on top of the final "
+    "output, and summarize the answers in tables for the sections that include a table."
+    "Furthermore, use these guidelines to structure the final output:\n\n"
+    "<project_scope_output>\n"
+    "Congratulations! We have completed the project scoping document for your analytics project. "
+    "Here is the final version:\n\n"
+    "Project Scope for [Insert Project Title]\n"
+    "<section1_question_and_answer>\n"
+    "<section2_question_and_answer>\n"
+    "<section3_question_and_answer>\n"
+    "<section4_question_and_answer>\n"
+    "<section5_question_and_answer>\n"
+    "<section6_question_and_answer>\n"
+    "<section7_question_and_answer>\n"
+    "<section8_question_and_answer>\n"
+    "<section9_question_and_answer>\n"
+    "<section10_question_and_answer>\n"
+    "</project_scope_output>\n\n"
+    "Thank you for taking the time to define your project in detail. This comprehensive project "
+    "scope will serve as a valuable guide throughout the execution of your analytics project. If "
+    "you have any further questions or need assistance, please don't hesitate to ask.\n"
+)
+
+
+
+ 
 # -----------------------------------------------------------------------------
 
 # Streamlit Title:
@@ -151,13 +219,13 @@ st.set_page_config(page_title = "ChatISA Project Coach", layout = "centered",pag
 # ----------------------------
 # Initialize or use the existing session state for the role
 if 'selected_role' not in st.session_state:
-    st.session_state.selected_role = "Premortem Coach"
+    st.session_state.selected_role = "Project Scoping Coach"
 
 st.sidebar.markdown("### What Role you Want the AI to Play")
 role = st.sidebar.radio(
     "Select the role you want the AI to play:",
-    ["Devil's Advocate", "Premortem Coach", "Reflection Coach", "Team Structuring Coach"],
-    index=["Devil's Advocate", "Premortem Coach", "Reflection Coach", "Team Structuring Coach"].index(st.session_state.selected_role),
+    ["Devil's Advocate", "Premortem Coach", "Project Scoping Coach", "Reflection Coach", "Team Structuring Coach"],
+    index=["Devil's Advocate", "Premortem Coach", "Project Scoping Coach", "Reflection Coach", "Team Structuring Coach"].index(st.session_state.selected_role),
     label_visibility='collapsed'
 )
 
@@ -168,11 +236,14 @@ st.session_state.selected_role = role
 with st.sidebar.expander("Learn more about the roles"):
     st.write("**Devil's Advocate**: Helps teams think through decisions by playing devil's advocate.")
     st.write("**Premortem Coach**: Helps teams perform a project premortem by encouraging them to envision possible failures and how to avoid them.")
+    st.write("**Project Scoping Coach**: Guides users through defining an analytics project using an internal project scoping document template.")
     st.write("**Reflection Coach**: Assists teams in reflecting on their experiences in a structured way to derive lessons and insights.")
     st.write("**Team Structuring Coach**: Helps teams recognize and make use of the resources and expertise within the team.")
 
 # Setting the appropriate system prompt based on the selected role
-if st.session_state.selected_role == "Premortem Coach":
+if st.session_state.selected_role == "Project Scoping Coach":
+    SYSTEM_PROMPT = project_scoping_prompt
+elif st.session_state.selected_role == "Premortem Coach":
     SYSTEM_PROMPT = premortem_prompt
 elif st.session_state.selected_role == "Reflection Coach":
     SYSTEM_PROMPT = reflective_prompt
@@ -230,11 +301,11 @@ st.sidebar.markdown("""
   - [Joshua Ferris](https://miamioh.edu/fsb/directory/?up=/directory/ferrisj2)
 
 ### Version 
-  1.2.2 (May 10, 2024)
+  1.3.0 (May 14, 2024)
 
 ### Key Features
   - Free to use
-  - Chat with one of nine LLMs
+  - Chat with one of several LLMs
   - Export chat to PDF
   
 ### Support & Funding
@@ -273,7 +344,7 @@ for message in st.session_state.messages[2:]:
     st.markdown(message["content"])
 
 # Display chatbox input & process user input
-if prompt := st.chat_input("Discuss your project: current (devil's advocate, premortem, or structuring) or past (reflection)."):
+if prompt := st.chat_input("Discuss your project: current (devil's advocate, scoping, premortem, or structuring) or past (reflection)."):
   # Store the user's prompt to memory
   st.session_state.messages.append({"role": "user", "content": prompt})
   # Display the user's prompt to the chat window
@@ -295,7 +366,7 @@ if prompt := st.chat_input("Discuss your project: current (devil's advocate, pre
                 for m in st.session_state.messages
             ],
       temp = TEMPERATURE,
-      max_num_tokens = 1000
+      max_num_tokens = 3000
     )
     
     # extracting the response, input tokens, and output tokens

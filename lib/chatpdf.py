@@ -4,8 +4,8 @@ from fpdf import FPDF
 import tempfile
 
 token_cost_rates = {
-    # GPT costs per https://openai.com/pricing on 2024-04-29
-    'gpt-4-turbo-preview': {'input_cost_per_million_tokens': 10, 'output_cost_per_million_tokens': 30},
+    # GPT costs per https://openai.com/pricing on 2024-05-14
+    'gpt-4o': {'input_cost_per_million_tokens': 5, 'output_cost_per_million_tokens': 15},
     'gpt-3.5-turbo': {'input_cost_per_million_tokens': 0.5, 'output_cost_per_million_tokens': 1.5},
     
     # Anthropic costs per https://www.anthropic.com/api on 2024-04-29

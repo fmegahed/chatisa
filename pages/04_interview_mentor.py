@@ -21,7 +21,7 @@ from pdf4llm import to_markdown
 # Models:
 # -------
 models = [
-  'gpt-4-turbo-preview', 
+  'gpt-4o', 
   'claude-3-opus-20240229', 
   'command-r-plus',
   'llama3-70b-8192' 
@@ -88,7 +88,7 @@ if not st.session_state.submitted:
       - [Joshua Ferris](https://miamioh.edu/fsb/directory/?up=/directory/ferrisj2)
 
     ### Version 
-      1.2.1 (May 1, 2024)
+      1.3.0 (May 14, 2024)
 
     ### Key Features
       - Free to use
@@ -213,7 +213,7 @@ if st.session_state.submitted:
         - [Joshua Ferris](https://miamioh.edu/fsb/directory/?up=/directory/ferrisj2)
 
       ### Version 
-        1.2.1 (May 1, 2024)
+        1.3.0 (May 13, 2024)
 
       ### Key Features
         - Free to use

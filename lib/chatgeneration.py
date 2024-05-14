@@ -20,8 +20,8 @@ def generate_chat_completion(model, messages, temp=0, max_num_tokens=1000):
     Function to generate chat completions, with reasonable defaults for traditional chat completions parameters.
     """
     
-    if model == 'gpt-4-turbo-preview': 
-        chat_model = ChatOpenAI(model="gpt-4-turbo-preview", temperature=temp, max_tokens=max_num_tokens)  
+    if model == 'gpt-4o': 
+        chat_model = ChatOpenAI(model="gpt-4o", temperature=temp, max_tokens=max_num_tokens)  
     elif model == 'gpt-3.5-turbo':
         chat_model = ChatOpenAI(model="gpt-3.5-turbo", temperature=temp, max_tokens=max_num_tokens)
     elif model == "claude-3-opus-20240229": 
@@ -54,7 +54,7 @@ def generate_chat_completion(model, messages, temp=0, max_num_tokens=1000):
     
     # extracting the token usage [work in progress]
     # for openai models
-    if model in ['gpt-4-turbo-preview', 'gpt-3.5-turbo']:
+    if model in ['gpt-4o', 'gpt-3.5-turbo']:
         input_tokens = chat_response.response_metadata['token_usage']['prompt_tokens']
         output_tokens = chat_response.response_metadata['token_usage']['completion_tokens']
     # for anthropic models
