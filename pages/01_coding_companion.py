@@ -70,16 +70,20 @@ On the other hand for Python, break chained methods into multiple lines using pa
 """
 # -----------------------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
+# Manage page tracking and associated session state
+# -----------------------------------------------------------------------------
+THIS_PAGE = "coding_companion"
+if "cur_page" not in st.session_state:
+    st.session_state.cur_page = THIS_PAGE
 
-# Initializing the Session State:
-# -------------------------------
-if 'token_counts' not in st.session_state:
-    st.session_state.token_counts = {model: {'input_tokens': 0, 'output_tokens': 0} for model in models}
+if ("token_counts" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
+    st.session_state.token_counts = {model: {"input_tokens": 0, "output_tokens": 0} for model in models}
 
-if 'model_choice' not in st.session_state:
+if ("model_choice" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
     st.session_state.model_choice = models[0]
-    
-if "messages" not in st.session_state:
+
+if ("messages" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
   st.session_state.messages = [{
     "role": "system",
     "content": SYSTEM_PROMPT
@@ -87,8 +91,9 @@ if "messages" not in st.session_state:
     "role": "user", 
     "content": "Hi, I am an undergraduate student studying business analytics."
     }]
-# -----------------------------------------------------------------------------
 
+st.session_state.cur_page = THIS_PAGE
+# -----------------------------------------------------------------------------
 
 # The Streamlit Interface:
 # ------------------------

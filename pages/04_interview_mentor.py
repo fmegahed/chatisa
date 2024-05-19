@@ -44,7 +44,28 @@ groq_api_key = os.getenv('GROQ_API_KEY')
 # ----------------
 TEMPERATURE = 0.25
 
+# -----------------------------------------------------------------------------
+# Manage page tracking and associated session state
+# -----------------------------------------------------------------------------
+THIS_PAGE = "exam_ally"
+if "cur_page" not in st.session_state:
+    st.session_state.cur_page = THIS_PAGE
 
+if ("token_counts" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
+    st.session_state.token_counts = {model: {"input_tokens": 0, "output_tokens": 0} for model in models}
+
+if ("model_choice" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
+    st.session_state.model_choice = models[0]
+
+if ("submitted" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
+    st.session_state.submitted = False
+
+# purge messages when entering the page
+if st.session_state.cur_page != THIS_PAGE:
+  del st.session_state.messages
+
+st.session_state.cur_page = THIS_PAGE
+# -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
 
@@ -56,10 +77,6 @@ st.markdown("## 🤖 ChatISA: Interview Mentor 🤖")
 
 # First "Screen" of the Interview Mentor:
 # ---------------------------------------
-
-if 'submitted' not in st.session_state:
-    st.session_state.submitted = False
-
 if not st.session_state.submitted:
     st.markdown(
         "Welcome to ChatISA Interview Mentor! This tool is designed to help you prepare for technical interviews by generating interview questions based on your resume and the job description. "
@@ -166,10 +183,6 @@ sidebar.render_sidebar()
 # Next Screen:
 # ------------
 if st.session_state.submitted:
-    # add token counts to session state
-    if 'token_counts' not in st.session_state:
-      st.session_state.token_counts = {model: {'input_tokens': 0, 'output_tokens': 0} for model in models}
-
     # Retrieve the information from the session_state
     model_choice = st.session_state.submission['model_choice']
     grade = st.session_state.submission['grade']

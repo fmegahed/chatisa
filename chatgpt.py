@@ -30,7 +30,13 @@ from streamlit_option_menu import option_menu
 from streamlit_extras.switch_page_button import switch_page
 
 # -----------------------------------------------------------------------------
+# Manage page tracking and associated session state
+# -----------------------------------------------------------------------------
+THIS_PAGE = "chatgpt"
+st.session_state.cur_page = THIS_PAGE
+# -----------------------------------------------------------------------------
 
+# -----------------------------------------------------------------------------
 # Change page names within the file:
 # ----------------------------------
 # Based on https://stackoverflow.com/a/74418483
