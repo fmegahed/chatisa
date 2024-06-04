@@ -203,8 +203,55 @@ project_scoping_prompt = (
     "you have any further questions or need assistance, please don't hesitate to ask.\n"
 )
 
+def reset_messages():
+    # Setting the appropriate system prompt based on the selected role
+    if st.session_state.selected_role == "Project Scoping Coach":
+        SYSTEM_PROMPT = project_scoping_prompt
+    elif st.session_state.selected_role == "Premortem Coach":
+        SYSTEM_PROMPT = premortem_prompt
+    elif st.session_state.selected_role == "Reflection Coach":
+        SYSTEM_PROMPT = reflective_prompt
+    elif st.session_state.selected_role == "Devil's Advocate":
+        SYSTEM_PROMPT = devils_advocate_prompt
+    elif st.session_state.selected_role == "Team Structuring Coach":
+        SYSTEM_PROMPT = structuring_prompt
+    else: # just in case we change our code in the future
+      raise ValueError("Invalid role selected")
+    st.session_state.messages = [{
+      "role": "system",
+      "content": SYSTEM_PROMPT
+    }, {
+      "role": "user", 
+      "content": "Hi, I am an undergraduate student studying business analytics."
+      }]
 
+# -----------------------------------------------------------------------------
+# Manage page tracking and associated session state
+# -----------------------------------------------------------------------------
+THIS_PAGE = "project_coach"
+if "cur_page" not in st.session_state:
+    st.session_state.cur_page = THIS_PAGE
 
+if ("token_counts" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
+    st.session_state.token_counts = {model: {"input_tokens": 0, "output_tokens": 0} for model in models}
+
+if ("model_choice" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
+    st.session_state.model_choice = models[0]
+
+if st.session_state.cur_page != THIS_PAGE:
+    st.session_state.selected_role = "Project Scoping Coach"
+
+if ("messages" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
+  st.session_state.messages = [{
+    "role": "system",
+    "content": project_scoping_prompt
+  }, {
+    "role": "user", 
+    "content": "Hi, I am an undergraduate student studying business analytics."
+    }]
+
+st.session_state.cur_page = THIS_PAGE
+# -----------------------------------------------------------------------------
  
 # -----------------------------------------------------------------------------
 
@@ -217,20 +264,15 @@ st.set_page_config(page_title = "ChatISA Project Coach", layout = "centered",pag
 
 # Radio Button to Select Role:
 # ----------------------------
-# Initialize or use the existing session state for the role
-if 'selected_role' not in st.session_state:
-    st.session_state.selected_role = "Project Scoping Coach"
-
 st.sidebar.markdown("### What Role you Want the AI to Play")
 role = st.sidebar.radio(
     "Select the role you want the AI to play:",
     ["Devil's Advocate", "Premortem Coach", "Project Scoping Coach", "Reflection Coach", "Team Structuring Coach"],
-    index=["Devil's Advocate", "Premortem Coach", "Project Scoping Coach", "Reflection Coach", "Team Structuring Coach"].index(st.session_state.selected_role),
-    label_visibility='collapsed'
+    index=2,
+    label_visibility='collapsed',
+    on_change=reset_messages,
+    key="selected_role"
 )
-
-# Update the session state with the selected role
-st.session_state.selected_role = role
 
 # Use an expander to provide more information about each role
 with st.sidebar.expander("Learn more about the roles"):
@@ -239,40 +281,6 @@ with st.sidebar.expander("Learn more about the roles"):
     st.write("**Project Scoping Coach**: Guides users through defining an analytics project using an internal project scoping document template.")
     st.write("**Reflection Coach**: Assists teams in reflecting on their experiences in a structured way to derive lessons and insights.")
     st.write("**Team Structuring Coach**: Helps teams recognize and make use of the resources and expertise within the team.")
-
-# Setting the appropriate system prompt based on the selected role
-if st.session_state.selected_role == "Project Scoping Coach":
-    SYSTEM_PROMPT = project_scoping_prompt
-elif st.session_state.selected_role == "Premortem Coach":
-    SYSTEM_PROMPT = premortem_prompt
-elif st.session_state.selected_role == "Reflection Coach":
-    SYSTEM_PROMPT = reflective_prompt
-elif st.session_state.selected_role == "Devil's Advocate":
-    SYSTEM_PROMPT = devils_advocate_prompt
-elif st.session_state.selected_role == "Team Structuring Coach":
-    SYSTEM_PROMPT = structuring_prompt
-else: # just in case we change our code in the future
-  raise ValueError("Invalid role selected")
-
-
-# Initializing Other Things in the Session State:
-# -----------------------------------------------
-
-if 'token_counts' not in st.session_state:
-    st.session_state.token_counts = {model: {'input_tokens': 0, 'output_tokens': 0} for model in models}
-
-if 'model_choice' not in st.session_state:
-    st.session_state.model_choice = models[0]
-    
-if "messages" not in st.session_state:
-  st.session_state.messages = [{
-    "role": "system",
-    "content": SYSTEM_PROMPT
-  }, {
-    "role": "user", 
-    "content": "Hi, I am an undergraduate student studying business analytics."
-    }]
-# -----------------------------------------------------------------------------
 
 
 # The Streamlit Interface:
