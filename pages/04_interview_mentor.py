@@ -61,7 +61,7 @@ if ("submitted" not in st.session_state) or (st.session_state.cur_page != THIS_P
     st.session_state.submitted = False
 
 # purge messages when entering the page
-if st.session_state.cur_page != THIS_PAGE:
+if (st.session_state.cur_page != THIS_PAGE) and ("messages" in st.session_state):
   del st.session_state.messages
 
 st.session_state.cur_page = THIS_PAGE
