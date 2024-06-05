@@ -11,12 +11,11 @@ from lib import chatpdf, chatgeneration, sidebar
 # Third-Party Libraries
 from dotenv import load_dotenv
 import streamlit as st
-
+from pypdf import PdfReader, PdfWriter
 import fitz # PyMuPDF
 from pdf4llm import to_markdown
 
 # ------------------------------------------------------------------------------
-
 
 # Models:
 # -------
@@ -43,6 +42,7 @@ groq_api_key = os.getenv('GROQ_API_KEY')
 # Constant Values:
 # ----------------
 TEMPERATURE = 0.25
+MAX_PDF_PAGES = 30
 
 # -----------------------------------------------------------------------------
 # Manage page tracking and associated session state
@@ -123,29 +123,40 @@ if not st.session_state.submitted:
         )
       
     if st.button('Submit'):
-      if all([model_choice, course_doc, exam_type]):
-          # Process the course material
-          with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-              tmp.write(course_doc.getvalue())
-              tmp_path = tmp.name
+        if all([model_choice, course_doc, exam_type]):
+            # Process the course material
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+                tmp.write(course_doc.getvalue())
+                tmp_path = tmp.name
 
-          course_text = to_markdown(tmp_path)
-          os.unlink(tmp_path)
+            infile = PdfReader(tmp_path, "rb")
 
-          # Store information in session_state
-          st.session_state['submission'] = {
-              'model_choice': model_choice,
-              'course_text': course_text,
-              'exam_type': exam_type
-          }
+            if len(infile.pages) > MAX_PDF_PAGES:
+                output = PdfWriter()
+                for i in range(MAX_PDF_PAGES):
+                   output.add_page(infile.pages[i])
+                with open(tmp_path, "wb") as f:
+                   output.write(f)
+            
+            infile = PdfReader(tmp_path, "rb")
+
+            course_text = to_markdown(tmp_path)
+            os.unlink(tmp_path)
+
+            # Store information in session_state
+            st.session_state['submission'] = {
+                'model_choice': model_choice,
+                'course_text': course_text,
+                'exam_type': exam_type
+            }
+            
+            # Clear the form or redirect/show other content
+            st.success('Your submission has been recorded.')
+            st.session_state.submitted = True
+            st.rerun()
           
-          # Clear the form or redirect/show other content
-          st.success('Your submission has been recorded.')
-          st.session_state.submitted = True
-          st.rerun()
-          
-      else:
-          st.error('Please fill in all fields before submitting.')
+        else:
+            st.error('Please fill in all fields before submitting.')
 
 # -----------------------------------------------------------------------------
 # Render the sidebar
