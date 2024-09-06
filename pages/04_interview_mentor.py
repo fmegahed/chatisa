@@ -1,4 +1,4 @@
-
+﻿
 
 # Import required libraries:
 # --------------------------
@@ -22,9 +22,9 @@ from pdf4llm import to_markdown
 # -------
 models = [
   'gpt-4o', 
-  'claude-3-opus-20240229', 
+  'claude-3-5-sonnet-20240620',
   'command-r-plus',
-  'llama3-70b-8192' 
+  'llama-3.1-70b-versatile' 
   ]
 # -----------------------------------------------------------------------------
 

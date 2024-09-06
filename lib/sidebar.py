@@ -8,7 +8,7 @@ def render_sidebar():
   - [Joshua Ferris](https://miamioh.edu/fsb/directory/?up=/directory/ferrisj2)
 
 ### Version 
-  1.3.0 (May 14, 2024)
+  1.4.0 (August 19, 2024)
 
 ### Key Features
   - Free to use
@@ -39,4 +39,5 @@ def render_sidebar():
 - **Prompt Engineering:** Adapted from [Assigning AI by Mollick and Mollic 2023](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4475995)
 - **Streamlit App:** Adapted from [ChatGPT Apps with Streamlit](https://docs.streamlit.io/knowledge-base/tutorials/build-conversational-apps#build-a-chatgpt-like-app)
 - **Our Code Repo:** [![Click here to access](https://img.shields.io/badge/view_source_code-gray?logo=github)](https://github.com/fmegahed/chatisa)
+- **Our ArXiv Paper:** [ChatISA Paper](https://arxiv.org/pdf/2407.15010)
 """)

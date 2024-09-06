@@ -1,4 +1,4 @@
-
+﻿
 
 # About this code:
 # ----------------
@@ -31,12 +31,12 @@ import streamlit as st
 # Models:
 # -------
 models = [
-  'gpt-4o', 'gpt-3.5-turbo', 
-  'claude-3-haiku-20240307', 'claude-3-sonnet-20240229', 'claude-3-opus-20240229',
+  'gpt-4o', 'gpt-4o-mini', 
+  'claude-3-5-sonnet-20240620',
   'command-r-plus',
-  'gemma-7b-it',
-  'llama3-8b-8192',
-  'llama3-70b-8192' 
+  'gemma2-9b-it',
+  'llama-3.1-8b-instant',
+  'llama-3.1-70b-versatile' 
   ]
 # -----------------------------------------------------------------------------
 
