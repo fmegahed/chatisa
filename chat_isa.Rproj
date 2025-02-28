@@ -1,4 +1,5 @@
 Version: 1.0
+ProjectId: 5a2414e8-ec4e-49ec-b81e-498aa6bc1713
 
 RestoreWorkspace: Default
 SaveWorkspace: Default
@@ -11,3 +12,7 @@ Encoding: UTF-8
 
 RnwWeave: Sweave
 LaTeX: pdfLaTeX
+
+PythonType: conda
+PythonVersion: 3.12.9
+PythonPath: C:/ProgramData/anaconda3/envs/chatisa/python.exe

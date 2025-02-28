@@ -4,19 +4,20 @@ from fpdf import FPDF
 import tempfile
 
 token_cost_rates = {
-    # GPT costs per https://openai.com/pricing on 2024-08-19
-    'gpt-4o': {'input_cost_per_million_tokens': 5, 'output_cost_per_million_tokens': 15},
+    # GPT costs per https://openai.com/pricing on 2025-02-28
+    'gpt-4o': {'input_cost_per_million_tokens': 2.5, 'output_cost_per_million_tokens': 10},
     'gpt-4o-mini': {'input_cost_per_million_tokens': 0.15, 'output_cost_per_million_tokens': 0.6},
+    'gpt-4.5-preview-2025-02-27': {'input_cost_per_million_tokens': 75, 'output_cost_per_million_tokens': 150},
     
-    # Anthropic costs per https://www.anthropic.com/pricing#anthropic-api on 2024-08-19
-    'claude-3-5-sonnet-20240620': {'input_cost_per_million_tokens': 3, 'output_cost_per_million_tokens': 15},
+    # Anthropic costs per https://www.anthropic.com/pricing#anthropic-api on 2025-02-28
+    'claude-3-7-sonnet-20250219': {'input_cost_per_million_tokens': 3, 'output_cost_per_million_tokens': 15},
     
-    # Cohere costs per https://cohere.com/pricing on 2024-08-19
-    'command-r-plus': {'input_cost_per_million_tokens': 3, 'output_cost_per_million_tokens': 15},
+    # Cohere costs per https://cohere.com/pricing on 2025-02-28
+    'command-r-plus': {'input_cost_per_million_tokens': 2.5, 'output_cost_per_million_tokens': 10},
     
-    # Groq costs per https://wow.groq.com/ on 2024-08-19
+    # Groq costs per https://wow.groq.com/ on 2025-02-28
     'llama-3.1-8b-instant': {'input_cost_per_million_tokens': 0.05, 'output_cost_per_million_tokens': 0.08},
-    'llama-3.1-70b-versatile': {'input_cost_per_million_tokens': 0.59, 'output_cost_per_million_tokens': 0.79},
+    'llama-3.3-70b-versatile': {'input_cost_per_million_tokens': 0.59, 'output_cost_per_million_tokens': 0.79},
     'gemma2-9b-it': {'input_cost_per_million_tokens': 0.2, 'output_cost_per_million_tokens': 0.2}
 }
 

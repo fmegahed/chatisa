@@ -24,14 +24,14 @@ def generate_chat_completion(model, messages, temp=0, max_num_tokens=1000):
         chat_model = ChatOpenAI(model="gpt-4o", temperature=temp, max_tokens=max_num_tokens)  
     elif model == 'gpt-4o-mini':
         chat_model = ChatOpenAI(model="gpt-4o-mini", temperature=temp, max_tokens=max_num_tokens)
-    elif model == "claude-3-5-sonnet-20240620": 
-        chat_model = ChatAnthropic(model="claude-3-5-sonnet-20240620", temperature=temp, max_tokens=max_num_tokens)
+    elif model == "claude-3-7-sonnet-20250219": 
+        chat_model = ChatAnthropic(model="claude-3-7-sonnet-20250219", temperature=temp, max_tokens=max_num_tokens)
     elif model == "command-r-plus":
         chat_model = ChatCohere(model="command-r-plus", temperature=temp, max_tokens=max_num_tokens)
     elif model == "llama-3.1-8b-instant":
         chat_model = ChatGroq(model="llama-3.1-8b-instant", temperature=temp, max_tokens=max_num_tokens)
-    elif model == "llama-3.1-70b-versatile":
-        chat_model = ChatGroq(model="llama-3.1-70b-versatile", temperature=temp, max_tokens=max_num_tokens)
+    elif model == "llama-3.3-70b-versatile":
+        chat_model = ChatGroq(model="llama-3.3-70b-versatile", temperature=temp, max_tokens=max_num_tokens)
     elif model == "gemma2-9b-it":
         chat_model = ChatGroq(model="gemma2-9b-it", temperature=temp, max_tokens=max_num_tokens)
     else:
@@ -46,7 +46,7 @@ def generate_chat_completion(model, messages, temp=0, max_num_tokens=1000):
         input_tokens = chat_response.response_metadata['token_usage']['prompt_tokens']
         output_tokens = chat_response.response_metadata['token_usage']['completion_tokens']
     # for anthropic models
-    elif model in ["claude-3-5-sonnet-20240620"]:
+    elif model in ["claude-3-7-sonnet-20250219"]:
         input_tokens = chat_response.response_metadata['usage']['input_tokens']
         output_tokens = chat_response.response_metadata['usage']['output_tokens']
     # for cohere models
@@ -62,7 +62,7 @@ def generate_chat_completion(model, messages, temp=0, max_num_tokens=1000):
         input_tokens = chat_response.response_metadata['token_usage']['prompt_tokens']
         output_tokens = chat_response.response_metadata['token_usage']['completion_tokens']
     # for groq models
-    elif model in ["llama-3.1-8b-instant", "llama-3.1-70b-versatile", "gemma2-9b-it"]:
+    elif model in ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "gemma2-9b-it"]:
         input_tokens = chat_response.response_metadata['token_usage']['prompt_tokens']
         output_tokens = chat_response.response_metadata['token_usage']['completion_tokens']
     else:

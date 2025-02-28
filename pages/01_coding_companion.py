@@ -31,12 +31,13 @@ import streamlit as st
 # Models:
 # -------
 models = [
-  'gpt-4o', 'gpt-4o-mini', 
-  'claude-3-5-sonnet-20240620',
+  'gpt-4o', 
+  'gpt-4o-mini', 
+  'claude-3-7-sonnet-20250219',
   'command-r-plus',
   'gemma2-9b-it',
-  'llama-3.1-8b-instant',
-  'llama-3.1-70b-versatile' 
+  'llama-3.3-70b-versatile', 
+  'llama-3.1-8b-instant'
   ]
 # -----------------------------------------------------------------------------
 
@@ -81,7 +82,7 @@ if ("token_counts" not in st.session_state) or (st.session_state.cur_page != THI
     st.session_state.token_counts = {model: {"input_tokens": 0, "output_tokens": 0} for model in models}
 
 if ("model_choice" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
-    st.session_state.model_choice = models[0]
+    st.session_state.model_choice = models[2]
 
 if ("messages" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
   st.session_state.messages = [{
