@@ -54,9 +54,6 @@ if "cur_page" not in st.session_state:
 if ("token_counts" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
     st.session_state.token_counts = {model: {"input_tokens": 0, "output_tokens": 0} for model in models}
 
-if ("model_choice" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
-    st.session_state.model_choice = models[0]
-
 if ("submitted" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
     st.session_state.submitted = False
 

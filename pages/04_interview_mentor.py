@@ -1,6 +1,4 @@
-# Import required libraries:
-# --------------------------
-import os # Standard Library
+import os
 import random
 import tempfile
 
@@ -12,27 +10,21 @@ from lib.speech import transcribe_audio, generate_speech
 from dotenv import load_dotenv
 import streamlit as st
 from pypdf import PdfReader, PdfWriter
-import fitz # PyMuPDF
+import fitz  # PyMuPDF
 from pdf4llm import to_markdown
 import openai
 from streamlit_mic_recorder import mic_recorder
 
-# ------------------------------------------------------------------------------
-
-
-# Models:
-# -------
+# -------------------------------------------------------------------------------
+# Models & Environment Setup
+# -------------------------------------------------------------------------------
 models = [
-  'gpt-4o', 
-  'claude-3-5-sonnet-20240620',
+  'gpt-4o',  
+  'claude-3-7-sonnet-20250219',
   'command-r-plus',
-  'llama-3.1-70b-versatile' 
+  'llama-3.3-70b-versatile'
   ]
-# -----------------------------------------------------------------------------
 
-
-# Load Environment Variables:
-# ---------------------------
 load_dotenv()
 
 openai_api_key = os.getenv('OPENAI_API_KEY')
@@ -40,24 +32,21 @@ anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
 cohere_api_key = os.getenv('COHERE_API_KEY')
 groq_api_key = os.getenv('GROQ_API_KEY')
 
-# Set OpenAI API key for direct API calls
 openai.api_key = openai_api_key
-# -----------------------------------------------------------------------------
 
-
-# Constant Values:
-# ----------------
+# -------------------------------------------------------------------------------
+# Constants & Voice Setup
+# -------------------------------------------------------------------------------
 TEMPERATURE = 0.25
 MAX_PDF_PAGES = 2
-
-# Possible Voice Options and Selecting one for the Session
 voices = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
+
 if "chosen_voice" not in st.session_state:
     st.session_state.chosen_voice = random.choice(voices)
 
-# -----------------------------------------------------------------------------
-# Manage page tracking and associated session state
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
+# Session State Management for Page Tracking
+# -------------------------------------------------------------------------------
 THIS_PAGE = "interview_mentor"
 if "cur_page" not in st.session_state:
     st.session_state.cur_page = THIS_PAGE
@@ -71,109 +60,81 @@ if ("model_choice" not in st.session_state) or (st.session_state.cur_page != THI
 if ("submitted" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
     st.session_state.submitted = False
 
-# purge messages when entering the page
+# Purge messages if coming from a different page
 if (st.session_state.cur_page != THIS_PAGE) and ("messages" in st.session_state):
-  del st.session_state.messages
+    del st.session_state.messages
 
 st.session_state.cur_page = THIS_PAGE
 
+# -------------------------------------------------------------------------------
+# Page Configuration
+# -------------------------------------------------------------------------------
+st.set_page_config(page_title="🎤 ChatISA: Interview Mentor 🎤", layout="centered", page_icon="🤖")
 
-# -----------------------------------------------------------------------------
-
-# Streamlit Application:
-# ----------------------
-st.set_page_config(page_title = "ChatISA Interview Mentor", layout = "centered",page_icon='🤖')
-
-# Determine if we're in speech mode - default to True
-speech_mode = st.toggle("Speech-to-Speech Mode", value=True)
-
-if speech_mode:
-    st.markdown("## 🎤 ChatISA: Interview Mentor 🎤")
-    
-    # Add voice selection to sidebar when in speech mode
-    with st.sidebar:
-        st.subheader("Voice Settings")
-        selected_voice = st.selectbox(
-            "Choose AI Voice",
-            voices,
-            index=voices.index(st.session_state.chosen_voice)
-        )
-        if selected_voice != st.session_state.chosen_voice:
-            st.session_state.chosen_voice = selected_voice
-else:
-    st.markdown("## 🤖 ChatISA: Interview Mentor 🤖")
-
-
-# First "Screen" of the Interview Mentor:
-# ---------------------------------------
+# -------------------------------------------------------------------------------
+# First Screen: Submission Form
+# -------------------------------------------------------------------------------
 if not st.session_state.submitted:
     st.markdown(
         "Welcome to ChatISA Interview Mentor! This tool is designed to help you prepare for technical interviews by generating interview questions based on your resume and the job description. "
         "To get started, please fill out the form below with your information and the job details. "
-        "Once you have submitted the form, the tool will generate a s**tructured interview with six questions** that you can use to practice for your interview. "
+        "Once you have submitted the form, the tool will generate a **structured interview with six questions** that you can use to practice for your interview. "
         "Please note that the questions are generated by a language model and may not be perfect. "
         "Good luck with your interview preparation!"
-        )
+    )
     
     st.sidebar.markdown("### Choose Your LLM")
     model_choice = st.sidebar.selectbox(
-      "Choose your LLM",
-      models,
-      index= 0,
-      key='model_choice',
-      label_visibility='collapsed',
-      help="Choose the LLM you want to use for generating the interview questions."
-      )        
-
-    col1, col2 = st.columns(2, gap = 'large')
-
+        "Choose your LLM",
+        models,
+        index=0,
+        key='model_choice',
+        label_visibility='collapsed',
+        help="Choose the LLM you want to use for generating the interview questions."
+    )
+    
+    col1, col2 = st.columns(2, gap='large')
     with col1:
-      st.markdown("### Interviewee Information")
-      
-      grade = st.selectbox(
-        "What is your Current Grade Level?", 
-        ["Freshman", "Sophomore", "Junior", "Senior", "Graduate Student"],
-        index = 3,
-        key = 'grade',
-        help = "What is your current grade level?"
+        st.markdown("### Interviewee Information")
+        grade = st.selectbox(
+            "What is your Current Grade Level?", 
+            ["Freshman", "Sophomore", "Junior", "Senior", "Graduate Student"],
+            index=3,
+            key='grade',
+            help="What is your current grade level?"
         )
-        
-      major = st.selectbox(
-        "What is your Major?",
-        [ "Business Analytics", "Computer Science", "Cybersecurity Management",
-        "Data Science", "Information Systems", "Statistics", "Software Engineering"],
-        index = 0,
-        key = 'major',
-        help = "What is your current major?"
+        major = st.selectbox(
+            "What is your Major?",
+            ["Business Analytics", "Computer Science", "Cybersecurity Management",
+             "Data Science", "Information Systems", "Statistics", "Software Engineering"],
+            index=0,
+            key='major',
+            help="What is your current major?"
         )
-        
-      raw_resume = st.file_uploader(
-        "Upload your Resume",
-        type = ['pdf'],
-        key = 'resume',
-        help = "Upload your resume in PDF format. This will be used to generate interview questions based on the information in your resume."
+        raw_resume = st.file_uploader(
+            "Upload your Resume",
+            type=['pdf'],
+            key='resume',
+            help="Upload your resume in PDF format. This will be used to generate interview questions based on the information in your resume."
         )
-      
     with col2:
-      st.markdown('### Job Information')
-      
-      job_title = st.text_input(
-        "Input the Job Title",
-        value = "",
-        key = 'job_title',
-        help = "What is the job title you are interviewing for?",
-        placeholder = "Business Analyst"
-      )
-      
-      job_description = st.text_area(
-        "Paste the Job Description",
-        value = "",
-        key = 'job_description',
-        help = "Paste the job description for the position you are interviewing for. This should be copied and pasted from the job advertisement. It is expected that your text will cover the job duties and responsibilities, required qualifications, preferred qualifications, and any other relevant information.",
-        placeholder = "As a Business Analyst, you will be responsible for analyzing data to help the company make informed business decisions. You will work closely with stakeholders to understand their needs and provide data-driven insights to support their decision-making process. The ideal candidate will have a strong background in data analysis, business intelligence, and data visualization. They will also have excellent communication skills and the ability to work collaboratively with cross-functional teams.",
-        height = 300
-      )
-      
+        st.markdown("### Job Information")
+        job_title = st.text_input(
+            "Input the Job Title",
+            value="",
+            key='job_title',
+            help="What is the job title you are interviewing for?",
+            placeholder="Business Analyst"
+        )
+        job_description = st.text_area(
+            "Paste the Job Description",
+            value="",
+            key='job_description',
+            help="Paste the job description for the position you are interviewing for. It should include job duties, qualifications, and any other relevant details.",
+            placeholder="As a Business Analyst, you will be responsible for analyzing data to help the company make informed business decisions...",
+            height=300
+        )
+    
     if st.button('Submit'):
         if all([model_choice, grade, major, raw_resume, job_title, job_description]):
             # Process the resume
@@ -182,18 +143,17 @@ if not st.session_state.submitted:
                 tmp_path = tmp.name
 
             infile = PdfReader(tmp_path, "rb")
-
             if len(infile.pages) > MAX_PDF_PAGES:
                 output = PdfWriter()
                 for i in range(MAX_PDF_PAGES):
-                   output.add_page(infile.pages[i])
+                    output.add_page(infile.pages[i])
                 with open(tmp_path, "wb") as f:
-                   output.write(f)
+                    output.write(f)
 
             resume_text = to_markdown(tmp_path)
             os.unlink(tmp_path)
 
-            # Store information in session_state
+            # Store submission details in session state
             st.session_state['submission'] = {
                 'model_choice': model_choice,
                 'grade': grade,
@@ -203,121 +163,122 @@ if not st.session_state.submitted:
                 'job_description': job_description
             }
             
-            # Clear the form or redirect/show other content
             st.success('Your submission has been recorded.')
             st.session_state.submitted = True
             st.rerun()
-            
         else:
             st.error('Please fill in all fields before submitting.')
 
-# -----------------------------------------------------------------------------
-# Render the sidebar
-# -----------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
+# Render Sidebar (common across pages)
+# -------------------------------------------------------------------------------
 sidebar.render_sidebar()
-# -----------------------------------------------------------------------------
 
-# Next Screen:
-# ------------
+# -------------------------------------------------------------------------------
+# Second Screen: Interview Flow
+# -------------------------------------------------------------------------------
 if st.session_state.submitted:
-    # Retrieve the information from the session_state
+    # Retrieve submission details
     model_choice = st.session_state.submission['model_choice']
     grade = st.session_state.submission['grade']
     major = st.session_state.submission['major']
     resume_text = st.session_state.submission['resume_text']
     job_title = st.session_state.submission['job_title']
     job_description = st.session_state.submission['job_description']
-    
-    # Improved system prompt
+
+    # Build system prompt based on submission details
     SYSTEM_PROMPT = (
-      f"You are an expert technical interviewer conducting an interview for a {job_title} position. "
-      f"Your interviewee is a {grade} student majoring in {major}.\n\n"
-      f"Resume information:\n{resume_text}\n\n"
-      f"Job description:\n{job_description}\n\n"
-      "Instructions:\n"
-      "1. Analyze the resume and job description thoroughly to understand how the candidate's qualifications match the position requirements.\n"
-      "2. Conduct a structured interview with six questions, asking one question at a time.\n"
-      "3. Wait for the candidate to answer each question before proceeding to the next question.\n"
-      "4. Be concise, professional, and constructive throughout the interview.\n\n"
-      "Question structure:\n"
-      "1. Background question about the candidate's interest in the position.\n"
-      "2. Question about how the candidate would measure business performance at the company.\n"
-      "3. Technical question assessing skills related to job requirements.\n"
-      "4. Technical question assessing software knowledge related to job requirements.\n"
-      "5. Situational question assessing teamwork abilities and handling of difficult situations.\n"
-      "6. Behavioral question screening for soft skills.\n\n"
-      "At the end of the interview:\n"
-      "- Thank the candidate for their time.\n"
-      "- Provide specific, actionable feedback on their performance.\n"
-      "- Include a performance score out of 100.\n"
-      "- Format feedback as: summary of interview (question/answer), positive feedback, constructive criticism with improvement advice, and overall score."
+        f"You are an expert technical interviewer conducting an interview for a {job_title} position. "
+        f"Your interviewee is a {grade} student majoring in {major}.\n\n"
+        f"Resume information:\n{resume_text}\n\n"
+        f"Job description:\n{job_description}\n\n"
+        "Instructions:\n"
+        "1. Analyze the resume and job description thoroughly to understand how the candidate's qualifications match the position requirements.\n"
+        "2. Conduct a structured interview with six questions, asking one question at a time.\n"
+        "3. Wait for the candidate to answer each question before proceeding to the next question.\n"
+        "4. Be concise, professional, and constructive throughout the interview.\n\n"
+        "Question structure:\n"
+        "1. Background question about the candidate's interest in the position.\n"
+        "2. Question about how the candidate would measure business performance at the company.\n"
+        "3. Technical question assessing skills related to job requirements.\n"
+        "4. Technical question assessing software knowledge related to job requirements.\n"
+        "5. Situational question assessing teamwork abilities and handling of difficult situations.\n"
+        "6. Behavioral question screening for soft skills.\n\n"
+        "At the end of the interview:\n"
+        "- Thank the candidate for their time.\n"
+        "- Provide specific, actionable feedback on their performance.\n"
+        "- Include a performance score out of 100.\n"
+        "- Format feedback as: summary of interview (question/answer), positive feedback, constructive criticism with improvement advice, and overall score."
     )
-    
-    # Initialize chat messages if not already done
+
+    # Initialize messages only after submission and SYSTEM_PROMPT creation
     if "messages" not in st.session_state:
-      st.session_state.messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": "Hello, I am excited about this opportunity."}
-      ]
-    
-    # Display all messages except system message
-    for message in st.session_state.messages[1:]:
-      with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+        st.session_state.messages = [
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            },
+            {
+                "role": "user",
+                "content": "Hello, I am excited about this opportunity."
+            }
+        ]
 
-    # Handle speech mode interaction
-    if speech_mode and "audio_data" in st.session_state and st.session_state.audio_data:
-        user_text = transcribe_audio(st.session_state.audio_data["bytes"])
+    # Sidebar toggle for AI audio response (default: text only)
+    ai_audio_enabled = st.sidebar.checkbox("Transcribe AI response to audio", value=False)
+    st.session_state.ai_audio_enabled = ai_audio_enabled
 
-        # Store user response in session state
-        st.session_state.messages.append({"role": "user", "content": user_text})
+    # Container for displaying chat messages (excluding the initial system prompt)
+    with st.container():
+        for message in st.session_state.messages[2:]:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
 
-        # Display the user's message
-        with st.chat_message("user"):
-            st.markdown(user_text)
+    # Determine the number of assistant (interviewer) messages
+    num_assistant_messages = sum(1 for m in st.session_state.messages if m["role"] == "assistant")
 
-        # Generate AI response
-        with st.chat_message("assistant"):
-            message_placeholder = st.empty()
-            
-            outputs = chatgeneration.generate_chat_completion(
-                model=st.session_state.submission['model_choice'],
-                messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
-                temp=TEMPERATURE,
-                max_num_tokens=6000
-            )
-
-            response, input_tokens, output_tokens = outputs
-            message_placeholder.markdown(response)
-
-            # Update token counts
-            st.session_state.token_counts[st.session_state.submission['model_choice']]['input_tokens'] += input_tokens
-            st.session_state.token_counts[st.session_state.submission['model_choice']]['output_tokens'] += output_tokens
-
-            # Generate and play AI speech response
-            with st.spinner("Generating audio response..."):
-                ai_audio = generate_speech(response)
-                st.audio(ai_audio, format="audio/mp3")
-
-        # Store AI response
-        st.session_state.messages.append({"role": "assistant", "content": response})
-        
-        # Clear the audio data to prevent reprocessing
-        st.session_state.audio_data = None
-
-    # Mic recorder for speech input
-    if speech_mode:
+    # Protecting against users who may be not responding to the questions and forcing the AI to generate a lot of clarification questions
+    if num_assistant_messages < 15: 
         st.markdown("#### Resume the interview by clicking on the 'Press to Speak' button and then press 'Stop Recording' when done.")
-        
-        # Mic recorder
-        st.session_state.audio_data = mic_recorder(
+        audio_data = mic_recorder(
             start_prompt="Press to Speak", 
             stop_prompt="Press to Stop Recording", 
             format="wav", 
             key="mic_recorder"
         )
 
-    # Export Chat to PDF section
+        if audio_data:
+            user_text = transcribe_audio(audio_data["bytes"])
+            st.session_state.messages.append({"role": "user", "content": user_text})
+            with st.chat_message("user"):
+                st.markdown(user_text)
+
+            with st.chat_message("assistant"):
+                message_placeholder = st.empty()
+                outputs = chatgeneration.generate_chat_completion(
+                    model=st.session_state.submission['model_choice'],
+                    messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
+                    temp=TEMPERATURE,
+                    max_num_tokens=6000
+                )
+                response, input_tokens, output_tokens = outputs
+                message_placeholder.markdown(response)
+
+                # Update token counts
+                st.session_state.token_counts[st.session_state.submission['model_choice']]['input_tokens'] += input_tokens
+                st.session_state.token_counts[st.session_state.submission['model_choice']]['output_tokens'] += output_tokens
+
+                # Generate audio for AI response only if enabled by the user
+                if st.session_state.ai_audio_enabled:
+                    with st.spinner("Generating audio response..."):
+                        ai_audio = generate_speech(response)
+                        st.audio(ai_audio, format="audio/mp3")
+            st.session_state.messages.append({"role": "assistant", "content": response})
+
+
+    # ---------------------------------------------------------------------------
+    # Export Chat to PDF (Always displayed at the bottom)
+    # ---------------------------------------------------------------------------
     with st.expander("Export Chat to PDF"):
         row = st.columns([2, 2])
         user_name = row[0].text_input("Enter your name:")
@@ -333,7 +294,6 @@ if st.session_state.submitted:
                 user_name=user_name, 
                 user_course=user_course
             )
-
             with open(pdf_output_path, "rb") as file:
                 st.download_button(
                     label="Download PDF", 

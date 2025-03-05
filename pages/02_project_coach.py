@@ -236,12 +236,6 @@ if "cur_page" not in st.session_state:
 if ("token_counts" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
     st.session_state.token_counts = {model: {"input_tokens": 0, "output_tokens": 0} for model in models}
 
-if ("model_choice" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
-    st.session_state.model_choice = models[0]
-
-if st.session_state.cur_page != THIS_PAGE:
-    st.session_state.selected_role = "Project Scoping Coach"
-
 if ("messages" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
   st.session_state.messages = [{
     "role": "system",
@@ -297,7 +291,7 @@ st.sidebar.markdown("### Choose Your LLM")
 model_choice = st.sidebar.selectbox(
     "Choose your LLM",
     models,
-    index=models.index(st.session_state.model_choice),
+    index=0,
     key='model_choice',
     label_visibility='collapsed'
 )

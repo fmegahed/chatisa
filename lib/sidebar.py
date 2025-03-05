@@ -12,7 +12,7 @@ def render_sidebar():
 
 ### Key Features
   - Free to use
-  - Chat with one of nine LLMs
+  - Chat with one of seven LLMs
   - Export chat to PDF
   
 ### Support & Funding

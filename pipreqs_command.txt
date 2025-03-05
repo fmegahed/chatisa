@@ -1,1 +1,0 @@
-pipreqs . --force --ignore other_attempts --encoding=utf-8-sig
