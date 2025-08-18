@@ -31,11 +31,11 @@ import streamlit as st
 # Models:
 # -------
 models = [
-  'gpt-4o', 
-  'gpt-4o-mini', 
-  'claude-3-7-sonnet-20250219',
-  'command-r-plus',
-  'gemma2-9b-it',
+  'gpt-5-chat-latest', 
+  'gpt-5-mini-2025-08-07', 
+  'claude-sonnet-4-20250514',
+  'command-a-03-2025',
+  'qwen/qwen3-32b',
   'llama-3.3-70b-versatile', 
   'llama-3.1-8b-instant'
   ]
@@ -157,8 +157,9 @@ if prompt := st.chat_input("Ask me to help you with your code and/or to explain 
     message_placeholder.markdown(full_response + "▌")
     
     # Update the token counts for the specific model in session state
-    st.session_state.token_counts[st.session_state.model_choice]['input_tokens'] += input_tokens
-    st.session_state.token_counts[st.session_state.model_choice]['output_tokens'] += output_tokens
+    if input_tokens is not None and output_tokens is not None:
+        st.session_state.token_counts[st.session_state.model_choice]['input_tokens'] += input_tokens
+        st.session_state.token_counts[st.session_state.model_choice]['output_tokens'] += output_tokens
   
   # Store the full response from the LLM in memory
   st.session_state.messages.append({"role": "assistant", "content": full_response})

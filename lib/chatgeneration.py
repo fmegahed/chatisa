@@ -20,20 +20,20 @@ def generate_chat_completion(model, messages, temp=0, max_num_tokens=1000):
     Function to generate chat completions, with reasonable defaults for traditional chat completions parameters.
     """
     
-    if model == 'gpt-4o': 
-        chat_model = ChatOpenAI(model="gpt-4o", temperature=temp, max_tokens=max_num_tokens)  
-    elif model == 'gpt-4o-mini':
-        chat_model = ChatOpenAI(model="gpt-4o-mini", temperature=temp, max_tokens=max_num_tokens)
-    elif model == "claude-3-7-sonnet-20250219": 
-        chat_model = ChatAnthropic(model="claude-3-7-sonnet-20250219", temperature=temp, max_tokens=max_num_tokens)
-    elif model == "command-r-plus":
-        chat_model = ChatCohere(model="command-r-plus", temperature=temp, max_tokens=max_num_tokens)
+    if model == 'gpt-5-chat-latest': 
+        chat_model = ChatOpenAI(model="gpt-5-chat-latest", temperature=temp, max_tokens=max_num_tokens)  
+    elif model == 'gpt-5-mini-2025-08-07':
+        chat_model = ChatOpenAI(model="gpt-5-mini-2025-08-07", temperature=temp, max_tokens=max_num_tokens)
+    elif model == "claude-sonnet-4-20250514": 
+        chat_model = ChatAnthropic(model="claude-sonnet-4-20250514", temperature=temp, max_tokens=max_num_tokens)
+    elif model == "command-a-03-2025":
+        chat_model = ChatCohere(model="command-a-03-2025", temperature=temp, max_tokens=max_num_tokens)
     elif model == "llama-3.1-8b-instant":
         chat_model = ChatGroq(model="llama-3.1-8b-instant", temperature=temp, max_tokens=max_num_tokens)
     elif model == "llama-3.3-70b-versatile":
         chat_model = ChatGroq(model="llama-3.3-70b-versatile", temperature=temp, max_tokens=max_num_tokens)
-    elif model == "gemma2-9b-it":
-        chat_model = ChatGroq(model="gemma2-9b-it", temperature=temp, max_tokens=max_num_tokens)
+    elif model == "qwen/qwen3-32b":
+        chat_model = ChatGroq(model="qwen/qwen3-32b", temperature=temp, max_tokens=max_num_tokens)
     else:
         raise ValueError(f"Model {model} is not supported.")  
 
@@ -42,15 +42,15 @@ def generate_chat_completion(model, messages, temp=0, max_num_tokens=1000):
     
     # extracting the token usage [work in progress]
     # for openai models
-    if model in ['gpt-4o', 'gpt-4o-mini']:
+    if model in ['gpt-5-chat-latest', 'gpt-5-mini-2025-08-07']:
         input_tokens = chat_response.response_metadata['token_usage']['prompt_tokens']
         output_tokens = chat_response.response_metadata['token_usage']['completion_tokens']
     # for anthropic models
-    elif model in ["claude-3-7-sonnet-20250219"]:
+    elif model in ["claude-sonnet-4-20250514"]:
         input_tokens = chat_response.response_metadata['usage']['input_tokens']
         output_tokens = chat_response.response_metadata['usage']['output_tokens']
     # for cohere models
-    elif model == "command-r-plus":
+    elif model == "command-a-03-2025":
         input_tokens = chat_response.response_metadata['token_count']['input_tokens']
         output_tokens = chat_response.response_metadata['token_count']['output_tokens']
     # for google models (there is no token usage metadata)
@@ -62,7 +62,7 @@ def generate_chat_completion(model, messages, temp=0, max_num_tokens=1000):
         input_tokens = chat_response.response_metadata['token_usage']['prompt_tokens']
         output_tokens = chat_response.response_metadata['token_usage']['completion_tokens']
     # for groq models
-    elif model in ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "gemma2-9b-it"]:
+    elif model in ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "qwen/qwen3-32b"]:
         input_tokens = chat_response.response_metadata['token_usage']['prompt_tokens']
         output_tokens = chat_response.response_metadata['token_usage']['completion_tokens']
     else:

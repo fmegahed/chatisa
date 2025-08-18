@@ -33,11 +33,11 @@ from pdf4llm import to_markdown
 # Models:
 # -------
 models = [
-  'gpt-4o', 
-  'gpt-4o-mini', 
-  'claude-3-7-sonnet-20250219',
-  'command-r-plus',
-  'gemma2-9b-it',
+  'gpt-5-chat-latest', 
+  'gpt-5-mini-2025-08-07', 
+  'claude-sonnet-4-20250514',
+  'command-a-03-2025',
+  'qwen/qwen3-32b',
   'llama-3.3-70b-versatile', 
   'llama-3.1-8b-instant'
   ]

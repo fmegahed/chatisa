@@ -8,7 +8,7 @@ def render_sidebar():
   - [Joshua Ferris](https://miamioh.edu/fsb/directory/?up=/directory/ferrisj2)
 
 ### Version 
-  2.0.0 (February 28, 2025)
+  3.0.0 (August 18, 2025)
 
 ### Key Features
   - Free to use

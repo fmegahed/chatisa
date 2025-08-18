@@ -20,9 +20,9 @@ from pdf4llm import to_markdown
 # Models:
 # -------
 models = [
-  'gpt-4o',  
-  'claude-3-7-sonnet-20250219',
-  'command-r-plus',
+  'gpt-5-chat-latest',  
+  'claude-sonnet-4-20250514',
+  'command-a-03-2025',
   'llama-3.3-70b-versatile'
   ]
 # -----------------------------------------------------------------------------

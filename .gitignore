@@ -13,3 +13,5 @@ other_attempts/
 
 # pycache
 __pycache__/
+.claude/settings.local.json
+CLAUDE.md

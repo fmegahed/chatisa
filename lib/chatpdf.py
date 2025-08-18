@@ -5,34 +5,31 @@ import tempfile
 
 token_cost_rates = {
     # GPT costs per https://openai.com/pricing on 2025-02-28
-    'gpt-4o': {'input_cost_per_million_tokens': 2.5, 'output_cost_per_million_tokens': 10},
-    'gpt-4o-mini': {'input_cost_per_million_tokens': 0.15, 'output_cost_per_million_tokens': 0.6},
-    'gpt-4.5-preview-2025-02-27': {'input_cost_per_million_tokens': 75, 'output_cost_per_million_tokens': 150},
+    'gpt-5-chat-latest': {'input_cost_per_million_tokens': 1.25, 'output_cost_per_million_tokens': 10},
+    'gpt-5-mini-2025-08-07': {'input_cost_per_million_tokens': 0.25, 'output_cost_per_million_tokens': 2},
     
     # Anthropic costs per https://www.anthropic.com/pricing#anthropic-api on 2025-02-28
-    'claude-3-7-sonnet-20250219': {'input_cost_per_million_tokens': 3, 'output_cost_per_million_tokens': 15},
+    'claude-sonnet-4-20250514': {'input_cost_per_million_tokens': 3, 'output_cost_per_million_tokens': 15},
     
     # Cohere costs per https://cohere.com/pricing on 2025-02-28
-    'command-r-plus': {'input_cost_per_million_tokens': 2.5, 'output_cost_per_million_tokens': 10},
+    'command-2-03-2025': {'input_cost_per_million_tokens': 2.5, 'output_cost_per_million_tokens': 10},
     
     # Groq costs per https://wow.groq.com/ on 2025-02-28
     'llama-3.1-8b-instant': {'input_cost_per_million_tokens': 0.05, 'output_cost_per_million_tokens': 0.08},
     'llama-3.3-70b-versatile': {'input_cost_per_million_tokens': 0.59, 'output_cost_per_million_tokens': 0.79},
-    'gemma2-9b-it': {'input_cost_per_million_tokens': 0.2, 'output_cost_per_million_tokens': 0.2}
+    'qwen/qwen3-32b': {'input_cost_per_million_tokens': 0.29, 'output_cost_per_million_tokens': 0.59}
 }
 
-
-
 LATIN_REPLACEMENTS = {
-  "\u2014": "--",     # em dash
-  "\u2013": "-",      # en dash
-  "\u2018": "'",      # left single quotation mark
-  "\u2019": "'",      # right single quotation mark
-  "\u201C": "\"",     # left double quotation mark
-  "\u201D": "\"",     # right double quotation mark
-  "\u2026": "...",    # ellipsis
-  "\u00A0": " ",      # non-breaking space
-  "\U0001f60a": ":)", # smiling face emoji
+    "\u2014": "--",     # em dash
+    "\u2013": "-",      # en dash
+    "\u2018": "'",      # left single quotation mark
+    "\u2019": "'",      # right single quotation mark
+    "\u201C": "\"",     # left double quotation mark
+    "\u201D": "\"",     # right double quotation mark
+    "\u2026": "...",    # ellipsis
+    "\u00A0": " ",      # non-breaking space
+    "\U0001f60a": ":)", # smiling face emoji
 }
 
 
