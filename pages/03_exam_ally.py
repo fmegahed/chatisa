@@ -68,7 +68,7 @@ st.session_state.cur_page = THIS_PAGE
 
 # Streamlit Application:
 # ----------------------
-st.set_page_config(page_title = "ChatISA Exam Ally", layout = "centered",page_icon='🤖')
+st.set_page_config(page_title = "ChatISA Exam Ally", layout = "centered", page_icon='assets/favicon.png')
 st.markdown("## 🤖 ChatISA: Exam Ally 🤖")
 
 
@@ -86,15 +86,7 @@ if not st.session_state.submitted:
         "Good luck with your studies!"
         )
     
-    st.sidebar.markdown("### Choose Your LLM")
-    model_choice = st.sidebar.selectbox(
-      "Choose your LLM",
-      models,
-      index= 0,
-      key='model_choice',
-      label_visibility='collapsed',
-      help="Choose the LLM you want to use for generating the exam questions."
-      ) 
+ 
       
     col1, col2 = st.columns(2, gap = 'large')
 
@@ -120,7 +112,7 @@ if not st.session_state.submitted:
         )
       
     if st.button('Submit'):
-        if all([model_choice, course_doc, exam_type]):
+        if all([st.session_state.get('model_choice'), course_doc, exam_type]):
             # Process the course material
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
                 tmp.write(course_doc.getvalue())
@@ -142,7 +134,7 @@ if not st.session_state.submitted:
 
             # Store information in session_state
             st.session_state['submission'] = {
-                'model_choice': model_choice,
+                'model_choice': st.session_state.model_choice,
                 'course_text': course_text,
                 'exam_type': exam_type
             }

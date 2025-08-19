@@ -2,113 +2,234 @@ import os
 from pathlib import Path
 
 import streamlit as st
+import pandas as pd
 from dotenv import load_dotenv
 from streamlit_option_menu import option_menu
 
-# Local modules (keep as in your project)
-from lib import chatpdf, chatgeneration, sidebar  # noqa: F401  (imported for side effects / future use)
+# Import centralized configuration
+from config import *
+
+# Local modules
+from lib import chatpdf, chatgeneration, sidebar  # noqa: F401
+from lib.enhanced_usage_logger import log_page_visit, log_session_action, migrate_from_csv
 
 # -----------------------------------------------------------------------------
-# App setup
+# App setup with centralized configuration
 # -----------------------------------------------------------------------------
-st.set_page_config(page_title="ChatISA", layout="centered", page_icon="🤖")
+st.set_page_config(**PAGE_CONFIG)
 
-# Load environment variables from a local .env (for local/dev). On Streamlit Cloud,
-# prefer st.secrets and do NOT commit .env files.
-load_dotenv()  # keep this if you rely on .env locally
+# Apply Miami University color scheme
+miami_css = f"""
+<style>
+    .stApp {{
+        background-color: {THEME_COLORS['background']};
+    }}
+    
+    .stButton > button {{
+        background-color: {THEME_COLORS['primary']};
+        color: white;
+        border: none;
+        border-radius: 4px;
+    }}
+    
+    .stButton > button:hover {{
+        background-color: {THEME_COLORS['secondary']};
+        color: white;
+    }}
+    
+    .stSelectbox > div > div {{
+        background-color: {THEME_COLORS['background']};
+        border: 1px solid {THEME_COLORS['primary']};
+    }}
+    
+    .stSidebar {{
+        background-color: #f8f9fa;
+    }}
+    
+    h1, h2, h3 {{
+        color: {THEME_COLORS['primary']};
+    }}
+    
+    .stInfo {{
+        background-color: rgba(195, 20, 45, 0.1);
+        border: 1px solid {THEME_COLORS['primary']};
+    }}
+    
+    .stWarning {{
+        background-color: rgba(255, 160, 122, 0.2);
+    }}
+</style>
+"""
+st.markdown(miami_css, unsafe_allow_html=True)
+
+# Load environment variables
+load_dotenv()
+
+# Migrate old CSV logs to JSON format if needed
+migrate_from_csv()
+
+# Check system configuration on startup
+system_info = get_system_info()
+if system_info["missing_api_keys"]:
+    st.warning(f"⚠️ Missing API keys: {', '.join(system_info['missing_api_keys'])}")
 
 # -----------------------------------------------------------------------------
-# Declare pages with the NEW navigation API so they're always registered.
+# Declare pages using config
 # -----------------------------------------------------------------------------
-
-coding = st.Page("pages/01_coding_companion.py", title="Coding Companion", icon="🖥")
-coach  = st.Page("pages/02_project_coach.py",   title="Project Coach",    icon="🎯")
-exam   = st.Page("pages/03_exam_ally.py",       title="Exam Ally",        icon="📝")
-mentor = st.Page("pages/04_interview_mentor.py",title="Interview Mentor", icon="👔")
+coding = st.Page("pages/01_coding_companion.py", title=PAGES["coding_companion"]["title"], icon=PAGES["coding_companion"]["icon"])
+coach = st.Page("pages/02_project_coach.py", title=PAGES["project_coach"]["title"], icon=PAGES["project_coach"]["icon"])
+exam = st.Page("pages/03_exam_ally.py", title=PAGES["exam_ally"]["title"], icon=PAGES["exam_ally"]["icon"])
+mentor = st.Page("pages/04_interview_mentor.py", title=PAGES["interview_mentor"]["title"], icon=PAGES["interview_mentor"]["icon"])
+comparison = st.Page("pages/05_ai_comparisons.py", title=PAGES["ai_comparisons"]["title"], icon=PAGES["ai_comparisons"]["icon"])
 
 
 def home():
-    """Home page content (callable page)."""
+    """Home page content using centralized configuration."""
     st.session_state.cur_page = "chatgpt"
+    
+    # Log page visit
+    log_page_visit("home", {
+        "version": VERSION,
+        "available_models": len(validate_api_keys()["available_models"]),
+        "features_enabled": sum(1 for f in FEATURES.values() if f)
+    })
 
-    st.markdown("## Welcome to Your ChatISA Assistant 🤖")
+    st.markdown(f"## Welcome to {APP_NAME}")
+    st.markdown(f"*Version {VERSION} - {DATE}*")
+    
     st.markdown(
         """
-        ChatISA is your personal, prompt-engineered chatbot where you can chat with one of several LLMs.
-        The chatbot consists of **four main pages:** (a) Coding Companion, (b) Project Coach, (c) Exam Ally, and (d) Interview Mentor.
-
-        Use the menu below or the sidebar to navigate.
+        **Your AI-powered educational assistant** featuring five specialized tools designed to enhance your academic journey. 
+        Developed at Miami University's Farmer School of Business, ChatISA provides free access to cutting-edge AI technology 
+        to support student success in programming, projects, exam preparation, interview practice, and AI model comparison.
         """
     )
+    
+    # Feature highlights
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        st.markdown("### 💻\n**Coding Companion**\n*Programming help & tutorials*")
+    with col2:
+        st.markdown("### 🎯\n**Project Coach**\n*Team project guidance*")
+    with col3:
+        st.markdown("### 📝\n**Exam Ally**\n*Study materials & practice*")
+    with col4:
+        st.markdown("### 👔\n**Interview Mentor**\n*Speech-based interview prep*")
+    with col5:
+        st.markdown("### ⚖️\n**AI Comparisons**\n*Compare AI responses side-by-side*")
+    
+    st.markdown("---")
+    
+    # System status
+    key_validation = validate_api_keys()
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Available Models", f"{len(key_validation['available_models'])}/7")
+    with col2:
+        st.metric("Available Modules", "5")
+    with col3:
+        status = "🟢 Ready" if key_validation["all_keys_present"] else "🟡 Limited"
+        st.metric("System Status", status)
+
+    # Model listing and summary (simplified)
+    with st.expander("Available Models & Pricing", expanded=False):
+        st.markdown("### Model Summary")
+        
+        # Create summary table
+        model_data = []
+        for model_name, config in MODELS.items():
+            # Convert costs to per million tokens for display
+            input_cost_per_million = config["cost_per_1k_input"] * 1000
+            output_cost_per_million = config["cost_per_1k_output"] * 1000
+            
+            model_data.append({
+                "Model": config["display_name"],
+                "Provider": config["provider"].title(),
+                "Input ($/1M tokens)": f"${input_cost_per_million:.2f}",
+                "Output ($/1M tokens)": f"${output_cost_per_million:.2f}",
+                "Max Tokens": f"{config['max_tokens']:,}",
+                "Vision": "Yes" if config["supports_vision"] else "No",
+                "Functions": "Yes" if config["supports_function_calling"] else "No"
+            })
+        
+        df = pd.DataFrame(model_data)
+        st.dataframe(df, use_container_width=True, hide_index=True)
+
+    if not key_validation["all_keys_present"]:
+        with st.expander("⚠️ Setup Required", expanded=False):
+            st.markdown(f"""
+            **Missing API Keys:** {', '.join(key_validation["missing_keys"])}
+            
+            To enable all features, add the missing API keys to your `.env` file:
+            ```
+            OPENAI_API_KEY=your_key_here
+            ANTHROPIC_API_KEY=your_key_here
+            COHERE_API_KEY=your_key_here
+            GROQ_API_KEY=your_key_here
+            ```
+            """)
 
     st.markdown("#### Select one of the following options to start:")
 
+    # Build options list dynamically from 4 core pages
+    options = []
+    icons = []
+    descriptions = {}
+    
+    for page_key, page_config in PAGES.items():
+        if page_key in ["coding_companion", "project_coach", "exam_ally", "interview_mentor", "ai_comparisons"]:
+            title = page_config["title"]
+            options.append(title)
+            icons.append(page_config["icon"])
+            descriptions[title] = page_config["description"]
+
     selected = option_menu(
         menu_title=None,
-        options=["Coding Companion", "Project Coach", "Exam Ally", "Interview Mentor"],
-        icons=["filetype-py", "kanban", "list-task", "briefcase"],
+        options=options,
+        icons=icons,
         menu_icon="list",
         default_index=0,
         orientation="horizontal",
     )
 
-    # Helper to switch to a registered page (use Page object to avoid path issues)
+    # Helper to switch to a registered page
     def go(target_page: st.Page) -> None:
         st.switch_page(target_page)
 
-    if selected == "Coding Companion":
-        st.info(
-            """
-            🧑‍💻 **Coding Companion** helps you debug, document, and scaffold code.
-            Choose your preferred model, ask for code, and export the conversation to PDF.
-            """
-        )
-        if st.button("Go to Coding Companion"):
-            go(coding)
+    # Dynamic page navigation based on selection
+    page_mapping = {
+        "Coding Companion": coding,
+        "Project Coach": coach, 
+        "Exam Ally": exam,
+        "Interview Mentor": mentor,
+        "AI Comparisons": comparison
+    }
 
-    elif selected == "Project Coach":
-        st.info(
-            """
-            🎯 **Project Coach** supports project planning and research assistance.
-            Upload context, iterate on deliverables, and keep citations handy.
-            """
-        )
-        if st.button("Go to Project Coach"):
-            go(coach)
-
-    elif selected == "Exam Ally":
-        st.info(
-            """
-            📚 **Exam Ally** generates practice questions from PDFs you provide.
-            Select question types, review answers, and export your session to PDF.
-            """
-        )
-        if st.button("Go to Exam Ally"):
-            go(exam)
-
-    elif selected == "Interview Mentor":
-        st.info(
-            """
-            💼 **Interview Mentor** crafts interview questions using (a) your job description
-            and (b) your résumé PDF. Practice answers and track progress.
-            """
-        )
-        if st.button("Go to Interview Mentor"):
-            go(mentor)
+    # Show selected page info and navigation button
+    if selected in descriptions:
+        st.info(f"**{descriptions[selected]}**")
+        
+        # Special handling for interview mentor (now speech-based)
+        if selected == "Interview Mentor":
+            st.warning("🎤 **Speech-to-Speech Feature** - Requires realtime server to be running")
+        
+        # Special handling for AI model comparison (experimental)
+        if selected == "AI Comparisons":
+            st.warning("🧪 **Experimental Feature** - Compare AI model responses side-by-side with support for text, images, and PDFs")
+        
+        if st.button(f"Go to {selected}", type="primary"):
+            go(page_mapping[selected])
 
     # Sidebar (as in your previous app)
     sidebar.render_sidebar()
 
 
-# Register a callable "Home" page so it shows in the nav and can be switched to
-home_page = st.Page(home, title="🏠 Home", icon="🤖")
+# Register a callable "Home" page
+home_page = st.Page(home, title=f"🏠 {APP_NAME}", icon="🏠")
 
-# Build navigation and run the selected page
-nav = st.navigation([home_page, coding, coach, exam, mentor])
+# Build navigation with 5 pages
+nav_pages = [home_page, coding, coach, exam, mentor, comparison]
+nav = st.navigation(nav_pages)
 nav.run()
 
-
-# -----------------------------------------------------------------------------
-# Sidebar (unchanged)
-# -----------------------------------------------------------------------------
-sidebar.render_sidebar()
+# Note: sidebar.render_sidebar() is called within the home() function and each page

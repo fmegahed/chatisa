@@ -1,0 +1,57 @@
+[
+  {
+    "timestamp": "2025-08-19T18:17:15.887253+00:00",
+    "session_id": "251bd5c3-ac00-40b4-8d90-8bd947fdf74e",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "3.1.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T18:18:25.555280+00:00",
+    "session_id": "251bd5c3-ac00-40b4-8d90-8bd947fdf74e",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "3.1.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T18:18:27.620780+00:00",
+    "session_id": "251bd5c3-ac00-40b4-8d90-8bd947fdf74e",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "3.1.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T18:18:34.300185+00:00",
+    "session_id": "251bd5c3-ac00-40b4-8d90-8bd947fdf74e",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "3.1.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T18:25:37.225775+00:00",
+    "session_id": "e5397c00-def3-4268-8076-5e7f0266e827",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "4.0.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  }
+]

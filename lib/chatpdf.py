@@ -3,22 +3,9 @@ import re
 from fpdf import FPDF
 import tempfile
 
-token_cost_rates = {
-    # GPT costs per https://openai.com/pricing on 2025-02-28
-    'gpt-5-chat-latest': {'input_cost_per_million_tokens': 1.25, 'output_cost_per_million_tokens': 10},
-    'gpt-5-mini-2025-08-07': {'input_cost_per_million_tokens': 0.25, 'output_cost_per_million_tokens': 2},
-    
-    # Anthropic costs per https://www.anthropic.com/pricing#anthropic-api on 2025-02-28
-    'claude-sonnet-4-20250514': {'input_cost_per_million_tokens': 3, 'output_cost_per_million_tokens': 15},
-    
-    # Cohere costs per https://cohere.com/pricing on 2025-02-28
-    'command-2-03-2025': {'input_cost_per_million_tokens': 2.5, 'output_cost_per_million_tokens': 10},
-    
-    # Groq costs per https://wow.groq.com/ on 2025-02-28
-    'llama-3.1-8b-instant': {'input_cost_per_million_tokens': 0.05, 'output_cost_per_million_tokens': 0.08},
-    'llama-3.3-70b-versatile': {'input_cost_per_million_tokens': 0.59, 'output_cost_per_million_tokens': 0.79},
-    'qwen/qwen3-32b': {'input_cost_per_million_tokens': 0.29, 'output_cost_per_million_tokens': 0.59}
-}
+# Import centralized configuration and logging
+from config import MODELS, calculate_cost, get_model_display_name
+from lib.enhanced_usage_logger import log_pdf_export
 
 LATIN_REPLACEMENTS = {
     "\u2014": "--",     # em dash
@@ -41,24 +28,41 @@ def clean_text(input_text):
 
 def create_pdf(chat_messages, models, token_counts, user_name, user_course):
   
+  # Get current page for logging
+  import streamlit as st
+  current_page = getattr(st.session_state, 'cur_page', 'unknown')
+  
   # Identifying the models used in this conversation (i.e., ones with token_counts > 0)
   subset_models = {model: token_counts[model] for model in models if token_counts[model]['input_tokens'] > 0 or token_counts[model]['output_tokens'] > 0}
 
-  # A formatted string with labels (a), (b), ..., (h)
-  formatted_models = ', '.join(f"({chr(97 + i)}) {model}" for i, model in enumerate(subset_models))
-  parts = formatted_models.rsplit(', ', 1)
-  formatted_models_with_and = ' and '.join(parts)
+  # Format model names based on single vs. multiple models
+  if len(subset_models) == 1:
+    # Single model - no letter labeling needed
+    model_name = get_model_display_name(list(subset_models.keys())[0])
+    formatted_models_with_and = model_name
+  else:
+    # Multiple models - use (a), (b), etc. labeling
+    formatted_models = ', '.join(f"({chr(97 + i)}) {get_model_display_name(model)}" for i, model in enumerate(subset_models))
+    parts = formatted_models.rsplit(', ', 1)
+    formatted_models_with_and = ' and '.join(parts)
   
-  # A formatted string of models with their token counts in parentheses
-  formatted_token_counts = ', '.join(f"({chr(97 + i)}) {model} ({token_counts[model]['input_tokens']}, {token_counts[model]['output_tokens']})" for i, model in enumerate(subset_models))
-  parts = formatted_token_counts.rsplit(', ', 1)
-  formatted_token_counts_with_and = ' and '.join(parts)
+  # Format token counts based on single vs. multiple models
+  if len(subset_models) == 1:
+    # Single model - no letter labeling needed
+    model = list(subset_models.keys())[0]
+    model_name = get_model_display_name(model)
+    formatted_token_counts_with_and = f"{model_name} ({token_counts[model]['input_tokens']}, {token_counts[model]['output_tokens']})"
+  else:
+    # Multiple models - use (a), (b), etc. labeling
+    formatted_token_counts = ', '.join(f"({chr(97 + i)}) {get_model_display_name(model)} ({token_counts[model]['input_tokens']}, {token_counts[model]['output_tokens']})" for i, model in enumerate(subset_models))
+    parts = formatted_token_counts.rsplit(', ', 1)
+    formatted_token_counts_with_and = ' and '.join(parts)
   
   # Calculate total input and output tokens
   total_input_tokens = sum(counts['input_tokens'] for counts in token_counts.values() if counts['input_tokens'] is not None)
   total_output_tokens = sum(counts['output_tokens'] for counts in token_counts.values() if counts['output_tokens'] is not None)
   
-  # Breaking down the tokens and costs by model
+  # Breaking down the tokens and costs by model using centralized config
   total_cost = 0.0
   model_details = []
   
@@ -66,18 +70,27 @@ def create_pdf(chat_messages, models, token_counts, user_name, user_course):
       input_tokens = counts['input_tokens']
       output_tokens = counts['output_tokens']
       
-      if output_tokens > 0:
-        input_cost = (input_tokens / 1_000_000) * token_cost_rates[model]['input_cost_per_million_tokens']
-        output_cost = (output_tokens / 1_000_000) * token_cost_rates[model]['output_cost_per_million_tokens']
-        model_cost = input_cost + output_cost
-        total_cost += model_cost
-        detail = f"{model} (Input: {input_tokens} tokens @ ${input_cost:.4f}, Output: {output_tokens} tokens @ ${output_cost:.4f}, Total: ${model_cost:.4f})"
-        model_details.append(detail)
+      if output_tokens > 0 and model in MODELS:
+          # Use centralized cost calculation
+          cost_info = calculate_cost(model, input_tokens, output_tokens)
+          model_cost = cost_info["total_cost"]
+          input_cost = cost_info["input_cost"]
+          output_cost = cost_info["output_cost"]
+          
+          total_cost += model_cost
+          display_name = get_model_display_name(model)
+          detail = f"{display_name} (Input: {input_tokens} tokens @ ${input_cost:.4f}, Output: {output_tokens} tokens @ ${output_cost:.4f}, Total: ${model_cost:.4f})"
+          model_details.append(detail)
   
-  # formatting the summary paragraph similar to formatted models
-  models_summary = ', '.join(f"({chr(97 + i)}) {model}" for i, model in enumerate(model_details))
-  parts = models_summary.rsplit(', ', 1)
-  models_summary = ' and '.join(parts)
+  # Format the summary paragraph based on single vs. multiple models
+  if len(model_details) == 1:
+    # Single model - no letter labeling needed
+    models_summary = model_details[0]
+  else:
+    # Multiple models - use (a), (b), etc. labeling
+    models_summary = ', '.join(f"({chr(97 + i)}) {model}" for i, model in enumerate(model_details))
+    parts = models_summary.rsplit(', ', 1)
+    models_summary = ' and '.join(parts)
 
   summary_paragraph = (
     f"The total number of tokens used in the chat is {total_input_tokens + total_output_tokens}, "
@@ -195,6 +208,17 @@ def create_pdf(chat_messages, models, token_counts, user_name, user_course):
   # -------------------------------------
   pdf_output_path = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf").name
   pdf.output(pdf_output_path)
+  
+  # Log PDF export (privacy-compliant - no personal info)
+  filename = f"{user_course}_{user_name}_chatisa.pdf"
+  log_pdf_export(
+      page=current_page,
+      data={
+          "course": user_course,
+          "file_type": "pdf"
+      }
+  )
+  
   return pdf_output_path
 
 def draw_divider(pdf):

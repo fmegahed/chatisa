@@ -236,7 +236,12 @@ if "cur_page" not in st.session_state:
 if ("token_counts" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
     st.session_state.token_counts = {model: {"input_tokens": 0, "output_tokens": 0} for model in models}
 
-if ("messages" not in st.session_state) or (st.session_state.cur_page != THIS_PAGE):
+# Purge messages if coming from a different page
+if (st.session_state.cur_page != THIS_PAGE) and ("messages" in st.session_state):
+    del st.session_state.messages
+
+# Initialize messages for this page
+if "messages" not in st.session_state:
   st.session_state.messages = [{
     "role": "system",
     "content": project_scoping_prompt
@@ -253,7 +258,7 @@ st.session_state.cur_page = THIS_PAGE
 # Streamlit Title:
 # ----------------
 
-st.set_page_config(page_title = "ChatISA Project Coach", layout = "centered",page_icon='🤖')
+st.set_page_config(page_title = "ChatISA Project Coach", layout = "centered", page_icon='assets/favicon.png')
 # -----------------------------------------------------------------------------
 
 
@@ -285,16 +290,6 @@ with st.sidebar.expander("Learn more about the roles"):
 # ----------------
 st.markdown("## 🤖 ChatISA: Project Coach 🤖")
 
-# Dropdown to Select Model:
-# -------------------------
-st.sidebar.markdown("### Choose Your LLM")
-model_choice = st.sidebar.selectbox(
-    "Choose your LLM",
-    models,
-    index=0,
-    key='model_choice',
-    label_visibility='collapsed'
-)
 
 # -----------------------------------------------------------------------------
 # Render the sidebar
