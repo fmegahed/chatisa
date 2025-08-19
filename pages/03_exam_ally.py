@@ -68,8 +68,8 @@ st.session_state.cur_page = THIS_PAGE
 
 # Streamlit Application:
 # ----------------------
-st.set_page_config(page_title = "ChatISA Exam Ally", layout = "centered", page_icon='assets/favicon.png')
-st.markdown("## 🤖 ChatISA: Exam Ally 🤖")
+st.set_page_config(page_title = "ChatISA: Exam Ally", layout = "centered", page_icon='assets/favicon.png')
+st.markdown("## 📝 ChatISA: Project Coach")
 
 
 # First "Screen" of the Exam Ally:

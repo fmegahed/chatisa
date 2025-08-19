@@ -88,16 +88,17 @@ def check_realtime_server_health():
 # Page Configuration
 # -------------------------------------------------------------------------------
 st.set_page_config(
-    page_title="🎤 ChatISA: Interview Mentor", 
+    page_title="ChatISA: Interview Mentor", 
     layout="centered", 
     page_icon="assets/favicon.png"
 )
+st.markdown("## 👔 ChatISA: Interview Mentor")
 
 # -------------------------------------------------------------------------------
 # Custom Sidebar for Interview Mentor (both speech-to-speech and transcription modes)
 # -------------------------------------------------------------------------------
 st.sidebar.markdown(f"""
-### 🎤 ChatISA v{VERSION}
+### 👔 ChatISA v{VERSION}
 **Interview Mentor**  
 *{DATE}*
 

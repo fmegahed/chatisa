@@ -41,7 +41,7 @@ MAX_TOKENS = 2000
 ALL_AVAILABLE_MODELS = [m for m in MODELS.keys() if not MODELS[m].get('realtime_only', False)]
 
 # Default selected models - main models from each provider:
-DEFAULT_MODELS = ['gpt-5-chat-latest', 'claude-sonnet-4-20250514', 'command-a-03-2025']
+DEFAULT_MODELS = ['gpt-5-chat-latest', 'claude-sonnet-4-20250514']
 
 # -----------------------------------------------------------------------------
 # Manage page tracking and session state
@@ -381,14 +381,14 @@ def get_model_response_proper(model: str, uploaded_files: List, prompt: str) -> 
 
 # Streamlit Page Configuration:
 # -----------------------------
-st.set_page_config(page_title="ChatISA AI Comparisons", layout="wide", page_icon='assets/favicon.png')
+st.set_page_config(page_title="ChatISA: AI Comparisons", layout="wide", page_icon='assets/favicon.png')
 st.markdown("## ⚖️ ChatISA: AI Comparisons")
 st.markdown("*Compare AI model responses side-by-side with vision and document support*")
 
 # Info box
 st.info(
     "🧪 **Experimental Feature**: Ask questions and compare how different AI models respond. "
-    "Upload images or PDFs for enhanced analysis. Vision models can see images directly."
+    "Upload images, PDFs, or simple datasets for a comperative analysis of the capabilities of different models. Vision models and data will be directly processed via the provider's API, i.e., no code interpreter sessions or VMs will be called by ChatISA."
 )
 
 # -----------------------------------------------------------------------------
@@ -495,16 +495,11 @@ if uploaded_files:
 # -------------------
 st.markdown("### 💬 Ask Your Question")
 
-prompt = st.text_area(
-    "Enter your question:",
-    placeholder="e.g., Explain quantum computing in simple terms\nor\nWhat do you see in this image?\nor\nSummarize the key points from this PDF",
-    height=120
-)
-
-# Generate comparison button
-can_generate = prompt.strip() and len(st.session_state.selected_models) >= 1
-
-if st.button("🚀 Compare Responses", type="primary", disabled=not can_generate):
+# Use chat_input for consistency with other modules (Enter to submit)
+if prompt := st.chat_input("Ask a question to compare AI responses (e.g., 'Explain quantum computing' or 'What do you see in this image?')"):
+    # Check if we can generate responses
+    can_generate = prompt.strip() and len(st.session_state.selected_models) >= 1
+    
     if can_generate:
         # Clear previous responses
         st.session_state.comparison_responses = {}
@@ -553,6 +548,12 @@ if st.button("🚀 Compare Responses", type="primary", disabled=not can_generate
             "content_info": content_info,
             "responses": st.session_state.comparison_responses.copy()
         })
+    else:
+        # Show warning if cannot generate
+        if not st.session_state.selected_models:
+            st.warning("⚠️ Please select at least one model from the sidebar to compare responses.")
+        elif not prompt.strip():
+            st.warning("⚠️ Please enter a question to compare responses.")
 
 # Display results section:
 # -----------------------
@@ -658,18 +659,5 @@ if st.session_state.comparison_messages:
         st.session_state.comparison_responses = {}
         st.rerun()
 
-# Warning about model availability
-if not st.session_state.selected_models:
-    st.warning("⚠️ Please select at least one model from the sidebar to start comparing responses.")
-
-# Footer information:
-st.markdown("---")
-st.markdown("""
-<div style="text-align: center; color: #666; font-size: 0.9em;">
-    <p><strong>Experimental Feature</strong> - Compare AI responses with proper vision and document support</p>
-    <p><strong>Vision Support:</strong> GPT-5 and Claude can analyze images directly</p>
-    <p><strong>PDF Support:</strong> GPT-5 and Claude models can read PDF documents directly</p>
-</div>
-""", unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------

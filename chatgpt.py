@@ -73,15 +73,13 @@ system_info = get_system_info()
 if system_info["missing_api_keys"]:
     st.warning(f"⚠️ Missing API keys: {', '.join(system_info['missing_api_keys'])}")
 
+# -----------------------------------------------------------------------------  
+# Page routing for compatibility with Streamlit 1.48.1
 # -----------------------------------------------------------------------------
-# Declare pages using config
-# -----------------------------------------------------------------------------
-coding = st.Page("pages/01_coding_companion.py", title=PAGES["coding_companion"]["title"], icon=PAGES["coding_companion"]["icon"])
-coach = st.Page("pages/02_project_coach.py", title=PAGES["project_coach"]["title"], icon=PAGES["project_coach"]["icon"])
-exam = st.Page("pages/03_exam_ally.py", title=PAGES["exam_ally"]["title"], icon=PAGES["exam_ally"]["icon"])
-mentor = st.Page("pages/04_interview_mentor.py", title=PAGES["interview_mentor"]["title"], icon=PAGES["interview_mentor"]["icon"])
-comparison = st.Page("pages/05_ai_comparisons.py", title=PAGES["ai_comparisons"]["title"], icon=PAGES["ai_comparisons"]["icon"])
 
+# Initialize page routing in session state
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "home"
 
 def home():
     """Home page content using centralized configuration."""
@@ -192,17 +190,13 @@ def home():
         orientation="horizontal",
     )
 
-    # Helper to switch to a registered page
-    def go(target_page: st.Page) -> None:
-        st.switch_page(target_page)
-
     # Dynamic page navigation based on selection
     page_mapping = {
-        "Coding Companion": coding,
-        "Project Coach": coach, 
-        "Exam Ally": exam,
-        "Interview Mentor": mentor,
-        "AI Comparisons": comparison
+        "Coding Companion": "pages/01_coding_companion.py",
+        "Project Coach": "pages/02_project_coach.py", 
+        "Exam Ally": "pages/03_exam_ally.py",
+        "Interview Mentor": "pages/04_interview_mentor.py",
+        "AI Comparisons": "pages/05_ai_comparisons.py"
     }
 
     # Show selected page info and navigation button
@@ -218,18 +212,25 @@ def home():
             st.warning("🧪 **Experimental Feature** - Compare AI model responses side-by-side with support for text, images, and PDFs")
         
         if st.button(f"Go to {selected}", type="primary"):
-            go(page_mapping[selected])
+            st.session_state.current_page = page_mapping[selected]
+            st.rerun()
 
     # Sidebar (as in your previous app)
     sidebar.render_sidebar()
 
 
-# Register a callable "Home" page
-home_page = st.Page(home, title=f"🏠 {APP_NAME}", icon="🏠")
+# Route to the appropriate page
+def route_page():
+    """Route to the appropriate page based on session state."""
+    current_page = st.session_state.get("current_page", "home")
+    
+    if current_page == "home":
+        home()
+    elif current_page.endswith('.py'):
+        # For Streamlit pages, we need to use st.switch_page
+        st.switch_page(current_page)
+    else:
+        home()
 
-# Build navigation with 5 pages
-nav_pages = [home_page, coding, coach, exam, mentor, comparison]
-nav = st.navigation(nav_pages)
-nav.run()
-
-# Note: sidebar.render_sidebar() is called within the home() function and each page
+# Run the appropriate page
+route_page()

@@ -53,5 +53,130 @@
       "available_models": 7,
       "features_enabled": 4
     }
+  },
+  {
+    "timestamp": "2025-08-19T21:03:18.687056+00:00",
+    "session_id": "9242c425-b816-44dd-8ee9-2880fbc29522",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "4.0.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T21:03:25.228944+00:00",
+    "session_id": "9242c425-b816-44dd-8ee9-2880fbc29522",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "4.0.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T21:08:33.234872+00:00",
+    "session_id": "609ad2de-f504-4683-b9b8-93fbe55b55e5",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "4.0.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T21:08:37.981378+00:00",
+    "session_id": "609ad2de-f504-4683-b9b8-93fbe55b55e5",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "4.0.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T21:08:39.655436+00:00",
+    "session_id": "609ad2de-f504-4683-b9b8-93fbe55b55e5",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "4.0.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T21:21:44.235386+00:00",
+    "session_id": "5a1c864b-dec4-416d-b0ca-8c92236273ba",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "4.0.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T21:21:53.476378+00:00",
+    "session_id": "5a1c864b-dec4-416d-b0ca-8c92236273ba",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "4.0.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T21:56:59.467787+00:00",
+    "session_id": "b71edb0b-3ce1-4400-a0d8-f81a2d5d61c7",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "4.0.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T22:16:16.468181+00:00",
+    "session_id": "aec57c64-8920-4053-b2e2-53cf634f9906",
+    "activity_type": "page_visit",
+    "page": "home",
+    "data": {
+      "version": "4.0.0",
+      "available_models": 7,
+      "features_enabled": 4
+    }
+  },
+  {
+    "timestamp": "2025-08-19T22:18:30.510540+00:00",
+    "session_id": "082eb211-4c73-46b0-889a-794ebe7fae38",
+    "activity_type": "ai_generation",
+    "page": "interview_mentor",
+    "data": {
+      "prompt_length": 24,
+      "response_length": 384,
+      "exported_to_pdf": false,
+      "course_provided": false,
+      "academic_level": null,
+      "major": null,
+      "temperature": 0.25,
+      "max_tokens": 6000
+    },
+    "model_used": "gpt-5-chat-latest",
+    "tokens": {
+      "input": 1230,
+      "output": 82,
+      "total": 1312
+    },
+    "cost": 0.002358,
+    "performance": {
+      "response_time_ms": 1353.3987998962402
+    }
   }
 ]
