@@ -32,7 +32,7 @@ ChatISA is an educational Streamlit web application that provides students acces
 
 ## 🎥 Demo
 
-<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/d4e2cae9626944c08d0aaa985c684654?sid=df291ecf-6698-481d-b84a-3f83e4b776d7" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+<div style="position: relative; padding-bottom: 54.21436004162331%; height: 0;"><iframe src="https://www.loom.com/embed/6a83a717569e46ee80005044384aee53?sid=668a08ff-f6b6-4316-976b-4ab862625df9" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 
 *See all five learning modules in action and learn how to navigate the interface effectively.*
 
