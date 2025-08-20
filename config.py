@@ -1,4 +1,4 @@
-"""
+﻿"""
 Central configuration file for ChatISA application.
 All shared parameters, settings, LLM configurations, and costs are defined here.
 """
@@ -12,7 +12,7 @@ load_dotenv(override=True)
 
 # ==================== Versioning and Date ====================
 DATE = "August 20, 2025"
-VERSION = "4.1.0"
+VERSION = "4.2.0"
 APP_NAME = "ChatISA"
 APP_DESCRIPTION = "Educational AI Assistant with Multiple LLM Support"
 

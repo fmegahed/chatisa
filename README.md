@@ -1,4 +1,4 @@
-# ChatISA v4.1
+# ChatISA v4.2.0
 
 <div align="center">
 
@@ -11,7 +11,7 @@
 [![Streamlit](https://img.shields.io/badge/streamlit-1.28%2B-red.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-*Making AI accessible for Miami University students*
+*Making AI accessible for educational excellence*
 
 </div>
 
@@ -19,99 +19,48 @@
 
 ## 📖 Overview
 
-ChatISA is a comprehensive educational AI assistant designed for business analytics and computer science students. It provides free access to multiple leading AI models through five specialized learning interfaces, with costs sponsored by industry partners to ensure equitable access to cutting-edge AI technology.
+ChatISA is an educational Streamlit web application that provides students access to multiple leading AI models through five specialized learning interfaces. Built for responsible academic use, it offers free access to cutting-edge AI technology with costs sponsored by industry partners.
 
 ### 🎯 Key Features
 
-- **🔄 Multi-Model Support**: Access 7+ leading AI models (OpenAI, Anthropic, Cohere, Groq)
-- **📚 Five Specialized Modules**: Tailored interfaces for different learning needs
-- **💰 Cost Coverage**: Free access with sponsored API costs for educational use
-- **📄 Professional Reports**: Comprehensive PDF exports with usage analytics
-- **🎤 Voice Integration**: Speech-to-speech capabilities for interview practice
-- **🔍 AI Model Comparison**: Side-by-side experimental comparison tool
-- **🎓 Educational Focus**: Purpose-built for responsible academic use
-- **⚡ Single-Port Deployment**: v4.1 embeds FastAPI server for simplified deployment
+- **Multi-Model Support**: Access to 7+ leading AI models (OpenAI, Anthropic, Cohere, Groq)
+- **Five Learning Modules**: Coding Companion, Project Coach, Exam Ally, Interview Mentor, AI Comparisons
+- **Speech-to-Speech**: Real-time voice interaction using OpenAI Realtime API
+- **Document Processing**: Native PDF, image, and document analysis for supported models
+- **Model Comparison**: Side-by-side AI responses with minimal system prompts
+- **Educational Focus**: Purpose-built for responsible academic use
 
----
+## 🎥 Demo
 
-## 🚀 Version 4.1 - Single Port Architecture
+<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/d4e2cae9626944c08d0aaa985c684654?sid=df291ecf-6698-481d-b84a-3f83e4b776d7" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
 
-ChatISA v4.1 introduces **embedded FastAPI server** architecture that eliminates the need for separate port management:
-
-### **Deployment Benefits:**
-- **Single Port**: Only port 8501 needed (no separate FastAPI server)
-- **University Servers**: Perfect for servers with port restrictions
-- **Simple Management**: One command starts everything
-- **Same Security**: API keys remain server-side only
-
-### **Technical Implementation:**
-- FastAPI server runs as background daemon thread within Streamlit
-- Automatic startup/shutdown with Streamlit process
-- Graceful error handling with fallback messaging
-- Thread-safe singleton pattern
-
-```bash
-# Single command starts both Streamlit + embedded FastAPI
-streamlit run chatgpt.py
-```
+*See all five learning modules in action and learn how to navigate the interface effectively.*
 
 ---
 
 ## 🛠️ Five Learning Modules
 
 ### 1. 💻 **Coding Companion**
-*Your programming learning partner*
-
-Get personalized programming help with educational context. Features code generation, debugging assistance, and concept explanations optimized for learning R, Python, and data analysis techniques.
-
-- **Specialty**: Programming education and code explanation
-- **Best For**: Learning syntax, debugging, understanding algorithms
-- **Default Model**: Claude Sonnet 4 (excellent for code analysis)
+Programming help with educational context. Features code generation, debugging assistance, and concept explanations for R, Python, and data analysis.
 
 ### 2. 🎯 **Project Coach**
-*Comprehensive project guidance with specialized coaching roles*
-
-Navigate team projects with AI coaching across multiple specialized roles including project scoping, risk analysis, team structuring, and reflection guidance.
-
-- **Coaching Roles**: Project Manager, Risk Analyst, Team Advisor, Devil's Advocate
-- **Features**: Interactive worksheets, structured guidance, decision frameworks
-- **Best For**: Group projects, business case studies, project planning
+Team project guidance with specialized coaching roles including Project Manager, Risk Analyst, Team Advisor, and Devil's Advocate.
 
 ### 3. 📝 **Exam Ally**
-*AI-powered exam preparation from your materials*
-
-Transform your study materials into personalized practice exams. Upload PDFs and generate targeted questions across multiple formats with adaptive difficulty.
-
-- **Question Types**: Multiple choice, short answer, code analysis, data interpretation
-- **Features**: PDF processing, adaptive questioning, performance feedback
-- **Best For**: Course review, exam preparation, knowledge assessment
+Transform study materials into personalized practice exams. Upload PDFs and generate targeted questions with adaptive difficulty.
 
 ### 4. 🎤 **Interview Mentor**
-*Professional interview practice with speech-to-speech technology*
+Real-time speech-to-speech interview practice using OpenAI's Realtime API. Upload resume and job descriptions for tailored experiences.
 
-Practice interviews with realistic AI conversation using OpenAI's Realtime API. Upload your resume and job descriptions for tailored interview experiences with natural voice interaction.
-
-- **Technology**: Real-time speech-to-speech conversation
-- **Features**: Resume analysis, company-specific questions, natural dialogue flow
-- **Best For**: Interview preparation, communication skills, professional practice
-
-### 5. ⚖️ **AI Comparisons** ⭐ *NEW in v4.0.0*
-*Experimental side-by-side model comparison*
-
-Compare how different AI models respond to the same questions with support for images, PDFs, and documents. Perfect for understanding AI capabilities and differences.
-
-- **Vision Support**: GPT-5 and Claude can analyze images directly
-- **Document Support**: Direct PDF reading capabilities for capable models  
-- **File Processing**: Automatic handling of various file types by extension
-- **Best For**: Understanding AI differences, research, experimental learning
+### 5. ⚖️ **AI Comparisons**
+Compare AI model responses side-by-side with minimal system prompts. Native support for images, PDFs, and documents (OpenAI and Anthropic models).
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Development)
 
 ### Prerequisites
-
-- **Python 3.8+**
+- **Python 3.11.1-3.12.9**
 - **Conda** (recommended for environment management)
 - **API Keys** (contact administrators for educational access)
 
@@ -126,8 +75,8 @@ Compare how different AI models respond to the same questions with support for i
    ```
 
 2. **Configure API keys**
+   Create `.env` file:
    ```bash
-   # Create .env file with your API keys
    OPENAI_API_KEY=your_openai_key_here
    ANTHROPIC_API_KEY=your_anthropic_key_here
    COHERE_API_KEY=your_cohere_key_here
@@ -140,30 +89,100 @@ Compare how different AI models respond to the same questions with support for i
    ```
 
 4. **Access ChatISA**
-   - Open your browser to `http://localhost:8502`
-   - Start exploring with AI! 🎉
+   Open browser to `http://localhost:8501`
 
 ---
 
-## 🏗️ Architecture
+## 🏢 Production Deployment (Windows Server)
+
+### Server Setup
+
+1. **Environment Setup**
+   ```bash
+   # Create conda environment in target directory
+   conda create --name chatisa --file requirements.txt
+   conda activate chatisa
+   
+   # Navigate to deployment directory
+   cd C:\Users\webapp\.conda\chat_isa
+   ```
+
+2. **SSL Certificate Configuration**
+   Place SSL certificates in `ssl/` directory:
+   - `ssl/chatisa.pem` (certificate file)
+   - `ssl/chatisapriv.key` (private key file)
+
+3. **Create Startup Script**
+   Create `chatisa.bat`:
+   ```batch
+   @echo off
+   cd /d C:\Users\webapp\.conda\chat_isa
+   C:\Users\webapp\.conda\envs\chatisa\python.exe -m streamlit run chatgpt.py --server.address chatisa.fsb.miamioh.edu --server.port 443 --server.sslCertFile C:\Users\webapp\.conda\chat_isa\ssl\chatisa.pem --server.sslKeyFile C:\Users\webapp\.conda\chat_isa\ssl\chatisapriv.key
+   pause
+   ```
+
+### Windows Task Scheduler Configuration
+
+1. **Create Task**
+   - Open Task Scheduler
+   - Create Basic Task: "ChatIsa Startup"
+   - Trigger: "When the computer starts"
+   - Action: Start the `chatisa.bat` file
+
+2. **Task Properties**
+   ```xml
+   <Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+     <RegistrationInfo>
+       <URI>\ChatIsa Startup</URI>
+     </RegistrationInfo>
+     <Triggers>
+       <BootTrigger>
+         <Enabled>true</Enabled>
+       </BootTrigger>
+     </Triggers>
+     <Settings>
+       <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+       <DisallowStartIfOnBatteries>true</DisallowStartIfOnBatteries>
+       <StopIfGoingOnBatteries>true</StopIfGoingOnBatteries>
+       <AllowHardTerminate>true</AllowHardTerminate>
+       <StartWhenAvailable>false</StartWhenAvailable>
+     </Settings>
+   </Task>
+   ```
+
+3. **Access Application**
+   - Production URL: `https://chatisa.fsb.miamioh.edu`
+   - Auto-starts on server boot
+   - Runs on port 443 with SSL
+
+---
+
+## 🏗️ Technical Architecture
+
+### Single-Port Implementation
+Version 4.1 eliminates separate FastAPI server by embedding OpenAI Realtime API token generation directly in the Streamlit application:
+
+- **Server-side token minting**: `mint_realtime_client_secret()` in `chatgpt.py`
+- **WebRTC frontend**: Embedded HTML/JavaScript for speech-to-speech
+- **Client token flow**: Streamlit generates ephemeral tokens for browser WebRTC connection
 
 ### Supported Models
 
-| Provider | Model | Specialty | Vision | PDF |
-|----------|-------|-----------|---------|-----|
-| **OpenAI** | GPT-5 Chat | General purpose | ✅ | ✅ |
-| | GPT-5 Mini | Cost-effective | ✅ | ✅ |
-| | GPT-4o Realtime | Speech-to-speech | ❌ | ❌ |
-| **Anthropic** | Claude Sonnet 4 | Code & analysis | ✅ | ✅ |
-| **Cohere** | Command A | Business writing | ❌ | ❌ |
-| **Groq** | Llama 3.3 70B | High performance | ❌ | ❌ |
-| | Llama 3.1 8B | Ultra-fast | ❌ | ❌ |
+| Provider | Model | Vision | PDF | Specialty |
+|----------|-------|---------|-----|-----------|
+| **OpenAI** | GPT-5 Chat | ✅ | ✅ | General purpose |
+| | GPT-5 Mini | ✅ | ✅ | Cost-effective |
+| | GPT-4o Realtime | ❌ | ❌ | Speech-to-speech |
+| **Anthropic** | Claude Sonnet 4 | ✅ | ✅ | Code & analysis |
+| **Cohere** | Command A | ❌ | ❌ | Business writing |
+| **Groq** | Llama 3.3 70B | ❌ | ❌ | High performance |
+| | Llama 3.1 8B | ❌ | ❌ | Ultra-fast |
 
-### Core Structure
+### Project Structure
 
 ```
 chatisa/
-├── chatgpt.py              # Main application entry point
+├── chatgpt.py              # Main application & token minting
 ├── config.py               # Centralized configuration
 ├── pages/                  # Five specialized modules
 │   ├── 01_coding_companion.py
@@ -172,8 +191,11 @@ chatisa/
 │   ├── 04_interview_mentor.py
 │   └── 05_ai_comparisons.py
 ├── lib/                    # Shared utilities
-├── assets/                 # Static resources
-└── realtime_server.py      # Speech server
+│   ├── chatgeneration.py   # LLM integration
+│   ├── chatpdf.py         # PDF processing
+│   ├── sidebar.py         # Common UI components
+│   └── speech.py          # Speech functionality
+└── ssl/                   # SSL certificates (production)
 ```
 
 ---
@@ -181,19 +203,15 @@ chatisa/
 ## 📚 Usage Guidelines
 
 ### For Students
-
-- **🎓 Educational Use**: Designed for learning and academic support
-- **👨‍🏫 Get Approval**: Always check with instructors before using for coursework
-- **🧠 Think Critically**: Use AI as a learning tool, not a replacement for understanding
-- **📝 Academic Integrity**: Follow your institution's AI usage policies
-- **🔍 Verify Results**: Always evaluate and verify AI-generated content
+- **Educational Use**: Designed for learning and academic support
+- **Get Approval**: Check with instructors before using for coursework
+- **Think Critically**: Use AI as a learning tool, not a replacement
+- **Academic Integrity**: Follow institutional AI usage policies
 
 ### For Educators
-
-- **📋 Set Guidelines**: Establish clear AI usage policies for your courses
-- **🎯 Align Goals**: Connect AI use with learning objectives
-- **📊 Review Usage**: Use PDF exports to understand student interactions
-- **🤝 Foster Discussion**: Encourage open conversations about AI assistance
+- **Set Guidelines**: Establish clear AI usage policies
+- **Review Usage**: Monitor student interactions through exports
+- **Foster Discussion**: Encourage conversations about AI assistance
 
 ---
 
@@ -205,15 +223,13 @@ chatisa/
 - **[Joshua Ferris](https://miamioh.edu/fsb/directory/?up=/directory/ferrisj2)** - Assistant Professor, Information Systems & Analytics
 
 **Funding Support:**
-- Industry partners covering API costs for educational use
-- Miami University providing server infrastructure and support
-- Committed to democratizing AI access for educational excellence
+- U.S. Bank covering API costs for educational use
+- Miami University providing server infrastructure and support  
+- The Raymond E. Glos Professorship, which provided Fadel time and monetary support to continue to update and mantain this chatbot
 
 ---
 
 ## 📄 Citation
-
-If you use ChatISA in your research or teaching:
 
 ```bibtex
 @misc{megahed2025chatisa,
@@ -249,7 +265,7 @@ MIT License - Free to use, modify, and distribute. See [LICENSE](LICENSE) for de
 
 **Built with ❤️ for educational excellence**
 
-*ChatISA v4.0.0 - Making AI accessible, responsible, and educational*
+*ChatISA v4.1 - Making AI accessible, responsible, and educational*
 
 **[⭐ Star us on GitHub](https://github.com/fmegahed/chatisa)**
 
