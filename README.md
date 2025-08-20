@@ -6,12 +6,10 @@
 
 **🤖 Educational AI Assistant with Multiple LLM Support**
 
-[![Version](https://img.shields.io/badge/version-4.1-blue.svg)](https://github.com/fmegahed/chatisa)
-[![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
-[![Streamlit](https://img.shields.io/badge/streamlit-1.28%2B-red.svg)](https://streamlit.io)
+[![Version](https://img.shields.io/badge/version-4.2.0-blue.svg)](https://github.com/fmegahed/chatisa)
+[![Python](https://img.shields.io/badge/python-3.11--3.12-blue.svg)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/streamlit-1.48%2B-red.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-
-*Making AI accessible for educational excellence*
 
 </div>
 
@@ -32,7 +30,7 @@ ChatISA is an educational Streamlit web application that provides students acces
 
 ## 🎥 Demo
 
-<div style="position: relative; padding-bottom: 54.21436004162331%; height: 0;"><iframe src="https://www.loom.com/embed/6a83a717569e46ee80005044384aee53?sid=668a08ff-f6b6-4316-976b-4ab862625df9" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+[![ChatISA - version 4.2.0 - Watch Video](https://cdn.loom.com/sessions/thumbnails/6a83a717569e46ee80005044384aee53-158c24375fa62fe3-full-play.gif)](https://www.loom.com/share/6a83a717569e46ee80005044384aee53)
 
 *See all five learning modules in action and learn how to navigate the interface effectively.*
 
