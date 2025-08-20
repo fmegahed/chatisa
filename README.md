@@ -1,4 +1,4 @@
-# ChatISA v4.0.0
+# ChatISA v4.1
 
 <div align="center">
 
@@ -6,7 +6,7 @@
 
 **🤖 Educational AI Assistant with Multiple LLM Support**
 
-[![Version](https://img.shields.io/badge/version-4.0.0-blue.svg)](https://github.com/fmegahed/chatisa)
+[![Version](https://img.shields.io/badge/version-4.1-blue.svg)](https://github.com/fmegahed/chatisa)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/streamlit-1.28%2B-red.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -30,6 +30,30 @@ ChatISA is a comprehensive educational AI assistant designed for business analyt
 - **🎤 Voice Integration**: Speech-to-speech capabilities for interview practice
 - **🔍 AI Model Comparison**: Side-by-side experimental comparison tool
 - **🎓 Educational Focus**: Purpose-built for responsible academic use
+- **⚡ Single-Port Deployment**: v4.1 embeds FastAPI server for simplified deployment
+
+---
+
+## 🚀 Version 4.1 - Single Port Architecture
+
+ChatISA v4.1 introduces **embedded FastAPI server** architecture that eliminates the need for separate port management:
+
+### **Deployment Benefits:**
+- **Single Port**: Only port 8501 needed (no separate FastAPI server)
+- **University Servers**: Perfect for servers with port restrictions
+- **Simple Management**: One command starts everything
+- **Same Security**: API keys remain server-side only
+
+### **Technical Implementation:**
+- FastAPI server runs as background daemon thread within Streamlit
+- Automatic startup/shutdown with Streamlit process
+- Graceful error handling with fallback messaging
+- Thread-safe singleton pattern
+
+```bash
+# Single command starts both Streamlit + embedded FastAPI
+streamlit run chatgpt.py
+```
 
 ---
 

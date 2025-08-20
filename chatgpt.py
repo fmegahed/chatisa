@@ -1,10 +1,12 @@
 import os
+import threading
 from pathlib import Path
 
 import streamlit as st
 import pandas as pd
 from dotenv import load_dotenv
 from streamlit_option_menu import option_menu
+import uvicorn
 
 # Import centralized configuration
 from config import *
@@ -12,6 +14,14 @@ from config import *
 # Local modules
 from lib import chatpdf, chatgeneration, sidebar  # noqa: F401
 from lib.enhanced_usage_logger import log_page_visit, log_session_action, migrate_from_csv
+
+# Import FastAPI app for embedding
+try:
+    from realtime_server import app as fastapi_app
+    FASTAPI_AVAILABLE = True
+except ImportError as e:
+    st.error(f"FastAPI server import failed: {e}")
+    FASTAPI_AVAILABLE = False
 
 # -----------------------------------------------------------------------------
 # App setup with centralized configuration
@@ -64,6 +74,33 @@ st.markdown(miami_css, unsafe_allow_html=True)
 
 # Load environment variables
 load_dotenv()
+
+# -----------------------------------------------------------------------------
+# FastAPI Server Embedding via Threading
+# -----------------------------------------------------------------------------
+def start_fastapi_server():
+    """Start FastAPI server in background thread."""
+    try:
+        uvicorn.run(
+            fastapi_app, 
+            host="127.0.0.1", 
+            port=5050, 
+            log_level="error",
+            access_log=False
+        )
+    except Exception as e:
+        st.error(f"Failed to start FastAPI server: {e}")
+
+# Start FastAPI server as background thread (singleton)
+if FASTAPI_AVAILABLE and 'fastapi_server_started' not in st.session_state:
+    try:
+        fastapi_thread = threading.Thread(target=start_fastapi_server, daemon=True)
+        fastapi_thread.start()
+        st.session_state.fastapi_server_started = True
+        st.success("🎤 Speech-to-speech server started successfully")
+    except Exception as e:
+        st.error(f"Failed to start embedded FastAPI server: {e}")
+        st.session_state.fastapi_server_started = False
 
 # Migrate old CSV logs to JSON format if needed
 migrate_from_csv()
@@ -205,7 +242,10 @@ def home():
         
         # Special handling for interview mentor (now speech-based)
         if selected == "Interview Mentor":
-            st.warning("🎤 **Speech-to-Speech Feature** - Requires realtime server to be running")
+            if st.session_state.get('fastapi_server_started', False):
+                st.success("🎤 **Speech-to-Speech Feature** - Server running on single port")
+            else:
+                st.warning("🎤 **Speech-to-Speech Feature** - Server startup failed")
         
         # Special handling for AI model comparison (experimental)
         if selected == "AI Comparisons":

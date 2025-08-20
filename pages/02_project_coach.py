@@ -258,7 +258,7 @@ st.session_state.cur_page = THIS_PAGE
 # Streamlit Title:
 # ----------------
 st.set_page_config(page_title = "ChatISA: Project Coach", layout = "centered", page_icon='assets/favicon.png')
-st.markdown("## 🎯 ChatISA: Project Coach")
+
 # -----------------------------------------------------------------------------
 
 

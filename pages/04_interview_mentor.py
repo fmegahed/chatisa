@@ -31,7 +31,7 @@ MAX_PDF_PAGES = 2
 TEMPERATURE = 0.25
 
 # Server configuration
-SERVER_URL = "http://localhost:5050"
+SERVER_URL = os.getenv("REALTIME_SERVER_URL", "http://localhost:5050")
 REALTIME_MODEL = OPENAI_REALTIME_MODEL
 DEFAULT_VOICE = DEFAULT_REALTIME_VOICE
 AVAILABLE_VOICES = REALTIME_VOICES
@@ -127,7 +127,6 @@ st.sidebar.markdown(f"""
 # First Screen: Submission Form
 # -------------------------------------------------------------------------------
 if not st.session_state.submitted_speech:
-    st.title("🎤 ChatISA: Interview Mentor")
     
     # Toggle for speech-to-speech vs transcription mode
     col_toggle1, col_toggle2 = st.columns([1, 3])
