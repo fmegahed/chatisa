@@ -32,29 +32,9 @@ THIS_PAGE = "chatgpt"
 st.session_state.cur_page = THIS_PAGE
 # -----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------------
-# Change page names within the file:
-# ----------------------------------
-# Based on https://stackoverflow.com/a/74418483
-pages = st.source_util.get_pages('chatgpt.py')
-
-# New page names
-new_page_names = {
-  'chatgpt': '🏠 Home',
-  'coding_companion': '🖥 Coding Companion',
-  'project_coach': '👩‍🏫 Project Coach',
-  'exam_ally': '📝 Exam Ally',
-  'interview_mentor': '👔 Interview Mentor',
-  'ai_comparisons': '⚖️ AI Comparisons',
-}
-
-for key, page in pages.items():
-  if page['page_name'] in new_page_names:
-    page['page_name'] = new_page_names[page['page_name']]
-
-
 # ---------------------- Streamlit setup ----------------------
-st.set_page_config(**PAGE_CONFIG)
+# st.set_page_config(**PAGE_CONFIG)
+st.set_page_config(page_title="ChatISA Home", page_icon='assets/favicon.png')
 
 miami_css = f"""
 <style>
@@ -207,7 +187,7 @@ def home():
         "features_enabled": sum(1 for f in FEATURES.values() if f)
     })
 
-    st.markdown(f"## Welcome to {APP_NAME}")
+    st.markdown(f'<h2 style="color: {THEME_COLORS["primary"]};">Welcome to {APP_NAME}</h2>', unsafe_allow_html=True)
     st.markdown(f"*Version {VERSION} - {DATE}*")
 
     st.markdown("""
@@ -227,7 +207,7 @@ def home():
 
     key_validation = validate_api_keys()
     c1, c2, c3 = st.columns(3)
-    with c1: st.metric("Available Models", f"{len(key_validation['available_models'])}/7")
+    with c1: st.metric("Available Models", len(key_validation['available_models']))
     with c2: st.metric("Available Modules", "5")
     with c3:
         status = "🟢 Ready" if key_validation["all_keys_present"] else "🟡 Limited"
@@ -265,8 +245,7 @@ def home():
             📚 The coding companion can help you with coding-related questions, taking into account your educational background and coding styles used at Miami University. 
             
             Here, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF.""")
-        if st.button("Go to Coding Companion"):
-            switch_page("🖥 Coding Companion")
+        st.markdown("👈 **Select 'Coding Companion' from the top part of the navigation menu on the left to get started.**")
 
     if selected == 'Project Coach':
         st.info("""
@@ -278,8 +257,7 @@ def home():
           
           Here, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF. """
         )
-        if st.button("Go to Project Coach"):
-            switch_page("👩‍🏫 Project Coach")
+        st.markdown("👈 **Select 'Project Coach' from the top part of the navigation menu on the left to get started.**")
 
     if selected == 'Exam Ally':
         st.info("""
@@ -289,8 +267,7 @@ def home():
         
         P.S.: We do not store any of your data on our servers.
         """)
-        if st.button("Go to Exam Ally"):
-            switch_page("📝 Exam Ally")
+        st.markdown("👈 **Select 'Exam Ally' from the top part of the navigation menu on the left to get started.**")
 
     if selected == 'Interview Mentor':
         st.info("""
@@ -300,8 +277,7 @@ def home():
         
         P.S.: We do not store any of your data on our servers.
         """)
-        if st.button("Go to Interview Mentor"):
-            switch_page("👔 Interview Mentor")
+        st.markdown("👈 **Select 'Interview Mentor' from the top part of the navigation menu on the left to get started.**")
 
     if selected == 'AI Comparisons':
         st.info("""
@@ -311,8 +287,7 @@ def home():
         
         🧪 **Experimental feature** - Results may vary across models.
         """)
-        if st.button("Go to AI Comparisons"):
-            switch_page("⚖️ AI Comparisons")
+        st.markdown("👈 **Select 'AI Comparisons' from the top part of the navigation menu on the left to get started.**")
 
     sidebar.render_sidebar()
 

@@ -28,17 +28,29 @@ import streamlit as st
 # -----------------------------------------------------------------------------
 
 
-# Models:
-# -------
+# Import models from config
+from config import MODELS
+
+# Get all models for coding companion (all HF models + existing ones)
 models = [
+  # Commercial API models
   'gpt-5-chat-latest', 
   'gpt-5-mini-2025-08-07', 
   'claude-sonnet-4-20250514',
   'command-a-03-2025',
-  'qwen/qwen3-32b',
   'llama-3.3-70b-versatile', 
-  'llama-3.1-8b-instant'
-  ]
+  'llama-3.1-8b-instant',
+  # All HuggingFace models
+  'deepseek-ai/DeepSeek-R1-0528',
+  'deepseek-ai/DeepSeek-V3',
+  'Qwen/Qwen2.5-VL-32B-Instruct',
+  'Qwen/Qwen3-235B-A22B-Instruct-2507',
+  'Qwen/Qwen3-Coder-480B-A35B-Instruct',
+  'openai/gpt-oss-120b',
+  'openai/gpt-oss-20b',
+  'meta-llama/Llama-4-Scout-17B-16E-Instruct',
+  'meta-llama/Llama-4-Maverick-17B-128E-Instruct'
+]
 # -----------------------------------------------------------------------------
 
 
@@ -104,7 +116,11 @@ st.session_state.cur_page = THIS_PAGE
 # Streamlit Title:
 # ----------------
 st.set_page_config(page_title = "ChatISA Coding Companion", layout = "centered", page_icon='assets/favicon.png')
-st.markdown("## 💻 ChatISA: Coding Companion")
+
+# Import theme colors
+from config import THEME_COLORS
+
+st.markdown(f'<h2 style="color: {THEME_COLORS["primary"]};">ChatISA: Coding Companion</h2>', unsafe_allow_html=True)
 
 
 # -----------------------------------------------------------------------------

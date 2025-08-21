@@ -30,17 +30,22 @@ from pdf4llm import to_markdown
 # -----------------------------------------------------------------------------
 
 
-# Models:
-# -------
+# Import models from config
+from config import MODELS
+
+# Get representative larger models for project coach
 models = [
-  'gpt-5-chat-latest', 
-  'gpt-5-mini-2025-08-07', 
+  # Commercial API models  
+  'gpt-5-chat-latest',
   'claude-sonnet-4-20250514',
+  # Open Weight Model from Cohere
   'command-a-03-2025',
-  'qwen/qwen3-32b',
-  'llama-3.3-70b-versatile', 
-  'llama-3.1-8b-instant'
-  ]
+  # Representative larger HuggingFace models
+  'openai/gpt-oss-120b',
+  'Qwen/Qwen3-235B-A22B-Instruct-2507',
+  'deepseek-ai/DeepSeek-V3',
+  'meta-llama/Llama-4-Maverick-17B-128E-Instruct'
+]
 # -----------------------------------------------------------------------------
 
 
@@ -259,6 +264,9 @@ st.session_state.cur_page = THIS_PAGE
 # ----------------
 st.set_page_config(page_title = "ChatISA: Project Coach", layout = "centered", page_icon='assets/favicon.png')
 
+# Import theme colors
+from config import THEME_COLORS
+
 # -----------------------------------------------------------------------------
 
 
@@ -288,7 +296,7 @@ with st.sidebar.expander("Learn more about the roles"):
 
 # Streamlit Title:
 # ----------------
-st.markdown("## 🎯 ChatISA: Project Coach")
+st.markdown(f'<h2 style="color: {THEME_COLORS["primary"]};">ChatISA: Project Coach</h2>', unsafe_allow_html=True)
 
 
 # -----------------------------------------------------------------------------

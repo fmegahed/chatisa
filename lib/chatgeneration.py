@@ -12,6 +12,7 @@ from langchain_cohere import ChatCohere
 from langchain_mistralai import ChatMistralAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_groq import ChatGroq
+from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
 import streamlit as st
 import time
@@ -77,12 +78,24 @@ def generate_chat_completion(model, messages, temp=None, max_num_tokens=None):
                 temperature=temp, 
                 max_tokens=max_num_tokens
             )
-        elif provider == "groq":
+        elif provider == "groq" or provider == "meta (via Groq)":
             chat_model = ChatGroq(
                 model=model, 
                 temperature=temp, 
                 max_tokens=max_num_tokens
             )
+        elif provider == "huggingface_inference":
+            # Use HuggingFace Inference API
+            from config import HUGGINGFACEHUB_API_TOKEN
+            llm = HuggingFaceEndpoint(
+                repo_id=model,
+                temperature=temp,
+                max_new_tokens=max_num_tokens,
+                huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN,
+                task="text-generation",
+                provider="auto"
+            )
+            chat_model = ChatHuggingFace(llm=llm)
         else:
             raise ValueError(f"Provider '{provider}' not implemented")
             
@@ -183,7 +196,11 @@ def extract_token_usage(chat_response, provider, model):
             usage = chat_response.response_metadata['token_count']
             return usage['input_tokens'], usage['output_tokens']
             
-        elif provider == "groq":
+        elif provider == "groq" or provider == "meta (via Groq)":
+            usage = chat_response.response_metadata['token_usage']
+            return usage['prompt_tokens'], usage['completion_tokens']
+            
+        elif provider == "huggingface_inference":
             usage = chat_response.response_metadata['token_usage']
             return usage['prompt_tokens'], usage['completion_tokens']
             

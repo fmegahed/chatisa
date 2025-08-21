@@ -126,7 +126,9 @@ ensure_interview_state_defaults()
 
 # ============ FIRST SCREEN: Setup ============
 if not st.session_state.submitted_speech:
-    st.title("🎤 ChatISA: Interview Mentor")
+    # Import theme colors
+    from config import THEME_COLORS
+    st.markdown(f'<h1 style="color: {THEME_COLORS["primary"]};">ChatISA: Interview Mentor</h1>', unsafe_allow_html=True)
 
     # Mode toggle
     col_toggle1, _ = st.columns([1, 3])
@@ -155,11 +157,16 @@ if not st.session_state.submitted_speech:
     # Model selection (transcription)
     if use_transcription:
         transcription_models = [
+            # Commercial API models  
             'gpt-5-chat-latest',
-            'gpt-5-mini-2025-08-07',
             'claude-sonnet-4-20250514',
+            # Open Weight Model from Cohere
             'command-a-03-2025',
-            'llama-3.3-70b-versatile'
+            # Representative larger HuggingFace models
+            'openai/gpt-oss-120b',
+            'Qwen/Qwen3-235B-A22B-Instruct-2507',
+            'deepseek-ai/DeepSeek-V3',
+            'meta-llama/Llama-4-Maverick-17B-128E-Instruct'
         ]
         default_index = transcription_models.index(
             DEFAULT_MODELS.get('interview_mentor_transcription', 'gpt-5-chat-latest')
@@ -277,10 +284,13 @@ if not st.session_state.submitted_speech:
 if st.session_state.submitted_speech:
     submission = st.session_state.interview_submission or {}
 
+    # Import theme colors at module level to avoid repeated imports
+    from config import THEME_COLORS
+    
     if submission.get('interview_mode') == 'transcription':
-        st.title("🎤 Live Transcription Interview")
+        st.markdown(f'<h1 style="color: {THEME_COLORS["primary"]};">Live Transcription Interview</h1>', unsafe_allow_html=True)
     else:
-        st.title("🎤 Live Speech-to-Speech Interview")
+        st.markdown(f'<h1 style="color: {THEME_COLORS["primary"]};">Live Speech-to-Speech Interview</h1>', unsafe_allow_html=True)
 
     with st.expander("📋 Interview Details", expanded=False):
         c1, c2 = st.columns(2)

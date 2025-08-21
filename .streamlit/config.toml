@@ -1,0 +1,33 @@
+[theme]
+# Miami University Theme Colors for ChatISA
+# Based on official Miami University branding guidelines
+
+# Base theme (light mode)
+base = "light"
+
+# Primary brand color (Miami Red)
+primaryColor = "#c3142d"
+
+# Background color (Clean white)
+backgroundColor = "#ffffff"
+
+# Secondary background color (Light gray for sidebars, cards, etc.)
+secondaryBackgroundColor = "#f8f9fa"
+
+# Text color (Black for maximum readability)
+textColor = "#000000"
+
+# Additional Streamlit configuration
+[server]
+# Disable CORS for development (adjust for production as needed)
+enableCORS = false
+enableXsrfProtection = false
+
+[browser]
+# Automatically open browser when running locally
+gatherUsageStats = false
+
+[client]
+# Improve client performance
+caching = true
+displayEnabled = true

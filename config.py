@@ -12,7 +12,7 @@ load_dotenv(override=True)
 
 # ==================== Versioning and Date ====================
 DATE = "August 20, 2025"
-VERSION = "4.2.0"
+VERSION = "4.3.0"
 APP_NAME = "ChatISA"
 APP_DESCRIPTION = "Educational AI Assistant with Multiple LLM Support"
 
@@ -22,6 +22,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+HUGGINGFACEHUB_API_TOKEN = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 # ==================== LLM Model Configuration ====================
 # Available models with their configurations
@@ -38,7 +39,8 @@ MODELS = {
         "supports_vision": True,
         "supports_function_calling": True,
         "temperature_range": (0.0, 2.0),
-        "default_temperature": 0.7
+        "default_temperature": 0.7,
+        "open_weight": False
     },
     "gpt-5-mini-2025-08-07": {
         "provider": "openai",
@@ -51,7 +53,8 @@ MODELS = {
         "supports_vision": True,
         "supports_function_calling": True,
         "temperature_range": (0.0, 2.0),
-        "default_temperature": 0.7
+        "default_temperature": 0.7,
+        "open_weight": False
     },
     
     # Anthropic Models
@@ -66,7 +69,8 @@ MODELS = {
         "supports_vision": True,
         "supports_function_calling": True,
         "temperature_range": (0.0, 1.0),
-        "default_temperature": 0.7
+        "default_temperature": 0.7,
+        "open_weight": False
     },
     
     # Cohere Models
@@ -81,10 +85,11 @@ MODELS = {
         "supports_vision": False,
         "supports_function_calling": True,
         "temperature_range": (0.0, 1.0),
-        "default_temperature": 0.3
+        "default_temperature": 0.3,
+        "open_weight": True
     },
     
-    # Groq Models
+    # Groq Models (open-weight models via API)
     "llama-3.3-70b-versatile": {
         "provider": "meta (via Groq)",
         "display_name": "Llama 3.3 70B",
@@ -96,7 +101,8 @@ MODELS = {
         "supports_vision": False,
         "supports_function_calling": True,
         "temperature_range": (0.0, 2.0),
-        "default_temperature": 0.7
+        "default_temperature": 0.7,
+        "open_weight": True
     },
     "llama-3.1-8b-instant": {
         "provider": "meta (via Groq)",
@@ -109,7 +115,8 @@ MODELS = {
         "supports_vision": False,
         "supports_function_calling": True,
         "temperature_range": (0.0, 2.0),
-        "default_temperature": 0.7
+        "default_temperature": 0.7,
+        "open_weight": True
     },
     
     # OpenAI Realtime Model (for speech-to-speech interviews)
@@ -125,7 +132,153 @@ MODELS = {
         "supports_function_calling": False,
         "temperature_range": (0.6, 1.2),
         "default_temperature": 0.8,
-        "realtime_only": True
+        "realtime_only": True,
+        "open_weight": False
+    },
+    
+    # ==================== HuggingFace Inference API Models ====================
+    
+    # DeepSeek Models  
+    "deepseek-ai/DeepSeek-R1-0528": {
+        "provider": "huggingface_inference",
+        "display_name": "DeepSeek R1",
+        "description": "DeepSeek's advanced reasoning model",
+        "cost_per_1k_input": 0.0,  # Free tier
+        "cost_per_1k_output": 0.0,
+        "max_tokens": 8192,
+        "context_window": 32768,
+        "supports_vision": False,
+        "supports_function_calling": True,
+        "temperature_range": (0.0, 1.0),
+        "default_temperature": 0.7,
+        "inference_provider": "auto",
+        "open_weight": True
+    },
+    "deepseek-ai/DeepSeek-V3": {
+        "provider": "huggingface_inference",
+        "display_name": "DeepSeek V3",
+        "description": "DeepSeek's latest generation model",
+        "cost_per_1k_input": 0.0,  # Free tier
+        "cost_per_1k_output": 0.0,
+        "max_tokens": 8192,
+        "context_window": 64000,
+        "supports_vision": False,
+        "supports_function_calling": True,
+        "temperature_range": (0.0, 1.0),
+        "default_temperature": 0.7,
+        "inference_provider": "auto",
+        "open_weight": True
+    },
+    
+    # Qwen Models
+    "Qwen/Qwen2.5-VL-32B-Instruct": {
+        "provider": "huggingface_inference", 
+        "display_name": "Qwen 2.5 VL 32B Instruct",
+        "description": "Advanced multimodal model with image and text capabilities",
+        "cost_per_1k_input": 0.0,  # Free tier
+        "cost_per_1k_output": 0.0,
+        "max_tokens": 8192,
+        "context_window": 32000,
+        "supports_vision": True,
+        "supports_function_calling": True,
+        "temperature_range": (0.0, 1.0),
+        "default_temperature": 0.7,
+        "inference_provider": "auto",
+        "open_weight": True
+    },
+    "Qwen/Qwen3-235B-A22B-Instruct-2507": {
+        "provider": "huggingface_inference",
+        "display_name": "Qwen 3 235B Instruct",
+        "description": "Large-scale Qwen text model with advanced reasoning",
+        "cost_per_1k_input": 0.0,  # Free tier
+        "cost_per_1k_output": 0.0,
+        "max_tokens": 8192,
+        "context_window": 128000,
+        "supports_vision": False,
+        "supports_function_calling": True,
+        "temperature_range": (0.0, 1.0),
+        "default_temperature": 0.7,
+        "inference_provider": "auto",
+        "open_weight": True
+    },
+    "Qwen/Qwen3-Coder-480B-A35B-Instruct": {
+        "provider": "huggingface_inference",
+        "display_name": "Qwen 3 Coder 480B Instruct",
+        "description": "Specialized coding model with advanced programming capabilities",
+        "cost_per_1k_input": 0.0,  # Free tier
+        "cost_per_1k_output": 0.0,
+        "max_tokens": 8192,
+        "context_window": 128000,
+        "supports_vision": False,
+        "supports_function_calling": True,
+        "temperature_range": (0.0, 1.0),
+        "default_temperature": 0.7,
+        "inference_provider": "auto",
+        "open_weight": True
+    },
+    
+    # OpenAI OSS Models
+    "openai/gpt-oss-120b": {
+        "provider": "huggingface_inference",
+        "display_name": "GPT OSS 120B",
+        "description": "OpenAI's open-source model with MoE architecture",
+        "cost_per_1k_input": 0.0,  # Free tier
+        "cost_per_1k_output": 0.0,
+        "max_tokens": 4096,
+        "context_window": 128000,
+        "supports_vision": False,
+        "supports_function_calling": True,
+        "temperature_range": (0.0, 2.0),
+        "default_temperature": 0.7,
+        "inference_provider": "auto",
+        "open_weight": True
+    },
+    "openai/gpt-oss-20b": {
+        "provider": "huggingface_inference",
+        "display_name": "GPT OSS 20B",
+        "description": "Compact OpenAI open-source model",
+        "cost_per_1k_input": 0.0,
+        "cost_per_1k_output": 0.0,
+        "max_tokens": 4096,
+        "context_window": 128000,
+        "supports_vision": False,
+        "supports_function_calling": True,
+        "temperature_range": (0.0, 2.0),
+        "default_temperature": 0.7,
+        "inference_provider": "auto",
+        "open_weight": True
+    },
+    
+    # Meta Llama-4 Models
+    "meta-llama/Llama-4-Scout-17B-16E-Instruct": {
+        "provider": "huggingface_inference",
+        "display_name": "Llama 4 Scout 17B",
+        "description": "Meta's efficient multimodal model",
+        "cost_per_1k_input": 0.0,
+        "cost_per_1k_output": 0.0,
+        "max_tokens": 4096,
+        "context_window": 128000,
+        "supports_vision": True,
+        "supports_function_calling": True,
+        "temperature_range": (0.0, 2.0),
+        "default_temperature": 0.7,
+        "inference_provider": "auto",
+        "open_weight": True
+    },
+    "meta-llama/Llama-4-Maverick-17B-128E-Instruct": {
+        "provider": "huggingface_inference",
+        "display_name": "Llama 4 Maverick 17B",
+        "description": "Meta's high-capacity multimodal model",
+        "cost_per_1k_input": 0.0,
+        "cost_per_1k_output": 0.0,
+        "max_tokens": 4096,
+        "context_window": 128000,
+        "supports_vision": True,
+        "supports_function_calling": True,
+        "temperature_range": (0.0, 2.0),
+        "default_temperature": 0.7,
+        "inference_provider": "auto",
+        "open_weight": True
     }
 }
 
@@ -146,7 +299,49 @@ MODEL_GROUPS = {
     "anthropic": ["claude-sonnet-4-20250514"],
     "cohere": ["command-a-03-2025"],
     "groq": ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
-    "vision_capable": ["gpt-5-chat-latest", "gpt-5-mini-2025-08-07", "claude-sonnet-4-20250514"]
+    "vision_capable": [
+        "gpt-5-chat-latest", 
+        "claude-sonnet-4-20250514",
+        "Qwen/Qwen2.5-VL-32B-Instruct",
+        "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+        "meta-llama/Llama-4-Maverick-17B-128E-Instruct"
+    ],
+    "open_weight": [m for m, config in MODELS.items() if config.get("open_weight", False)]
+}
+
+# Model categories for organized UI selection
+MODEL_CATEGORIES = {
+    "commercial_api": {
+        "display_name": "Commercial APIs",
+        "description": "Premium hosted models with guaranteed SLAs",
+        "models": ["gpt-5-chat-latest", "gpt-5-mini-2025-08-07", "claude-sonnet-4-20250514", "command-a-03-2025"]
+    },
+    "hf_multimodal": {
+        "display_name": "Multimodal (HF)",
+        "description": "Vision and image processing capabilities",
+        "models": [
+            "Qwen/Qwen2.5-VL-32B-Instruct",
+            "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+            "meta-llama/Llama-4-Maverick-17B-128E-Instruct"
+        ]
+    },
+    "hf_text": {
+        "display_name": "Text-Only (HF)",
+        "description": "High-quality text generation via serverless API",
+        "models": [
+            "deepseek-ai/DeepSeek-R1-0528",
+            "deepseek-ai/DeepSeek-V3",
+            "Qwen/Qwen3-235B-A22B-Instruct-2507",
+            "Qwen/Qwen3-Coder-480B-A35B-Instruct",
+            "openai/gpt-oss-120b", 
+            "openai/gpt-oss-20b"
+        ]
+    },
+    "hosted_fast": {
+        "display_name": "Fast Processing (Groq)",
+        "description": "Ultra-fast processing via Groq hardware",
+        "models": ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
+    }
 }
 
 # ==================== Speech Configuration ====================
@@ -201,7 +396,7 @@ Current Task: {task}
         "icon": "📝",
         "description": "Exam preparation with PDF-based question generation",
         "default_temperature": 0.3,
-        "max_tokens": 4000,
+        "max_tokens": 8000,
         "max_pdf_pages": 10,
         "question_types": ["multiple_choice", "short_answer", "essay", "true_false"]
     },
@@ -210,7 +405,7 @@ Current Task: {task}
         "icon": "👔",
         "description": "Speech-to-speech technical interview preparation",
         "default_temperature": 0.25,
-        "max_tokens": 6000,
+        "max_tokens": 8000,
         "max_pdf_pages": 2,
         "speech_enabled": True,
         "auto_summary": True,
@@ -232,7 +427,7 @@ Current Task: {task}
         "description": "Compare AI model responses side-by-side with support for text, images, and PDFs",
         "default_temperature": 0.3,
         "max_tokens": 2000,
-        "default_models": ["gpt-5-chat-latest", "claude-sonnet-4-20250514", "command-a-03-2025"],
+        "default_models": ["gpt-5-chat-latest", "claude-sonnet-4-20250514", "Qwen/Qwen2.5-VL-32B-Instruct"],
         "supports_file_upload": True,
         "supports_images": True,
         "experimental": True,
@@ -381,7 +576,18 @@ REQUIRED_API_KEYS = {
     "OPENAI_API_KEY": ["gpt-5-chat-latest", "gpt-5-mini-2025-08-07", "gpt-4o-realtime-preview-2025-06-03"],
     "ANTHROPIC_API_KEY": ["claude-sonnet-4-20250514"],
     "COHERE_API_KEY": ["command-a-03-2025"],
-    "GROQ_API_KEY": ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
+    "GROQ_API_KEY": ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
+    "HUGGINGFACEHUB_API_TOKEN": [
+        "deepseek-ai/DeepSeek-R1-0528",
+        "deepseek-ai/DeepSeek-V3",
+        "Qwen/Qwen2.5-VL-32B-Instruct",
+        "Qwen/Qwen3-235B-A22B-Instruct-2507",
+        "Qwen/Qwen3-Coder-480B-A35B-Instruct",
+        "openai/gpt-oss-120b", 
+        "openai/gpt-oss-20b",
+        "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+        "meta-llama/Llama-4-Maverick-17B-128E-Instruct"
+    ]
 }
 
 def validate_api_keys() -> dict:
@@ -501,10 +707,10 @@ def print_config_summary():
 # ==================== Export this configuration ====================
 __all__ = [
     'APP_NAME', 'VERSION', 'DATE', 'APP_DESCRIPTION',
-    'MODELS', 'DEFAULT_MODELS', 'MODEL_GROUPS', 'PAGES', 'ACADEMIC_LEVELS', 'MAJORS',
+    'MODELS', 'DEFAULT_MODELS', 'MODEL_GROUPS', 'MODEL_CATEGORIES', 'PAGES', 'ACADEMIC_LEVELS', 'MAJORS',
     'PAGE_CONFIG', 'SIDEBAR_CONFIG', 'THEME_COLORS', 'FEATURES',
     'calculate_cost', 'get_model_display_name', 'validate_api_keys', 'get_system_info', 'validate_environment', 'print_config_summary',
-    'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'COHERE_API_KEY', 'GROQ_API_KEY',
+    'OPENAI_API_KEY', 'ANTHROPIC_API_KEY', 'COHERE_API_KEY', 'GROQ_API_KEY', 'HUGGINGFACEHUB_API_TOKEN',
     'OPENAI_REALTIME_MODEL', 'REALTIME_VOICES', 'DEFAULT_REALTIME_VOICE', 'TTS_VOICES', 'DEFAULT_TTS_VOICE',
     'MAX_RETRIES', 'TIMEOUT_SECONDS', 'ENABLE_CACHING'
 ]

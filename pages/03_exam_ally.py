@@ -17,14 +17,22 @@ from pdf4llm import to_markdown
 
 # ------------------------------------------------------------------------------
 
-# Models:
-# -------
+# Import models from config
+from config import MODELS
+
+# Get same models as project coach
 models = [
-  'gpt-5-chat-latest',  
+  # Commercial API models  
+  'gpt-5-chat-latest',
   'claude-sonnet-4-20250514',
+  # Open Weight Model from Cohere
   'command-a-03-2025',
-  'llama-3.3-70b-versatile'
-  ]
+  # Representative larger HuggingFace models
+  'openai/gpt-oss-120b',
+  'Qwen/Qwen3-235B-A22B-Instruct-2507',
+  'deepseek-ai/DeepSeek-V3',
+  'meta-llama/Llama-4-Maverick-17B-128E-Instruct'
+]
 # -----------------------------------------------------------------------------
 
 
@@ -69,7 +77,11 @@ st.session_state.cur_page = THIS_PAGE
 # Streamlit Application:
 # ----------------------
 st.set_page_config(page_title = "ChatISA: Exam Ally", layout = "centered", page_icon='assets/favicon.png')
-st.markdown("## 📝 ChatISA: Project Coach")
+
+# Import theme colors
+from config import THEME_COLORS
+
+st.markdown(f'<h2 style="color: {THEME_COLORS["primary"]};">ChatISA: Exam Ally</h2>', unsafe_allow_html=True)
 
 
 # First "Screen" of the Exam Ally:

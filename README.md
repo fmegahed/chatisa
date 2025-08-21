@@ -1,4 +1,4 @@
-# ChatISA v4.2.0
+# ChatISA v4.3.0
 
 <div align="center">
 
@@ -6,7 +6,7 @@
 
 **🤖 Educational AI Assistant with Multiple LLM Support**
 
-[![Version](https://img.shields.io/badge/version-4.2.0-blue.svg)](https://github.com/fmegahed/chatisa)
+[![Version](https://img.shields.io/badge/version-4.3.0-blue.svg)](https://github.com/fmegahed/chatisa)
 [![Python](https://img.shields.io/badge/python-3.11--3.12-blue.svg)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/streamlit-1.48%2B-red.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -21,7 +21,7 @@ ChatISA is an educational Streamlit web application that provides students acces
 
 ### 🎯 Key Features
 
-- **Multi-Model Support**: Access to 7+ leading AI models (OpenAI, Anthropic, Cohere, Groq)
+- **Multi-Model Support**: Access to 16 leading AI models (OpenAI, Anthropic, Cohere, Meta/Groq, HuggingFace)
 - **Five Learning Modules**: Coding Companion, Project Coach, Exam Ally, Interview Mentor, AI Comparisons
 - **Speech-to-Speech**: Real-time voice interaction using OpenAI Realtime API
 - **Document Processing**: Native PDF, image, and document analysis for supported models
@@ -79,6 +79,7 @@ Compare AI model responses side-by-side with minimal system prompts. Native supp
    ANTHROPIC_API_KEY=your_anthropic_key_here
    COHERE_API_KEY=your_cohere_key_here
    GROQ_API_KEY=your_groq_key_here
+   HUGGINGFACEHUB_API_TOKEN=your_huggingface_token_here
    ```
 
 3. **Launch the application**
@@ -175,6 +176,17 @@ Version 4.1 eliminates separate FastAPI server by embedding OpenAI Realtime API 
 | **Cohere** | Command A | ❌ | ❌ | Business writing |
 | **Groq** | Llama 3.3 70B | ❌ | ❌ | High performance |
 | | Llama 3.1 8B | ❌ | ❌ | Ultra-fast |
+| **HuggingFace** | DeepSeek R1 | ❌ | ❌ | Reasoning model |
+| | DeepSeek V3 | ❌ | ❌ | Large language model |
+| | Qwen 2.5 VL 32B | ✅ | ❌ | Vision-language |
+| | Qwen 3 235B | ❌ | ❌ | Ultra-large model |
+| | Qwen 3 Coder 480B | ❌ | ❌ | Code generation |
+| | OpenAI OSS 120B | ❌ | ❌ | Open-source GPT |
+| | OpenAI OSS 20B | ❌ | ❌ | Lightweight OSS |
+| | Llama 4 Scout | ❌ | ❌ | Fast inference |
+| | Llama 4 Maverick | ❌ | ❌ | High performance |
+
+*Total: 16 models across 5 providers*
 
 ### Project Structure
 
@@ -263,7 +275,7 @@ MIT License - Free to use, modify, and distribute. See [LICENSE](LICENSE) for de
 
 **Built with ❤️ for educational excellence**
 
-*ChatISA v4.1 - Making AI accessible, responsible, and educational*
+*ChatISA v4.3.0 - Making AI accessible, responsible, and educational*
 
 **[⭐ Star us on GitHub](https://github.com/fmegahed/chatisa)**
 

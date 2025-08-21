@@ -77,7 +77,8 @@ def get_model_display_info(model: str) -> Dict[str, str]:
             'anthropic': '#D4A574', 
             'cohere': '#39CCCC',
             'meta (via groq)': '#4285F4',
-            'groq': '#4285F4'
+            'groq': '#4285F4',
+            'huggingface_inference': '#FF6B35'
         }
         
         return {
@@ -320,6 +321,28 @@ def get_model_response_proper(model: str, uploaded_files: List, prompt: str) -> 
                 temperature=TEMPERATURE,
                 max_tokens=MAX_TOKENS
             )
+        elif provider == 'huggingface_inference':
+            # Use chatgeneration module for HF models since it has proper setup
+            from lib.chatgeneration import generate_chat_completion
+            # Convert message format for chatgeneration
+            messages_for_hf = [message]
+            response_text, input_tokens, output_tokens = generate_chat_completion(
+                model=model,
+                messages=messages_for_hf,
+                temp=TEMPERATURE,
+                max_num_tokens=MAX_TOKENS
+            )
+            
+            # Return in expected format
+            return {
+                "model": model,
+                "response": response_text,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "success": True,
+                "error": None,
+                "response_time_ms": 0  # Time tracking handled in chatgeneration
+            }
         else:
             # Fallback to init_chat_model for other providers
             langchain_model = get_langchain_model_name(model)
@@ -382,7 +405,11 @@ def get_model_response_proper(model: str, uploaded_files: List, prompt: str) -> 
 # Streamlit Page Configuration:
 # -----------------------------
 st.set_page_config(page_title="ChatISA: AI Comparisons", layout="wide", page_icon='assets/favicon.png')
-st.markdown("## ⚖️ ChatISA: AI Comparisons")
+
+# Import theme colors
+from config import THEME_COLORS
+
+st.markdown(f'<h2 style="color: {THEME_COLORS["primary"]};">ChatISA: AI Comparisons</h2>', unsafe_allow_html=True)
 st.markdown("*Compare AI model responses side-by-side with vision and document support*")
 
 # Info box
@@ -397,29 +424,72 @@ st.info(
 with st.sidebar:
     st.markdown("### ⚖️ AI Comparison Settings")
     
-    # Model selection
+    # Model selection with grouped checkboxes
     st.markdown("#### Select Models to Compare:")
+    st.markdown("*Choose models from different categories using checkboxes*")
     
-    # Group models by provider for better organization
-    openai_models = [m for m in ALL_AVAILABLE_MODELS if MODELS[m]['provider'] == 'openai']
-    anthropic_models = [m for m in ALL_AVAILABLE_MODELS if MODELS[m]['provider'] == 'anthropic']
-    cohere_models = [m for m in ALL_AVAILABLE_MODELS if MODELS[m]['provider'] == 'cohere']
-    groq_models = [m for m in ALL_AVAILABLE_MODELS if 'groq' in MODELS[m]['provider'].lower()]
+    from config import MODEL_CATEGORIES
     
-    all_selectable_models = openai_models + anthropic_models + cohere_models + groq_models
+    # Initialize selected models if not in session state
+    if 'checkbox_selected_models' not in st.session_state:
+        st.session_state.checkbox_selected_models = DEFAULT_MODELS.copy()
     
-    # Multi-select for models
-    selected_models = st.multiselect(
-        "Choose models (2-4 recommended):",
-        options=all_selectable_models,
-        default=st.session_state.selected_models,
-        format_func=lambda x: get_model_display_info(x)['name'],
-        help="Select 2-4 models for optimal comparison viewing"
-    )
+    selected_models = []
     
-    # Update session state
-    if selected_models:
+    # Create vertical layout with headers and checkboxes
+    st.markdown("---")
+    
+    for category_key, category_info in MODEL_CATEGORIES.items():
+        # Check if this category has any available models
+        category_models = [m for m in category_info['models'] if m in MODELS and m in ALL_AVAILABLE_MODELS]
+        if not category_models:
+            continue
+            
+        # Category header
+        st.markdown(f"### {category_info['display_name']}")
+        st.markdown(f"*{category_info['description']}*")
+        
+        # Create columns for better layout (2 columns for models)
+        cols = st.columns(2)
+        
+        for i, model in enumerate(category_models):
+            model_config = MODELS[model]
+            model_display = model_config['display_name']
+            
+            # Add indicators for special capabilities
+            indicators = []
+            if model_config.get('supports_vision', False):
+                indicators.append("👁️ Vision")
+            if model_config.get('open_weight', False):
+                indicators.append("🔓 Open")
+            if model_config.get('cost_per_1k_input', 1) == 0:
+                indicators.append("💰 Free")
+            
+            indicator_text = f" ({', '.join(indicators)})" if indicators else ""
+            
+            # Check if this model should be selected by default
+            default_selected = model in st.session_state.checkbox_selected_models
+            
+            # Alternate between columns
+            with cols[i % 2]:
+                if st.checkbox(
+                    f"{model_display}{indicator_text}",
+                    value=default_selected,
+                    key=f"model_checkbox_{model}",
+                    help=f"{model_config['description']} | Provider: {model_config['provider'].title()}"
+                ):
+                    selected_models.append(model)
+        
+        # Add some spacing between categories
+        st.markdown("---")
+    
+    # Update session state with newly selected models
+    if selected_models != st.session_state.checkbox_selected_models:
+        st.session_state.checkbox_selected_models = selected_models
         st.session_state.selected_models = selected_models
+    elif not selected_models:
+        # Keep the previous selection if no checkboxes are currently selected
+        selected_models = st.session_state.selected_models
     
     # Show selected models info with vision capability
     if st.session_state.selected_models:

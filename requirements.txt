@@ -1,4 +1,4 @@
-# ChatISA v3.1.0 Requirements - Exact Versions
+# ChatISA v4.3.0 Requirements - Exact Versions
 # Generated from production conda environment using # pip freeze
 # Use: conda create --name chatisa --file requirements.txt
 
@@ -67,6 +67,7 @@ langchain-community==0.3.27
 langchain-core==0.3.74
 langchain-google-genai==2.1.9
 langchain-groq==0.3.7
+langchain-huggingface==0.3.1
 langchain-mistralai==0.2.11
 langchain-openai==0.3.30
 langchain-text-splitters==0.3.9
