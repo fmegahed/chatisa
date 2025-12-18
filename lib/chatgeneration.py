@@ -203,7 +203,21 @@ def generate_chat_completion(model, messages, temp=None, max_num_tokens=None):
         # Don't let logging errors break the main functionality
         print(f"Warning: Failed to log usage: {log_error}")
 
-    return chat_response.content, input_tokens, output_tokens
+    # Ensure content is a string (Gemini can return a list of content parts instead of
+    # a string, causing "TypeError: can only concatenate str (not 'list') to str")
+    content = chat_response.content
+    if isinstance(content, list):
+        parts = []
+        for part in content:
+            if isinstance(part, str):
+                parts.append(part)
+            elif isinstance(part, dict) and 'text' in part:
+                parts.append(part['text'])
+            else:
+                parts.append(str(part))
+        content = "".join(parts)
+
+    return content, input_tokens, output_tokens
 
 def extract_token_usage(chat_response, provider, model):
     """

@@ -4,6 +4,13 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v5.0.2 - December 18, 2025
+
+### Bug Fix
+- Fixed Gemini models returning list instead of string causing TypeError
+
+---
+
 ## v5.0.1 - December 18, 2025
 
 ### Changes
