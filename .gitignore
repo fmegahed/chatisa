@@ -16,3 +16,4 @@ __pycache__/
 .claude/settings.local.json
 CLAUDE.md
 *.tmp.*
+*.backup_20251029
