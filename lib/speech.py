@@ -36,7 +36,7 @@ def ensure_interview_state_defaults():
 def check_realtime_ready() -> bool:
     return bool(OPENAI_API_KEY or os.getenv("OPENAI_API_KEY"))
 
-# ------------ PDF → markdown (PyMuPDF4LLM) ------------
+# ------------ PDF -> markdown (PyMuPDF4LLM) ------------
 def pdf_to_markdown(pdf_bytes: bytes) -> str:
     """
     Convert uploaded resume PDF bytes to markdown using PyMuPDF4LLM.

@@ -1,4 +1,4 @@
-﻿
+
 
 # About this code:
 # ----------------
@@ -19,6 +19,7 @@ import os # Standard Library
 
 # Our Own Modules
 from lib import chatpdf, chatgeneration, sidebar
+from lib.ui import apply_theme_css
 
 # Third-Party Libraries
 from dotenv import load_dotenv
@@ -31,21 +32,11 @@ from pdf4llm import to_markdown
 
 
 # Import models from config
-from config import MODELS
+from config import MODELS, get_page_models, THEME_COLORS, PAGE_ICON
 
-# Get representative larger models for project coach
-models = [
-  # Commercial API models  
-  'gpt-5-chat-latest',
-  'claude-sonnet-4-20250514',
-  # Open Weight Model from Cohere
-  'command-a-03-2025',
-  # Representative larger HuggingFace models
-  'openai/gpt-oss-120b',
-  'Qwen/Qwen3-235B-A22B-Instruct-2507',
-  'deepseek-ai/DeepSeek-V3',
-  'meta-llama/Llama-4-Maverick-17B-128E-Instruct'
-]
+# Get models for project coach dynamically from config
+# Filtered to show larger models good at reasoning and context understanding
+models = get_page_models("project_coach")
 # -----------------------------------------------------------------------------
 
 
@@ -68,18 +59,18 @@ project_scoping_document = to_markdown('assets/project_scoping_worksheet.pdf')
 
 devils_advocate_prompt = (
     "You are a friendly helpful team member who helps their teammates think through decisions. Your "
-    "role is to play devil’s advocate. Do not reveal your plans to student. Wait for student to respond "
+    "role is to play devil's advocate. Do not reveal your plans to student. Wait for student to respond "
     "to each question before moving on. Ask 1 question at a time. Reflect on and carefully plan ahead "
     "of each step. First introduce yourself to the student as their AI teammate who wants to help "
     "students reconsider decisions from a different point of view. Ask the student What is a recent "
     "team decision you have made or are considering? Wait for student response. Then tell the "
     "student that while this may be a good decision, sometimes groups can fall into a consensus trap "
-    "of not wanting to question the groups’ decisions and its your job to play devil’s advocate. That "
-    "doesn’t mean the decision is wrong only that its always worth questioning the decision. Then ask the student: can you think of some alternative points of view? And what the potential drawbacks "
+    "of not wanting to question the groups' decisions and its your job to play devil's advocate. That "
+    "doesn't mean the decision is wrong only that its always worth questioning the decision. Then ask the student: can you think of some alternative points of view? And what the potential drawbacks "
     "if you proceed with this decision? Wait for the student to respond. You can follow up your "
     "interaction by asking more questions such as what data or evidence support your decision and "
     "what assumptions are you making? If the student struggles, you can try to answer some of these "
-    "questions. Explain to the student that whatever their final decision, it’s always worth questioning "
+    "questions. Explain to the student that whatever their final decision, it's always worth questioning "
     "any group choice. Wrap up the conversation by telling the student you are here to help."
   )
   
@@ -90,7 +81,7 @@ structuring_prompt =  (
     "their AI teammate and ask students to tell you in detail about their project. Wait for student "
     "response. Then once you know about the project, tell students that effective teams understand "
     "and use the skills and expertise of their team members. Ask students to list their team members "
-    "and the skills each team member has. Explain that if they don’t know about each others’ skills, "
+    "and the skills each team member has. Explain that if they don't know about each others' skills, "
     "now is the time to find out so they can plan for the project. Wait for student response. Then ask "
     "students that with these skill sets in mind, how they can imagine organizing their team tasks. Tell "
     "teams that you can help if they need it. If students ask for help, suggest ways to use skills so that "
@@ -126,7 +117,7 @@ premortem_prompt = (
 
 reflective_prompt = (
     "You are a helpful friendly coach helping a student reflect on their recent team experience. "
-    "Introduce yourself. Explain that you’re here as their coach to help them reflect on the experience. "
+    "Introduce yourself. Explain that you're here as their coach to help them reflect on the experience. "
     "Think step by step and wait for the student to answer before doing anything else. "
     "Do not share your plan with students. Reflect on each step of the conversation and then decide what to do next. "
     "Ask only 1 question at a time. \n"
@@ -262,17 +253,34 @@ st.session_state.cur_page = THIS_PAGE
 
 # Streamlit Title:
 # ----------------
-st.set_page_config(page_title = "ChatISA: Project Coach", layout = "centered", page_icon='assets/favicon.png')
+st.set_page_config(page_title = "ChatISA: Project Coach", layout = "centered", page_icon=PAGE_ICON)
+apply_theme_css()
 
 # Import theme colors
-from config import THEME_COLORS
 
 # -----------------------------------------------------------------------------
 
 
+# The Streamlit Interface:
+# ------------------------
+
+# Streamlit Title:
+# ----------------
+st.markdown(f'<h2 style="color: {THEME_COLORS["primary"]};">ChatISA: Project Coach</h2>', unsafe_allow_html=True)
+
+
+# -----------------------------------------------------------------------------
+# Render the sidebar with Role Selection between Navigation and Model Selection
+# -----------------------------------------------------------------------------
+# First render navigation
+sidebar.render_navigation()
+
 # Radio Button to Select Role:
 # ----------------------------
-st.sidebar.markdown("### What Role you Want the AI to Play")
+st.sidebar.markdown(
+    f'<h3 style="color: {THEME_COLORS["primary"]};">Coach Role</h3>',
+    unsafe_allow_html=True
+)
 role = st.sidebar.radio(
     "Select the role you want the AI to play:",
     ["Devil's Advocate", "Premortem Coach", "Project Scoping Coach", "Reflection Coach", "Team Structuring Coach"],
@@ -290,19 +298,8 @@ with st.sidebar.expander("Learn more about the roles"):
     st.write("**Reflection Coach**: Assists teams in reflecting on their experiences in a structured way to derive lessons and insights.")
     st.write("**Team Structuring Coach**: Helps teams recognize and make use of the resources and expertise within the team.")
 
-
-# The Streamlit Interface:
-# ------------------------
-
-# Streamlit Title:
-# ----------------
-st.markdown(f'<h2 style="color: {THEME_COLORS["primary"]};">ChatISA: Project Coach</h2>', unsafe_allow_html=True)
-
-
-# -----------------------------------------------------------------------------
-# Render the sidebar
-# -----------------------------------------------------------------------------
-sidebar.render_sidebar()
+# Now render rest of sidebar (skip navigation since we already rendered it)
+sidebar.render_sidebar(skip_navigation=True)
 # -----------------------------------------------------------------------------
     
 
@@ -341,7 +338,7 @@ if prompt := st.chat_input("Discuss your project: current (devil's advocate, sco
     # extracting the response, input tokens, and output tokens
     response, input_tokens, output_tokens = outputs
     full_response += response
-    message_placeholder.markdown(full_response + "▌")
+    message_placeholder.markdown(full_response)
     
     # Update the token counts for the specific model in session state
     st.session_state.token_counts[st.session_state.model_choice]['input_tokens'] += input_tokens

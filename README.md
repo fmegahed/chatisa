@@ -1,4 +1,4 @@
-# ChatISA v4.3.0
+# ChatISA v5.0.0
 
 <div align="center">
 
@@ -6,7 +6,7 @@
 
 **🤖 Educational AI Assistant with Multiple LLM Support**
 
-[![Version](https://img.shields.io/badge/version-4.3.0-blue.svg)](https://github.com/fmegahed/chatisa)
+[![Version](https://img.shields.io/badge/version-5.0.0-blue.svg)](https://github.com/fmegahed/chatisa)
 [![Python](https://img.shields.io/badge/python-3.11--3.12-blue.svg)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/streamlit-1.48%2B-red.svg)](https://streamlit.io)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -17,13 +17,14 @@
 
 ## 📖 Overview
 
-ChatISA is an educational Streamlit web application that provides students access to multiple leading AI models through five specialized learning interfaces. Built for responsible academic use, it offers free access to cutting-edge AI technology with costs sponsored by industry partners.
+ChatISA is an educational Streamlit web application that provides students access to multiple leading AI models through six specialized learning interfaces. Built for responsible academic use, it offers free access to cutting-edge AI technology with costs sponsored by industry partners.
 
 ### 🎯 Key Features
 
-- **Multi-Model Support**: Access to 16 leading AI models (OpenAI, Anthropic, Cohere, Meta/Groq, HuggingFace)
-- **Five Learning Modules**: Coding Companion, Project Coach, Exam Ally, Interview Mentor, AI Comparisons
+- **Multi-Model Support**: Access to 17 leading AI models (OpenAI, Anthropic, Google, Cohere, Meta/Groq, HuggingFace)
+- **Six Learning Modules**: Coding Companion, Project Coach, Exam Ally, Interview Mentor, AI Sandbox, AI Comparisons
 - **Speech-to-Speech**: Real-time voice interaction using OpenAI Realtime API
+- **Code Execution**: AI Sandbox with Python code interpreter for data analysis and visualizations
 - **Document Processing**: Native PDF, image, and document analysis for supported models
 - **Model Comparison**: Side-by-side AI responses with minimal system prompts
 - **Educational Focus**: Purpose-built for responsible academic use
@@ -36,13 +37,13 @@ ChatISA is an educational Streamlit web application that provides students acces
 
 ---
 
-## 🛠️ Five Learning Modules
+## 🛠️ Six Learning Modules
 
 ### 1. 💻 **Coding Companion**
 Programming help with educational context. Features code generation, debugging assistance, and concept explanations for R, Python, and data analysis.
 
-### 2. 🎯 **Project Coach**
-Team project guidance with specialized coaching roles including Project Manager, Risk Analyst, Team Advisor, and Devil's Advocate.
+### 2. 📋 **Project Coach**
+Team project guidance with specialized coaching roles including Devil's Advocate, Premortem Coach, Project Scoping Coach, Reflection Coach, and Team Structuring Coach.
 
 ### 3. 📝 **Exam Ally**
 Transform study materials into personalized practice exams. Upload PDFs and generate targeted questions with adaptive difficulty.
@@ -50,7 +51,10 @@ Transform study materials into personalized practice exams. Upload PDFs and gene
 ### 4. 🎤 **Interview Mentor**
 Real-time speech-to-speech interview practice using OpenAI's Realtime API. Upload resume and job descriptions for tailored experiences.
 
-### 5. ⚖️ **AI Comparisons**
+### 5. 🧪 **AI Sandbox**
+Python code execution environment powered by OpenAI's Responses API. Analyze data, create visualizations, solve math problems, and process uploaded files in a secure sandbox.
+
+### 6. 📊 **AI Comparisons**
 Compare AI model responses side-by-side with minimal system prompts. Native support for images, PDFs, and documents (OpenAI and Anthropic models).
 
 ---
@@ -186,7 +190,7 @@ Version 4.1 eliminates separate FastAPI server by embedding OpenAI Realtime API 
 | | Llama 4 Scout | ❌ | ❌ | Fast inference |
 | | Llama 4 Maverick | ❌ | ❌ | High performance |
 
-*Total: 16 models across 5 providers*
+*Total: 17 models across 6 providers (including GPT-4o Realtime for speech)*
 
 ### Project Structure
 
@@ -194,17 +198,19 @@ Version 4.1 eliminates separate FastAPI server by embedding OpenAI Realtime API 
 chatisa/
 ├── chatgpt.py              # Main application & token minting
 ├── config.py               # Centralized configuration
-├── pages/                  # Five specialized modules
+├── pages/                  # Six specialized modules
 │   ├── 01_coding_companion.py
 │   ├── 02_project_coach.py
 │   ├── 03_exam_ally.py
 │   ├── 04_interview_mentor.py
-│   └── 05_ai_comparisons.py
+│   ├── 05_ai_sandbox.py
+│   └── 06_ai_comparisons.py
 ├── lib/                    # Shared utilities
 │   ├── chatgeneration.py   # LLM integration
 │   ├── chatpdf.py         # PDF processing
 │   ├── sidebar.py         # Common UI components
-│   └── speech.py          # Speech functionality
+│   ├── speech.py          # Speech functionality
+│   └── ui.py              # Theme and styling
 └── ssl/                   # SSL certificates (production)
 ```
 
@@ -275,7 +281,7 @@ MIT License - Free to use, modify, and distribute. See [LICENSE](LICENSE) for de
 
 **Built with ❤️ for educational excellence**
 
-*ChatISA v4.3.0 - Making AI accessible, responsible, and educational*
+*ChatISA v5.0.0 - Making AI accessible, responsible, and educational*
 
 **[⭐ Star us on GitHub](https://github.com/fmegahed/chatisa)**
 

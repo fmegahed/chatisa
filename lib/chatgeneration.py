@@ -47,8 +47,10 @@ def generate_chat_completion(model, messages, temp=None, max_num_tokens=None):
     # Use config defaults if not specified
     if temp is None:
         temp = model_config["default_temperature"]
-    if max_num_tokens is None:
-        max_num_tokens = model_config["max_tokens"]
+
+    # Always use the model's configured max_tokens to ensure proper operation
+    # (some models like Gemini 3 Pro use reasoning tokens that count against the limit)
+    max_num_tokens = model_config["max_tokens"]
     
     # Validate temperature range
     temp_min, temp_max = model_config["temperature_range"]
@@ -58,54 +60,87 @@ def generate_chat_completion(model, messages, temp=None, max_num_tokens=None):
             f"[{temp_min}, {temp_max}] for {model}"
         )
     
+    # Models that don't support temperature parameter
+    no_temperature_models = ["gpt-5-mini-2025-08-07", "o1", "o1-mini", "o1-preview"]
+
     # Initialize the appropriate chat model based on provider
     try:
         if provider == "openai":
-            chat_model = ChatOpenAI(
-                model=model, 
-                temperature=temp, 
-                max_tokens=max_num_tokens
-            )
+            # Some OpenAI models don't support temperature
+            if any(m in model for m in no_temperature_models):
+                chat_model = ChatOpenAI(
+                    model=model,
+                    max_tokens=max_num_tokens
+                )
+            else:
+                chat_model = ChatOpenAI(
+                    model=model,
+                    temperature=temp,
+                    max_tokens=max_num_tokens
+                )
         elif provider == "anthropic":
             chat_model = ChatAnthropic(
-                model=model, 
-                temperature=temp, 
+                model=model,
+                temperature=temp,
                 max_tokens=max_num_tokens
             )
         elif provider == "cohere":
             chat_model = ChatCohere(
-                model=model, 
-                temperature=temp, 
+                model=model,
+                temperature=temp,
                 max_tokens=max_num_tokens
+            )
+        elif provider == "google":
+            chat_model = ChatGoogleGenerativeAI(
+                model=model,
+                temperature=temp,
+                max_output_tokens=max_num_tokens
             )
         elif provider == "groq" or provider == "meta (via Groq)":
             chat_model = ChatGroq(
-                model=model, 
-                temperature=temp, 
+                model=model,
+                temperature=temp,
                 max_tokens=max_num_tokens
             )
         elif provider == "huggingface_inference":
             # Use HuggingFace Inference API
             from config import HUGGINGFACEHUB_API_TOKEN
-            llm = HuggingFaceEndpoint(
-                repo_id=model,
-                temperature=temp,
-                max_new_tokens=max_num_tokens,
-                huggingfacehub_api_token=HUGGINGFACEHUB_API_TOKEN,
-                task="text-generation",
-                provider="auto"
-            )
+
+            # Determine the correct task type for the model
+            # Newer chat models use "conversational", older ones use "text-generation"
+            task_type = "text-generation"  # Default
+
+            # Models that require conversational task type
+            conversational_models = [
+                "gemma-3",
+                "Phi-4",
+                "Qwen3-VL",
+                "Llama-4"
+            ]
+
+            if any(model_id in model for model_id in conversational_models):
+                task_type = "conversational"
+
+            # Configure endpoint parameters
+            endpoint_kwargs = {
+                "repo_id": model,
+                "temperature": temp,
+                "max_new_tokens": max_num_tokens,
+                "huggingfacehub_api_token": HUGGINGFACEHUB_API_TOKEN,
+                "task": task_type,
+            }
+
+            # Don't use provider="auto" for some models that have issues with it
+            if not any(x in model for x in ["gpt2"]):
+                endpoint_kwargs["provider"] = "auto"
+
+            llm = HuggingFaceEndpoint(**endpoint_kwargs)
             chat_model = ChatHuggingFace(llm=llm)
         else:
             raise ValueError(f"Provider '{provider}' not implemented")
-            
-    except Exception as e:
-        st.error(f"Failed to initialize {model}: {str(e)}")
-        raise
 
-    # Generate the response with timing
-    start_time = time.time()
-    try:
+        # Generate the response with timing
+        start_time = time.time()
         chat_response = chat_model.invoke(messages)
     except Exception as e:
         st.error(f"Failed to generate response with {model}: {str(e)}")
@@ -199,11 +234,15 @@ def extract_token_usage(chat_response, provider, model):
         elif provider == "groq" or provider == "meta (via Groq)":
             usage = chat_response.response_metadata['token_usage']
             return usage['prompt_tokens'], usage['completion_tokens']
-            
+
+        elif provider == "google":
+            usage = chat_response.response_metadata.get('usage_metadata', {})
+            return usage.get('prompt_token_count', None), usage.get('candidates_token_count', None)
+
         elif provider == "huggingface_inference":
             usage = chat_response.response_metadata['token_usage']
             return usage['prompt_tokens'], usage['completion_tokens']
-            
+
         else:
             # For providers without token usage metadata
             return None, None

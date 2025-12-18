@@ -1,4 +1,4 @@
-﻿import json
+import json
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -9,6 +9,10 @@ from config import (
     DEFAULT_REALTIME_VOICE,
     REALTIME_VOICES,
     DEFAULT_MODELS,
+    MAJORS,
+    THEME_COLORS,
+    PAGE_ICON,
+    get_page_models,
 )
 
 from lib.speech import (
@@ -19,9 +23,14 @@ from lib.speech import (
     transcribe_audio,
     generate_speech,
 )
-from lib import chatpdf, chatgeneration  # your existing modules
+from lib import chatpdf, chatgeneration, sidebar
+from lib.ui import apply_theme_css
 
-THIS_PAGE = "pages/04_interview_mentor.py"
+THIS_PAGE = "interview_mentor"
+st.session_state.cur_page = THIS_PAGE
+
+st.set_page_config(page_title="ChatISA: Interview Mentor", page_icon=PAGE_ICON, layout="wide")
+apply_theme_css()
 
 # ---------- Minimal WebRTC frontend ----------
 RTC_HTML = """
@@ -104,30 +113,75 @@ async function stopRealtime() {
 """
 
 # ---------- Sidebar ----------
-with st.sidebar:
-    st.markdown("## 👔 Interview Mentor")
-    st.markdown(
-        """
-**Modes**
-- Speech-to-speech (default)
-- Transcription (voice→text + optional AI audio)
+# Render navigation first
+sidebar.render_navigation()
 
-**Steps**
-1. Fill the setup form  
-2. Start the interview  
-3. (Optional) Export transcript to PDF
-        """
-    )
-    st.markdown("---")
-    st.caption(f"{APP_NAME} — {DATE}")
+# Interview-specific info with Miami colors
+st.sidebar.markdown(
+    f'<h3 style="color: {THEME_COLORS["primary"]};">Interview Guide</h3>',
+    unsafe_allow_html=True
+)
+st.sidebar.markdown(f"""
+<div style="background-color: {THEME_COLORS['info']}10; padding: 10px; border-radius: 5px; font-size: 0.9em;">
+    <strong>Modes</strong><br>
+    &bull; Speech-to-speech (default)<br>
+    &bull; Transcription (voice-text + optional AI audio)
+</div>
+""", unsafe_allow_html=True)
+
+st.sidebar.markdown(f"""
+<div style="background-color: {THEME_COLORS['success']}15; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 0.9em;">
+    <strong>Steps</strong><br>
+    1. Fill the setup form<br>
+    2. Start the interview<br>
+    3. (Optional) Export transcript to PDF
+</div>
+""", unsafe_allow_html=True)
+
+# Render rest of sidebar (skip navigation since we already rendered it)
+sidebar.render_sidebar(skip_navigation=True)
 
 # ---------- Page logic ----------
 ensure_interview_state_defaults()
 
+def _extract_json(text: str) -> str:
+    start = text.find("{")
+    end = text.rfind("}")
+    if start == -1 or end == -1 or end <= start:
+        return ""
+    return text[start:end + 1]
+
+def build_interview_profile(resume_text: str, job_description: str, job_title: str, grade: str, major: str, model: str) -> dict:
+    prompt = (
+        "Extract a concise interview profile as JSON with keys:\n"
+        "- role_focus (string)\n"
+        "- priority_topics (list of 6-10 strings)\n"
+        "- strengths (list of 3-6 strings)\n"
+        "- gaps (list of 3-6 strings)\n"
+        "- starter_questions (list of 3 strings)\n"
+        "Return ONLY valid JSON.\n\n"
+        f"Role: {job_title}\n"
+        f"Candidate: {grade}, {major}\n\n"
+        f"Resume:\n{resume_text[:4000]}\n\n"
+        f"Job description:\n{job_description[:4000]}"
+    )
+    try:
+        resp, _, _ = chatgeneration.generate_chat_completion(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a JSON-only extraction assistant."},
+                {"role": "user", "content": prompt}
+            ],
+            temp=0.2,
+            max_num_tokens=1200
+        )
+        json_text = _extract_json(resp)
+        return json.loads(json_text) if json_text else {}
+    except Exception:
+        return {}
+
 # ============ FIRST SCREEN: Setup ============
 if not st.session_state.submitted_speech:
-    # Import theme colors
-    from config import THEME_COLORS
     st.markdown(f'<h1 style="color: {THEME_COLORS["primary"]};">ChatISA: Interview Mentor</h1>', unsafe_allow_html=True)
 
     # Mode toggle
@@ -137,7 +191,7 @@ if not st.session_state.submitted_speech:
 
     if use_transcription:
         st.markdown(
-            "Speak your responses; they’re transcribed to text for the AI interviewer. "
+            "Speak your responses; they're transcribed to text for the AI interviewer. "
             "Optionally enable AI voice responses. Upload your resume and a job description for tailored questions."
         )
     else:
@@ -156,21 +210,10 @@ if not st.session_state.submitted_speech:
 
     # Model selection (transcription)
     if use_transcription:
-        transcription_models = [
-            # Commercial API models  
-            'gpt-5-chat-latest',
-            'claude-sonnet-4-20250514',
-            # Open Weight Model from Cohere
-            'command-a-03-2025',
-            # Representative larger HuggingFace models
-            'openai/gpt-oss-120b',
-            'Qwen/Qwen3-235B-A22B-Instruct-2507',
-            'deepseek-ai/DeepSeek-V3',
-            'meta-llama/Llama-4-Maverick-17B-128E-Instruct'
-        ]
-        default_index = transcription_models.index(
-            DEFAULT_MODELS.get('interview_mentor_transcription', 'gpt-5-chat-latest')
-        )
+        # Get transcription models dynamically from config
+        transcription_models = get_page_models("interview_mentor_transcription")
+        default_model = DEFAULT_MODELS.get('interview_mentor_transcription', 'gpt-5.2-2025-12-11')
+        default_index = transcription_models.index(default_model) if default_model in transcription_models else 0
         st.markdown("### AI Model Selection")
         selected_model = st.selectbox(
             "Choose AI model",
@@ -178,6 +221,23 @@ if not st.session_state.submitted_speech:
             index=default_index,
             key='transcription_model_choice',
         )
+
+    # Interview type
+    st.markdown("### Interview Type")
+    st.caption("Interview type is tailored to the major and job (e.g., technical in marketing differs from business analytics).")
+    interview_type = st.selectbox(
+        "Select interview format",
+        ["Behavioral", "Technical", "Coding/LeetCode", "Case", "Mixed"],
+        index=4,
+        key="interview_type",
+        help=(
+            "Behavioral: stories and decision-making. "
+            "Technical: role-specific skills and domain knowledge. "
+            "Coding/LeetCode: algorithms, data structures, and complexity. "
+            "Case: structured problem solving and business judgment. "
+            "Mixed: blend of the above."
+        )
+    )
 
     # Candidate + job info
     col1, col2 = st.columns(2, gap='large')
@@ -189,15 +249,17 @@ if not st.session_state.submitted_speech:
             index=3,
             key='grade_speech'
         )
-        major = st.selectbox(
+        major_options = MAJORS + ["Other (enter below)"]
+        major_choice = st.selectbox(
             "Major",
-            [
-                "Business Analytics", "Computer Science", "Cybersecurity Management",
-                "Data Science", "Information Systems", "Statistics", "Software Engineering"
-            ],
+            major_options,
             index=0,
             key='major_speech'
         )
+        custom_major = ""
+        if major_choice == "Other (enter below)":
+            custom_major = st.text_input("Enter your major", key="major_speech_custom")
+        major = custom_major.strip() if major_choice == "Other (enter below)" else major_choice
         raw_resume = st.file_uploader(
             "Upload Resume (PDF)",
             type=['pdf'],
@@ -210,7 +272,7 @@ if not st.session_state.submitted_speech:
             "Job Description",
             value="",
             key='job_description_speech',
-            placeholder="Paste the description here…",
+            placeholder="Paste the description here...",
             height=300
         )
 
@@ -237,34 +299,52 @@ if not st.session_state.submitted_speech:
     if st.button(button_text, type="primary", use_container_width=True):
         if all([grade, major, raw_resume, job_title, job_description]):
             resume_text = pdf_to_markdown(raw_resume.getvalue())
+            profile_model = st.session_state.get('transcription_model_choice', 'gpt-5.2-2025-12-11')
+            interview_profile = build_interview_profile(
+                resume_text=resume_text,
+                job_description=job_description,
+                job_title=job_title,
+                grade=grade,
+                major=major,
+                model=profile_model,
+            )
 
             interview_instructions = (
                 f"You are an expert technical interviewer for a {job_title} role. "
                 f"The candidate is a {grade} majoring in {major}.\n\n"
+                f"Interview type: {interview_type}\n\n"
                 f"Resume:\n{resume_text[:4000]}\n\n"
                 f"Job description:\n{job_description[:4000]}\n\n"
+                f"Interview profile (JSON):\n{json.dumps(interview_profile, ensure_ascii=True)}\n\n"
                 "VOICE BEHAVIOR:\n"
                 "- Speak naturally and professionally\n"
                 "- Use appropriate pauses and emphasis\n"
                 "- Keep responses concise but thorough\n\n"
                 "INTERVIEW STRUCTURE:\n"
-                "- Ask exactly 6 questions (interest, performance measurement, technical skills, software knowledge, situational teamwork, behavioral)\n"
+                "- Follow the selected interview type (behavioral, technical, coding/leetcode, case, or mixed)\n"
+                "- Aim for 6-8 questions total; add follow-ups when answers are shallow\n"
+                "- Choose the next topic based on the profile, what is not yet covered, and the candidate's answers\n"
                 "- Ask ONE question at a time and wait for the response\n"
-                "- Finish with detailed feedback and a score out of 100"
+                "- Use a simple rubric per answer: 0=incorrect/irrelevant, 1=partial, 2=solid, 3=excellent\n"
+                "- Provide feedback only after all questions are answered\n"
+                "- End with: 3 strengths, 3 gaps/risks, 3 next-step actions, and an overall score out of 100\n"
+                "- Compute the score as (sum of points / (3 * number of questions)) * 100, rounded"
             )
 
             submission_data = {
                 'grade': grade,
                 'major': major,
+                'interview_type': interview_type,
                 'resume_text': resume_text,
                 'job_title': job_title,
                 'job_description': job_description,
                 'chosen_voice': chosen_voice,
+                'interview_profile': interview_profile,
                 'interview_mode': 'transcription' if use_transcription else 'speech_to_speech'
             }
             if use_transcription:
                 submission_data.update({
-                    'model_choice': st.session_state.get('transcription_model_choice', 'gpt-5-chat-latest'),
+                    'model_choice': st.session_state.get('transcription_model_choice', 'gpt-5.2-2025-12-11'),
                     'ai_audio_enabled': st.session_state.get('ai_audio_transcription', False),
                 })
             else:
@@ -284,23 +364,21 @@ if not st.session_state.submitted_speech:
 if st.session_state.submitted_speech:
     submission = st.session_state.interview_submission or {}
 
-    # Import theme colors at module level to avoid repeated imports
-    from config import THEME_COLORS
-    
     if submission.get('interview_mode') == 'transcription':
         st.markdown(f'<h1 style="color: {THEME_COLORS["primary"]};">Live Transcription Interview</h1>', unsafe_allow_html=True)
     else:
         st.markdown(f'<h1 style="color: {THEME_COLORS["primary"]};">Live Speech-to-Speech Interview</h1>', unsafe_allow_html=True)
 
-    with st.expander("📋 Interview Details", expanded=False):
+    with st.expander(" Interview Details", expanded=False):
         c1, c2 = st.columns(2)
         with c1:
             st.write(f"**Position:** {submission.get('job_title','')}")
             st.write(f"**Grade:** {submission.get('grade','')}")
             st.write(f"**Major:** {submission.get('major','')}")
+            st.write(f"**Type:** {submission.get('interview_type','Mixed')}")
         with c2:
             if submission.get('interview_mode') == 'transcription':
-                st.write(f"**Model:** {submission.get('model_choice', 'gpt-5-chat-latest')}")
+                st.write(f"**Model:** {submission.get('model_choice', 'gpt-5.2-2025-12-11')}")
                 st.write(f"**AI Audio:** {'Enabled' if submission.get('ai_audio_enabled', False) else 'Disabled'}")
                 if submission.get('ai_audio_enabled', False):
                     st.write(f"**Voice:** {submission.get('chosen_voice', DEFAULT_REALTIME_VOICE)}")
@@ -310,7 +388,7 @@ if st.session_state.submitted_speech:
                 st.write(f"**Response Speed:** {submission.get('response_speed', 2)} s")
                 st.write("**Mode:** Speech-to-Speech")
 
-    with st.expander("💡 Interview Tips", expanded=False):
+    with st.expander(" Interview Tips", expanded=False):
         c1, c2 = st.columns(2)
         with c1:
             if submission.get('interview_mode') == 'transcription':
@@ -342,13 +420,21 @@ if st.session_state.submitted_speech:
             del st.session_state["messages"]
 
         if "messages" not in st.session_state:
+            interview_profile = submission.get('interview_profile', {})
             SYSTEM_PROMPT = (
                 f"You are an expert interviewer for a {submission.get('job_title','')} role. "
                 f"The candidate is a {submission.get('grade','')} majoring in {submission.get('major','')}.\n\n"
+                f"Interview type: {submission.get('interview_type','Mixed')}\n\n"
                 f"Resume:\n{submission.get('resume_text','')}\n\n"
                 f"Job description:\n{submission.get('job_description','')}\n\n"
-                "Ask six questions (one at a time) following the required structure. "
-                "Be concise and professional. At the end, provide actionable feedback and a score out of 100."
+                f"Interview profile (JSON):\n{json.dumps(interview_profile, ensure_ascii=True)}\n\n"
+                "Ask one question at a time. Follow the selected interview type (behavioral, technical, coding/leetcode, case, or mixed). "
+                "Aim for 6-8 total questions and add follow-ups when needed. "
+                "Choose topics dynamically based on the profile, what has not yet been covered, and the candidate's answers. "
+                "Be concise and professional. Use a simple rubric per answer: 0=incorrect/irrelevant, 1=partial, 2=solid, 3=excellent. "
+                "Provide feedback only after all questions are answered. "
+                "At the end, include 3 strengths, 3 gaps/risks, 3 next-step actions, and an overall score out of 100. "
+                "Compute the score as (sum of points / (3 * number of questions)) * 100, rounded."
             )
             st.session_state.messages = [
                 {"role": "system", "content": SYSTEM_PROMPT},
@@ -382,7 +468,7 @@ if st.session_state.submitted_speech:
             with st.chat_message("assistant"):
                 placeholder = st.empty()
                 resp, in_tok, out_tok = chatgeneration.generate_chat_completion(
-                    model=submission.get('model_choice', 'gpt-5-chat-latest'),
+                    model=submission.get('model_choice', 'gpt-5.2-2025-12-11'),
                     messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
                     temp=0.25,
                     max_num_tokens=6000
@@ -397,7 +483,7 @@ if st.session_state.submitted_speech:
             st.session_state.messages.append({"role": "assistant", "content": resp})
 
         st.markdown("---")
-        with st.expander("📄 Export Interview to PDF", expanded=False):
+        with st.expander(" Export Interview to PDF", expanded=False):
             c1, c2 = st.columns(2)
             user_name = c1.text_input("Your Name", key="trans_name").replace(" ", "_")
             company_name = c2.text_input("Company", key="trans_company").replace(" ", "_")
@@ -436,9 +522,7 @@ if st.session_state.submitted_speech:
         tok = st.session_state.get("_rt_token")
         if tok:
             st.info(
-                f"Model **{tok['model']}**, Voice **{tok['voice']}** — session `{tok['session_id']}`.",
-                icon="🎙️"
-            )
+                f"Model **{tok['model']}**, Voice **{tok['voice']}** -- session `{tok['session_id']}`.")
             payload = json.dumps({"client_secret": tok["client_secret"], "model": tok["model"]})
             components.html(
                 RTC_HTML + f"<script>location.hash = encodeURIComponent('{payload}');</script>",
@@ -463,12 +547,12 @@ if st.session_state.submitted_speech:
     st.markdown("---")
     c1, c2 = st.columns(2)
     with c1:
-        if st.button("🔄 Restart Interview"):
+        if st.button("Restart Interview"):
             st.session_state.interview_active = False
             st.session_state["_rt_token"] = None
             st.rerun()
     with c2:
-        if st.button("🏠 Back to Setup"):
+        if st.button("Back to Setup"):
             st.session_state.submitted_speech = False
             st.session_state.interview_active = False
             st.session_state["_rt_token"] = None

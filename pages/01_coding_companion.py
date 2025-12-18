@@ -1,4 +1,4 @@
-﻿
+
 
 # About this code:
 # ----------------
@@ -29,28 +29,11 @@ import streamlit as st
 
 
 # Import models from config
-from config import MODELS
+from config import MODELS, get_page_models
 
-# Get all models for coding companion (all HF models + existing ones)
-models = [
-  # Commercial API models
-  'gpt-5-chat-latest', 
-  'gpt-5-mini-2025-08-07', 
-  'claude-sonnet-4-20250514',
-  'command-a-03-2025',
-  'llama-3.3-70b-versatile', 
-  'llama-3.1-8b-instant',
-  # All HuggingFace models
-  'deepseek-ai/DeepSeek-R1-0528',
-  'deepseek-ai/DeepSeek-V3',
-  'Qwen/Qwen2.5-VL-32B-Instruct',
-  'Qwen/Qwen3-235B-A22B-Instruct-2507',
-  'Qwen/Qwen3-Coder-480B-A35B-Instruct',
-  'openai/gpt-oss-120b',
-  'openai/gpt-oss-20b',
-  'meta-llama/Llama-4-Scout-17B-16E-Instruct',
-  'meta-llama/Llama-4-Maverick-17B-128E-Instruct'
-]
+# Get all models for coding companion dynamically from config
+# This automatically updates when models are added/removed/renamed in config.py
+models = get_page_models("coding_companion")
 # -----------------------------------------------------------------------------
 
 
@@ -165,7 +148,7 @@ if prompt := st.chat_input("Ask me to help you with your code and/or to explain 
     # extracting the response, input tokens, and output tokens
     response, input_tokens, output_tokens = outputs
     full_response += response
-    message_placeholder.markdown(full_response + "▌")
+    message_placeholder.markdown(full_response)
     
     # Update the token counts for the specific model in session state
     if input_tokens is not None and output_tokens is not None:

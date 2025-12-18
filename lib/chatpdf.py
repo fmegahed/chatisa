@@ -22,6 +22,8 @@ LATIN_REPLACEMENTS = {
 
 # Create a latin-1 encoded friendly text for the PDF
 def clean_text(input_text):
+  if input_text is None:
+    return ""
   for original, replacement in LATIN_REPLACEMENTS.items():
     input_text = input_text.replace(original, replacement)
   return input_text.encode("latin-1", "ignore").decode("latin-1")
@@ -86,11 +88,13 @@ def create_pdf(chat_messages, models, token_counts, user_name, user_course):
   if len(model_details) == 1:
     # Single model - no letter labeling needed
     models_summary = model_details[0]
-  else:
+  elif len(model_details) > 1:
     # Multiple models - use (a), (b), etc. labeling
     models_summary = ', '.join(f"({chr(97 + i)}) {model}" for i, model in enumerate(model_details))
     parts = models_summary.rsplit(', ', 1)
     models_summary = ' and '.join(parts)
+  else:
+    models_summary = "no model usage was recorded"
 
   summary_paragraph = (
     f"The total number of tokens used in the chat is {total_input_tokens + total_output_tokens}, "
@@ -219,6 +223,185 @@ def create_pdf(chat_messages, models, token_counts, user_name, user_course):
       }
   )
   
+  return pdf_output_path
+
+def create_sandbox_pdf(sandbox_messages, user_name, user_course, total_cost=0.0):
+  """
+  Create PDF for AI Sandbox interactions with code executions and embedded images.
+
+  Args:
+    sandbox_messages: List of messages with structure:
+      {
+        "role": "user" or "assistant",
+        "content": "text content",
+        "code_executions": [  # Only for assistant messages
+          {
+            "code": "python code",
+            "outputs": [
+              {"type": "image", "image": {"b64_json": "...", "filename": "..."}}
+            ]
+          }
+        ]
+      }
+    user_name: Student's name
+    user_course: Course name
+    total_cost: Total cost of API usage
+  """
+
+  # Get current page for logging
+  import streamlit as st
+  current_page = getattr(st.session_state, 'cur_page', 'ai_sandbox')
+
+  # Initialize pdf
+  pdf = PDF(user_name, user_course, format="Letter")
+  pdf.add_page()
+  pdf.set_auto_page_break(auto=True, margin=pdf.margin)
+
+  # Document Title
+  pdf.set_font("Arial", "B", 16)
+  pdf.cell(0, pdf.margin, f"{user_name}'s AI Sandbox Session on {pdf.date}", 0, 1, "C")
+  pdf.ln(3)
+
+  # Introductory Text
+  draw_heading(pdf, "AI Sandbox Purpose")
+  pdf.multi_cell(
+    0, pdf.margin,
+    f"The AI Sandbox provides a secure Python code execution environment for computational problem-solving and data analysis. This document exports the conversation between {user_name} and ChatISA's AI Sandbox for coursework related to {user_course}. The GPT-5.2 model with code interpreter was used to generate responses and execute Python code.",
+    0, "L", True
+  )
+  draw_divider(pdf)
+
+  # Explanation of document
+  draw_heading(pdf, "PDF Output Style and Layout")
+  pdf.multi_cell(
+    0, pdf.margin,
+    f"The PDF provides a clear record of the interaction. Student prompts appear in light red boxes. ChatISA's text responses have a white background, while executed Python code appears with a gray background. Generated visualizations and graphs are embedded directly in the document. This formatting improves readability and provides clear distinction between prompts, code, and outputs.",
+    0, "L", True
+  )
+  draw_divider(pdf)
+
+  # Cost information
+  if total_cost > 0:
+    draw_heading(pdf, "Usage Cost")
+    pdf.multi_cell(
+      0, pdf.margin,
+      f"The total cost for this AI Sandbox session is ${total_cost:.4f}. This includes costs for code execution, image processing, and API token usage.",
+      0, "L", True
+    )
+    draw_divider(pdf)
+
+  # Page break before interaction
+  pdf.add_page()
+
+  # Sandbox Interaction
+  draw_heading(pdf, f"{pdf.user_name}'s AI Sandbox Interaction")
+
+  for message in sandbox_messages:
+    role = message["role"]
+    content = clean_text(message.get("content", ""))
+
+    # User message
+    if role == "user":
+      pdf.set_fill_color(255, 235, 224)
+      pdf.multi_cell(0, pdf.margin, f"{pdf.user_name}:", fill=True)
+      pdf.multi_cell(0, pdf.margin, content, fill=True)
+      pdf.ln(3)
+
+    # Assistant message
+    else:
+      pdf.set_fill_color(255, 255, 255)
+      pdf.multi_cell(0, pdf.margin, "ChatISA:", fill=True)
+
+      # Text content
+      if content.strip():
+        pdf.multi_cell(0, pdf.margin, content, fill=True)
+        pdf.ln(3)
+
+      # Code executions
+      if "code_executions" in message and message["code_executions"]:
+        for execution in message["code_executions"]:
+          code = clean_text(execution.get("code", ""))
+
+          # Display code
+          if code.strip():
+            pdf.set_font("Courier", size=10)
+            pdf.set_fill_color(230, 230, 230)
+            pdf.multi_cell(0, pdf.margin, code, fill=True)
+            pdf.set_font("Arial", size=11)
+            pdf.ln(3)
+
+          # Display images from outputs
+          if "outputs" in execution and execution["outputs"]:
+            for output in execution["outputs"]:
+              if output["type"] == "image" and output.get("image", {}).get("b64_json"):
+                try:
+                  # Decode base64 image
+                  import base64
+                  from io import BytesIO
+                  from PIL import Image
+
+                  image_b64 = output["image"]["b64_json"]
+                  image_bytes = base64.b64decode(image_b64)
+                  image = Image.open(BytesIO(image_bytes))
+
+                  # Save to temporary file
+                  import tempfile
+                  temp_image = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+                  image.save(temp_image.name, format="PNG")
+                  temp_image.close()
+
+                  # Calculate image dimensions to fit page width
+                  max_width = pdf.w - 2 * pdf.margin
+                  img_width = image.width
+                  img_height = image.height
+                  aspect_ratio = img_height / img_width
+
+                  # Scale to fit within page width
+                  display_width = min(max_width, img_width * 0.75)  # 75% of original or page width
+                  display_height = display_width * aspect_ratio
+
+                  # Check if image fits on current page (leave margin for bottom)
+                  available_height = pdf.h - pdf.get_y() - pdf.margin - 20
+                  if display_height > available_height:
+                    pdf.add_page()  # Start new page for image
+
+                  # Center the image
+                  x_centered = (pdf.w - display_width) / 2
+
+                  # Add image
+                  pdf.image(temp_image.name, x=x_centered, w=display_width)
+                  pdf.ln(5)
+
+                  # Clean up temp file
+                  import os
+                  os.unlink(temp_image.name)
+
+                except Exception as img_error:
+                  # If image embedding fails, note it
+                  pdf.set_font("Arial", "I", 10)
+                  pdf.multi_cell(0, pdf.margin, f"[Image could not be embedded: {str(img_error)}]")
+                  pdf.set_font("Arial", size=11)
+                  pdf.ln(3)
+
+      pdf.ln(3)
+
+  draw_divider(pdf)
+
+  # Save the pdf
+  pdf_output_path = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf").name
+  pdf.output(pdf_output_path)
+
+  # Log PDF export
+  filename = f"{user_course}_{user_name}_sandbox.pdf"
+  log_pdf_export(
+      page=current_page,
+      data={
+          "course": user_course,
+          "file_type": "pdf",
+          "sandbox": True
+      }
+  )
+
   return pdf_output_path
 
 def draw_divider(pdf):

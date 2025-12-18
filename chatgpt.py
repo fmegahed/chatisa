@@ -1,4 +1,4 @@
-﻿import os
+import os
 import json
 import time
 from pathlib import Path
@@ -10,7 +10,7 @@ from streamlit_option_menu import option_menu
 import streamlit.components.v1 as components
 import requests
 from requests.adapters import HTTPAdapter
-from streamlit_extras.switch_page_button import switch_page
+from typing import Optional
 
 
 # ---------------------- your config & modules ----------------------
@@ -22,6 +22,7 @@ from config import *
 
 # Local modules (unchanged)
 from lib import chatpdf, chatgeneration, sidebar  # noqa: F401
+from lib.ui import apply_theme_css
 from lib.enhanced_usage_logger import log_page_visit, log_session_action, migrate_from_csv
 
 
@@ -35,23 +36,7 @@ st.session_state.cur_page = THIS_PAGE
 # ---------------------- Streamlit setup ----------------------
 # st.set_page_config(**PAGE_CONFIG)
 st.set_page_config(page_title="ChatISA Home", page_icon='assets/favicon.png')
-
-miami_css = f"""
-<style>
-    .stApp {{ background-color: {THEME_COLORS['background']}; }}
-    .stButton > button {{
-        background-color: {THEME_COLORS['primary']}; color: white; border: none; border-radius: 4px;
-    }}
-    .stButton > button:hover {{ background-color: {THEME_COLORS['secondary']}; color: white; }}
-    .stSelectbox > div > div {{ background-color: {THEME_COLORS['background']}; border: 1px solid {THEME_COLORS['primary']}; }}
-    .stSidebar {{ background-color: #f8f9fa; }}
-    h1, h2, h3 {{ color: {THEME_COLORS['primary']}; }}
-    .stInfo {{ background-color: rgba(195, 20, 45, 0.1); border: 1px solid {THEME_COLORS['primary']}; }}
-    .stWarning {{ background-color: rgba(255, 160, 122, 0.2); }}
-</style>
-"""
-
-st.markdown(miami_css, unsafe_allow_html=True)
+apply_theme_css()
 
 load_dotenv(override=True)
 
@@ -183,6 +168,7 @@ async function stopRealtime() {
 def home():
     log_page_visit("home", {
         "version": VERSION,
+        "total_models": len(MODELS),
         "available_models": len(validate_api_keys()["available_models"]),
         "features_enabled": sum(1 for f in FEATURES.values() if f)
     })
@@ -191,26 +177,103 @@ def home():
     st.markdown(f"*Version {VERSION} - {DATE}*")
 
     st.markdown("""
-    **Your AI-powered educational assistant** featuring five specialized tools designed to enhance your academic journey. 
-    Developed at Miami University's Farmer School of Business, ChatISA provides free access to cutting-edge AI technology 
-    to support student success in programming, projects, exam preparation, interview practice, and AI model comparison.
+    **Your AI-powered educational assistant** featuring six specialized modules designed to enhance your academic journey.
+    Developed at Miami University's Farmer School of Business, ChatISA provides free access to cutting-edge AI technology
+    to support student success in programming, projects, exam preparation, interview practice, code execution, and AI model comparison.
     """)
 
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1: st.markdown("### 💻\n**Coding Companion**\n*Programming help & tutorials*")
-    with col2: st.markdown("### 🎯\n**Project Coach**\n*Team project guidance*")
-    with col3: st.markdown("### 📝\n**Exam Ally**\n*Study materials & practice*")
-    with col4: st.markdown("### 👔\n**Interview Mentor**\n*Speech-based interview prep*")
-    with col5: st.markdown("### ⚖️\n**AI Comparisons**\n*Compare AI responses side-by-side*")
+    st.markdown("#### Select a module to continue:")
+
+    # Select the page to switch to (updated for six pages)
+    selected = option_menu(
+        menu_title=None,
+        options=[
+            "💻 Coding Companion",
+            "📋 Project Coach",
+            "📝 Exam Ally",
+            "🎤 Interview Mentor",
+            "🧪 AI Sandbox",
+            "📊 AI Comparisons",
+        ],
+        icons=["💻", "📋", "📝", "🎤", "🧪", "📊"],
+        menu_icon="list",
+        default_index=0,
+        orientation="horizontal",
+    )
+
+    def navigate_to(page_label: str) -> Optional[str]:
+        page_map = {
+            "💻 Coding Companion": "pages/01_coding_companion.py",
+            "📋 Project Coach": "pages/02_project_coach.py",
+            "📝 Exam Ally": "pages/03_exam_ally.py",
+            "🎤 Interview Mentor": "pages/04_interview_mentor.py",
+            "🧪 AI Sandbox": "pages/05_ai_sandbox.py",
+            "📊 AI Comparisons": "pages/06_ai_comparisons.py",
+        }
+        return page_map.get(page_label)
+
+    if st.button(f"Open {selected}", use_container_width=True):
+        target = navigate_to(selected)
+        if target and hasattr(st, "switch_page"):
+            st.switch_page(target)
+
+    if selected == '💻 Coding Companion':
+        st.info("""
+            The coding companion helps with programming questions and explanations tailored to your coursework.
+
+            Select a model, ask a question, and export the conversation to PDF if needed.""")
+        st.markdown("Use the left navigation to adjust models or switch tools.")
+
+    if selected == '📋 Project Coach':
+        st.info("""
+        The Project Coach supports team projects by taking one of four roles:
+          - **Premortem Coach** to anticipate risks and mitigations
+          - **Team Structuring Coach** to surface resources and responsibilities
+          - **Devil's Advocate** to challenge assumptions
+          - **Reflection Coach** to synthesize lessons learned
+
+          Select a model, ask a question, and export the conversation to PDF if needed.""")
+        st.markdown("Use the left navigation to adjust models or switch tools.")
+
+    if selected == '📝 Exam Ally':
+        st.info("""
+        The Exam Ally helps you prepare by generating questions from your uploaded PDF and selected question type.
+
+        Select a model, choose a question type, and export the conversation to PDF if needed.""")
+        st.markdown("Use the left navigation to adjust models or switch tools.")
+
+    if selected == '🎤 Interview Mentor':
+        st.info("""
+        The Interview Mentor generates questions based on a job description and your uploaded resume PDF.
+
+        Select a model, ask a question, and export the conversation to PDF if needed.""")
+        st.markdown("Use the left navigation to adjust models or switch tools.")
+
+    if selected == '🧪 AI Sandbox':
+        st.info("""
+        The AI Sandbox provides a secure Python code execution environment for problem-solving and data analysis.
+          - Upload data files (CSV, Excel, etc.) and analyze them
+          - Create charts and visualizations
+          - Perform calculations with step-by-step explanations
+
+          Enter a prompt, upload files, and review results in a notebook-style interface.""")
+        st.markdown("Use the left navigation to adjust models or switch tools.")
+
+    if selected == '📊 AI Comparisons':
+        st.info("""
+        The AI Comparisons tool lets you compare multiple model responses side-by-side.
+
+        Upload images or PDFs to see how different models interpret visual content.""")
+        st.markdown("Use the left navigation to adjust models or switch tools.")
 
     st.markdown("---")
 
     key_validation = validate_api_keys()
     c1, c2, c3 = st.columns(3)
-    with c1: st.metric("Available Models", len(key_validation['available_models']))
-    with c2: st.metric("Available Modules", "5")
+    with c1: st.metric("Total Models", len(MODELS))
+    with c2: st.metric("Available Modules", "6")
     with c3:
-        status = "🟢 Ready" if key_validation["all_keys_present"] else "🟡 Limited"
+        status = "Ready" if key_validation["all_keys_present"] else "Limited"
         st.metric("System Status", status)
 
     with st.expander("Available Models & Pricing", expanded=False):
@@ -228,67 +291,6 @@ def home():
             })
         st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
-    st.markdown("#### Select one of the following options to start:")
-
-    # Select the page to switch to (updated for five pages)
-    selected = option_menu(
-        menu_title=None,
-        options=["Coding Companion", "Project Coach", "Exam Ally", "Interview Mentor", "AI Comparisons"],
-        icons=["filetype-py", "kanban", "list-task", "briefcase", "arrows-expand"],
-        menu_icon="list",
-        default_index=0,
-        orientation="horizontal",
-    )
-
-    if selected == 'Coding Companion':
-        st.info("""
-            📚 The coding companion can help you with coding-related questions, taking into account your educational background and coding styles used at Miami University. 
-            
-            Here, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF.""")
-        st.markdown("👈 **Select 'Coding Companion' from the top part of the navigation menu on the left to get started.**")
-
-    if selected == 'Project Coach':
-        st.info("""
-        📚 The Project Coach can help you with project-related questions, where the AI can take one of four roles:  
-          - **Premortem Coach** to help the team perform a project premortem by encouraging them to envision possible failures and how to avoid them.  
-          - **Team Structuring Coach** to help the team recognize and make use of the resources and expertise within the team.  
-          - **Devil's Advocate** to challenge your ideas and assumptions at various stages of your project.  
-          - **Reflection Coach** to assist the team in reflecting on their experiences in a structured way to derive lessons and insights. 
-          
-          Here, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF. """
-        )
-        st.markdown("👈 **Select 'Project Coach' from the top part of the navigation menu on the left to get started.**")
-
-    if selected == 'Exam Ally':
-        st.info("""
-        📚 The Exam Ally can help you prepare for exams by generating exam questions based on information extracted from a PDF that you upload and your choice of exam question type. 
-        
-        Here, you can select the model you want to chat with and type of exam questions. Note that the LLM grades and feedback can be wrong, so always double-check the answers. You can also export the entire conversation to a PDF.
-        
-        P.S.: We do not store any of your data on our servers.
-        """)
-        st.markdown("👈 **Select 'Exam Ally' from the top part of the navigation menu on the left to get started.**")
-
-    if selected == 'Interview Mentor':
-        st.info("""
-        📚 The Interview Mentor is designed to help you prepare for technical interviews by generating interview questions based on information extracted from: (a) a job description that you will provide, and (b) a PDF of your resume. 
-        
-        Here, you can select the model you want to chat with, input your query, and view the conversation. You can also export the entire conversation to a PDF.
-        
-        P.S.: We do not store any of your data on our servers.
-        """)
-        st.markdown("👈 **Select 'Interview Mentor' from the top part of the navigation menu on the left to get started.**")
-
-    if selected == 'AI Comparisons':
-        st.info("""
-        📚 The AI Comparisons tool allows you to compare responses from multiple AI models side-by-side for the same query.
-        
-        Here, you can select multiple models, input your query, and view responses from different models simultaneously. This helps you understand different AI perspectives and choose the best response for your needs.
-        
-        🧪 **Experimental feature** - Results may vary across models.
-        """)
-        st.markdown("👈 **Select 'AI Comparisons' from the top part of the navigation menu on the left to get started.**")
-
     sidebar.render_sidebar()
 
 
@@ -298,7 +300,7 @@ migrate_from_csv()
 system_info = get_system_info()
 
 if system_info["missing_api_keys"]:
-    st.warning(f"⚠️ Missing API keys: {', '.join(system_info['missing_api_keys'])}")
+    st.warning(f"Warning: Missing API keys: {', '.join(system_info['missing_api_keys'])}")
 
 # Call home() directly
 home()

@@ -24,7 +24,7 @@ from langchain_openai import ChatOpenAI
 
 # Our Own Modules
 from lib import sidebar
-from config import MODELS, get_model_display_name
+from config import MODELS, get_model_display_name, get_page_models, DEFAULT_MODELS as CONFIG_DEFAULT_MODELS, THEME_COLORS
 
 # -----------------------------------------------------------------------------
 
@@ -37,11 +37,12 @@ load_dotenv()
 TEMPERATURE = 0.3
 MAX_TOKENS = 2000
 
-# Available models for comparison:
-ALL_AVAILABLE_MODELS = [m for m in MODELS.keys() if not MODELS[m].get('realtime_only', False)]
+# Available models for comparison - get from config dynamically
+ALL_AVAILABLE_MODELS = get_page_models("ai_comparisons")
 
-# Default selected models - main models from each provider:
-DEFAULT_MODELS = ['gpt-5-chat-latest', 'claude-sonnet-4-20250514']
+# Default selected models from config
+DEFAULT_MODELS = [CONFIG_DEFAULT_MODELS.get('coding_companion', 'gpt-5.2-2025-12-11'),
+                  CONFIG_DEFAULT_MODELS.get('project_coach', 'claude-sonnet-4-5-20250929')]
 
 # -----------------------------------------------------------------------------
 # Manage page tracking and session state
@@ -93,9 +94,9 @@ def get_model_display_info(model: str) -> Dict[str, str]:
 def get_langchain_model_name(model: str) -> str:
     """Convert our model names to LangChain init_chat_model format."""
     model_mapping = {
-        'gpt-5-chat-latest': 'openai:gpt-5-chat-latest',
+        'gpt-5.2-2025-12-11': 'openai:gpt-5.2-2025-12-11',
         'gpt-5-mini-2025-08-07': 'openai:gpt-5-mini-2025-08-07',
-        'claude-sonnet-4-20250514': 'anthropic:claude-sonnet-4-20250514',
+        'claude-sonnet-4-5-20250929': 'anthropic:claude-sonnet-4-5-20250929',
         'command-a-03-2025': 'cohere:command-a-03-2025',
         'llama-3.3-70b-versatile': 'groq:llama-3.3-70b-versatile',
         'llama-3.1-8b-instant': 'groq:llama-3.1-8b-instant'
@@ -225,7 +226,7 @@ def create_message_for_model(prompt: str, uploaded_files: List, model: str) -> D
                 img_base64, mime_type = img_result
                 
                 # Show processing info with more details
-                st.caption(f"📷 Converted {uploaded_file.name} to {mime_type} (size: {len(img_base64)//1024}KB base64) for {provider}")
+                st.caption(f"Converted {uploaded_file.name} to {mime_type} (size: {len(img_base64)//1024}KB base64) for {provider}")
                 
                 if provider == 'anthropic':
                     # Claude format - exactly as per LangChain docs
@@ -406,83 +407,74 @@ def get_model_response_proper(model: str, uploaded_files: List, prompt: str) -> 
 # -----------------------------
 st.set_page_config(page_title="ChatISA: AI Comparisons", layout="wide", page_icon='assets/favicon.png')
 
-# Import theme colors
-from config import THEME_COLORS
-
 st.markdown(f'<h2 style="color: {THEME_COLORS["primary"]};">ChatISA: AI Comparisons</h2>', unsafe_allow_html=True)
 st.markdown("*Compare AI model responses side-by-side with vision and document support*")
 
 # Info box
 st.info(
-    "🧪 **Experimental Feature**: Ask questions and compare how different AI models respond. "
+    " **Experimental Feature**: Ask questions and compare how different AI models respond. "
     "Upload images, PDFs, or simple datasets for a comperative analysis of the capabilities of different models. Vision models and data will be directly processed via the provider's API, i.e., no code interpreter sessions or VMs will be called by ChatISA."
 )
 
 # -----------------------------------------------------------------------------
 # Custom sidebar for model selection
 # -----------------------------------------------------------------------------
+# Render navigation first
+sidebar.render_navigation()
+
 with st.sidebar:
-    st.markdown("### ⚖️ AI Comparison Settings")
-    
-    # Model selection with grouped checkboxes
-    st.markdown("#### Select Models to Compare:")
-    st.markdown("*Choose models from different categories using checkboxes*")
-    
+    st.markdown(
+        f'<h3 style="color: {THEME_COLORS["primary"]};">Model Selection</h3>',
+        unsafe_allow_html=True
+    )
+    st.markdown("*Choose models to compare*")
+
     from config import MODEL_CATEGORIES
-    
+
     # Initialize selected models if not in session state
     if 'checkbox_selected_models' not in st.session_state:
         st.session_state.checkbox_selected_models = DEFAULT_MODELS.copy()
-    
+
     selected_models = []
-    
-    # Create vertical layout with headers and checkboxes
-    st.markdown("---")
-    
+
     for category_key, category_info in MODEL_CATEGORIES.items():
         # Check if this category has any available models
         category_models = [m for m in category_info['models'] if m in MODELS and m in ALL_AVAILABLE_MODELS]
         if not category_models:
             continue
-            
-        # Category header
-        st.markdown(f"### {category_info['display_name']}")
-        st.markdown(f"*{category_info['description']}*")
-        
-        # Create columns for better layout (2 columns for models)
-        cols = st.columns(2)
-        
-        for i, model in enumerate(category_models):
+
+        # Category header with Miami colors
+        st.markdown(
+            f'<h4 style="color: {THEME_COLORS["secondary"]}; margin-top: 15px;">{category_info["display_name"]}</h4>',
+            unsafe_allow_html=True
+        )
+
+        for model in category_models:
             model_config = MODELS[model]
             model_display = model_config['display_name']
-            
-            # Add indicators for special capabilities
+
+            # Add indicators for special capabilities (text-based, no emoji)
             indicators = []
             if model_config.get('supports_vision', False):
-                indicators.append("👁️ Vision")
+                indicators.append("Vision")
             if model_config.get('open_weight', False):
-                indicators.append("🔓 Open")
+                indicators.append("Open")
             if model_config.get('cost_per_1k_input', 1) == 0:
-                indicators.append("💰 Free")
-            
-            indicator_text = f" ({', '.join(indicators)})" if indicators else ""
-            
+                indicators.append("Free")
+
+            indicator_text = f" [{', '.join(indicators)}]" if indicators else ""
+
             # Check if this model should be selected by default
             default_selected = model in st.session_state.checkbox_selected_models
-            
-            # Alternate between columns
-            with cols[i % 2]:
-                if st.checkbox(
-                    f"{model_display}{indicator_text}",
-                    value=default_selected,
-                    key=f"model_checkbox_{model}",
-                    help=f"{model_config['description']} | Provider: {model_config['provider'].title()}"
-                ):
-                    selected_models.append(model)
-        
-        # Add some spacing between categories
-        st.markdown("---")
-    
+
+            if st.checkbox(
+                f"{model_display}{indicator_text}",
+                value=default_selected,
+                key=f"model_checkbox_{model}",
+                help=f"{model_config['description']} | Provider: {model_config['provider'].title()}"
+            ):
+                selected_models.append(model)
+
     # Update session state with newly selected models
     if selected_models != st.session_state.checkbox_selected_models:
         st.session_state.checkbox_selected_models = selected_models
@@ -490,34 +482,49 @@ with st.sidebar:
     elif not selected_models:
         # Keep the previous selection if no checkboxes are currently selected
         selected_models = st.session_state.selected_models
-    
+
+    st.markdown("---")
+
     # Show selected models info with vision capability
     if st.session_state.selected_models:
-        st.markdown("#### Selected Models:")
+        st.markdown(
+            f'<h4 style="color: {THEME_COLORS["primary"]};">Selected Models</h4>',
+            unsafe_allow_html=True
+        )
         vision_models = []
         for model in st.session_state.selected_models:
             info = get_model_display_info(model)
-            vision_indicator = " 👁️" if info['supports_vision'] else ""
+            vision_indicator = " [Vision]" if info['supports_vision'] else ""
             st.write(f"• {info['name']} ({info['provider']}){vision_indicator}")
             if info['supports_vision']:
                 vision_models.append(info['name'])
-        
+
         if vision_models:
-            st.success(f"📸 Vision-capable: {', '.join(vision_models)}")
-    
+            st.markdown(f"""
+<div style="background-color: {THEME_COLORS['success']}15; padding: 8px; border-radius: 5px; margin-top: 10px; font-size: 0.9em;">
+    <strong>Vision-capable:</strong> {', '.join(vision_models)}
+</div>
+""", unsafe_allow_html=True)
+
     st.markdown("---")
-    st.markdown("#### Generation Settings:")
+    st.markdown(
+        f'<h4 style="color: {THEME_COLORS["primary"]};">Generation Settings</h4>',
+        unsafe_allow_html=True
+    )
     temperature = st.slider("Temperature", 0.0, 1.0, TEMPERATURE, 0.1)
     max_tokens = st.slider("Max Tokens", 500, 4000, MAX_TOKENS, 100)
-    
+
     # Update global settings
     globals()['TEMPERATURE'] = temperature
     globals()['MAX_TOKENS'] = max_tokens
+
+# Render rest of sidebar (skip navigation since we already rendered it)
+sidebar.render_sidebar(skip_navigation=True)
 # -----------------------------------------------------------------------------
 
 # File upload section:
 # -------------------
-st.markdown("### 📁 Upload Files (Optional)")
+st.markdown("### Upload Files (Optional)")
 
 uploaded_files = st.file_uploader(
     "Upload files (images, PDFs, documents, code):",
@@ -529,41 +536,40 @@ uploaded_files = st.file_uploader(
 # Display uploaded content:
 # -------------------------
 if uploaded_files:
-    st.markdown("#### 📋 Uploaded Files:")
-    
-    vision_models = [get_model_display_info(m)['name'] for m in st.session_state.selected_models 
+    st.markdown("#### Uploaded Files:")
+
+    vision_models = [get_model_display_info(m)['name'] for m in st.session_state.selected_models
                     if get_model_display_info(m)['supports_vision']]
-    
-    pdf_capable_models = [get_model_display_info(m)['name'] for m in st.session_state.selected_models 
+
+    pdf_capable_models = [get_model_display_info(m)['name'] for m in st.session_state.selected_models
                          if MODELS[m]['provider'] in ['anthropic', 'openai']]
-    
+
     for uploaded_file in uploaded_files:
         file_type = get_file_type(uploaded_file.name)
-        
+
         if file_type == 'image':
-            st.image(uploaded_file, caption=f"📸 {uploaded_file.name}", width=200)
+            st.image(uploaded_file, caption=uploaded_file.name, width=200)
             if vision_models:
-                st.success(f"👁️ **Vision models** ({', '.join(vision_models)}) will analyze this image")
+                st.success(f"**Vision models** ({', '.join(vision_models)}) will analyze this image")
             else:
-                st.warning("⚠️ **No vision models selected** - Add GPT-5 or Claude to analyze images")
-        
+                st.warning("**No vision models selected** - Add GPT-5 or Claude to analyze images")
+
         elif file_type == 'pdf':
-            st.info(f"📄 **PDF**: {uploaded_file.name}")
+            st.info(f"**PDF**: {uploaded_file.name}")
             if pdf_capable_models:
-                st.success(f"📖 **PDF-capable models** ({', '.join(pdf_capable_models)}) can read this PDF directly")
+                st.success(f"**PDF-capable models** ({', '.join(pdf_capable_models)}) can read this PDF directly")
             else:
-                st.warning("⚠️ **No PDF-capable models selected** - Add GPT-5 or Claude to read PDFs directly")
-        
+                st.warning("**No PDF-capable models selected** - Add GPT-5 or Claude to read PDFs directly")
+
         elif file_type in ['document', 'code', 'data']:
-            icon = {'document': '📝', 'code': '💻', 'data': '📊'}[file_type]
-            st.info(f"{icon} **{file_type.title()}**: {uploaded_file.name} - Content will be included as text")
-        
+            st.info(f"**{file_type.title()}**: {uploaded_file.name} - Content will be included as text")
+
         else:
-            st.warning(f"❓ **Unknown type**: {uploaded_file.name} - May not be processed by all models")
+            st.warning(f"**Unknown type**: {uploaded_file.name} - May not be processed by all models")
 
 # Main question input:
 # -------------------
-st.markdown("### 💬 Ask Your Question")
+st.markdown("### Ask Your Question")
 
 # Use chat_input for consistency with other modules (Enter to submit)
 if prompt := st.chat_input("Ask a question to compare AI responses (e.g., 'Explain quantum computing' or 'What do you see in this image?')"):
@@ -621,15 +627,15 @@ if prompt := st.chat_input("Ask a question to compare AI responses (e.g., 'Expla
     else:
         # Show warning if cannot generate
         if not st.session_state.selected_models:
-            st.warning("⚠️ Please select at least one model from the sidebar to compare responses.")
+            st.warning("Please select at least one model from the sidebar to compare responses.")
         elif not prompt.strip():
-            st.warning("⚠️ Please enter a question to compare responses.")
+            st.warning("Please enter a question to compare responses.")
 
 # Display results section:
 # -----------------------
 if st.session_state.comparison_responses and st.session_state.selected_models:
     st.markdown("---")
-    st.markdown("### 📊 Comparison Results")
+    st.markdown("### Comparison Results")
     
     # Dynamic column layout
     num_models = len(st.session_state.selected_models)
@@ -643,7 +649,7 @@ if st.session_state.comparison_responses and st.session_state.selected_models:
             
             with cols[i]:
                 # Model header with custom styling
-                vision_badge = " 👁️" if model_info['supports_vision'] else ""
+                vision_badge = " [Vision]" if model_info['supports_vision'] else ""
                 st.markdown(f"""
                     <div style="
                         background-color: {model_info['color']}20;
@@ -658,13 +664,13 @@ if st.session_state.comparison_responses and st.session_state.selected_models:
                         <small style="color: #666;">{model_info['provider']}</small>
                     </div>
                 """, unsafe_allow_html=True)
-                
+
                 if result.get("success"):
                     st.markdown(result["response"])
-                    
+
                     # Show usage info
                     if result.get("input_tokens") or result.get("output_tokens"):
-                        with st.expander("📊 Usage Info", expanded=False):
+                        with st.expander("Usage Info", expanded=False):
                             if result.get("input_tokens"):
                                 st.write(f"Input: {result['input_tokens']:,}")
                             if result.get("output_tokens"):
@@ -672,59 +678,59 @@ if st.session_state.comparison_responses and st.session_state.selected_models:
                             if result.get("response_time_ms"):
                                 st.write(f"Time: {result['response_time_ms']:.0f}ms")
                 else:
-                    st.error(f"❌ Error: {result.get('error', 'Unknown error')}")
+                    st.error(f"Error: {result.get('error', 'Unknown error')}")
     else:
         # For 4+ models, use expandable sections
         st.markdown("**Showing results in expandable sections:**")
-        
+
         for model in st.session_state.selected_models:
             model_info = get_model_display_info(model)
             result = st.session_state.comparison_responses.get(model, {})
-            
-            vision_badge = " 👁️" if model_info['supports_vision'] else ""
+
+            vision_badge = " [Vision]" if model_info['supports_vision'] else ""
             with st.expander(f"{model_info['name']}{vision_badge} ({model_info['provider']})", expanded=True):
                 if result.get("success"):
                     st.markdown(result["response"])
                 else:
-                    st.error(f"❌ Error: {result.get('error', 'Unknown error')}")
+                    st.error(f"Error: {result.get('error', 'Unknown error')}")
 
 # Chat history section:
 # --------------------
 if st.session_state.comparison_messages:
     st.markdown("---")
-    st.markdown("### 📝 Recent Comparisons")
-    
+    st.markdown("### Recent Comparisons")
+
     # Show last 3 comparisons
     recent_messages = st.session_state.comparison_messages[-3:]
-    
+
     for i, message in enumerate(reversed(recent_messages)):
         question_preview = message['prompt'][:80] + ("..." if len(message['prompt']) > 80 else "")
         content_badge = f" [{message['content_info']}]" if message.get('content_info') != "Text" else ""
-        
+
         with st.expander(f"Q{len(recent_messages) - i}: {question_preview}{content_badge}", expanded=False):
             st.markdown(f"**Question:** {message['prompt']}")
-            
+
             if message.get('content_info') != "Text":
-                st.caption(f"📁 Content: {message['content_info']}")
-            
+                st.caption(f"Content: {message['content_info']}")
+
             # Show abbreviated responses
             models_used = list(message['responses'].keys())
             for model in models_used[:3]:  # Show max 3 in history
                 model_info = get_model_display_info(model)
                 result = message['responses'].get(model, {})
-                
+
                 if result.get("success"):
                     response_preview = result["response"][:200] + ("..." if len(result["response"]) > 200 else "")
                     st.markdown(f"**{model_info['name']}:** {response_preview}")
                 else:
-                    st.markdown(f"**{model_info['name']}:** ❌ Error")
-            
+                    st.markdown(f"**{model_info['name']}:** Error")
+
             if len(models_used) > 3:
                 st.caption(f"... and {len(models_used) - 3} more models")
 
 # Clear history button:
 if st.session_state.comparison_messages:
-    if st.button("🗑️ Clear History", type="secondary"):
+    if st.button("Clear History", type="secondary"):
         st.session_state.comparison_messages = []
         st.session_state.comparison_responses = {}
         st.rerun()

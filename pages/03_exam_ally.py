@@ -1,4 +1,4 @@
-﻿
+
 
 # Import required libraries:
 # --------------------------
@@ -7,6 +7,7 @@ import tempfile
 
 # Our Own Modules
 from lib import chatpdf, chatgeneration, sidebar
+from lib.ui import apply_theme_css
 
 # Third-Party Libraries
 from dotenv import load_dotenv
@@ -18,21 +19,11 @@ from pdf4llm import to_markdown
 # ------------------------------------------------------------------------------
 
 # Import models from config
-from config import MODELS
+from config import MODELS, get_page_models, THEME_COLORS, PAGE_ICON
 
-# Get same models as project coach
-models = [
-  # Commercial API models  
-  'gpt-5-chat-latest',
-  'claude-sonnet-4-20250514',
-  # Open Weight Model from Cohere
-  'command-a-03-2025',
-  # Representative larger HuggingFace models
-  'openai/gpt-oss-120b',
-  'Qwen/Qwen3-235B-A22B-Instruct-2507',
-  'deepseek-ai/DeepSeek-V3',
-  'meta-llama/Llama-4-Maverick-17B-128E-Instruct'
-]
+# Get models for exam ally dynamically from config
+# All models can generate exam questions, excluding realtime speech models
+models = get_page_models("exam_ally")
 # -----------------------------------------------------------------------------
 
 
@@ -76,10 +67,10 @@ st.session_state.cur_page = THIS_PAGE
 
 # Streamlit Application:
 # ----------------------
-st.set_page_config(page_title = "ChatISA: Exam Ally", layout = "centered", page_icon='assets/favicon.png')
+st.set_page_config(page_title = "ChatISA: Exam Ally", layout = "centered", page_icon=PAGE_ICON)
+apply_theme_css()
 
 # Import theme colors
-from config import THEME_COLORS
 
 st.markdown(f'<h2 style="color: {THEME_COLORS["primary"]};">ChatISA: Exam Ally</h2>', unsafe_allow_html=True)
 
@@ -265,7 +256,7 @@ if st.session_state.submitted:
         # extracting the response, input tokens, and output tokens
         response, input_tokens, output_tokens = outputs
         full_response += response
-        message_placeholder.markdown(full_response + "▌")
+        message_placeholder.markdown(full_response)
         
         # Update the token counts for the specific model in session state
         st.session_state.token_counts[st.session_state.submission['model_choice']]['input_tokens'] += input_tokens

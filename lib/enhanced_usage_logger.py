@@ -42,21 +42,33 @@ def get_session_id() -> str:
     return st.session_state[page_session_key]
 
 def load_json_log(file_path: Path) -> List[Dict[str, Any]]:
-    """Load JSON log file, return empty list if file doesn't exist."""
+    """Load JSONL (JSON Lines) log file, return empty list if file doesn't exist."""
     if not file_path.exists():
         return []
-    
+
     try:
+        entries = []
         with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except (json.JSONDecodeError, IOError):
+            for line in f:
+                line = line.strip()
+                if line:  # Skip empty lines
+                    try:
+                        entries.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        # Skip corrupted lines but continue reading
+                        continue
+        return entries
+    except IOError:
         return []
 
 def save_json_log(file_path: Path, data: List[Dict[str, Any]]):
-    """Save data to JSON log file."""
+    """Append data to JSONL log file (does not overwrite existing data)."""
     try:
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False, default=str)
+        # Use append mode to add new entries without overwriting
+        with open(file_path, 'a', encoding='utf-8') as f:
+            for entry in data:
+                json.dump(entry, f, ensure_ascii=False, default=str)
+                f.write('\n')
     except IOError as e:
         print(f"Error saving log file {file_path}: {e}")
 
@@ -71,7 +83,7 @@ def log_activity(
 ):
     """
     Log any user activity in a privacy-compliant way.
-    
+
     Args:
         activity_type: Type of activity ('ai_generation', 'page_visit', 'model_change', 'pdf_export', 'feature_use')
         page: Page where activity occurred
@@ -82,8 +94,6 @@ def log_activity(
         performance: Performance metrics
     """
     try:
-        activity_data = load_json_log(ACTIVITY_LOG_FILE)
-        
         # Create privacy-compliant entry
         activity_entry = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -92,7 +102,7 @@ def log_activity(
             "page": page,
             "data": data or {}
         }
-        
+
         # Add AI-specific data if applicable
         if model_used:
             activity_entry["model_used"] = model_used
@@ -102,10 +112,10 @@ def log_activity(
             activity_entry["cost"] = cost
         if performance:
             activity_entry["performance"] = performance
-            
-        activity_data.append(activity_entry)
-        save_json_log(ACTIVITY_LOG_FILE, activity_data)
-        
+
+        # Append single entry (save_json_log now uses append mode)
+        save_json_log(ACTIVITY_LOG_FILE, [activity_entry])
+
     except Exception as e:
         print(f"Error logging activity: {e}")
 
@@ -142,44 +152,40 @@ def log_enhanced_usage(
         major: Student's major
         additional_metadata: Any additional structured data
     """
-    try:
-        # Use privacy-compliant activity logging
-        tokens = {
-            "input": input_tokens or 0,
-            "output": output_tokens or 0,
-            "total": (input_tokens or 0) + (output_tokens or 0)
-        }
-        
-        performance = {"response_time_ms": response_time_ms} if response_time_ms else None
-        
-        # Privacy-compliant: Only store metadata, no personal info
-        data = {
-            "prompt_length": len(prompt) if prompt else 0,
-            "response_length": len(response) if response else 0,
-            "exported_to_pdf": exported_to_pdf,
-            "course_provided": bool(course_name),  # Just whether course was provided, not the name
-            "academic_level": academic_level,  # This is not personal
-            "major": major  # This is not personal
-        }
-        
-        if additional_metadata:
-            # Filter out any potential personal info
-            safe_metadata = {k: v for k, v in additional_metadata.items() 
-                           if not any(personal in k.lower() for personal in ['name', 'email', 'id', 'user'])}
-            data.update(safe_metadata)
-        
-        log_activity(
-            activity_type="ai_generation",
-            page=page,
-            data=data,
-            model_used=model_used,
-            tokens=tokens,
-            cost=cost,
-            performance=performance
-        )
-        
-    except Exception as e:
-        print(f"Error logging usage: {e}")
+    # Use privacy-compliant activity logging
+    tokens = {
+        "input": input_tokens or 0,
+        "output": output_tokens or 0,
+        "total": (input_tokens or 0) + (output_tokens or 0)
+    }
+    
+    performance = {"response_time_ms": response_time_ms} if response_time_ms else None
+    
+    # Privacy-compliant: Only store metadata, no personal info
+    data = {
+        "prompt_length": len(prompt) if prompt else 0,
+        "response_length": len(response) if response else 0,
+        "exported_to_pdf": exported_to_pdf,
+        "course_provided": bool(course_name),  # Just whether course was provided, not the name
+        "academic_level": academic_level,  # This is not personal
+        "major": major  # This is not personal
+    }
+    
+    if additional_metadata:
+        # Filter out any potential personal info
+        safe_metadata = {k: v for k, v in additional_metadata.items() 
+                       if not any(personal in k.lower() for personal in ['name', 'email', 'id', 'user'])}
+        data.update(safe_metadata)
+    
+    log_activity(
+        activity_type="ai_generation",
+        page=page,
+        data=data,
+        model_used=model_used,
+        tokens=tokens,
+        cost=cost,
+        performance=performance
+    )
 
 def log_session_action(action: str, page: str, data: Optional[Dict[str, Any]] = None):
     """
@@ -446,7 +452,7 @@ def clean_personal_data_from_logs():
         if SESSION_LOG_FILE.exists():
             shutil.move(str(SESSION_LOG_FILE), str(SESSION_LOG_FILE.with_suffix('.json.backup')))
             
-        print("✓ Personal data cleaned and logs migrated to privacy-compliant format")
+        print("Personal data cleaned and logs migrated to privacy-compliant format")
         
     except Exception as e:
         print(f"Error cleaning logs: {e}")

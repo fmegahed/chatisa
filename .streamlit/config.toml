@@ -17,6 +17,9 @@ secondaryBackgroundColor = "#f8f9fa"
 # Text color (Black for maximum readability)
 textColor = "#000000"
 
+# Typeface
+font = "serif"
+
 # Additional Streamlit configuration
 [server]
 # Disable CORS for development (adjust for production as needed)
@@ -27,7 +30,7 @@ enableXsrfProtection = false
 # Automatically open browser when running locally
 gatherUsageStats = false
 
-[client]
-# Improve client performance
-caching = true
-displayEnabled = true
+# [client]
+# The following options were deprecated and removed in newer Streamlit versions:
+# caching = true
+# displayEnabled = true
