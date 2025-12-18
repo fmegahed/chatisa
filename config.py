@@ -12,7 +12,7 @@ load_dotenv(override=True)
 
 # ==================== Versioning and Date ====================
 DATE = "Dec 18, 2025"
-VERSION = "5.0.2"
+VERSION = "5.0.3"
 APP_NAME = "ChatISA"
 APP_DESCRIPTION = "Educational AI Assistant with Multiple LLM Support"
 PAGE_ICON = "assets/favicon.png"

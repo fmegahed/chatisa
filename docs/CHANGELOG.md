@@ -4,6 +4,13 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v5.0.3 - December 18, 2025
+
+### Bug Fix
+- Added missing `pdf4llm` package to requirements.txt
+
+---
+
 ## v5.0.2 - December 18, 2025
 
 ### Bug Fix

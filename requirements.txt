@@ -21,6 +21,7 @@ fpdf==1.7.2
 pypdf==6.4.2
 PyMuPDF==1.26.7
 pymupdf4llm==0.2.7
+pdf4llm==0.2.7
 
 # LLM Providers - LangChain Integration
 langchain==1.2.0
