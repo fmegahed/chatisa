@@ -4,6 +4,16 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v5.0.1 - December 18, 2025
+
+### Changes
+- Cleaned up `requirements.txt` to include only direct dependencies with latest versions
+- Replaced deprecated `use_container_width` with `width="stretch"` (Streamlit 1.52+)
+- Removed unused LangChain import causing errors with LangChain 1.2.0
+- Suppressed Pydantic V1 compatibility warning for Python 3.14+
+
+---
+
 ## [v5.0.0](releases/v5.0.0.md) - December 18, 2025
 
 ### Highlights

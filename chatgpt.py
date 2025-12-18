@@ -1,7 +1,11 @@
 import os
 import json
 import time
+import warnings
 from pathlib import Path
+
+# Suppress Pydantic V1 compatibility warning (LangChain internal - not fixable in user code)
+warnings.filterwarnings("ignore", message="Core Pydantic V1 functionality")
 
 import pandas as pd
 import streamlit as st
@@ -212,7 +216,7 @@ def home():
         }
         return page_map.get(page_label)
 
-    if st.button(f"Open {selected}", use_container_width=True):
+    if st.button(f"Open {selected}", width="stretch"):
         target = navigate_to(selected)
         if target and hasattr(st, "switch_page"):
             st.switch_page(target)
@@ -289,7 +293,7 @@ def home():
                 "Vision": "Yes" if cfg["supports_vision"] else "No",
                 "Functions": "Yes" if cfg["supports_function_calling"] else "No",
             })
-        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
 
     sidebar.render_sidebar()
 

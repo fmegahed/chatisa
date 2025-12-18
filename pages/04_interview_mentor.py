@@ -296,7 +296,7 @@ if not st.session_state.submitted_speech:
 
     # Submit
     button_text = 'Start Transcription Interview' if use_transcription else 'Start Speech-to-Speech Interview'
-    if st.button(button_text, type="primary", use_container_width=True):
+    if st.button(button_text, type="primary", width="stretch"):
         if all([grade, major, raw_resume, job_title, job_description]):
             resume_text = pdf_to_markdown(raw_resume.getvalue())
             profile_model = st.session_state.get('transcription_model_choice', 'gpt-5.2-2025-12-11')
@@ -501,7 +501,7 @@ if st.session_state.submitted_speech:
                         f,
                         file_name=f"{company_name}_{user_name}_interview.pdf",
                         mime="application/pdf",
-                        use_container_width=True
+                        width="stretch"
                     )
 
     else:

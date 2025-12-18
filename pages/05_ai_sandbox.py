@@ -172,7 +172,7 @@ def render_code_execution(code: str, outputs: List[Dict]):
 
                     col1, col2 = st.columns([3, 1])
                     with col1:
-                        st.image(image, use_container_width=True)
+                        st.image(image, width="stretch")
                     with col2:
                         st.download_button(
                             label="Download",
@@ -501,7 +501,7 @@ if len(st.session_state.sandbox_messages) > 0:
                         data=file,
                         file_name=f"{user_course}_{user_name}_sandbox.pdf",
                         mime="application/pdf",
-                        use_container_width=True
+                        width="stretch"
                     )
             except Exception as pdf_error:
                 st.error(f"Error generating PDF: {str(pdf_error)}")
@@ -540,7 +540,7 @@ st.sidebar.markdown(f"""
 st.sidebar.markdown("")
 
 # Clear conversation button
-if st.sidebar.button("Clear Conversation", use_container_width=True):
+if st.sidebar.button("Clear Conversation", width="stretch"):
     st.session_state.sandbox_messages = []
     st.session_state.sandbox_file_ids = []
     st.session_state.sandbox_output_files = []

@@ -5,7 +5,6 @@ Supports multiple LLM providers with automatic token tracking and cost calculati
 """
 
 # Importing the necessary libraries
-from langchain.prompts.chat import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_cohere import ChatCohere

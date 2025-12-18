@@ -387,7 +387,7 @@ def render_clear_conversation_button():
         return
 
     st.sidebar.markdown("")
-    if st.sidebar.button("Clear Conversation", use_container_width=True, key="clear_conv_sidebar"):
+    if st.sidebar.button("Clear Conversation", width="stretch", key="clear_conv_sidebar"):
         # Keep only the system message if present
         if st.session_state.messages and st.session_state.messages[0].get("role") == "system":
             st.session_state.messages = [st.session_state.messages[0]]
