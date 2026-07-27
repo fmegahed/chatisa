@@ -19,6 +19,13 @@ Prints the shareable links and the two env lines. **Save the links
 immediately**: the server keeps only hashes and cannot regenerate them.
 Add the env lines to the deployment (or `.env.local` in development):
 
+> **The mistake that broke guest login on 2026-07-27:** only the env line
+> (the hashes) was saved, and links were later reconstructed by pasting the
+> hashes after `?pass=`. Hashed links can never work, and the real tokens
+> cannot be recovered, so the whole set had to be re-minted. Check before
+> sharing: a working link has a 32-character code after `pass=`; a
+> 64-character code is a hash and is dead on arrival.
+
 ```
 CHATISA_GUEST_PASS_HASHES=<64-hex-hash>,<64-hex-hash>,...
 CHATISA_GUEST_EXPIRES=2026-09-30
