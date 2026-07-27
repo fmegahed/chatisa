@@ -17,3 +17,10 @@ __pycache__/
 CLAUDE.md
 *.tmp.*
 *.backup_20251029
+
+# Miami's brand standards PDF (14.6 MB). Deliberately NOT committed: it is
+# Miami University's document rather than project source, PROJECT_MEMORY records
+# the brand guide as repo-external by design, and it would be 64% of the
+# repository. Keep a local copy beside the repo; assets/miami-colors.md and
+# web/lib/ask/chart-style.ts carry the parts the code actually needs.
+assets/brand-standards-2025_508.pdf

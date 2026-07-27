@@ -1,0 +1,74 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# local data + e2e auth state
+data/
+tests/e2e/.auth/
+
+# keep the env template
+!.env.example
+tests/e2e/.data/
+tests/e2e/.data-perf/
+tests/e2e/.data-live/
+
+# live hardening runs: real-model transcripts, generated decks, traces. The
+# specs are committed; their output is evidence for one run, not source.
+tests/live/.auth/
+tests/live/.artifacts/
+
+# self-hosted wasm runtimes, populated by: npm run setup:runtimes
+public/runtimes/
+deploy/
+
+# Build caches and scratch databases. Added 2026-07-26 while preparing the repo:
+# these were not ignored and would have been committed, and two of them are
+# SQLite databases (the bundle self-test's, and a manual e2e run's) that can hold
+# user rows and document excerpts. The deploy bundler learned the same lesson the
+# same day; see docs/development/2026-07-26-hardening.md section 1.4.
+.cache/
+tests/e2e/.data-manual/
+
+# Any stray SQLite file, wherever it appears. A belt-and-braces rule: the two
+# above were each a directory nobody thought about, and the next one will be too.
+*.db
+*.db-shm
+*.db-wal

@@ -1,0 +1,19 @@
+--skip-build: keeping the already-compiled footer date (July 26, 2026).
+Assembling deploy/chatisa-app ...
+Verifying the bundle is self-contained ...
+  self-contained: no links, alias packages materialized
+  no development data: no .db files, no nested deploy/
+  worker relative import copied: lib\exam\pdf-core.mjs
+  worker deps (unpdf, @napi-rs/canvas): copied 3 packages
+Self-test: booting the assembled bundle ...
+  self-test PASSED: pdfWorker, dbRoundtrip, brandAssets, speech (acceptable here: speech not-configured)
+Fetching better-sqlite3 v12.11.1 prebuilt for Node ABI 137 (Node 24)...
+  swapped: node_modules\better-sqlite3\build\Release\better_sqlite3.node
+  swapped: .next\node_modules\better-sqlite3-90e2652d1716b047\build\Release\better_sqlite3.node
+  bundle targets Node 24 (ABI 137)
+Zipping (this takes a minute)...
+
+Bundle ready: C:\Users\megahefm\Documents\claude\chatisa\webapp\web\deploy\chatisa-app
+Size: 300 MB (folder)
+COPY THIS to the server: C:\Users\megahefm\Documents\claude\chatisa\webapp\web\deploy\chatisa-app.zip
+  (302 MB; extract there, then read INSTALL.txt)

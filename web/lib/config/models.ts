@@ -1,0 +1,730 @@
+/**
+ * Model catalog.
+ *
+ * Every id here was verified against the provider's own live listing on
+ * 2026-07-21 with `npm run models:audit`, and the HuggingFace routes were
+ * verified per serving provider with `scripts/check-proposed.ts`. That process
+ * exists because the previous catalog shipped
+ * `meta-llama/Llama-4-Maverick-17B-128E-Instruct` for months while the router
+ * only ever served the `-FP8` suffixed id, so students were offered a model
+ * that could never answer. No unit test can catch that; only asking the
+ * provider can.
+ *
+ * HuggingFace ids carry an explicit `:provider` route suffix. The route is
+ * part of the identity, not a detail: providers serving identical weights
+ * differ in price, speed, context, and crucially in whether they support
+ * structured output.
+ *
+ * Replacing any id requires explicit approval (ADR-005), and the replacement
+ * must be verified live before it ships (ADR-018).
+ */
+
+export type ProviderId =
+  | "openai"
+  | "anthropic"
+  | "google"
+  | "huggingface_inference";
+
+export interface ModelConfig {
+  provider: ProviderId;
+  displayName: string;
+  description: string;
+  costPer1kInput: number;
+  costPer1kOutput: number;
+  maxTokens: number;
+  contextWindow: number;
+  supportsVision: boolean;
+  supportsFunctionCalling: boolean;
+  /**
+   * Whether this route can return schema-conforming JSON. Distinct from
+   * `supportsFunctionCalling`: on the HuggingFace router the same weights
+   * support tools on one provider and structured output only on another.
+   * Exam Ally cannot generate an exam without this, so it filters on it.
+   */
+  supportsStructuredOutput: boolean;
+  /**
+   * True where a limit is inferred rather than published by the provider.
+   * Inferred limits are deliberately conservative, so the cost of being wrong
+   * is a model being offered for slightly smaller documents than it could
+   * actually handle, never a failed request.
+   */
+  limitsInferred?: boolean;
+  temperatureRange: [number, number];
+  defaultTemperature: number;
+  /**
+   * Whether the provider still accepts a `temperature` parameter for this model.
+   * Absent means yes, so only models that reject it need saying.
+   *
+   * Added 2026-07-26 after Ask Anything failed outright on Claude Opus 5:
+   * `AI_APICallError: temperature is deprecated for this model`. Every request
+   * carrying a temperature was rejected, so the model was offered in five
+   * modules and worked in none of them. Claude Sonnet 5 is the same generation
+   * and only WARNS ("temperature is not supported ... and will be ignored"),
+   * which is why this went unnoticed: the default model degraded silently while
+   * the premium one broke loudly, and nothing exercised the premium one.
+   *
+   * temperatureRange is left as published rather than zeroed, because it
+   * describes what the model's sampling would do; this flag describes whether we
+   * are allowed to ask.
+   */
+  supportsTemperature?: boolean;
+  openWeight: boolean;
+  realtimeOnly?: boolean;
+  tags: string[];
+}
+
+export const MODELS: Record<string, ModelConfig> = {
+  "gpt-5.6-sol": {
+    provider: "openai",
+    displayName: "GPT-5.6 Sol",
+    description: "OpenAI's most capable model. Best for hard reasoning and detailed feedback.",
+    costPer1kInput: 0.005,
+    costPer1kOutput: 0.03,
+    maxTokens: 128000,
+    contextWindow: 1050000,
+    supportsVision: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: false,
+    tags: ["premium", "reasoning", "coding", "large_context", "vision", "sandbox"],
+  },
+  "gpt-5.6-terra": {
+    provider: "openai",
+    displayName: "GPT-5.6 Terra",
+    description: "Strong general purpose OpenAI model at half the cost of Sol.",
+    costPer1kInput: 0.0025,
+    costPer1kOutput: 0.015,
+    maxTokens: 128000,
+    contextWindow: 1050000,
+    supportsVision: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: false,
+    tags: ["premium", "reasoning", "coding", "large_context", "vision"],
+  },
+  "gpt-5.6-luna": {
+    provider: "openai",
+    displayName: "GPT-5.6 Luna",
+    description: "OpenAI's fast, low cost model. A good default for everyday questions.",
+    costPer1kInput: 0.001,
+    costPer1kOutput: 0.006,
+    maxTokens: 128000,
+    contextWindow: 1050000,
+    supportsVision: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: false,
+    tags: ["cost_effective", "coding", "large_context", "vision"],
+  },
+  // Replaced Opus 4.8 on 2026-07-24, the day Opus 5 landed: same price
+  // ($5/$25 per million), more capable, per the professor's direction and
+  // https://www.anthropic.com/news/claude-opus-5. Assumed to keep the 4.7-era
+  // tokenizer family (text costs roughly 30 percent more tokens than
+  // pre-4.7 Claude models), so cost estimates carry over from 4.8, not from
+  // Sonnet 4.5.
+  //
+  // Kept from the 4.8 entry because the lesson outlives the model: 4.8 was
+  // briefly withheld on 2026-07-21 after returning HTTP 500 for every request
+  // carrying a system prompt. That was an Anthropic incident, not a defect.
+  // The failure reproduced 5/5, which felt conclusive, but an active incident
+  // reproduces 100 percent of the time inside its own window; only re-testing
+  // after a delay can tell a defect from an outage (ADR-019).
+  "claude-opus-5": {
+    provider: "anthropic",
+    displayName: "Claude Opus 5",
+    description: "Anthropic's most capable model. Strong at careful explanation and code review.",
+    costPer1kInput: 0.005,
+    costPer1kOutput: 0.025,
+    maxTokens: 128000,
+    contextWindow: 1000000,
+    supportsVision: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    // Rejected by the provider: see supportsTemperature.
+    supportsTemperature: false,
+    openWeight: false,
+    tags: ["premium", "reasoning", "coding", "large_context", "vision"],
+  },
+  "claude-sonnet-5": {
+    provider: "anthropic",
+    displayName: "Claude Sonnet 5",
+    description: "Balanced Anthropic model. Fast, capable, and well suited to tutoring.",
+    costPer1kInput: 0.003,
+    costPer1kOutput: 0.015,
+    maxTokens: 128000,
+    contextWindow: 1000000,
+    supportsVision: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    // Rejected by the provider: see supportsTemperature.
+    supportsTemperature: false,
+    openWeight: false,
+    tags: ["premium", "reasoning", "coding", "large_context", "vision"],
+  },
+  "gemini-3.1-pro-preview-customtools": {
+    provider: "google",
+    displayName: "Gemini 3.1 Pro",
+    description: "Google's most capable model, with a very large context window.",
+    costPer1kInput: 0.002,
+    costPer1kOutput: 0.012,
+    maxTokens: 65536,
+    contextWindow: 1048576,
+    supportsVision: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: false,
+    tags: ["premium", "reasoning", "coding", "large_context", "vision"],
+  },
+  "gemini-3.6-flash": {
+    provider: "google",
+    displayName: "Gemini 3.6 Flash",
+    description: "Google's fast model. Large context at a lower price than Pro.",
+    costPer1kInput: 0.0015,
+    costPer1kOutput: 0.0075,
+    maxTokens: 65536,
+    contextWindow: 1048576,
+    supportsVision: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: false,
+    tags: ["cost_effective", "coding", "large_context", "vision"],
+  },
+  // Routed via together rather than fireworks-ai: same price, faster, and fireworks does not support structured output for these weights.
+  "zai-org/GLM-5.2:together": {
+    provider: "huggingface_inference",
+    displayName: "GLM-5.2",
+    description: "Open weight flagship from Z.ai. Strong general reasoning.",
+    costPer1kInput: 0.0014,
+    costPer1kOutput: 0.0044,
+    maxTokens: 8192,
+    contextWindow: 262144,
+    supportsVision: false,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "reasoning", "coding", "large_context"],
+  },
+  "thinkingmachines/Inkling:together": {
+    provider: "huggingface_inference",
+    displayName: "Inkling",
+    description: "Open weight multimodal model from Thinking Machines.",
+    costPer1kInput: 0.001,
+    costPer1kOutput: 0.00405,
+    maxTokens: 8192,
+    contextWindow: 524288,
+    supportsVision: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "reasoning", "large_context", "vision"],
+  },
+  // Routed via together rather than fireworks-ai: same price, faster first token, and fireworks does not support structured output for these weights.
+  "deepseek-ai/DeepSeek-V4-Pro:together": {
+    provider: "huggingface_inference",
+    displayName: "DeepSeek V4 Pro",
+    description: "Open weight reasoning model from DeepSeek.",
+    costPer1kInput: 0.00174,
+    costPer1kOutput: 0.00348,
+    maxTokens: 8192,
+    contextWindow: 512000,
+    supportsVision: false,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "reasoning", "coding", "large_context"],
+  },
+  // fireworks-ai kept for throughput (about 106 tokens per second against about 19 elsewhere). That route has no structured output, so this model is not offered for exam generation.
+  "deepseek-ai/DeepSeek-V4-Flash:fireworks-ai": {
+    provider: "huggingface_inference",
+    displayName: "DeepSeek V4 Flash",
+    description: "Very cheap, very fast open weight model. Good for quick questions.",
+    costPer1kInput: 0.00014,
+    costPer1kOutput: 0.00028,
+    maxTokens: 8192,
+    contextWindow: 1048576,
+    supportsVision: false,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: false,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "cost_effective", "large_context"],
+  },
+  // Routed via together rather than fireworks-ai: same price, and the fireworks route supports neither tools nor structured output.
+  "moonshotai/Kimi-K2.7-Code:together": {
+    provider: "huggingface_inference",
+    displayName: "Kimi K2.7 Code",
+    description: "Open weight model specialised for programming tasks.",
+    costPer1kInput: 0.00095,
+    costPer1kOutput: 0.004,
+    maxTokens: 8192,
+    contextWindow: 262144,
+    supportsVision: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "coding", "large_context", "vision"],
+  },
+  // Vision confirmed from the model card (image-text-to-text, vision encoder) despite the absence of a VL suffix, which in earlier Qwen generations marked the separate vision variant. scaleway publishes no context length, so 131072 is a conservative floor.
+  "Qwen/Qwen3.6-35B-A3B:scaleway": {
+    provider: "huggingface_inference",
+    displayName: "Qwen3.6 35B",
+    description: "Efficient open weight model from Alibaba that also reads images.",
+    costPer1kInput: 0.00029,
+    costPer1kOutput: 0.00171,
+    maxTokens: 8192,
+    contextWindow: 131072,
+    supportsVision: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
+    limitsInferred: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "cost_effective", "reasoning", "vision"],
+  },
+  // cerebras kept for speed (about 899 tokens per second against 46 to 122 on every structured output route). No structured output there, so it is not offered for exam generation. Context inferred from sibling routes, which all report 131072.
+  "openai/gpt-oss-120b:cerebras": {
+    provider: "huggingface_inference",
+    displayName: "GPT-OSS 120B",
+    description: "OpenAI's open weight model, served extremely fast.",
+    costPer1kInput: 0.00025,
+    costPer1kOutput: 0.00069,
+    maxTokens: 8192,
+    contextWindow: 131072,
+    supportsVision: false,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: false,
+    limitsInferred: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "reasoning", "coding"],
+  },
+  // groq kept for speed (about 693 tokens per second). No structured output there, so it is not offered for exam generation.
+  "openai/gpt-oss-20b:groq": {
+    provider: "huggingface_inference",
+    displayName: "GPT-OSS 20B",
+    description: "Small open weight model from OpenAI, served extremely fast.",
+    costPer1kInput: 0.0001,
+    costPer1kOutput: 0.0005,
+    maxTokens: 8192,
+    contextWindow: 131072,
+    supportsVision: false,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: false,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "cost_effective", "coding"],
+  },
+  // The model card reports image input, but the cerebras route publishes neither pricing nor context and image serving there is unconfirmed, so vision is left off rather than risk failed requests. Context inferred from sibling routes.
+  "google/gemma-4-31B-it:cerebras": {
+    provider: "huggingface_inference",
+    displayName: "Gemma 4 31B",
+    description: "Google's open weight model. Free to use and very fast.",
+    costPer1kInput: 0.0,
+    costPer1kOutput: 0.0,
+    maxTokens: 8192,
+    contextWindow: 262144,
+    supportsVision: false,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: false,
+    limitsInferred: true,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "cost_effective", "free"],
+  },
+  // The card reports vision, but only through an optional mmproj pack that this route is not confirmed to load, so vision is left off. No route anywhere supports structured output for these weights.
+  "prism-ml/Ternary-Bonsai-27B-gguf:together": {
+    provider: "huggingface_inference",
+    displayName: "Ternary Bonsai 27B",
+    description: "Free open weight model. A good way to see what small models can do.",
+    costPer1kInput: 0.0,
+    costPer1kOutput: 0.0,
+    maxTokens: 8192,
+    contextWindow: 262144,
+    supportsVision: false,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: false,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "cost_effective", "free"],
+  },
+  // Context is only 16,384 tokens, far smaller than everything else here, so it is unsuitable for long documents. Reports no tool support.
+  // The router advertises structured output on this route, but a live probe on
+  // 2026-07-21 returned an object that did not match a two-field schema. The
+  // measurement wins over the advertised capability, so it is recorded as
+  // false. Excluded from Exam Ally by context anyway.
+  "microsoft/phi-4:deepinfra": {
+    provider: "huggingface_inference",
+    displayName: "Phi-4",
+    description: "Small, inexpensive open weight model from Microsoft.",
+    costPer1kInput: 7e-05,
+    costPer1kOutput: 0.00014,
+    maxTokens: 4096,
+    contextWindow: 16384,
+    supportsVision: false,
+    supportsFunctionCalling: false,
+    supportsStructuredOutput: false,
+    temperatureRange: [0.0, 2.0],
+    defaultTemperature: 0.7,
+    openWeight: true,
+    tags: ["open_weight", "cost_effective"],
+  },
+};
+export type ModuleKey =
+  | "coding_companion"
+  | "project_coach"
+  | "exam_ally"
+  | "interview_mentor"
+  | "interview_mentor_transcription"
+  | "jobapp_assistant"
+  | "ai_sandbox"
+  | "sandbox_chat"
+  | "ai_comparisons"
+  | "ask_anything";
+
+export const DEFAULT_MODELS: Partial<Record<ModuleKey, string>> = {
+  coding_companion: "claude-sonnet-5",
+  // The Sandbox side chat is coding help, so it mirrors the Coding Companion.
+  sandbox_chat: "claude-sonnet-5",
+  // Ask Anything: strong agentic tool use at mid cost (design 2026-07-24).
+  ask_anything: "claude-sonnet-5",
+  project_coach: "gpt-5.6-terra",
+  exam_ally: "gpt-5.6-terra",
+  // Speech is moving to Deepgram; the previous default,
+  // gpt-4o-realtime-preview-2025-06-03, was withdrawn by OpenAI and is no
+  // longer served, so nothing here can point at it.
+  interview_mentor_transcription: "gpt-5.6-terra",
+  jobapp_assistant: "gpt-5.6-terra",
+};
+
+interface PageModelRule {
+  includeAll?: boolean;
+  excludeTags?: string[];
+  tags?: string[];
+  includeRealtime?: boolean;
+  minContextWindow?: number;
+  specificModels?: string[];
+  /**
+   * Restrict to models that can return schema-conforming JSON. Exam Ally sets
+   * this: without structured output it cannot build an exam at all, and
+   * offering a model that always fails is worse than offering fewer models.
+   */
+  requireStructuredOutput?: boolean;
+}
+
+const PAGE_MODELS: Record<string, PageModelRule> = {
+  coding_companion: { includeAll: true, excludeTags: ["realtime", "speech"] },
+  project_coach: {
+    tags: ["reasoning", "large_context"],
+    minContextWindow: 64000,
+  },
+  // Exam generation needs structured output, and the document must fit, so the
+  // 16k-context model is excluded by minContextWindow rather than by name.
+  exam_ally: {
+    includeAll: true,
+    excludeTags: ["realtime", "speech"],
+    requireStructuredOutput: true,
+    minContextWindow: 64000,
+  },
+  // Speech runs through Deepgram, not through a chat model, so the interviewer
+  // model is an ordinary chat model. Both keys resolve to the same set: the
+  // "realtime", "speech" and "transcription" tags they used to filter on are
+  // carried by no model in the current catalog, so these resolved to an empty
+  // list and to the five premium models respectively.
+  interview_mentor: { includeAll: true, minContextWindow: 64000 },
+  // Tailoring needs structured output and enough room for a whole resume.
+  jobapp_assistant: {
+    includeAll: true,
+    requireStructuredOutput: true,
+    minContextWindow: 64000,
+  },
+  interview_mentor_transcription: { includeAll: true, minContextWindow: 64000 },
+  ai_sandbox: { specificModels: ["gpt-5.6-sol"] },
+  // The Sandbox side chat offers the same models as the Coding Companion.
+  sandbox_chat: { includeAll: true, excludeTags: ["realtime", "speech"] },
+  ai_comparisons: { includeAll: true, excludeTags: ["realtime", "speech"] },
+  // Ask Anything: Anthropic + OpenAI only (professor's decision 2026-07-24,
+  // slice C revision). Both providers accept the same native file parts
+  // (images, PDFs) and have hosted code execution, so any chat can switch
+  // between all roster models mid-conversation, attachments included. Gemini
+  // and Kimi remain available in AI Comparison.
+  ask_anything: {
+    specificModels: [
+      "gpt-5.6-sol",
+      "gpt-5.6-terra",
+      "gpt-5.6-luna",
+      "claude-opus-5",
+      "claude-sonnet-5",
+    ],
+  },
+};
+
+
+export const MODEL_CATEGORIES: Record<
+  string,
+  { displayName: string; description: string; models: string[] }
+> = {
+  commercial_api: {
+    displayName: "Commercial APIs",
+    description: "Hosted models from the large AI labs",
+    models: [
+      "gpt-5.6-sol",
+      "gpt-5.6-terra",
+      "gpt-5.6-luna",
+      "claude-opus-5",
+      "claude-sonnet-5",
+      "gemini-3.1-pro-preview-customtools",
+      "gemini-3.6-flash",
+    ],
+  },
+  open_weight_large: {
+    displayName: "Open weight, large",
+    description:
+      "Openly published models that rival the commercial labs. Worth trying to see how far open alternatives have come.",
+    models: [
+      "zai-org/GLM-5.2:together",
+      "deepseek-ai/DeepSeek-V4-Pro:together",
+      "moonshotai/Kimi-K2.7-Code:together",
+      "thinkingmachines/Inkling:together",
+      "openai/gpt-oss-120b:cerebras",
+    ],
+  },
+  open_weight_small: {
+    displayName: "Open weight, small and fast",
+    description:
+      "Smaller open models. Cheap or free, quick to respond, and a good way to see the trade-off against the large models.",
+    models: [
+      "deepseek-ai/DeepSeek-V4-Flash:fireworks-ai",
+      "Qwen/Qwen3.6-35B-A3B:scaleway",
+      "openai/gpt-oss-20b:groq",
+      "google/gemma-4-31B-it:cerebras",
+      "prism-ml/Ternary-Bonsai-27B-gguf:together",
+      "microsoft/phi-4:deepinfra",
+    ],
+  },
+};
+
+
+/**
+ * Models available to a module. Mirrors legacy get_page_models, including its
+ * ordering (provider, then display name) and its fallback for unknown pages.
+ */
+export function getPageModels(page: string): string[] {
+  const rule = PAGE_MODELS[page];
+  if (!rule) {
+    return Object.keys(MODELS).filter((m) => !MODELS[m].realtimeOnly);
+  }
+  if (rule.specificModels) return [...rule.specificModels];
+
+  let available: string[];
+  if (rule.includeAll) {
+    available = Object.keys(MODELS);
+  } else if (rule.tags) {
+    available = Object.keys(MODELS).filter((m) =>
+      rule.tags!.some((tag) => MODELS[m].tags.includes(tag)),
+    );
+  } else {
+    available = Object.keys(MODELS);
+  }
+
+  if (rule.excludeTags) {
+    available = available.filter(
+      (m) => !rule.excludeTags!.some((tag) => MODELS[m].tags.includes(tag)),
+    );
+  }
+  if (!rule.includeRealtime) {
+    available = available.filter((m) => !MODELS[m].realtimeOnly);
+  }
+  if (rule.minContextWindow !== undefined) {
+    available = available.filter(
+      (m) => MODELS[m].contextWindow >= rule.minContextWindow!,
+    );
+  }
+  if (rule.requireStructuredOutput) {
+    available = available.filter((m) => MODELS[m].supportsStructuredOutput);
+  }
+
+  // Legacy sorts by (provider, display_name) using Python's stable sort.
+  return available.sort((a, b) => {
+    const pa = MODELS[a].provider;
+    const pb = MODELS[b].provider;
+    if (pa !== pb) return pa < pb ? -1 : 1;
+    const da = MODELS[a].displayName;
+    const db = MODELS[b].displayName;
+    if (da !== db) return da < db ? -1 : 1;
+    return 0;
+  });
+}
+
+export function getModelsByTag(...tags: string[]): string[] {
+  return Object.keys(MODELS).filter((m) =>
+    tags.some((tag) => MODELS[m].tags.includes(tag)),
+  );
+}
+
+export function getDefaultModelForPage(page: string): string {
+  const configured = DEFAULT_MODELS[page as ModuleKey];
+  const available = getPageModels(page);
+  if (configured && available.includes(configured)) return configured;
+  return available[0] ?? Object.keys(MODELS)[0];
+}
+
+export interface CostBreakdown {
+  inputTokens: number;
+  outputTokens: number;
+  inputCost: number;
+  outputCost: number;
+  totalCost: number;
+  model: string;
+  currency: "USD";
+}
+
+/**
+ * The temperature to send for this model, or undefined when it must be omitted.
+ *
+ * Every call that sets a temperature goes through here, because the failure it
+ * prevents is total: Claude Opus 5 rejects the parameter outright
+ * (`AI_APICallError: temperature is deprecated for this model`), so before this
+ * existed the model was offered in five modules and answered in none of them.
+ * An unknown model id is treated as accepting temperature, which is the
+ * pre-existing behaviour.
+ *
+ * The AI SDK omits an option set to undefined, so callers can pass the result
+ * straight through without branching.
+ */
+export function temperatureFor(
+  modelId: string,
+  requested: number,
+): number | undefined {
+  return MODELS[modelId]?.supportsTemperature === false ? undefined : requested;
+}
+
+/** Mirrors legacy calculate_cost, including its 6-decimal rounding. */
+export function calculateCost(
+  model: string,
+  inputTokens: number,
+  outputTokens: number,
+): CostBreakdown | { error: string } {
+  const cfg = MODELS[model];
+  if (!cfg) return { error: `Unknown model: ${model}` };
+  const inputCost = (inputTokens / 1000) * cfg.costPer1kInput;
+  const outputCost = (outputTokens / 1000) * cfg.costPer1kOutput;
+  const round6 = (n: number) => Number(n.toFixed(6));
+  return {
+    inputTokens,
+    outputTokens,
+    inputCost: round6(inputCost),
+    outputCost: round6(outputCost),
+    totalCost: round6(inputCost + outputCost),
+    model,
+    currency: "USD",
+  };
+}
+
+export interface ModelOption {
+  id: string;
+  /** Product name only. Badges are derived, never baked into this. */
+  name: string;
+  /** One student-facing sentence. Already written for every model. */
+  description: string;
+  /** MODEL_CATEGORIES key this model belongs to. */
+  groupId: string;
+  groupName: string;
+  /** Short factual labels, rendered as text rather than colour. */
+  badges: string[];
+  recommended: boolean;
+}
+
+/** Which category a model sits in. Categories are a total, disjoint partition
+ * of the catalog, asserted by tests, so this always resolves. */
+export function categoryOf(modelId: string): string | null {
+  for (const [key, category] of Object.entries(MODEL_CATEGORIES)) {
+    if (category.models.includes(modelId)) return key;
+  }
+  return null;
+}
+
+export function badgesFor(modelId: string): string[] {
+  const cfg = MODELS[modelId];
+  if (!cfg) return [];
+  return [
+    cfg.openWeight ? "open weight" : null,
+    cfg.costPer1kInput === 0 ? "free" : null,
+    cfg.supportsVision ? "reads images" : null,
+  ].filter((b): b is string => b !== null);
+}
+
+/**
+ * Everything a picker needs for one module, in category order.
+ *
+ * Exists because three pages each built this inline and drifted: one included a
+ * vision badge and two did not, and all three appended badges to a displayName
+ * that already ended in "(open weight)", producing
+ * "Gemma 4 31B (open weight, free) (open weight, free tier)".
+ */
+export function buildModelOptions(page: string, availableIds?: string[]): {
+  options: ModelOption[];
+  defaultModelId: string;
+} {
+  const allowed = getPageModels(page);
+  const usable = availableIds
+    ? allowed.filter((id) => availableIds.includes(id))
+    : allowed;
+
+  const preferred = getDefaultModelForPage(page);
+  const defaultModelId = usable.includes(preferred) ? preferred : (usable[0] ?? "");
+
+  const groupOrder = Object.keys(MODEL_CATEGORIES);
+  const options = usable
+    .map((id): ModelOption => {
+      const groupId = categoryOf(id) ?? groupOrder[0];
+      return {
+        id,
+        name: MODELS[id].displayName,
+        description: MODELS[id].description,
+        groupId,
+        groupName: MODEL_CATEGORIES[groupId]?.displayName ?? "Other",
+        badges: badgesFor(id),
+        recommended: id === defaultModelId,
+      };
+    })
+    .sort((a, b) => {
+      const ga = groupOrder.indexOf(a.groupId);
+      const gb = groupOrder.indexOf(b.groupId);
+      if (ga !== gb) return ga - gb;
+      return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+    });
+
+  return { options, defaultModelId };
+}
+
+export function getModelDisplayName(model: string): string {
+  return MODELS[model]?.displayName ?? model;
+}

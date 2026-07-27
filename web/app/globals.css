@@ -1,0 +1,189 @@
+@import "tailwindcss";
+
+/*
+ * ChatISA design tokens: Miami University Brand Guide 2024 v.2 (brand-standards-2025_508.pdf)
+ * Colors: pp. 28–29 exact hex, used at 100% opacity only (p. 28 forbids tints/shades).
+ * Type: p. 33 approved digital alternates: Source Serif 4 (for FreightText Pro), Arial (for Gotham).
+ * Contrast pairs restricted to the guide's WCAG 2.1 AA matrix (p. 31); see docs/design-system.md.
+ */
+@theme {
+  /* Primary (guide p. 28) */
+  --color-miami-red: #c41230;
+  --color-paper: #ffffff;
+
+  /* Secondary (guide p. 29) */
+  --color-accent-red: #ad102a;
+  --color-light-tan: #edece2;
+  --color-medium-tan: #ccc9b8;
+  --color-dark-tan: #70685c;
+
+  /* Neutral (guide p. 29) */
+  --color-ink: #000000;
+  --color-medium-gray: #666666;
+  --color-warm-white: #faf9f7;
+
+  /* Tertiary: sparing emphasis only (guide p. 29) */
+  --color-corn-yellow: #efdb72;
+  --color-slate-blue: #3e5468;
+
+  --font-display: "Source Serif 4 Variable", "Source Serif 4", Georgia,
+    "Times New Roman", serif;
+  --font-body: Arial, "Helvetica Neue", Helvetica, sans-serif;
+
+  --radius-card: 0.375rem;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background-color: var(--color-warm-white);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  /* Strong, brand-red focus indicator (>=3:1 on all app surfaces) */
+  :focus-visible {
+    outline: 3px solid var(--color-miami-red);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /*
+   * Signature element: the Miami "ribbon" label (guide pp. 32, 34–35).
+   * Uppercase sans, white on Miami Red, with the guide's angled edge and the
+   * required extra breathing space before and after the text (p. 34 note).
+   */
+  .ribbon {
+    display: inline-block;
+    background-color: var(--color-miami-red);
+    color: var(--color-paper);
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+    padding: 0.5em 1.25em 0.5em 1em;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 0.55em) 100%, 0 100%);
+  }
+
+  /* Readable model output: long answers, code, lists, and tables. */
+  .chat-prose {
+    line-height: 1.6;
+  }
+  .chat-prose > * + * {
+    margin-top: 0.75rem;
+  }
+  .chat-prose h1,
+  .chat-prose h2,
+  .chat-prose h3,
+  .chat-prose h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .chat-prose h1 {
+    font-size: 1.5rem;
+  }
+  .chat-prose h2 {
+    font-size: 1.3rem;
+  }
+  .chat-prose h3 {
+    font-size: 1.15rem;
+  }
+  .chat-prose ul,
+  .chat-prose ol {
+    padding-left: 1.5rem;
+  }
+  .chat-prose ul {
+    list-style: disc;
+  }
+  .chat-prose ol {
+    list-style: decimal;
+  }
+  .chat-prose li + li {
+    margin-top: 0.25rem;
+  }
+  /* Code sits on a light tan card, so it always uses dark text even when the
+   * surrounding surface is dark (e.g. the Sandbox assistant in dark theme). */
+  .chat-prose :not(pre) > code {
+    background-color: var(--color-light-tan);
+    color: var(--color-ink);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+    font-size: 0.9em;
+  }
+  .chat-prose pre {
+    color: var(--color-ink);
+  }
+  .chat-prose pre code {
+    font-family: ui-monospace, Consolas, "Courier New", monospace;
+  }
+  .chat-prose blockquote {
+    border-left: 4px solid var(--color-medium-tan);
+    padding-left: 0.75rem;
+  }
+
+  /*
+   * AI Sandbox theme tokens, scoped to the workspace so the IDE can offer a
+   * light and a dark skin without touching the rest of the brand-light app.
+   * Panes read these variables; the toggle flips data-sb-theme.
+   */
+  .sb-root {
+    --sb-bg: var(--color-warm-white);
+    --sb-panel: var(--color-paper);
+    --sb-text: var(--color-ink);
+    --sb-muted: var(--color-dark-tan);
+    --sb-border: var(--color-medium-tan);
+    --sb-header: var(--color-light-tan);
+    --sb-accent: var(--color-miami-red);
+  }
+  .sb-root[data-sb-theme="dark"] {
+    --sb-bg: #0a0a0a;
+    --sb-panel: #141414;
+    --sb-text: #eaeaea;
+    --sb-muted: #9a9a9a;
+    --sb-border: #2c2c2c;
+    --sb-header: #1c1c1c;
+    /* Reads white text at >=4.5:1 (buttons use white on this). */
+    --sb-accent: #d02040;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 0.5rem;
+    top: 0.5rem;
+    z-index: 50;
+    background-color: var(--color-miami-red);
+    color: var(--color-paper);
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    transform: translateY(-200%);
+  }
+
+  .skip-link:focus-visible {
+    transform: none;
+    outline-color: var(--color-ink);
+  }
+}

@@ -1,0 +1,109 @@
+\documentclass[tikz,border=0.05in]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning,fit}
+\usepackage{fontawesome5}
+\renewcommand{\familydefault}{\sfdefault} % use sans-serif
+
+% Define colors
+\definecolor{miamired}{rgb}{0.8,0,0}
+\definecolor{darkgray}{rgb}{0.3,0.3,0.3}
+
+% Define base node styles
+\tikzset{
+  role/.style={
+    rectangle, draw, ultra thick, rounded corners,
+    minimum height=1.0cm, font=\normalsize, align=center, inner sep=4pt
+  },
+  arrow/.style={ultra thick,->,>=stealth},
+  MiamiTeam/.style={role, draw=miamired, text width=5cm},
+  Safety/.style={role, draw=darkgray, text width=5cm},
+  Industry/.style={role, draw=blue!70, text width=4cm}
+}
+
+\begin{document}
+\begin{tikzpicture}[node distance=0.5cm and 1.5cm, transform shape, scale=0.9]
+
+  
+  
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Top row: External entities reporting to the PI/PM block
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \node (MeetKai) [Industry, text width=6cm] {\textbf{Primary Industry Partner:}\\ MaxByte Technologies, Inc.};
+
+   \node (PI_PM) [MiamiTeam, right=of MeetKai] {%
+    \textbf{PI:} \faUserTie\ Fadel Megahed\\[2pt]
+    \textbf{Project Manager:} \faClipboardCheck\ Mohamed Farrag, DBA};
+  
+  \node (MaxByte) [Industry, right=of PI_PM, text width=6cm] {\textbf{Non-Ohio Industry Partner}\\  MeetKai, Inc.};
+
+  % PI/PM block placed just below the external nodes (centered below SafetyExt)
+
+
+  % Draw arrows from external nodes to PI/PM
+  \draw [arrow] (MeetKai) -- (PI_PM);
+  \draw [arrow] (MaxByte) -- (PI_PM);
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Internal Team: Co-PIs and the AM Hub group
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Co-PI nodes (left and center)
+  \node (CoPI1) [MiamiTeam, below left=of PI_PM, xshift=-1.5cm, yshift=-1.5cm] {%
+    \textbf{Co-PI:} \faUserTie\ Arthur Carvalho, PhD\\
+    (AI, natural language processing)};
+  \node (CoPI2) [MiamiTeam, below=of PI_PM, yshift=-1.5cm] {%
+    \textbf{Co-PI:} \faUserTie\ Jay Shan, PhD\\
+    (AI, predictive analytics)};
+    
+  % AM Hub group: a vertical chain for Mayyas, SP, and Post Doc (right of PI_PM)
+  \node (Mayyas) [MiamiTeam, below right=of PI_PM, xshift=1.5cm, yshift=-1.5cm] {%
+    \textbf{Co-PI:} \faUserTie\ Mohammad Mayyas, PhD\\
+    (advanced manufacturing)};
+  \node (SP) [MiamiTeam, below=of Mayyas] {%
+    \textbf{SP:} \faRobot\ Reza Abrishambaf, PhD\\
+    (Industrial IoT, Cyber-Physical Systems)};
+  \node (PostDoc) [MiamiTeam, below=of SP] {%
+    \textbf{Postdoctoral Researcher:} \faUserGraduate\ TBD\\
+    (advanced manufacturing, industrial IoT, digital transformation)};
+    
+  % Enclose the AM Hub group in a dashed rectangle with label "AM Hub"
+  \node[draw=miamired, dashed, thick, rounded corners, inner sep=5pt, fit=(Mayyas)(SP)(PostDoc), label=above:{\textbf{AM Hub}}] (AMHubRect) {};
+
+  \node[draw=miamired, dashed, thick, rounded corners, inner sep=5pt, fit=(CoPI1)(CoPI2), label=below:{\textbf{FSB Faculty}}] (FSB) {};
+
+  % Draw arrows from the Co-PIs to the PI/PM block
+  \draw [arrow] (CoPI1) -- (PI_PM);
+  \draw [arrow] (CoPI2) -- (PI_PM);
+  \draw [arrow] (Mayyas) -- (PI_PM);
+  
+  % Within the AM Hub chain: SP reports to Mayyas, and Post Doc reports to SP
+  \draw [arrow] (SP) -- (Mayyas);
+  \draw [arrow] (PostDoc) -- (SP);
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Student Assistants (centered below the Co-PI row)
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \node (Students) [MiamiTeam, left=of PostDoc, xshift=-1.5cm] {%
+    \textbf{Student Research Assistants:} \faUsers\\
+    (coding, data collection)};
+
+    \node[draw=miamired, dashed, thick, rounded corners, inner sep=5pt, fit=(Students), label=below:{\textbf{FSB and AM Hub Students}}] (StBox) {};
+    
+  % Draw arrows from Student Assistants to each reporting entity
+  \draw [arrow] (Students) -| (CoPI1);
+  \draw [arrow] (Students) -- (CoPI2);
+  \draw [arrow] (Students) -- (PostDoc);
+  
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % Evaluation Team and Discovery Center (left of PI/PM)
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \node (EvalTeam) [MiamiTeam, above=of PI_PM, xshift = 7cm, yshift =0.75cm, text width=7cm] {%
+    \textbf{Evaluation Team}\\[2pt]
+    \faCheckCircle\ Discovery Center};
+
+  \node (SafetyExt) [Safety, above=of PI_PM, xshift = -7cm, yshift=.75cm, text width=7cm] {%
+    \textbf{Safety Consultant}\\[2pt]
+    \faHardHat\ Lora Cavuoto, PhD};
+    
+
+\end{tikzpicture}
+\end{document}

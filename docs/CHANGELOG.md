@@ -4,6 +4,42 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.0.0 - July 26, 2026
+
+**The Streamlit application is replaced by a full-stack Next.js platform.** Full
+notes: `docs/releases/v6.0.0.md`.
+
+### Added
+- Eight modules: Coding Tutor, Coding Studio, Exam Prep, Project Assistant,
+  JobApp Drafter, Interview Mentor, Ask Anything, AI Comparison
+- Google sign-in restricted to verified `@miamioh.edu` accounts
+- Python, R, and SQL executed in the student's own browser (Pyodide, WebR,
+  SQLite WASM), self-hosted with a mirrored R package repository
+- Spoken interview practice on Deepgram, with live captions and a feedback report
+- A house chart style shared across every module that plots
+- A self-verifying deploy bundle, and a live-model test harness
+
+### Changed
+- 18 models across 4 providers, each verified against the provider's live listing
+- All provider calls server-side; the legacy app embedded a client secret in page
+  HTML and in an iframe URL fragment
+- Analytics start clean; the legacy JSONL activity log is not migrated
+- The Streamlit app moves to `legacy/` and still runs
+
+### Removed
+- Chat conversation content is no longer stored anywhere (ADR-022)
+- Uploaded documents are never persisted; only sampled excerpts (ADR-015)
+
+### Testing
+- 735 unit tests and 17 end-to-end suites, from a starting point of none,
+  including 50 characterization tests pinning the port against the legacy Python
+
+### Note
+- The transition from Streamlit to this platform was carried out with extensive
+  use of Claude Code, under a staged plan-then-implement workflow. See
+  "How this was built" in `docs/releases/v6.0.0.md`.
+
+---
 ## v5.0.3 - December 18, 2025
 
 ### Bug Fix

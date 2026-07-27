@@ -1,0 +1,94 @@
+\documentclass[border=0.05in,varwidth=false]{standalone}
+\usepackage{pgfgantt}
+\usepackage{xcolor}
+
+\definecolor{miamired}{rgb}{0.8, 0, 0}
+\definecolor{darkgray}{rgb}{0.3, 0.3, 0.3}
+
+\begin{document}
+
+% No minipage; just fbox around your chart if you like
+\fbox{%
+  \begin{ganttchart}[
+    hgrid style/.style={very thick, miamired},
+    vgrid={*5{dotted}, *1{black}, *{6}{dotted}},
+    bar/.append style={fill=gray, draw=gray},
+    bar label node/.append style={align=center},
+    milestone/.append style={fill=black},
+    vrule/.style={black},
+    group/.append style={draw=black, fill=miamired, draw=miamired},
+    link/.style={->, thick, miamired},
+    x unit=0.33in,
+    y unit title = 24 pt,
+    y unit chart= 18pt,
+    title label font = \bfseries\small\color{black},
+    group label font = \bfseries\small\color{black},
+    bar label font = \scriptsize\color{black},
+    milestone label font = \bfseries\footnotesize,
+    link label font=\scriptsize\bfseries\color{miamired},
+    time slot format=isodate-yearmonth,
+    time slot unit=month]{2025-07}{2027-06}
+  
+    \gantttitlecalendar{year, month} \\
+
+
+
+	% Initiation
+    \ganttgroup{Project Initiation}{2025-07}{2025-09} \\
+    \ganttbar{IRB approval (MM, RB)}{2025-07}{2025-09} \\
+    \ganttbar{Hiring and training (MM, RB)}{2025-07}{2025-09} \\
+    %\ganttmilestone{IRB Approval}{2025-08} \\ \\
+    \ganttbar{\parbox{4cm}{\raggedleft  Machine assessment, integra- tion, and setup (MB, MK)}}{2025-07}{2025-09} \\
+    \ganttmilestone{\parbox{4cm}{\raggedleft Requirements and design specification (MB, MK)}}{2025-09} \\
+
+    \\
+    
+    %Phase 1
+    \ganttgroup{Phase 1}{2025-10}{2025-10} \\
+    \ganttbar{\parbox{4cm}{\raggedleft Sensors and machine connectivity (MB, MK)}}{2025-10}{2025-10} \\
+    \ganttbar{\parbox{4cm}{\raggedleft Collection of  manuals (RA)}}{2025-10}{2025-10} \\
+    \ganttbar{\parbox{4cm}{\raggedleft Collection of  images (RA)}}{2025-10}{2025-10} \\
+\ganttmilestone{\parbox{4cm}{\raggedleft Database creation \\ (FM, AC, JS)}}{2025-10} \\
+
+    \\
+
+    %Phase 2
+    \ganttgroup{Phase 2}{2025-11}{2025-12} \\
+    \ganttbar{\parbox{4cm}{\raggedleft RAG development (AC, JS)}}{2025-11}{2025-12} \\
+    \ganttbar{\parbox{4cm}{\raggedleft     Image classifier development (FM, MM, RB)}}{2025-11}{2025-12} \\
+    \ganttbar{\parbox{4cm}{\raggedleft  IIoT integration and connectivity (MB, MK)}}{2025-11}{2025-12} \\
+    \ganttbar{\parbox{4cm}{\raggedleft Testing of AI system \\(FM, AC, JS)}}{2025-12}{2025-12} \\
+    \ganttmilestone{\parbox{4cm}{\raggedleft  AI system deployment (FM, AC, JS, MM, RB)}}{2025-12} \\
+
+ 
+
+    \\
+
+    %Phase 3
+    \ganttgroup{Phase 3}{2026-01}{2026-03} \\
+    \ganttbar{\parbox{4cm}{\raggedleft Gamified module script \\ (MM, RB)}}{2026-01}{2026-01} \\
+    \ganttbar{Analytics layer (FM, AC, JS)}{2026-01}{2026-02} \\
+    \ganttbar{Testing of Analytics layer \\ (FM, AC, JS)}{2026-03}{2026-03} \\
+    \ganttmilestone{\parbox{4cm}{\raggedleft AI and  analytics layer integration (FM, AC, JS)}}{2026-03} \\
+
+    \\
+    
+    \ganttgroup{Phase 4}{2026-01}{2026-12} \\
+    
+   \ganttbar{\parbox{4cm}{\raggedleft 3D environment build \\ (MB, MK)}}{2026-01}{2026-03} \\
+      \ganttbar{\parbox{4cm}{\raggedleft Digital twin simulation \\ (MB, MK)}}{2026-01}{2026-06} \\
+      \ganttbar{\parbox{4cm}{\raggedleft Testing of XR systems \\ (FM, AC, JS, MB, MK)}}{2026-07}{2026-12}\\
+    \ganttbar{\parbox{4cm}{\raggedleft Generative AI integration \\ (MB, MK)}}{2026-01}{2026-12}\\
+    \ganttmilestone{\parbox{4cm}{\raggedleft XR prototypes \\ (MB, MK)}}{2026-12} \\
+    
+    \\
+    
+    \ganttgroup{Phase 5}{2027-01}{2027-06} \\
+        \ganttbar{\parbox{4cm}{\raggedleft Empirical evaluation \\(DC, FM, LC, MM, MB)}}{2027-01}{2027-04}\\
+        \ganttbar{\parbox{4cm}{\raggedleft{Model and application refinement (MB, MK)}}}{2027-01}{2027-06}\\
+    \ganttmilestone{\parbox{4cm}{\raggedleft{Final application online (MB, MK)}}}{2027-06}\\
+
+
+  \end{ganttchart}
+}
+\end{document}

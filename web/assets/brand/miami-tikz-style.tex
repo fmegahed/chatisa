@@ -1,0 +1,73 @@
+% Miami University house style for TikZ figures (ChatISA brand assets).
+% Distilled 2026-07-24 from Prof. Megahed's figure set. Start every Miami
+% figure from this preamble; model layout on the exemplar figures.
+%
+% Canonical palette (miamired standardized to the university's #C41230; some
+% older figures used #C3142D):
+%   miamired  #C41230  primary; human decisions, emphasis, main flow arrows
+%   agentblue #1D5FAD  secondary; system/AI/process elements
+%   evalgold  #EFDB72  checks, evaluation, highlights (darken for borders)
+%   neutraltan #CCC9B8 outcomes, de-emphasized elements
+%   inkdark   #1A1A1A  body text on light backgrounds
+%   paperwarm #EDECE2  warm background panels (from the deck template)
+
+\documentclass[tikz,border=0.1in]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, fit, backgrounds, calc}
+\usepackage[T1]{fontenc}
+\usepackage{amssymb}
+\usepackage[scaled=0.95]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{miamired}{HTML}{C41230}
+\definecolor{agentblue}{HTML}{1D5FAD}
+\definecolor{evalgold}{HTML}{EFDB72}
+\definecolor{neutraltan}{HTML}{CCC9B8}
+\definecolor{inkdark}{HTML}{1A1A1A}
+\definecolor{paperwarm}{HTML}{EDECE2}
+
+\tikzset{
+  % Boxes: rounded corners, ultra thick border in the role color, a light
+  % tint of the same color as fill, bold small text, fixed width for rhythm.
+  decision/.style = {rectangle, rounded corners, draw=miamired, ultra thick,
+                     fill=miamired!8, align=center, text width=3.35cm,
+                     minimum height=1.65cm, font=\small\bfseries, inner sep=5pt},
+  process/.style  = {rectangle, rounded corners, draw=agentblue, ultra thick,
+                     fill=agentblue!6, align=center, text width=3.35cm,
+                     minimum height=1.65cm, font=\small\bfseries, inner sep=5pt},
+  check/.style    = {rectangle, rounded corners, draw=evalgold!80!black, ultra thick,
+                     fill=evalgold!22, align=center, text width=3.35cm,
+                     minimum height=1.65cm, font=\small\bfseries, inner sep=5pt},
+  outcome/.style  = {rectangle, rounded corners, draw=neutraltan, ultra thick,
+                     fill=neutraltan!30, align=center, text width=3.35cm,
+                     minimum height=1.65cm, font=\small\bfseries, inner sep=5pt},
+  lab/.style      = {font=\small, align=center},
+  % Arrows: Stealth heads; the main flow in softened Miami red, feedback
+  % loops in gold, secondary/reuse paths gray and dashed. Edge labels sit on
+  % a white backing so lines break around the text.
+  flow/.style     = {ultra thick, -{Stealth[length=3mm]}, draw=miamired!65},
+  loop/.style     = {ultra thick, -{Stealth[length=3mm]}, draw=evalgold!80!black},
+  aside/.style    = {ultra thick, -{Stealth[length=3mm]}, draw=gray!60, dashed},
+}
+
+% House conventions:
+% - Number the boxes when the figure describes a sequence.
+% - Edge labels: node[lab, fill=white, inner sep=2.5pt] on the arrow.
+% - Close with a legend row of \textcolor{<color>}{$\blacksquare$}~Meaning
+%   pairs when more than two roles appear.
+% - Gantt charts: use pgfgantt with hgrid style {very thick, miamired},
+%   groups filled miamired, links {->, thick, miamired}, milestone fill
+%   black, bars gray (see the gantt exemplar).
+
+\begin{document}
+\begin{tikzpicture}[node distance=1.5cm and 0.7cm]
+  % Replace with the figure's content. Minimal example of the vocabulary:
+  \node (a) [decision] {1. A human\\decision};
+  \node (b) [process, right=of a] {2. System or\\AI work};
+  \node (c) [check, right=of b] {3. A check that\\cannot be skipped};
+  \draw [flow] (a) -- (b);
+  \draw [flow] (b) -- (c);
+  \draw [loop] (c.north) to[out=125,in=55]
+    node[lab, fill=white, inner sep=2.5pt] {failures return} (b.north);
+\end{tikzpicture}
+\end{document}

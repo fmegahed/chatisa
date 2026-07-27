@@ -1,0 +1,96 @@
+Stamped footer date: July 26, 2026
+Building (next build)...
+
+> web@0.1.0 build
+> next build
+
+▲ Next.js 16.2.10 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 9.0s
+  Running TypeScript ...
+  Finished TypeScript in 8.8s ...
+  Collecting page data using 7 workers ...
+(node:14660) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6648) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37012) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  Generating static pages using 7 workers (0/26) ...
+  Generating static pages using 7 workers (6/26) 
+  Generating static pages using 7 workers (12/26) 
+  Generating static pages using 7 workers (19/26) 
+✓ Generating static pages using 7 workers (26/26) in 285ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /[module]
+├ ƒ /ai-comparison
+├ ƒ /api/applications
+├ ƒ /api/applications/[id]/documents
+├ ƒ /api/ask-anything
+├ ƒ /api/ask-anything/files/anthropic/[fileId]
+├ ƒ /api/ask-anything/files/openai/[containerId]
+├ ƒ /api/ask-anything/files/openai/[containerId]/[fileId]
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/chat
+├ ƒ /api/complete
+├ ƒ /api/documents/[id]
+├ ƒ /api/documents/[id]/export
+├ ƒ /api/exam-prep/documents
+├ ƒ /api/exam-prep/documents/[id]
+├ ƒ /api/exam-prep/exams
+├ ƒ /api/exam-prep/exams/[id]
+├ ƒ /api/exam-prep/exams/[id]/answers
+├ ƒ /api/exam-prep/exams/[id]/results
+├ ƒ /api/exam-prep/exams/[id]/retry
+├ ƒ /api/health
+├ ƒ /api/interview
+├ ƒ /api/interview/[id]
+├ ƒ /api/interview/[id]/answer
+├ ƒ /api/project-assistant/[projectId]
+├ ƒ /api/project-assistant/[projectId]/coach/[coachType]
+├ ƒ /api/project-assistant/[projectId]/coach/[coachType]/deliverable
+├ ƒ /api/project-assistant/[projectId]/coach/[coachType]/export
+├ ƒ /api/project-assistant/[projectId]/coaches
+├ ƒ /api/project-assistant/[projectId]/export
+├ ƒ /api/project-assistant/[projectId]/members
+├ ƒ /api/projects
+├ ƒ /api/py-proxy
+├ ƒ /api/speech/speak
+├ ƒ /api/speech/token
+├ ƒ /ask-anything
+├ ƒ /coding-studio
+├ ƒ /coding-tutor
+├ ƒ /exam-prep
+├ ƒ /guest
+├ ○ /icon.png
+├ ƒ /interview-mentor
+├ ƒ /jobapp-drafter
+├ ƒ /login
+├ ƒ /project-assistant
+├ ƒ /project-assistant/[projectId]
+├ ƒ /project-assistant/[projectId]/coach/[coachType]
+└ ƒ /project-assistant/new
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+Assembling deploy/chatisa-app ...
+(node:29664) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Verifying the bundle is self-contained ...
+  self-contained: no links, alias packages materialized
+  no development data: no .db files, no nested deploy/
+  worker relative import copied: lib\exam\pdf-core.mjs
+  worker deps (unpdf, @napi-rs/canvas): copied 3 packages
+Self-test: booting the assembled bundle ...
+FATAL: bundle self-test failed; this bundle must not ship.
+  deep health: {"pdfWorker":"ok","dbRoundtrip":"ok","brandAssets":"ok","speech":"not-configured: DEEPGRAM_TOKEN is not set, so Interview Mentor will not speak. Students can still type answers."}
