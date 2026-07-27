@@ -46,21 +46,31 @@ const envFile = join(here, "chatisa.env");
 if (existsSync(envFile)) {
   // strip a UTF-8 BOM (Notepad adds one) so the first key parses.
   const text = readFileSync(envFile, "utf8").replace(/^﻿/, "");
+  const commented = [];
   for (const line of text.split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith("#")) continue;
     const eq = trimmed.indexOf("=");
     if (eq < 1) continue;
     const key = trimmed.slice(0, eq).trim();
-    // Surrounding quotes are a natural way to paste a value; strip them.
-    const value = trimmed
-      .slice(eq + 1)
-      .trim()
-      .replace(/^"(.*)"$/, "$1")
-      .replace(/^'(.*)'$/, "$1");
+    const rest = trimmed.slice(eq + 1).trim();
+    // Match how dotenv reads the SAME line on the dev machine, or a value that
+    // works in `next dev` silently breaks here. Dev proved fine and production
+    // broke on exactly this (2026-07-27): an inline comment after
+    // DEEPGRAM_TOKEN was stripped by dotenv in dev but shipped into the
+    // credential by this parser, and Deepgram answered "Invalid credentials".
+    // So: surrounding quotes come off, and everything from an unquoted # on
+    // is a comment, not value.
+    const quoted = rest.match(/^"([^"]*)"/) ?? rest.match(/^'([^']*)'/);
+    const value = quoted ? quoted[1] : rest.split("#")[0].trim();
+    if (!quoted && rest.includes("#")) commented.push(key);
     if (!(key in process.env)) process.env[key] = value;
   }
   console.log(`[chatisa] loaded environment from ${envFile}`);
+  for (const key of commented) {
+    // Names only, never values: this line goes to the log.
+    console.log(`[chatisa] note: dropped an inline # comment from the value of ${key}`);
+  }
 } else {
   console.error(`[chatisa] PROBLEM: ${envFile} not found.`);
   if (existsSync(`${envFile}.txt`)) {

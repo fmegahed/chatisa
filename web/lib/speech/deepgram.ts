@@ -30,6 +30,35 @@ export const STT_MODEL = "nova-3";
 /** Interviewer voice. Aura-2, natural and even-paced rather than bright. */
 export const TTS_MODEL = "aura-2-thalia-en";
 
+/**
+ * The whole cause chain of an error, joined for a log line.
+ *
+ * Node's fetch wraps every network failure in TypeError("fetch failed") and
+ * puts the part that identifies the problem (ETIMEDOUT, ENOTFOUND, a TLS
+ * message) in err.cause, which String(err) drops. During the 2026-07-27
+ * outage chatisa.log therefore said only "fetch failed", and the question
+ * that mattered — DNS or firewall? — was unanswerable from the log. For
+ * server logs only: cause chains can quote credentials, so never send this
+ * to a browser.
+ */
+export function describeErrorChain(err: unknown): string {
+  const parts: string[] = [];
+  const seen = new Set<unknown>();
+  let current: unknown = err;
+  while (current !== undefined && current !== null && !seen.has(current)) {
+    seen.add(current);
+    if (current instanceof Error) {
+      const code = (current as { code?: unknown }).code;
+      parts.push(code ? `${current.message} (${String(code)})` : current.message);
+      current = current.cause;
+    } else {
+      parts.push(String(current));
+      break;
+    }
+  }
+  return parts.join(" <- ") || "unknown error";
+}
+
 export class SpeechNotConfiguredError extends Error {
   constructor() {
     super("No Deepgram credential is configured on this server.");
@@ -128,12 +157,16 @@ export async function probeSpeech(): Promise<SpeechProbe> {
     };
   } catch (err) {
     // Never echo the provider's message verbatim: it can quote the credential
-    // back. A status code is the useful, safe part.
-    const status =
-      typeof err === "object" && err !== null && "status" in err
-        ? String((err as { status: unknown }).status)
-        : null;
-    logger.error({ err: String(err), status }, "speech probe failed");
+    // back. A status code is the useful, safe part. The SDK's error classes
+    // carry it as `statusCode`; older shapes used `status`. Missing both was
+    // how a 400 rejection got reported as a network problem (2026-07-27).
+    const raw =
+      typeof err === "object" && err !== null
+        ? ((err as { status?: unknown }).status ??
+          (err as { statusCode?: unknown }).statusCode)
+        : undefined;
+    const status = raw === undefined || raw === null ? null : String(raw);
+    logger.error({ err: describeErrorChain(err), status }, "speech probe failed");
     return {
       state: "broken",
       detail: status

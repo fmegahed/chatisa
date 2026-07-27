@@ -140,6 +140,13 @@ await cp(
   join(web, "scripts", "chatisa-server.mjs"),
   join(bundle, "chatisa-server.mjs"),
 );
+// Diagnoses "speech is broken" from ON the server: DNS -> TCP -> TLS -> HTTPS
+// -> a real token mint, with a control host, so a firewall block, a TLS
+// inspection appliance, and a bad credential each produce a distinct verdict.
+await cp(
+  join(web, "scripts", "speech-doctor.mjs"),
+  join(bundle, "speech-doctor.mjs"),
+);
 
 // Prove portability before zipping: no symlink or junction may survive
 // anywhere in the bundle, and the aliased packages must be real files.
@@ -645,6 +652,13 @@ TROUBLESHOOTING
   redirect URI shown in chatisa.env.example.
 - chatisa.log grows over time; delete it whenever it gets large (the server
   recreates it).
+- Interview Mentor's voice/microphone does not work, or /api/health?deep=1
+  says speech is "broken": open a Command Prompt in chatisa-app and run
+      node speech-doctor.mjs
+  It tests the network path to Deepgram step by step and prints a verdict
+  naming the exact fix (and its output is safe to paste into an IT ticket).
+  One known trap it calls out: an inline # comment on the DEEPGRAM_TOKEN
+  line in chatisa.env. Keep that line as only  DEEPGRAM_TOKEN=<the key>.
 `,
 );
 

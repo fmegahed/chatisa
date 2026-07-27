@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { logger } from "@/lib/log";
 import {
   SpeechNotConfiguredError,
+  describeErrorChain,
   grantSpeechToken,
 } from "@/lib/speech/deepgram";
 import { SPEECH_TOKEN_RATE_LIMIT, checkRateLimit } from "@/lib/ratelimit";
@@ -56,7 +57,9 @@ export async function POST() {
       );
     }
     // Never surface the provider's message: it can echo credentials back.
-    logger.error({ err: String(err) }, "speech token mint failed");
+    // The cause chain goes to the server log only, where it names the real
+    // failure (ETIMEDOUT vs ENOTFOUND) instead of fetch's opaque wrapper.
+    logger.error({ err: describeErrorChain(err) }, "speech token mint failed");
     return errorResponse(
       502,
       "Speech could not be started just now. You can still type your answers.",

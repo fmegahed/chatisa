@@ -69,6 +69,23 @@ describe("probeSpeech", () => {
     expect(probe.detail).toContain("401");
   });
 
+  it("reads the SDK's statusCode property, not just status", async () => {
+    // The @deepgram/sdk v4+ error classes carry `statusCode`. The probe used
+    // to look only for `status`, so a 400 "Invalid credentials" rejection was
+    // reported with the NETWORK advice ("could not be reached... check
+    // outbound HTTPS"), which misdirected the 2026-07-27 production outage
+    // into a firewall hunt when the real fault was the credential value.
+    process.env.DEEPGRAM_TOKEN = "test-key-not-a-real-credential";
+    grant.mockRejectedValue(
+      Object.assign(new Error("BadRequestError"), { statusCode: 400 }),
+    );
+    const { probeSpeech } = await import("@/lib/speech/deepgram");
+    const probe = await probeSpeech();
+    expect(probe.state).toBe("broken");
+    expect(probe.detail).toContain("400");
+    expect(probe.detail).not.toMatch(/outbound/i);
+  });
+
   it("reports broken, with network advice, when Deepgram is unreachable", async () => {
     process.env.DEEPGRAM_TOKEN = "test-key-not-a-real-credential";
     grant.mockRejectedValue(new Error("getaddrinfo ENOTFOUND api.deepgram.com"));
@@ -97,6 +114,34 @@ describe("probeSpeech", () => {
     const probe = await probeSpeech();
     expect(probe.detail).not.toContain(secret);
     expect(probe.detail).not.toContain("invalid key");
+  });
+});
+
+describe("describeErrorChain", () => {
+  /**
+   * Node's fetch wraps every network failure in TypeError("fetch failed") and
+   * hides the actionable part (ETIMEDOUT vs ENOTFOUND vs a TLS error) in
+   * err.cause. String(err) drops that, which is why chatisa.log said only
+   * "fetch failed" while speech was down in production (2026-07-27) and the
+   * DNS-vs-firewall question could not be answered from the log.
+   */
+  it("includes every cause in the chain, not just the top error", async () => {
+    const { describeErrorChain } = await import("@/lib/speech/deepgram");
+    const inner = Object.assign(new Error("connect ETIMEDOUT 34.86.0.1:443"), {
+      code: "ETIMEDOUT",
+    });
+    const outer = new TypeError("fetch failed", { cause: inner });
+    const text = describeErrorChain(outer);
+    expect(text).toContain("fetch failed");
+    expect(text).toContain("ETIMEDOUT");
+  });
+
+  it("survives non-Error values and cycles", async () => {
+    const { describeErrorChain } = await import("@/lib/speech/deepgram");
+    expect(describeErrorChain("plain string")).toContain("plain string");
+    const a = new Error("a");
+    a.cause = a;
+    expect(describeErrorChain(a)).toContain("a");
   });
 });
 
