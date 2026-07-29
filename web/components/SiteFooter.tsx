@@ -1,4 +1,5 @@
 import { BUILD_DATE } from "@/lib/config/build-info";
+import { version } from "@/package.json";
 
 export function SiteFooter() {
   return (
@@ -60,7 +61,9 @@ export function SiteFooter() {
   );
 }
 
-/** Bump on each release. The date beside it is stamped automatically when the
- * deploy bundle is made; see lib/config/build-info. */
-const CHATISA_VERSION = "v6.0.0";
+/** Derived from package.json so a release version bump can never miss the
+ * footer again (v6.1.0 and v6.1.1 shipped still displaying v6.0.0). The date
+ * beside it is stamped automatically when the deploy bundle is made; see
+ * lib/config/build-info. */
+const CHATISA_VERSION = `v${version}`;
 const CHATISA_UPDATED = BUILD_DATE;

@@ -260,7 +260,18 @@ for (const signal of ["SIGINT", "SIGTERM"]) {
       const body = await res.json();
       const deep = body?.checks?.deep;
       if (!deep) continue;
-      const bad = Object.entries(deep).filter(([, v]) => v !== "ok");
+      // Informational states that are not failures (mirrors OPTIONAL_DEEP in
+      // make-deploy-bundle.mjs): scout reports "ok, N active postings" when
+      // healthy and "no harvest yet" on a fresh database minutes before the
+      // boot harvest fills it; speech is optional per deployment. Stale
+      // feeds and real failures still warn.
+      const informational = {
+        scout: /^(ok, \d+ active postings|no harvest yet)$/,
+        speech: /^not configured/,
+      };
+      const bad = Object.entries(deep).filter(
+        ([name, v]) => v !== "ok" && !informational[name]?.test(String(v)),
+      );
       if (bad.length === 0) {
         console.log("[chatisa] feature check: database, PDF worker, and brand assets all verified");
       } else {

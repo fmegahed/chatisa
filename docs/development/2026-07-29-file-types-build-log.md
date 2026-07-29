@@ -109,3 +109,19 @@ No breaking changes.
   including the extended polish one, passed on the first run; the fixed
   scenario then passed on both viewports (2.7s each). Final e2e state:
   45/45 across the two suites.
+
+## Post-release fix (uncommitted): launcher false "scout is BROKEN"
+
+Found during the v6.1.1 production deploy: `chatisa-server.mjs`'s boot
+feature check flags ANY deep-health value that is not exactly "ok". The
+scout field added in v6.1.0 reports "no harvest yet" on a fresh database
+(seconds before the boot harvest fills it) and "ok, N active postings"
+when healthy — so the launcher warned "BROKEN" at first boot and would
+have warned on EVERY boot after a successful harvest. The bundle
+self-test's OPTIONAL_DEEP was taught these states in v6.1.0/v6.1.1 but
+this second consumer was missed. Fix: an `informational` allowlist in
+the launcher mirroring OPTIONAL_DEEP (`scout: /^(ok, \d+ active
+postings|no harvest yet)$/`, `speech: /^not configured/`); stale and
+failure states still warn. Verified by direct evaluation of all six
+state shapes. Ships with the next bundle; until then the deployed
+launcher's boot warning about scout is noise to ignore.
