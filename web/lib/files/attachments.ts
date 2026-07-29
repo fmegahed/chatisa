@@ -7,7 +7,9 @@
  * Routing summary: images and PDFs ride NATIVELY as file parts (both roster
  * providers render them); Word/PowerPoint become extracted text; csv/xlsx are
  * loaded into the chat's Python session as a DataFrame and only an
- * announcement rides in the message; json/txt/md become capped text.
+ * announcement rides in the message; json/txt/md and code files (py, R, Rmd,
+ * qmd, html) become capped text; Jupyter notebooks become extracted cells
+ * plus up to four plot outputs riding natively as images (v6.1.1).
  */
 
 export type AttachmentKind =
@@ -15,6 +17,7 @@ export type AttachmentKind =
   | "pdf"
   | "dataset"
   | "office"
+  | "notebook"
   | "text"
   | "unsupported";
 
@@ -44,6 +47,21 @@ export interface Classified {
   mediaType?: string;
 }
 
+/** Formats read as plain text. Code files (.py, .R, .Rmd, .qmd) are listed by
+ * extension because Windows browsers report an EMPTY MIME type for them, so
+ * the text/* fallback below never fires (v6.1.1). */
+const TEXT_EXTENSIONS = new Set([
+  "txt",
+  "md",
+  "json",
+  "py",
+  "r",
+  "rmd",
+  "qmd",
+  "html",
+  "htm",
+]);
+
 const IMAGE_TYPES: Record<string, string> = {
   png: "image/png",
   jpg: "image/jpeg",
@@ -65,7 +83,8 @@ export function classifyFile(name: string, mimeType?: string): Classified {
   if (ext === "xlsx") return { kind: "dataset", format: "xlsx" };
   if (ext === "docx") return { kind: "office", office: "docx" };
   if (ext === "pptx") return { kind: "office", office: "pptx" };
-  if (ext === "txt" || ext === "md" || ext === "json") return { kind: "text" };
+  if (ext === "ipynb") return { kind: "notebook" };
+  if (TEXT_EXTENSIONS.has(ext)) return { kind: "text" };
   if (mimeType?.startsWith("image/")) return { kind: "image", mediaType: mimeType };
   if (mimeType === "application/pdf")
     return { kind: "pdf", mediaType: "application/pdf" };
@@ -80,7 +99,7 @@ export function rejectionReason(
   mimeType?: string,
 ): string | null {
   if (classifyFile(name, mimeType).kind === "unsupported") {
-    return `"${name}" isn't a supported file type. Attach images, PDF, Word, PowerPoint, Excel, csv, json, or txt.`;
+    return `"${name}" isn't a supported file type. Attach images, PDF, Word, PowerPoint, Excel, code and notebook files (.py, .R, .Rmd, .qmd, .ipynb), csv, json, html, md, or txt.`;
   }
   if (sizeBytes > MAX_ATTACHMENT_BYTES) {
     return `"${name}" is larger than 25 MB. Attach a smaller file, or the part of it you need.`;
@@ -120,7 +139,7 @@ export function estimatePdfPages(bytes: Uint8Array): number | null {
 
 /** The data carried by a data-attachment UI part. */
 export interface AttachmentData {
-  kind: "dataset" | "office" | "text";
+  kind: "dataset" | "office" | "notebook" | "text";
   name: string;
   /** Short human label for the chip ("loaded as sales, 120 rows x 5 columns"). */
   detail: string;
@@ -174,6 +193,8 @@ export function attachmentBlockText(data: AttachmentData): string {
   const label =
     data.kind === "dataset"
       ? `[Attached dataset: ${data.name}]`
-      : `[Attached file: ${data.name}]`;
+      : data.kind === "notebook"
+        ? `[Attached notebook: ${data.name}]`
+        : `[Attached file: ${data.name}]`;
   return `${label}\n${capped.text}`;
 }

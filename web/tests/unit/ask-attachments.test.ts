@@ -40,6 +40,19 @@ describe("attachment classification", () => {
     expect(classifyFile("song.mp3").kind).toBe("unsupported");
   });
 
+  it("accepts code and notebook files despite the empty MIME type Windows reports", () => {
+    // Chrome on Windows sends "" for these, so the text/* fallback never fires.
+    expect(classifyFile("clean.py", "").kind).toBe("text");
+    expect(classifyFile("model.R", "").kind).toBe("text");
+    expect(classifyFile("report.Rmd", "").kind).toBe("text");
+    expect(classifyFile("slides.qmd", "").kind).toBe("text");
+    expect(classifyFile("index.html", "").kind).toBe("text");
+    expect(classifyFile("page.htm", "").kind).toBe("text");
+    expect(classifyFile("analysis.ipynb", "").kind).toBe("notebook");
+    expect(rejectionReason("analysis.ipynb", 1234, "")).toBeNull();
+    expect(rejectionReason("model.R", 1234, "")).toBeNull();
+  });
+
   it("extension wins over the browser MIME type, MIME fills the gap", () => {
     // Browsers report Office files with odd MIME types; the extension decides.
     expect(classifyFile("deck.pptx", "application/zip").office).toBe("pptx");
@@ -78,6 +91,18 @@ describe("attachment text handling", () => {
     const block = attachmentBlockText(part.data);
     expect(block).toContain("[Attached file: notes.txt]");
     expect(block.length).toBeLessThan(ATTACH_TEXT_MAX + 200);
+  });
+
+  it("labels notebook attachments so the model knows what it is reading", () => {
+    const part = attachmentPart({
+      kind: "notebook",
+      name: "analysis.ipynb",
+      detail: "3 cells, python",
+      text: "```python\ndf.head()\n```",
+    });
+    expect(attachmentBlockText(part.data)).toContain(
+      "[Attached notebook: analysis.ipynb]",
+    );
   });
 
   it("announces a loaded dataset with variable, shape, and columns", () => {

@@ -170,6 +170,37 @@ describe("POST /api/scout/polish", () => {
     const res = await polish({ modelId: "gpt-5.6-terra", files: [] });
     expect(res.status).toBe(400);
   });
+
+  it("places notebooks and Quarto files, and never returns a path with a space", async () => {
+    // Fresh email: the 4/60s bucket is shared with the tests above.
+    sessionEmail = "student2@miamioh.edu";
+    // "Final Project.ipynb" is the common coursework name; the mock echoes it
+    // into notebooks/, and the guard must hyphenate rather than 502 (v6.1.1).
+    const res = await polish({
+      modelId: "gpt-5.6-terra",
+      files: [
+        { kind: "text", name: "Final Project.ipynb", content: "{}" },
+        { kind: "text", name: "report.qmd", content: "---\ntitle: Report\n---" },
+      ],
+    });
+    expect(res.status).toBe(200);
+    const { polish: plan } = await res.json();
+    const placed = [
+      ...plan.layout.map((l: { from: string }) => l.from),
+      ...plan.exclude.map((e: { name: string }) => e.name),
+    ].sort();
+    expect(placed).toEqual(["Final Project.ipynb", "report.qmd"]);
+    const notebook = plan.layout.find(
+      (l: { from: string }) => l.from === "Final Project.ipynb",
+    );
+    expect(notebook.to).toBe("notebooks/Final-Project.ipynb");
+    const paths = [
+      ...plan.layout.map((l: { to: string }) => l.to),
+      ...plan.extraFiles.map((f: { path: string }) => f.path),
+    ];
+    for (const p of paths) expect(p).not.toContain(" ");
+    sessionEmail = "student@miamioh.edu";
+  });
 });
 
 describe("POST /api/scout/refresh", () => {

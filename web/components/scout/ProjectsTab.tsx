@@ -16,6 +16,7 @@ import {
   getScaffold,
   putScaffold,
 } from "@/lib/scout/device-files";
+import { notebookToText } from "@/lib/files/notebook-text";
 
 /**
  * My Projects: generate a job-agnostic portfolio scaffold, and keep every
@@ -51,7 +52,8 @@ interface PolishPlan {
 }
 
 /** What device-files stores for a polished project so re-download works.
- * Binary originals (PDFs) are not stored; the card says to re-add them. */
+ * Text originals (code, notebooks) are stored in full; binary originals
+ * (PDFs) are not, and the card says to re-add them. */
 interface StoredPolish {
   mode: "polished";
   plan: PolishPlan;
@@ -62,6 +64,17 @@ interface StoredPolish {
 const TEXT_EXTENSIONS =
   /\.(py|r|ipynb|sql|md|txt|csv|qmd|rmd|js|ts|json|yml|yaml)$/i;
 const MAX_POLISH_FILES = 15;
+/** Text files above this are placed but not read. */
+const MAX_TEXT_BYTES = 400_000;
+/** Notebooks get a larger raw allowance: the bulk is base64 plots that the
+ * cell extraction strips before anything is sent (v6.1.1). */
+const MAX_NOTEBOOK_BYTES = 5_000_000;
+
+function readableAsText(f: File): boolean {
+  if (!TEXT_EXTENSIONS.test(f.name)) return false;
+  const cap = /\.ipynb$/i.test(f.name) ? MAX_NOTEBOOK_BYTES : MAX_TEXT_BYTES;
+  return f.size <= cap;
+}
 
 const MAX_SKILLS = 6;
 
@@ -536,6 +549,7 @@ function PolishPane(props: {
   onRecord: (record: ProjectRecord, stored: StoredPolish) => void;
 }) {
   const [files, setFiles] = useState<File[]>([]);
+  const [overflowed, setOverflowed] = useState(false);
   const [hint, setHint] = useState("");
   const [modelId, setModelId] = useState(props.defaultModelId);
   const [busy, setBusy] = useState(false);
@@ -553,17 +567,34 @@ function PolishPane(props: {
     setBusy(true);
     setPlan(null);
     try {
-      const payload = await Promise.all(
-        files.map(async (f) =>
-          TEXT_EXTENSIONS.test(f.name) && f.size <= 400_000
-            ? {
-                kind: "text" as const,
-                name: f.name,
-                content: (await f.text()).slice(0, 30_000),
-              }
-            : { kind: "binary" as const, name: f.name, sizeBytes: f.size },
-        ),
-      );
+      // The stored copy keeps the FULL raw text (bounded by the size caps)
+      // so later re-downloads are faithful; the model payload is extracted
+      // (notebooks: cells only, plots dropped) and sliced.
+      const storedByName = new Map<string, string>();
+      const payload: (
+        | { kind: "text"; name: string; content: string }
+        | { kind: "binary"; name: string; sizeBytes: number }
+      )[] = [];
+      for (const f of files) {
+        if (!readableAsText(f)) {
+          payload.push({ kind: "binary", name: f.name, sizeBytes: f.size });
+          continue;
+        }
+        const raw = await f.text();
+        let content = raw;
+        if (/\.ipynb$/i.test(f.name)) {
+          const parsed = notebookToText(raw, { maxImages: 0 });
+          if (parsed) {
+            content = parsed.text;
+          } else if (f.size > MAX_TEXT_BYTES) {
+            // Huge and not actually a notebook: place it, do not read it.
+            payload.push({ kind: "binary", name: f.name, sizeBytes: f.size });
+            continue;
+          }
+        }
+        storedByName.set(f.name, raw);
+        payload.push({ kind: "text", name: f.name, content: content.slice(0, 30_000) });
+      }
       const res = await fetch("/api/scout/polish", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -581,11 +612,6 @@ function PolishPane(props: {
       const nextPlan = body.polish as PolishPlan;
       setPlan(nextPlan);
 
-      const contentByName = new Map(
-        payload.flatMap((f) =>
-          f.kind === "text" ? [[f.name, f.content] as const] : [],
-        ),
-      );
       const record: ProjectRecord = {
         id: crypto.randomUUID(),
         repoName: nextPlan.repoName,
@@ -599,11 +625,11 @@ function PolishPane(props: {
         mode: "polished",
         plan: nextPlan,
         textFiles: nextPlan.layout.flatMap((m) => {
-          const contents = contentByName.get(m.from);
+          const contents = storedByName.get(m.from);
           return contents === undefined ? [] : [{ path: m.to, contents }];
         }),
         binaryPaths: nextPlan.layout
-          .filter((m) => !contentByName.has(m.from))
+          .filter((m) => !storedByName.has(m.from))
           .map((m) => m.to),
       });
     } catch {
@@ -655,6 +681,7 @@ function PolishPane(props: {
               for (const f of picked) {
                 if (!merged.some((m) => m.name === f.name)) merged.push(f);
               }
+              setOverflowed(merged.length > MAX_POLISH_FILES);
               setFiles(merged.slice(0, MAX_POLISH_FILES));
             }}
           />
@@ -681,6 +708,23 @@ function PolishPane(props: {
             </li>
           ))}
         </ul>
+      ) : null}
+      {(() => {
+        const unread = files
+          .filter((f) => TEXT_EXTENSIONS.test(f.name) && !readableAsText(f))
+          .map((f) => f.name);
+        return unread.length > 0 ? (
+          <p className="mt-2 text-sm text-dark-tan">
+            Too large to read, so placed in the layout without being read:{" "}
+            {unread.join(", ")}
+          </p>
+        ) : null;
+      })()}
+      {overflowed ? (
+        <p className="mt-2 text-sm text-dark-tan">
+          Only the first {MAX_POLISH_FILES} files are used. Remove some to
+          make room for others.
+        </p>
       ) : null}
 
       <div className="mt-3 max-w-xl">

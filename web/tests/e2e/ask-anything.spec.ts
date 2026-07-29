@@ -180,6 +180,57 @@ test.describe("Ask Anything", () => {
     ).toBeVisible({ timeout: 15_000 });
   });
 
+  test("attaches code and notebook files: extension beats a blank MIME type", async ({
+    page,
+  }) => {
+    // Windows browsers report no MIME type for .py/.ipynb; the extension
+    // decides (v6.1.1). octet-stream here simulates the worst case.
+    const notebook = {
+      nbformat: 4,
+      nbformat_minor: 5,
+      metadata: { kernelspec: { language: "python" } },
+      cells: [
+        {
+          cell_type: "code",
+          metadata: {},
+          execution_count: 1,
+          source: "print('KUMQUAT')",
+          outputs: [],
+        },
+      ],
+    };
+    await page.goto("/ask-anything");
+    await expect(page.getByLabel("Your message")).toBeVisible();
+    await page.locator("#chat-attach-input").setInputFiles([
+      {
+        name: "clean.py",
+        mimeType: "application/octet-stream",
+        buffer: Buffer.from("anchovy_constant = 1\n"),
+      },
+      {
+        name: "analysis.ipynb",
+        mimeType: "application/octet-stream",
+        buffer: Buffer.from(JSON.stringify(notebook)),
+      },
+    ]);
+    const chips = page.getByRole("list", { name: "Files to send" });
+    await expect(chips).toContainText("clean.py");
+    await expect(chips).toContainText("analysis.ipynb");
+    // The notebook chip reports the extraction, not just "text".
+    await expect(chips).toContainText("1 cell, python", { timeout: 15_000 });
+
+    await page.getByLabel("Your message").fill("Review my code files");
+    await page.getByRole("button", { name: "Send message" }).click();
+    await expect(page.getByText(/FILE_ACK/)).toBeVisible({ timeout: 15_000 });
+    // The model saw the .py contents and the notebook's extracted cell. The
+    // echo renders as markdown across elements, so scope to the whole reply.
+    const reply = page
+      .getByRole("article", { name: "ChatISA" })
+      .filter({ hasText: "FILE_ACK" });
+    await expect(reply).toContainText("anchovy_constant");
+    await expect(reply).toContainText("KUMQUAT");
+  });
+
   test("attaches a PDF natively: payload kept out of localStorage, survives reload", async ({
     page,
   }) => {

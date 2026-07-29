@@ -140,6 +140,28 @@ test.describe("Job Scout", () => {
         mimeType: "text/csv",
         buffer: Buffer.from("week,units\n1,10\n2,12\n"),
       },
+      {
+        // Space in the name on purpose: the guard hyphenates repo paths
+        // instead of failing the request (v6.1.1).
+        name: "Final Project.ipynb",
+        mimeType: "application/octet-stream",
+        buffer: Buffer.from(
+          JSON.stringify({
+            nbformat: 4,
+            nbformat_minor: 5,
+            metadata: { kernelspec: { language: "python" } },
+            cells: [
+              {
+                cell_type: "code",
+                metadata: {},
+                execution_count: 1,
+                source: "df.groupby('week').sum()",
+                outputs: [],
+              },
+            ],
+          }),
+        ),
+      },
     ]);
     await page
       .getByLabel("One line about the project (optional)")
@@ -157,6 +179,10 @@ test.describe("Job Scout", () => {
     // Their file is placed, the data file is excluded with a reason, and
     // the code is never rewritten (suggestions only).
     await expect(page.getByText("forecast.R", { exact: false }).first()).toBeVisible();
+    // The notebook is placed under notebooks/ with the space hyphenated.
+    await expect(
+      page.getByText("notebooks/Final-Project.ipynb", { exact: false }).first(),
+    ).toBeVisible();
     // Role-scoped: the README preview repeats these phrases as markdown.
     await expect(
       page.getByRole("heading", { name: "Left out on purpose" }),

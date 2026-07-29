@@ -52,7 +52,14 @@ const requestSchema = z.object({
     .max(MAX_FILES),
 });
 
-const SAFE_PATH = /^[\w.-]+(\/[\w.-]+)*$/;
+/** Repo-relative path, no traversal, tolerating spaces inside segments.
+ * Coursework names like
+ * "Final Project.ipynb" are the common case; a model echoing one into a
+ * repo path must not fail validation and 502 the whole request (v6.1.1).
+ * The placement guard rewrites spaces to hyphens after generation. */
+const SAFE_PATH_LOOSE = /^[\w. -]+(\/[\w. -]+)*$/;
+
+const toSafePath = (p: string) => p.replaceAll(" ", "-");
 
 const polishSchema = z.object({
   repoName: z.string().regex(/^[a-z0-9][a-z0-9-]{2,60}$/),
@@ -64,7 +71,7 @@ const polishSchema = z.object({
     .array(
       z.object({
         from: z.string().max(120),
-        to: z.string().regex(SAFE_PATH),
+        to: z.string().max(180).regex(SAFE_PATH_LOOSE),
       }),
     )
     .max(MAX_FILES),
@@ -75,7 +82,10 @@ const polishSchema = z.object({
   /** Generated additions only (requirements.txt and the like). */
   extraFiles: z
     .array(
-      z.object({ path: z.string().regex(SAFE_PATH), contents: z.string().max(5_000) }),
+      z.object({
+        path: z.string().max(180).regex(SAFE_PATH_LOOSE),
+        contents: z.string().max(5_000),
+      }),
     )
     .max(4),
   suggestions: z.array(z.string().max(300)).max(8),
@@ -94,6 +104,7 @@ const INSTRUCTIONS = `You organize a student's real, finished coursework project
 HARD RULES:
 - You NEVER modify, rewrite, or reformat the student's files. Their code ships verbatim; your job is structure and documentation.
 - Map every uploaded file into either "layout" (with a sensible repo path) or "exclude" (with a plain reason). Data files that could contain personal, graded, or licensed course data belong in exclude; so do credentials and anything embarrassing to publish.
+- R and Python coursework carries rendered and environment artifacts: an .html knit from an .Rmd or .qmd whose source is also uploaded, "_files/" folders, .Rproj.user, .ipynb_checkpoints, __pycache__, .venv, and renv/library belong in exclude or .gitignore. Lockfiles (renv.lock, requirements.txt) stay. Notebook text you receive has plot outputs stripped; the student's real notebook keeps them, so never call a notebook plot-free.
 - The README must be grounded in what the files actually contain: describe what the project does, how it is organized, and how to run it. Use bracketed placeholders like [X%] for any number the files do not state; never invent metrics.
 - Put your improvement ideas in a "Suggested improvements" README section and in "suggestions"; do not apply them.
 - resumeBullets follow the same honesty rule: only what the work shows, placeholders for unmeasured numbers.
@@ -181,13 +192,19 @@ export async function POST(req: Request) {
       ...object.layout.map((l) => l.from),
       ...object.exclude.map((e) => e.name),
     ]);
-    const layout = object.layout.filter((l) => uploaded.has(l.from));
+    const layout = object.layout
+      .filter((l) => uploaded.has(l.from))
+      .map((l) => ({ from: l.from, to: toSafePath(l.to) }));
     const exclude = object.exclude.filter((e) => uploaded.has(e.name));
     for (const name of uploaded) {
       if (!placed.has(name)) {
-        layout.push({ from: name, to: name.replaceAll(" ", "-") });
+        layout.push({ from: name, to: toSafePath(name) });
       }
     }
+    const extraFiles = object.extraFiles.map((f) => ({
+      ...f,
+      path: toSafePath(f.path),
+    }));
     const seen = new Set<string>();
     const skillIds = object.skillIds.flatMap((raw) => {
       const id = resolveSkillId(raw);
@@ -208,7 +225,7 @@ export async function POST(req: Request) {
       outcome: "ok",
     });
     return NextResponse.json({
-      polish: { ...object, layout, exclude, skillIds },
+      polish: { ...object, layout, exclude, extraFiles, skillIds },
     });
   } catch (err) {
     logger.error({ err: String(err) }, "scout project polish failed");

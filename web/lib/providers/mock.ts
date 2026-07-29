@@ -544,7 +544,11 @@ function mockObjectFor(options: LanguageModelV4CallOptions): string {
       gitignore: "data/raw/\n.env\n",
       layout: kept.map((n) => ({
         from: n,
-        to: /\.(md|pdf|docx)$/i.test(n) ? `docs/${n}` : `src/${n}`,
+        to: /\.ipynb$/i.test(n)
+          ? `notebooks/${n}`
+          : /\.(md|pdf|docx)$/i.test(n)
+            ? `docs/${n}`
+            : `src/${n}`,
       })),
       exclude: dataFiles.map((n) => ({
         name: n,

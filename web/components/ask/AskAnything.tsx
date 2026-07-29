@@ -32,6 +32,7 @@ import {
   truncateAttachmentText,
 } from "@/lib/files/attachments";
 import { officeTextFromFile } from "@/lib/files/office-text";
+import { notebookToText } from "@/lib/files/notebook-text";
 import { prepareImage } from "@/lib/files/image";
 import {
   deleteFilesForChat,
@@ -66,7 +67,18 @@ const MAX_TOOL_STEPS_PER_TURN = 10;
 
 /** What the composer's file picker offers (matches classifyFile). */
 const ATTACH_ACCEPT =
-  ".png,.jpg,.jpeg,.webp,.gif,.pdf,.csv,.tsv,.xlsx,.docx,.pptx,.txt,.md,.json";
+  ".png,.jpg,.jpeg,.webp,.gif,.pdf,.csv,.tsv,.xlsx,.docx,.pptx,.txt,.md,.json,.py,.r,.rmd,.qmd,.ipynb,.html";
+
+/** Notebook plot outputs attached as native images per notebook (v6.1.1). */
+const NOTEBOOK_PLOT_CAP = 4;
+
+/** Browser-only: notebook plot base64 to a File for the image pipeline. */
+function fileFromBase64(base64: string, name: string, mediaType: string): File {
+  const bin = atob(base64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i += 1) bytes[i] = bin.charCodeAt(i);
+  return new File([bytes], name, { type: mediaType });
+}
 
 /** A small CSV-ish sample of a SQL result table for the model and the card. */
 function tableSample(table: { columns: string[]; rows: Record<string, unknown>[] }): string {
@@ -409,6 +421,51 @@ export function AskAnything({
           ],
           detail,
         };
+      }
+
+      if (cls.kind === "notebook") {
+        const parsed = notebookToText(await file.text(), {
+          maxImages: NOTEBOOK_PLOT_CAP,
+        });
+        if (parsed && parsed.text.trim().length > 0) {
+          const { text, truncated } = truncateAttachmentText(parsed.text);
+          const cells = `${parsed.cellCount} cell${parsed.cellCount === 1 ? "" : "s"}`;
+          const detail =
+            parsed.images.length > 0
+              ? `${cells}, ${parsed.language}, ${parsed.images.length} plot${parsed.images.length === 1 ? "" : "s"}`
+              : `${cells}, ${parsed.language}`;
+          const parts: PreparedAttachment["parts"] = [
+            attachmentPart({
+              kind: "notebook",
+              name: file.name,
+              detail,
+              text,
+              truncated,
+            }),
+          ];
+          const stem = file.name.replace(/\.ipynb$/i, "");
+          for (const [i, img] of parsed.images.entries()) {
+            const ext = img.mediaType === "image/png" ? "png" : "jpg";
+            try {
+              const plotFile = fileFromBase64(
+                img.base64,
+                `${stem}-plot-${i + 1}.${ext}`,
+                img.mediaType,
+              );
+              const { dataUrl, mediaType } = await prepareImage(plotFile);
+              parts.push({
+                type: "file",
+                mediaType,
+                url: dataUrl,
+                filename: plotFile.name,
+              });
+            } catch {
+              // A malformed embedded plot never blocks the notebook itself.
+            }
+          }
+          return { parts, detail };
+        }
+        // Unparseable notebook: fall through and ride as plain text.
       }
 
       // Plain text formats.

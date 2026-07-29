@@ -4,6 +4,36 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.1.1 - July 29, 2026
+
+**Code and notebook files as first-class uploads.**
+
+### Added
+- Ask Anything accepts `.py`, `.R`, `.Rmd`, `.qmd`, `.ipynb`, and `.html`
+  attachments. Code files ride as text regardless of the (often blank)
+  MIME type the browser reports; Jupyter notebooks are converted
+  client-side to their markdown and code cells with capped text outputs,
+  and up to four plot outputs are attached as real images the model can
+  see.
+- My Projects polish reads notebooks properly: cells are extracted before
+  the per-file text cap (previously the cap usually landed inside the
+  first base64 plot blob, so the model never saw the code), and the raw
+  size allowance for notebooks rises to 5 MB. The zip still ships the
+  student's original bytes untouched.
+- The polish prompt knows R and Python coursework ecosystems: rendered
+  HTML, `_files/`, `.Rproj.user`, `.ipynb_checkpoints`, `__pycache__`,
+  `.venv`, and `renv/library` are steered to exclude/.gitignore while
+  lockfiles stay.
+- Polish now says so when a file is too large to read or when more than
+  15 files are chosen, instead of silently degrading.
+
+### Fixed
+- A polish request whose repo layout echoed a filename with a space
+  ("Final Project.ipynb") failed entirely; paths are now hyphenated
+  deterministically instead.
+- Re-downloading a polished project zip now writes the full original text
+  files, not the truncated copies sent to the model.
+
 ## v6.1.0 - July 29, 2026
 
 **Job Scout: a weekly job board matched to the ISA curriculum.** Full notes:
