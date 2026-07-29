@@ -482,6 +482,120 @@ function mockObjectFor(options: LanguageModelV4CallOptions): string {
     });
   }
 
+  // Job Scout: weekly posting tagging { skills, category, seniorityOk }.
+  if (keys.includes("seniorityOk")) {
+    const prompt = promptText(options);
+    const category = /intern/i.test(prompt)
+      ? "internship"
+      : /federal|usajobs|department of/i.test(prompt)
+        ? "federal"
+        : "fulltime";
+    return JSON.stringify({
+      skills: [
+        { skillId: "sql", importance: "required" },
+        { skillId: "data_analysis", importance: "required" },
+        { skillId: "tableau", importance: "preferred" },
+      ],
+      category,
+      seniorityOk: true,
+      visaSponsorship: "unknown",
+    });
+  }
+
+  // Job Scout: resume/free-text skill extraction { skills } with levels.
+  // Checked AFTER the tailored-resume branch, which also asks for "skills".
+  if (keys.length === 1 && keys[0] === "skills") {
+    return JSON.stringify({
+      skills: [
+        {
+          skillId: "python",
+          level: "applied",
+          evidence: "Built weekly reports in Python",
+        },
+        {
+          skillId: "sql",
+          level: "applied",
+          evidence: "Queried the sales database with SQL",
+        },
+        {
+          skillId: "data_visualization",
+          level: "exposure",
+          evidence: "Charts for the weekly report",
+        },
+      ],
+    });
+  }
+
+  // Job Scout: polishing a student's real project (organize + suggest).
+  // Maps the actual uploaded filenames from the prompt so the client-side
+  // zip assembly is genuinely exercised.
+  if (keys.includes("layout") && keys.includes("gitignore")) {
+    const prompt = promptText(options);
+    const names = [...prompt.matchAll(/^FILE: ([^\n(]+?)(?: \(binary.*)?$/gm)].map(
+      (m) => m[1].trim(),
+    );
+    const dataFiles = names.filter((n) => /\.(csv|xlsx|db)$/i.test(n));
+    const kept = names.filter((n) => !dataFiles.includes(n));
+    return JSON.stringify({
+      repoName: "course-project-polished",
+      summary: "A coursework project organized for a public portfolio.",
+      readme:
+        "# Course Project\n\nWhat this shows, how it is organized, and how to run it.\n\n## Suggested improvements\n- Add unit tests for the loading step.",
+      gitignore: "data/raw/\n.env\n",
+      layout: kept.map((n) => ({
+        from: n,
+        to: /\.(md|pdf|docx)$/i.test(n) ? `docs/${n}` : `src/${n}`,
+      })),
+      exclude: dataFiles.map((n) => ({
+        name: n,
+        reason: "Raw course data should not be published; point to the source instead.",
+      })),
+      extraFiles: [
+        { path: "data/README.md", contents: "Where to obtain the data." },
+      ],
+      suggestions: ["Add unit tests for the loading step."],
+      resumeBullets: [
+        "Organized and documented an end-to-end analytics project for [N] records",
+      ],
+      skillIds: ["sql", "data_visualization"],
+    });
+  }
+
+  // Job Scout: portfolio project scaffold.
+  if (keys.includes("repoName")) {
+    return JSON.stringify({
+      repoName: "retail-demand-analytics",
+      summary:
+        "A portfolio project demonstrating SQL and data visualization on public retail data.",
+      readme:
+        "# Retail Demand Analytics\n\nWhat this project shows: SQL analysis and clear visual communication on real public data.\n\n## Skill map\n- sql: schema design and analysis queries in `sql/`\n- data_visualization: the dashboard notebook in `notebooks/`\n\n## Milestones\n1. Load the data.\n2. Model the questions.\n3. Visualize and write up.",
+      files: [
+        {
+          path: ".gitignore",
+          contents: "data/raw/\n.env\n__pycache__/\n",
+        },
+        {
+          path: "data/README.md",
+          contents:
+            "Download the UCI Online Retail dataset and place the CSV here.",
+        },
+        {
+          path: "notebooks/analysis.ipynb.todo.md",
+          contents: "TODO: exploratory analysis, then the dashboard views.",
+        },
+      ],
+      instructions: [
+        "git init",
+        "git add . && git commit -m \"Scaffold retail demand analytics\"",
+        "gh repo create retail-demand-analytics --public --source=. --push",
+      ],
+      resumeBullets: [
+        "Analyzed [N] retail transactions with SQL to identify demand patterns",
+        "Built a dashboard communicating [X%] improvement opportunities",
+      ],
+    });
+  }
+
   // Grading of a written answer.
   if (keys.includes("criteria")) {
     return JSON.stringify({

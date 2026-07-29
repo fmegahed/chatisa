@@ -11,6 +11,7 @@ import {
 } from "@/components/interview/HandsFree";
 import { usePauseSetting } from "@/components/interview/PauseDial";
 import { ResumePicker } from "@/components/jobs/ResumePicker";
+import { DeviceResumeOffer } from "@/components/scout/DeviceResumeOffer";
 import type { ModelOption } from "@/lib/config/models";
 
 interface PublicTurn {
@@ -82,6 +83,15 @@ const VERDICT_LABEL: Record<string, string> = {
 export function InterviewMentor(props: {
   models: ModelOption[];
   defaultModelId: string;
+  /** A JobApp Drafter handoff: seeds the job so the student never describes
+   * the same job twice. Absent for every other visit. */
+  initialJob?: {
+    company: string;
+    jobTitle: string;
+    jobUrl: string | null;
+    postingText: string | null;
+    applicationId: string;
+  };
 }) {
   const [phase, setPhase] = useState<"setup" | "running" | "results">("setup");
   const [interview, setInterview] = useState<PublicInterview | null>(null);
@@ -92,14 +102,16 @@ export function InterviewMentor(props: {
 
   // Setup fields
   const [modelId, setModelId] = useState(props.defaultModelId);
-  const [company, setCompany] = useState("");
-  const [jobTitle, setJobTitle] = useState("");
-  const [jobUrl, setJobUrl] = useState("");
+  const [company, setCompany] = useState(props.initialJob?.company ?? "");
+  const [jobTitle, setJobTitle] = useState(props.initialJob?.jobTitle ?? "");
+  const [jobUrl, setJobUrl] = useState(props.initialJob?.jobUrl ?? "");
   const [interviewType, setInterviewType] = useState("mixed");
   const [questionCount, setQuestionCount] = useState(5);
   const [gradeLevel, setGradeLevel] = useState("");
   const [major, setMajor] = useState("");
-  const [postingText, setPostingText] = useState("");
+  const [postingText, setPostingText] = useState(
+    props.initialJob?.postingText ?? "",
+  );
   const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   // Answering
@@ -200,6 +212,14 @@ export function InterviewMentor(props: {
       form.append("questionCount", String(questionCount));
       form.append("gradeLevel", gradeLevel.trim());
       form.append("major", major.trim());
+      // Links the interview to the saved application it came from, but only
+      // while the job is still that job; a changed title means a new target.
+      if (
+        props.initialJob &&
+        jobTitle.trim() === props.initialJob.jobTitle.trim()
+      ) {
+        form.append("applicationId", props.initialJob.applicationId);
+      }
       form.append("resume", resumeFile);
 
       const created = await call("/api/interview", { method: "POST", body: form });
@@ -294,6 +314,13 @@ export function InterviewMentor(props: {
       {busy ? (
         <p role="status" className="mb-5 text-sm font-bold">
           {busy}
+        </p>
+      ) : null}
+
+      {phase === "setup" && props.initialJob ? (
+        <p role="status" className="mb-5 rounded-card bg-light-tan p-3">
+          Loaded from JobApp Drafter: {props.initialJob.jobTitle} at{" "}
+          {props.initialJob.company}. Edit anything before you start.
         </p>
       ) : null}
 
@@ -616,6 +643,10 @@ function SetupPanel(props: {
         </div>
 
         <p className="mt-4 block text-sm font-bold">Your resume (PDF)</p>
+        <DeviceResumeOffer
+          currentFile={props.resumeFile}
+          onUse={props.setResumeFile}
+        />
         <ResumePicker file={props.resumeFile} onChoose={props.setResumeFile} />
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2">

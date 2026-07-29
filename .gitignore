@@ -29,3 +29,7 @@ PUSH_INFO.txt
 # Plaintext guest invite links (mint output). The server stores only hashes,
 # so these files are the sole copy of working links; never commit them.
 guest-links-*.txt
+
+# Prototype/inspiration folders (e.g. careerbridge) live beside the repo at
+# the workspace root; if one is ever moved inside, it stays uncommitted.
+new_feature/

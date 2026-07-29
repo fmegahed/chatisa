@@ -38,7 +38,7 @@ export default async function GuestPage({
             width={164}
             height={120}
             priority
-            className="mx-auto h-auto"
+            className="mx-auto h-auto w-auto"
           />
           <h1 className="mt-6 text-center text-3xl">
             You&apos;re invited to try ChatISA

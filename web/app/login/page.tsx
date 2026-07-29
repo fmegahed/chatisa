@@ -41,9 +41,10 @@ export default async function LoginPage({
             width={164}
             height={120}
             priority
-            // h-auto pairs with the global max-width reset, which otherwise
-            // constrains width only and distorts the mark on narrow screens.
-            className="mx-auto h-auto"
+            // h-auto AND w-auto: next/image warns when CSS touches one
+            // dimension without the other (console notice, 2026-07-29);
+            // the pair keeps the mark's aspect under the global reset.
+            className="mx-auto h-auto w-auto"
           />
           <h1 className="mt-6 text-center text-3xl">Sign in to ChatISA</h1>
           <p className="mt-2 text-center">

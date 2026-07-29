@@ -50,6 +50,20 @@
       "when": 1784811489956,
       "tag": "0006_worthless_earthquake",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1785282523173,
+      "tag": "0007_boring_sentinels",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1785285709166,
+      "tag": "0008_previous_stryfe",
+      "breakpoints": true
     }
   ]
 }

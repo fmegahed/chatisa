@@ -9,9 +9,32 @@ import { recordUsageEvent } from "@/lib/db";
 
 export const metadata: Metadata = { title: "JobApp Drafter" };
 
-export default async function JobAppAssistantPage() {
+export default async function JobAppAssistantPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ job?: string }>;
+}) {
   const session = await auth();
   if (!session?.user?.email) redirect("/login");
+
+  // A Job Scout handoff: /jobapp-drafter?job=<postingId> prefills the job so
+  // the student never retypes it (design 2026-07-28). Public employer
+  // content, so no ownership check applies; a stale id simply prefills
+  // nothing.
+  const { job } = await searchParams;
+  let initialJob = null;
+  if (job && /^[\w-]{8,64}$/.test(job)) {
+    const { getScoutPosting } = await import("@/lib/db");
+    const posting = getScoutPosting(job);
+    if (posting) {
+      initialJob = {
+        company: posting.company,
+        positionTitle: posting.title,
+        applyUrl: posting.applyUrl,
+        postingText: posting.description,
+      };
+    }
+  }
 
   const available = filterAvailableModels(getPageModels("jobapp_assistant"));
   const { options, defaultModelId } = buildModelOptions(
@@ -74,6 +97,7 @@ export default async function JobAppAssistantPage() {
             defaultModelId={defaultModelId}
             studentName={session.user.name ?? ""}
             studentEmail={session.user.email}
+            initialJob={initialJob ?? undefined}
           />
         </div>
       )}

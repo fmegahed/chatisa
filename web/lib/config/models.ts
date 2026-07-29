@@ -407,7 +407,8 @@ export type ModuleKey =
   | "ai_sandbox"
   | "sandbox_chat"
   | "ai_comparisons"
-  | "ask_anything";
+  | "ask_anything"
+  | "job_scout";
 
 export const DEFAULT_MODELS: Partial<Record<ModuleKey, string>> = {
   coding_companion: "claude-sonnet-5",
@@ -422,6 +423,10 @@ export const DEFAULT_MODELS: Partial<Record<ModuleKey, string>> = {
   // longer served, so nothing here can point at it.
   interview_mentor_transcription: "gpt-5.6-terra",
   jobapp_assistant: "gpt-5.6-terra",
+  // Job Scout's student-facing generation (resume skills, project
+  // scaffolds); mirrors JobApp. The weekly tagging pipeline pins its own
+  // model in lib/scout/tag.ts and does not read this.
+  job_scout: "gpt-5.6-terra",
 };
 
 interface PageModelRule {
@@ -466,6 +471,13 @@ const PAGE_MODELS: Record<string, PageModelRule> = {
     minContextWindow: 64000,
   },
   interview_mentor_transcription: { includeAll: true, minContextWindow: 64000 },
+  // Scaffold generation needs structured output (a file manifest), and gap
+  // evidence plus a README needs room; same shape as jobapp_assistant.
+  job_scout: {
+    includeAll: true,
+    requireStructuredOutput: true,
+    minContextWindow: 64000,
+  },
   ai_sandbox: { specificModels: ["gpt-5.6-sol"] },
   // The Sandbox side chat offers the same models as the Coding Companion.
   sandbox_chat: { includeAll: true, excludeTags: ["realtime", "speech"] },

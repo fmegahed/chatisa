@@ -342,6 +342,84 @@ export const usageEvents = sqliteTable(
 );
 
 /**
+ * Job Scout's weekly-harvested postings (design 2026-07-28). Public employer
+ * content only: no student column exists here on purpose, and none may be
+ * added — which jobs a student views or saves lives in their browser
+ * (local-first decision, 2026-07-28).
+ */
+export const scoutPostings = sqliteTable(
+  "scout_postings",
+  {
+    id: text("id").primaryKey(),
+    /** jsearch | usajobs */
+    source: text("source").notNull(),
+    /** The source's own job id; uniqueness is per source. */
+    externalId: text("external_id").notNull(),
+    /** lower(company)|lower(title)|state — cross-source duplicate detection. */
+    fingerprint: text("fingerprint").notNull(),
+    title: text("title").notNull(),
+    company: text("company").notNull(),
+    locationCity: text("location_city"),
+    locationState: text("location_state"),
+    remote: integer("remote", { mode: "boolean" }).notNull().default(false),
+    /** fulltime | internship | federal */
+    category: text("category").notNull(),
+    /** The employer's own application URL. Job Scout never proxies applying. */
+    applyUrl: text("apply_url").notNull(),
+    description: text("description").notNull(),
+    postedAt: text("posted_at"),
+    harvestedAt: text("harvested_at").notNull(),
+    /** Bumped each harvest that still sees the posting; drives retirement. */
+    lastSeenAt: text("last_seen_at").notNull(),
+    /** [{skillId, importance: "required"|"preferred"}] from the tagging pass. */
+    skillsJson: text("skills_json").notNull().default("[]"),
+    /**
+     * sponsors | no_sponsorship | unknown, from the tagging pass
+     * (user request 2026-07-28). "sponsors"/"no_sponsorship" only on the
+     * posting's own explicit words; everything else stays unknown, because a
+     * wrong "sponsors" wastes an international student's application.
+     */
+    visaSponsorship: text("visa_sponsorship").notNull().default("unknown"),
+    /** Vocabulary version the tags were made with (lib/scout/taxonomy.ts). */
+    taxonomyVersion: integer("taxonomy_version").notNull(),
+    active: integer("active", { mode: "boolean" }).notNull().default(true),
+  },
+  (t) => [
+    uniqueIndex("scout_postings_source_external").on(t.source, t.externalId),
+    index("scout_postings_active_category").on(t.active, t.category),
+  ],
+);
+
+/**
+ * One row per harvest run: the scheduler's persisted memory (a restart must
+ * derive "is a run due" from here, never from an in-memory timer) and the
+ * operator's cost/coverage record.
+ */
+export const scoutRuns = sqliteTable(
+  "scout_runs",
+  {
+    id: text("id").primaryKey(),
+    startedAt: text("started_at").notNull(),
+    finishedAt: text("finished_at"),
+    /** running | completed | partial | failed */
+    status: text("status").notNull(),
+    /** schedule | manual */
+    trigger: text("trigger").notNull(),
+    jsearchRequests: integer("jsearch_requests").notNull().default(0),
+    jsearchFound: integer("jsearch_found").notNull().default(0),
+    usajobsRequests: integer("usajobs_requests").notNull().default(0),
+    usajobsFound: integer("usajobs_found").notNull().default(0),
+    dedupedCount: integer("deduped_count").notNull().default(0),
+    taggedCount: integer("tagged_count").notNull().default(0),
+    costUsd: real("cost_usd").notNull().default(0),
+    /** Per-source failure notes, JSON {jsearch?: string, usajobs?: string}. */
+    sourceErrorsJson: text("source_errors_json").notNull().default("{}"),
+    error: text("error"),
+  },
+  (t) => [index("scout_runs_started").on(t.startedAt)],
+);
+
+/**
  * A team project workspace, scoped to a course the student selects (ADR-010).
  * "Course" is a label only; no enrollment data is looked up or stored.
  * `coachTypesJson` is the subset of coaches the lead enabled, as a JSON array.

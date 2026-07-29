@@ -1,0 +1,1 @@
+ALTER TABLE `scout_postings` ADD `visa_sponsorship` text DEFAULT 'unknown' NOT NULL;

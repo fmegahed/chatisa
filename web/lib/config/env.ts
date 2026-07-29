@@ -45,6 +45,20 @@ const serverEnvSchema = z.object({
   SEMANTIC_SCHOLAR_API_KEY: optional(z.string().min(1)),
   OPENALEX_MAILTO: optional(z.string().min(3)),
 
+  /**
+   * Job Scout's harvest sources (design 2026-07-28). Not model providers,
+   * so not in PROVIDER_KEYS: absent keys leave the weekly feed empty (the
+   * module says so honestly) rather than hiding models or blocking boot.
+   * USAJobs requires the registered account email in the User-Agent header.
+   */
+  RAPIDAPI_KEY: optional(z.string().min(1)),
+  USAJOBS_API_KEY: optional(z.string().min(1)),
+  USAJOBS_EMAIL: optional(z.string().min(3)),
+  /** Comma-separated emails allowed to trigger a manual harvest. */
+  CHATISA_SCOUT_ADMINS: optional(z.string().min(3)),
+  /** Per-run tagging cost ceiling in USD; defaults to 10 in lib/scout/tag.ts. */
+  CHATISA_SCOUT_MAX_RUN_USD: optional(z.string().min(1)),
+
   /** Auth (required in production). */
   AUTH_SECRET: optional(z.string().min(32)),
   AUTH_GOOGLE_ID: optional(z.string().min(1)),

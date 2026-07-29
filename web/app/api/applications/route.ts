@@ -86,6 +86,11 @@ export async function POST(req: Request) {
   // pasting it means they have seen it and we have not.
   let postingText = input.postingText?.trim() || null;
   let descriptionSource = postingText ? "pasted" : "none";
+  // Job Scout prefills carry their provenance; honored only when posting
+  // text actually came along, so a client cannot label thin air (2026-07-28).
+  if (postingText && form.get("postingSource") === "job_scout") {
+    descriptionSource = "job_scout";
+  }
   let postingMessage: string | null = null;
 
   if (!postingText && input.jobUrl) {

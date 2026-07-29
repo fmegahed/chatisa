@@ -44,6 +44,13 @@ export const MODULES: ModuleInfo[] = [
     group: "coursework",
   },
   {
+    slug: "job-scout",
+    name: "Job Scout",
+    description:
+      "Browse this week's analytics and IS jobs, matched to the courses you have taken.",
+    group: "jobs",
+  },
+  {
     slug: "jobapp-drafter",
     name: "JobApp Drafter",
     description:

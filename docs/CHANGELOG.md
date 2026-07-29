@@ -4,6 +4,56 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.1.0 - July 29, 2026
+
+**Job Scout: a weekly job board matched to the ISA curriculum.** Full notes:
+`docs/releases/v6.1.0.md`.
+
+### Added
+- **Job Scout**, a ninth module leading the job-search group: a weekly board
+  of ISA-relevant postings (JSearch + USAJobs, harvested Sundays 2 AM
+  Eastern), matched in the browser against the courses a student has taken
+  and the skills they confirm from their resume. Profiles and saved jobs
+  never leave the device (ADR-025); posting tagging runs on a flash-tier
+  model with a per-run cost cap (ADR-026).
+- One-click handoffs: a Job Scout posting prefills JobApp Drafter
+  (`descriptionSource: "job_scout"`), and finished JobApp documents link to
+  Interview Mentor with the same job, finally wiring the
+  `interviews.applicationId` column reserved for it.
+- A job-agnostic portfolio project generator: pick skills (a job's gap list
+  pre-checks them), get a scaffold with README, starter files, dataset
+  pointers, and GitHub CLI instructions as a zip assembled in the browser.
+- The course-to-skill mapping is data under test: ~190 leveled links over
+  the live bulletin catalog, with an instructor review table and a two-model
+  regeneration script (`npm run scout:course-skills`).
+- Visa sponsorship stance extracted per posting from the ad's own words
+  (`sponsors` / `no_sponsorship` / `unknown`), shown only when the posting
+  stated one, with a filter to hide explicit "no sponsorship" listings.
+  Postings older than 30 days are never stored and age out of the feed.
+- Job Scout reorganized into four tabs (My Profile, My Projects, This
+  Week's Jobs, Saved Jobs): popular-first course chips with a live "skills
+  you are building" panel and weekly demand comparison; generated projects
+  persist as artifacts whose skills count in the profile once a repo link
+  is added; saved jobs survive posting retirement; multi-state filtering
+  (top states as chips, the rest behind a type-ahead); and the profile
+  resume stays on the student's device so JobApp Drafter and Interview
+  Mentor can reuse it with one click.
+- "Polish a project I already built": upload real coursework files and get
+  a repo layout, grounded README, publish-exclusion warnings, and honest
+  resume bullets back, with the student's code shipped verbatim. The
+  primary project path; polished projects count in the skill profile
+  immediately.
+- Students can override any computed skill level (Strong / Working /
+  Introduced) in the skills panel, in either direction.
+
+### Changed
+- Matching no longer counts professional skills (teamwork, communication)
+  as required or lists them as gaps; they weigh in at preferred only.
+- Aggregator-stuffed job titles ("... at Company City, ST") are cleaned at
+  harvest.
+- Postings are ranked by requirement-coverage match, newest first on ties,
+  and the feed states this.
+
 ## v6.0.0 - July 26, 2026
 
 **The Streamlit application is replaced by a full-stack Next.js platform.** Full

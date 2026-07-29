@@ -1,0 +1,45 @@
+{
+  "SearchResult": {
+    "SearchResultItems": [
+      {
+        "MatchedObjectId": "usaj-800100",
+        "MatchedObjectDescriptor": {
+          "PositionTitle": "Management Analyst",
+          "OrganizationName": "Department of the Treasury",
+          "PositionURI": "https://www.usajobs.gov/job/800100",
+          "ApplyURI": ["https://www.usajobs.gov/job/800100/apply"],
+          "PublicationStartDate": "2026-07-20",
+          "PositionLocation": [
+            {
+              "CityName": "Washington, District of Columbia",
+              "CountrySubDivisionCode": "District of Columbia"
+            }
+          ],
+          "UserArea": {
+            "Details": {
+              "JobSummary": "Serve as a Management Analyst supporting data-driven process improvement across bureau operations, developing reports and dashboards for senior leadership.",
+              "MajorDuties": [
+                "Analyze operational data and prepare findings.",
+                "Develop performance dashboards and metrics."
+              ]
+            }
+          },
+          "QualificationSummary": "Applicants must demonstrate experience with data analysis, spreadsheets, and written communication. Familiarity with visualization tools is desirable."
+        }
+      },
+      {
+        "MatchedObjectId": "usaj-800101",
+        "MatchedObjectDescriptor": {
+          "PositionTitle": "IT Specialist (INFOSEC)",
+          "OrganizationName": "Department of Defense",
+          "PositionURI": "",
+          "ApplyURI": [],
+          "PublicationStartDate": "2026-07-19",
+          "PositionLocation": [],
+          "UserArea": { "Details": { "JobSummary": "" } },
+          "QualificationSummary": ""
+        }
+      }
+    ]
+  }
+}

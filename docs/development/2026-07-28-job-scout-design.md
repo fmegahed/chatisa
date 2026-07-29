@@ -25,9 +25,10 @@ collapses into a one-time diff review by the instructor.
   remote + major national markets, internships/co-ops, and a federal track
   via USAJobs.
 - **Schedule:** Sundays 2:00 AM America/New_York, in-process scheduler.
-- **Models: frontier everywhere.** Weekly posting tagging uses a frontier
-  model (claude-sonnet-5), not a budget tier. Student-facing generation uses
-  the standard catalog via `ModelChooser`.
+- **Models:** weekly posting tagging uses `gemini-3.6-flash` (revised from
+  "frontier everywhere", user decision 2026-07-28 — the quality delta on
+  skill-listing doesn't justify the weekly cost). Student-facing generation
+  uses the standard catalog via `ModelChooser`.
 - **GitHub: scaffold download, no OAuth.** No tokens ever held.
 - **Skill profile: courses + optional resume**, resume processed transiently.
 - **Course catalog: live bulletin** (`bulletin.miamioh.edu/courses-instruction/isa/`),
@@ -41,7 +42,15 @@ and privacy cost for little signal); RemoteOK (user exclusion).
 
 ## 1. Student flow
 
-One page, numbered stages in the house style (`ribbon`, `max-w-4xl` shell).
+REVISED 2026-07-29 (user feedback after the seeded feed went live): one
+page, four client-side tabs — **My Profile · My Projects · This Week's
+Jobs · Saved Jobs** — with My Projects deliberately before the feed.
+My Profile holds popular-first course chips, a live skills panel with a
+weekly demand comparison, manual skill additions, and the device-persisted
+resume; My Projects keeps every generated scaffold as an artifact whose
+skills join the profile once a repo URL proves it was built; Saved Jobs
+outlive posting retirement via snapshots. The original numbered stages
+below describe the first-run wizard, which survives inside My Profile.
 
 1. **Your profile.** Checklist of ISA courses taken (bundled catalog, §2).
    Optional resume upload: the server extracts taxonomy skills from it via a
@@ -205,17 +214,25 @@ normalize → dedupe → relevance filter → tag → store.
   boards; the same role appears twice).
 - **Relevance filter:** cheap deterministic pass (title/keyword) drops the
   obviously off-target before any model spend.
-- **Tagging (frontier, claude-sonnet-5):** `generateObject` per posting with
+- **Tagging (`gemini-3.6-flash`):** `generateObject` per posting with
   the posting text nonce-fenced (the `lib/documents/generate.ts` fence —
   harvested text is untrusted input), emitting
-  `{skills: [{skillId (enum), importance: required|preferred}], category, seniorityOk}`.
+  `{skills: [{skillId (enum), importance: required|preferred}], category, seniorityOk, visaSponsorship}`.
+  Visa sponsorship (user request, 2026-07-28) is classified from the
+  posting's own words only: `sponsors` on an explicit offer,
+  `no_sponsorship` on an explicit refusal or authorization-without-
+  sponsorship requirement, else `unknown` — never inferred, because a wrong
+  "sponsors" wastes an international student's application. Cards show the
+  stance only when the posting stated one, and a filter can hide explicit
+  "no sponsorship" postings.
   Bounded concurrency, retry-once, and a **per-run cost cap**
-  (`CHATISA_SCOUT_MAX_RUN_USD`, default 75): beyond the cap the run stores
+  (`CHATISA_SCOUT_MAX_RUN_USD`, default 10): beyond the cap the run stores
   untagged postings as inactive and marks itself `partial`. Expected cost
-  ~$25–60/run at Sonnet pricing; actual cost recorded per run.
-- **Retention:** a posting missing from two consecutive harvests or older
-  than 35 days goes `active = false`; rows deleted after 90 days. Public
-  content, but no reason to hoard it.
+  well under a dollar per run at Flash pricing; actual cost recorded per run.
+- **Retention:** a posting missing from two consecutive harvests, or whose
+  own post date is older than 30 days (user decision 2026-07-28: nothing
+  older than a month is stored or stays listed), goes `active = false`;
+  rows deleted after 90 days. Public content, but no reason to hoard it.
 
 ## 5. Handoffs
 
@@ -238,14 +255,20 @@ normalize → dedupe → relevance filter → tag → store.
 
 ## 6. Portfolio project generator + GitHub
 
-From a job's detail view (seeded by its gap skills and evidence phrases from
-the student's own courses — sent explicitly by the client in the request, not
-looked up server-side):
+**Job-agnostic by design** (user decision, 2026-07-28): a portfolio project
+demonstrates *skills*, not a single vacancy — the repo stays useful across
+every application, and the README never names an employer. Entry points may
+prefill the skill selection (a job's gap list, or the student's most common
+gaps across the feed), but the generated output references only skills.
 
-- A frontier model (student-picked via `ModelChooser`) generates a project
-  brief via `generateObject`: README mapping the project to the job's named
-  skills, milestone plan, pointers to real public datasets, starter file
-  stubs (folder layout, notebook/R script skeletons, `.gitignore`), suggested
+Seeded by student-selected skills plus evidence phrases from their own
+courses — sent explicitly by the client in the request, not looked up
+server-side:
+
+- A model (student-picked via `ModelChooser`) generates a project brief via
+  `generateObject`: README mapping the project to the selected skills,
+  milestone plan, pointers to real public datasets, starter file stubs
+  (folder layout, notebook/R script skeletons, `.gitignore`), suggested
   repo name.
 - Delivered as a **zip assembled client-side** (`fflate`, small and
   tree-shakeable) from the returned file manifest, plus copy-paste
@@ -312,8 +335,8 @@ No student-keyed tables. Migration via `drizzle-kit generate`, applied at boot.
 
 - ADR: server-cached public job postings + in-process weekly scheduler
   (first server-side background job; first server-cached external content).
-- ADR: frontier-model tagging with per-run cost cap (user decision,
-  2026-07-28).
+- ADR: flash-tier tagging with per-run cost cap (user decision, 2026-07-28,
+  revising the earlier frontier-everywhere choice).
 - `docs/CHANGELOG.md` and `PROJECT_MEMORY.md` entries per house convention;
   roadmap entry removed/marked done if one is added.
 

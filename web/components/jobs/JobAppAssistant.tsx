@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ModelChooser } from "@/components/ModelChooser";
 import { ResumePicker } from "@/components/jobs/ResumePicker";
+import { DeviceResumeOffer } from "@/components/scout/DeviceResumeOffer";
 import {
   CoverLetterEditor,
   GroundingBanner,
@@ -39,6 +40,14 @@ export function JobAppAssistant(props: {
   defaultModelId: string;
   studentName: string;
   studentEmail: string;
+  /** A Job Scout handoff: seeds the job fields so nothing is retyped.
+   * Absent for every other visit; all behaviour is unchanged then. */
+  initialJob?: {
+    company: string;
+    positionTitle: string;
+    applyUrl: string;
+    postingText: string;
+  };
 }) {
   const [step, setStep] = useState<"setup" | "documents">("setup");
   const [busy, setBusy] = useState("");
@@ -46,10 +55,14 @@ export function JobAppAssistant(props: {
   const [notice, setNotice] = useState<string | null>(null);
 
   const [modelId, setModelId] = useState(props.defaultModelId);
-  const [company, setCompany] = useState("");
-  const [positionTitle, setPositionTitle] = useState("");
-  const [jobUrl, setJobUrl] = useState("");
-  const [postingText, setPostingText] = useState("");
+  const [company, setCompany] = useState(props.initialJob?.company ?? "");
+  const [positionTitle, setPositionTitle] = useState(
+    props.initialJob?.positionTitle ?? "",
+  );
+  const [jobUrl, setJobUrl] = useState(props.initialJob?.applyUrl ?? "");
+  const [postingText, setPostingText] = useState(
+    props.initialJob?.postingText ?? "",
+  );
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [template, setTemplate] = useState<1 | 2 | 3>(1);
 
@@ -94,6 +107,14 @@ export function JobAppAssistant(props: {
       form.append("positionTitle", positionTitle.trim());
       form.append("jobUrl", jobUrl.trim());
       form.append("postingText", postingText.trim());
+      // Provenance for a Job Scout handoff, but only while the posting is
+      // still the one Job Scout supplied; an edited posting is "pasted".
+      if (
+        props.initialJob &&
+        postingText.trim() === props.initialJob.postingText.trim()
+      ) {
+        form.append("postingSource", "job_scout");
+      }
       form.append("resume", resumeFile);
 
       const created = await call("/api/applications", {
@@ -214,6 +235,13 @@ export function JobAppAssistant(props: {
           <section className="rounded-card border border-medium-tan bg-paper p-5">
             <h2 className="text-xl">1. The job</h2>
 
+            {props.initialJob ? (
+              <p role="status" className="mt-2 rounded-card bg-light-tan p-3">
+                Loaded from Job Scout: {props.initialJob.positionTitle} at{" "}
+                {props.initialJob.company}. Edit anything before you continue.
+              </p>
+            ) : null}
+
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="company" className="block text-sm font-bold">
@@ -294,6 +322,11 @@ export function JobAppAssistant(props: {
             </p>
 
             <p className="mt-3 block text-sm font-bold">Resume PDF</p>
+            <DeviceResumeOffer
+              currentFile={resumeFile}
+              disabled={busy !== ""}
+              onUse={setResumeFile}
+            />
             <ResumePicker file={resumeFile} onChoose={setResumeFile} />
 
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -477,6 +510,21 @@ export function JobAppAssistant(props: {
               </div>
             </section>
           ))}
+
+          {documents.length > 0 && applicationId ? (
+            // Closes the loop the schema always intended: the interview
+            // starts already knowing this job (handoff, 2026-07-28).
+            <p className="rounded-card border border-medium-tan bg-light-tan p-4">
+              Documents ready?{" "}
+              <a
+                href={`/interview-mentor?application=${applicationId}`}
+                className="font-bold underline"
+              >
+                Practice the interview for this job
+              </a>{" "}
+              without retyping anything.
+            </p>
+          ) : null}
         </div>
       ) : null}
     </div>

@@ -9,9 +9,33 @@ import { isSpeechConfigured } from "@/lib/speech/deepgram";
 
 export const metadata: Metadata = { title: "Interview Mentor" };
 
-export default async function InterviewMentorPage() {
+export default async function InterviewMentorPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ application?: string }>;
+}) {
   const session = await auth();
   if (!session?.user?.email) redirect("/login");
+
+  // A JobApp Drafter handoff: /interview-mentor?application=<id> prefills
+  // the job from the student's own saved application, ownership-checked, so
+  // the same job is never described twice (design 2026-07-28; the schema's
+  // interviews.applicationId was reserved for exactly this).
+  const { application } = await searchParams;
+  let initialJob = null;
+  if (application && /^[\w-]{8,64}$/.test(application)) {
+    const { getOwnedApplication } = await import("@/lib/db");
+    const app = getOwnedApplication(application, session.user.email);
+    if (app) {
+      initialJob = {
+        company: app.company,
+        jobTitle: app.positionTitle,
+        jobUrl: app.jobUrl,
+        postingText: app.postingText,
+        applicationId: app.id,
+      };
+    }
+  }
 
   const available = filterAvailableModels(getPageModels("interview_mentor"));
   const { options: models, defaultModelId } = buildModelOptions(
@@ -62,7 +86,11 @@ export default async function InterviewMentorPage() {
         </div>
       ) : (
         <div className="mt-8">
-          <InterviewMentor models={models} defaultModelId={defaultModelId} />
+          <InterviewMentor
+            models={models}
+            defaultModelId={defaultModelId}
+            initialJob={initialJob ?? undefined}
+          />
         </div>
       )}
     </div>

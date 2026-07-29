@@ -524,6 +524,9 @@ export function createInterview(params: {
   gradeLevel: string | null;
   major: string | null;
   plannedQuestions: number;
+  /** Set when started from a saved application (JobApp handoff, 2026-07-28).
+   * Callers must have ownership-checked it; this function trusts them. */
+  applicationId?: string | null;
 }): string {
   const db = getDb();
   const id = randomUUID();
@@ -540,6 +543,7 @@ export function createInterview(params: {
       gradeLevel: params.gradeLevel,
       major: params.major,
       plannedQuestions: params.plannedQuestions,
+      applicationId: params.applicationId ?? null,
       askedCount: 0,
       createdAt: new Date().toISOString(),
     })
@@ -861,4 +865,286 @@ export function saveDocumentContent(params: {
     )
     .run();
   return result.changes > 0;
+}
+
+// ---------------------------------------------------------------- job scout
+
+/** A posting as the harvest pipeline hands it over, pre-tagging. */
+export interface ScoutPostingInput {
+  source: "jsearch" | "usajobs";
+  externalId: string;
+  fingerprint: string;
+  title: string;
+  company: string;
+  locationCity: string | null;
+  locationState: string | null;
+  remote: boolean;
+  category: "fulltime" | "internship" | "federal";
+  applyUrl: string;
+  description: string;
+  postedAt: string | null;
+  skillsJson: string;
+  /** sponsors | no_sponsorship | unknown (tagging pass, 2026-07-28). */
+  visaSponsorship: string;
+  taxonomyVersion: number;
+}
+
+/**
+ * Insert-or-refresh on (source, externalId): a posting seen again keeps its
+ * id (so a student's locally saved id stays valid week to week) and gets its
+ * lastSeenAt and tags refreshed.
+ */
+export function upsertScoutPosting(input: ScoutPostingInput): string {
+  const db = getDb();
+  const now = new Date().toISOString();
+  const existing = db
+    .select({ id: schema.scoutPostings.id })
+    .from(schema.scoutPostings)
+    .where(
+      and(
+        eq(schema.scoutPostings.source, input.source),
+        eq(schema.scoutPostings.externalId, input.externalId),
+      ),
+    )
+    .get();
+  if (existing) {
+    db.update(schema.scoutPostings)
+      .set({
+        title: input.title,
+        company: input.company,
+        locationCity: input.locationCity,
+        locationState: input.locationState,
+        remote: input.remote,
+        category: input.category,
+        applyUrl: input.applyUrl,
+        description: input.description,
+        postedAt: input.postedAt,
+        lastSeenAt: now,
+        skillsJson: input.skillsJson,
+        visaSponsorship: input.visaSponsorship,
+        taxonomyVersion: input.taxonomyVersion,
+        active: true,
+      })
+      .where(eq(schema.scoutPostings.id, existing.id))
+      .run();
+    return existing.id;
+  }
+  const id = randomUUID();
+  db.insert(schema.scoutPostings)
+    .values({ id, ...input, harvestedAt: now, lastSeenAt: now, active: true })
+    .run();
+  return id;
+}
+
+/** True when any active posting already carries this cross-source fingerprint. */
+export function scoutFingerprintExists(fingerprint: string): boolean {
+  return Boolean(
+    getDb()
+      .select({ id: schema.scoutPostings.id })
+      .from(schema.scoutPostings)
+      .where(
+        and(
+          eq(schema.scoutPostings.fingerprint, fingerprint),
+          eq(schema.scoutPostings.active, true),
+        ),
+      )
+      .get(),
+  );
+}
+
+export interface ScoutFeedFilters {
+  category?: "fulltime" | "internship" | "federal";
+  state?: string;
+  remote?: boolean;
+  limit: number;
+  offset: number;
+}
+
+/**
+ * The feed query. Descriptions are excluded: cards do not need them, and a
+ * page of full employer text would be most of a megabyte.
+ */
+export function listScoutPostings(filters: ScoutFeedFilters) {
+  const conditions = [eq(schema.scoutPostings.active, true)];
+  if (filters.category)
+    conditions.push(eq(schema.scoutPostings.category, filters.category));
+  if (filters.state)
+    conditions.push(eq(schema.scoutPostings.locationState, filters.state));
+  if (filters.remote !== undefined)
+    conditions.push(eq(schema.scoutPostings.remote, filters.remote));
+  return getDb()
+    .select({
+      id: schema.scoutPostings.id,
+      source: schema.scoutPostings.source,
+      title: schema.scoutPostings.title,
+      company: schema.scoutPostings.company,
+      locationCity: schema.scoutPostings.locationCity,
+      locationState: schema.scoutPostings.locationState,
+      remote: schema.scoutPostings.remote,
+      category: schema.scoutPostings.category,
+      applyUrl: schema.scoutPostings.applyUrl,
+      postedAt: schema.scoutPostings.postedAt,
+      skillsJson: schema.scoutPostings.skillsJson,
+      visaSponsorship: schema.scoutPostings.visaSponsorship,
+      taxonomyVersion: schema.scoutPostings.taxonomyVersion,
+    })
+    .from(schema.scoutPostings)
+    .where(and(...conditions))
+    .orderBy(desc(schema.scoutPostings.postedAt))
+    .limit(filters.limit)
+    .offset(filters.offset)
+    .all();
+}
+
+export function countScoutPostings(): number {
+  const row = getDb()
+    .select({ n: sql<number>`count(*)` })
+    .from(schema.scoutPostings)
+    .where(eq(schema.scoutPostings.active, true))
+    .get();
+  return row?.n ?? 0;
+}
+
+/** Full row, description included, for the expanded card and the handoff. */
+export function getScoutPosting(id: string) {
+  return (
+    getDb()
+      .select()
+      .from(schema.scoutPostings)
+      .where(eq(schema.scoutPostings.id, id))
+      .get() ?? null
+  );
+}
+
+/**
+ * Retirement per design §4.3: postings unseen since the cutoff go inactive;
+ * rows older than the purge cutoff are deleted outright.
+ */
+export function retireScoutPostings(params: {
+  unseenSinceIso: string;
+  purgeBeforeIso: string;
+  /** Postings whose own post date is older than this go inactive too
+   * (user decision 2026-07-28: nothing older than a month stays listed). */
+  postedBeforeIso: string;
+}): { deactivated: number; purged: number } {
+  const db = getDb();
+  const deactivated = db
+    .update(schema.scoutPostings)
+    .set({ active: false })
+    .where(
+      and(
+        eq(schema.scoutPostings.active, true),
+        sql`(${schema.scoutPostings.lastSeenAt} < ${params.unseenSinceIso}
+             or (${schema.scoutPostings.postedAt} is not null
+                 and ${schema.scoutPostings.postedAt} < ${params.postedBeforeIso}))`,
+      ),
+    )
+    .run().changes;
+  const purged = db
+    .delete(schema.scoutPostings)
+    .where(lt(schema.scoutPostings.lastSeenAt, params.purgeBeforeIso))
+    .run().changes;
+  return { deactivated, purged };
+}
+
+export function createScoutRun(trigger: "schedule" | "manual"): string {
+  const id = randomUUID();
+  getDb()
+    .insert(schema.scoutRuns)
+    .values({
+      id,
+      startedAt: new Date().toISOString(),
+      status: "running",
+      trigger,
+    })
+    .run();
+  return id;
+}
+
+export function finishScoutRun(
+  id: string,
+  patch: {
+    status: "completed" | "partial" | "failed";
+    jsearchRequests?: number;
+    jsearchFound?: number;
+    usajobsRequests?: number;
+    usajobsFound?: number;
+    dedupedCount?: number;
+    taggedCount?: number;
+    costUsd?: number;
+    sourceErrorsJson?: string;
+    error?: string | null;
+  },
+): void {
+  getDb()
+    .update(schema.scoutRuns)
+    .set({ finishedAt: new Date().toISOString(), ...patch })
+    .where(eq(schema.scoutRuns.id, id))
+    .run();
+}
+
+/** The scheduler's persisted memory: when did a harvest last succeed. */
+export function latestSuccessfulScoutRun() {
+  return (
+    getDb()
+      .select()
+      .from(schema.scoutRuns)
+      .where(
+        sql`${schema.scoutRuns.status} in ('completed', 'partial')`,
+      )
+      .orderBy(desc(schema.scoutRuns.startedAt))
+      .limit(1)
+      .get() ?? null
+  );
+}
+
+/**
+ * Guards the manual trigger: only one harvest at a time. A "running" row
+ * older than two hours is treated as dead, not in progress: a killed
+ * process never writes finishScoutRun, and without this cutoff one crash
+ * would block every future harvest (guard added 2026-07-28).
+ */
+export function scoutRunInProgress(): boolean {
+  const staleCutoff = new Date(Date.now() - 2 * 3_600_000).toISOString();
+  return Boolean(
+    getDb()
+      .select({ id: schema.scoutRuns.id })
+      .from(schema.scoutRuns)
+      .where(
+        and(
+          eq(schema.scoutRuns.status, "running"),
+          sql`${schema.scoutRuns.startedAt} > ${staleCutoff}`,
+        ),
+      )
+      .get(),
+  );
+}
+
+/**
+ * The whole active feed in one shot (card fields only, no descriptions).
+ * Exists because client-side matching needs every posting's tags anyway,
+ * and one compact response beats a pagination loop: at 2,000 postings this
+ * is roughly 600 KB before gzip (user scale question, 2026-07-29).
+ */
+export function listAllScoutPostings() {
+  return getDb()
+    .select({
+      id: schema.scoutPostings.id,
+      source: schema.scoutPostings.source,
+      title: schema.scoutPostings.title,
+      company: schema.scoutPostings.company,
+      locationCity: schema.scoutPostings.locationCity,
+      locationState: schema.scoutPostings.locationState,
+      remote: schema.scoutPostings.remote,
+      category: schema.scoutPostings.category,
+      applyUrl: schema.scoutPostings.applyUrl,
+      postedAt: schema.scoutPostings.postedAt,
+      skillsJson: schema.scoutPostings.skillsJson,
+      visaSponsorship: schema.scoutPostings.visaSponsorship,
+      taxonomyVersion: schema.scoutPostings.taxonomyVersion,
+    })
+    .from(schema.scoutPostings)
+    .where(eq(schema.scoutPostings.active, true))
+    .orderBy(desc(schema.scoutPostings.postedAt))
+    .all();
 }

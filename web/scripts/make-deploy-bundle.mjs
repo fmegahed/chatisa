@@ -338,11 +338,21 @@ console.log("Self-test: booting the assembled bundle ...");
    * self-test, because the boot above deliberately supplies no DEEPGRAM_TOKEN:
    * "not-configured" is the correct answer in this environment, not a fault.
    *
-   * Narrow on purpose. Only this key, and only this value: a `speech` of
-   * "broken: ..." still fails the bundle, which is the state that matters (a
-   * credential that is present and refused). Everything else stays strict.
+   * Narrow on purpose. Only these keys, and only these values: a `speech`
+   * of "broken: ..." still fails the bundle, which is the state that
+   * matters (a credential that is present and refused). Everything else
+   * stays strict.
+   *
+   * `scout` joined the deep block on 2026-07-28 and failed this self-test
+   * the same way speech did on 2026-07-26: the boot above uses a fresh
+   * data directory and no harvest keys, so "no harvest yet" is the correct
+   * answer in this environment. Any other non-ok scout value (a failed
+   * query, a stale-feed report from a corrupted table) still fails.
    */
-  const OPTIONAL_DEEP = { speech: /^not-configured\b/ };
+  const OPTIONAL_DEEP = {
+    speech: /^not-configured\b/,
+    scout: /^no harvest yet$/,
+  };
 
   const deep = health?.checks?.deep;
   const bad = deep
@@ -524,6 +534,20 @@ SEMANTIC_SCHOLAR_API_KEY=
 # A contact address puts us in OpenAlex's faster pool. Use a role address, not
 # a personal one; it is sent with every OpenAlex request.
 OPENALEX_MAILTO=
+
+# --- Job Scout weekly job feed -----------------------------------------------
+# Without RAPIDAPI_KEY the JSearch source is skipped; without the USAJobs pair
+# the federal track is skipped. Both absent = the feed stays empty and the
+# module says so to students. USAJOBS_EMAIL is the registered account email,
+# sent as the User-Agent per data.usajobs.gov terms.
+RAPIDAPI_KEY=
+USAJOBS_API_KEY=
+USAJOBS_EMAIL=
+# Comma-separated emails allowed to trigger a manual harvest via
+# POST /api/scout/refresh (progress lands in the scout_runs table).
+CHATISA_SCOUT_ADMINS=
+# Per-run tagging cost ceiling in USD (default 10 when unset).
+CHATISA_SCOUT_MAX_RUN_USD=
 
 # --- Data (REQUIRED): folder for the usage database; BACK THIS FOLDER UP -----
 CHATISA_DATA_DIR=C:\\chatisa-data

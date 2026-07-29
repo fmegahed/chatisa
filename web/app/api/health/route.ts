@@ -102,10 +102,32 @@ async function deepChecks(): Promise<{ deep: Record<string, string>; ok: boolean
     speech = failText(err);
   }
 
+  // Job Scout feed freshness. Informational like speech's not-configured
+  // state: an empty or stale feed is visible here for the operator but never
+  // turns the server red, because the module itself tells students honestly
+  // and every other feature is unaffected (design 2026-07-28).
+  let scout = "unknown";
+  try {
+    const { latestSuccessfulScoutRun, countScoutPostings } = await import(
+      "@/lib/db"
+    );
+    const last = latestSuccessfulScoutRun();
+    if (!last) {
+      scout = "no harvest yet";
+    } else {
+      const ageDays =
+        (Date.now() - new Date(last.startedAt).getTime()) / 86_400_000;
+      const freshness = ageDays > 8 ? `stale (${Math.floor(ageDays)}d)` : "ok";
+      scout = `${freshness}, ${countScoutPostings()} active postings`;
+    }
+  } catch (err) {
+    scout = failText(err);
+  }
+
   const ok =
     Object.values(deep).every((v) => v === "ok") &&
     !speech.startsWith("broken");
-  return { deep: { ...deep, speech }, ok };
+  return { deep: { ...deep, speech, scout }, ok };
 }
 
 export async function GET(req: Request) {

@@ -14,11 +14,20 @@ export async function register() {
     const { getDb } = await import("./lib/db");
     getDb();
 
+    // Job Scout's weekly harvest (design 2026-07-28). Self-guarding: no-op
+    // under test/mock mode or when no source key is configured.
+    const { startScoutScheduler } = await import("./lib/scout/scheduler");
+    startScoutScheduler();
+
     if (process.env.CHATISA_MOCK_LLM === "1") {
       logger.error(
         {},
         "MOCK MODEL ENABLED: every AI response on this server is canned test output, not a real model. Unset CHATISA_MOCK_LLM before using this server for anything real.",
       );
+      // A deterministic Job Scout feed, so e2e has postings without any
+      // harvest. Mock mode only; the real feed comes from the Sunday run.
+      const { seedScoutFixtures } = await import("./lib/scout/mock-fixtures");
+      seedScoutFixtures();
     }
 
     if (report.missingProviders.length > 0) {

@@ -36,6 +36,9 @@ const startSchema = z.object({
   gradeLevel: z.string().max(60).nullable().optional(),
   major: z.string().max(120).nullable().optional(),
   questionCount: z.coerce.number().int().min(3).max(10),
+  /** Links the interview to a saved application (the JobApp handoff,
+   * 2026-07-28, finally using the FK reserved for it). */
+  applicationId: z.string().max(64).nullable().optional(),
 });
 
 function errorResponse(status: number, message: string, extra?: object) {
@@ -85,6 +88,7 @@ export async function POST(req: Request) {
     gradeLevel: (form.get("gradeLevel") as string) || null,
     major: (form.get("major") as string) || null,
     questionCount: form.get("questionCount"),
+    applicationId: (form.get("applicationId") as string) || null,
   });
   if (!parsed.success) {
     return errorResponse(400, "Fill in the company, the job title, and the number of questions.", {
@@ -165,6 +169,17 @@ export async function POST(req: Request) {
       jobDescription: postingText,
     });
 
+    // The link is provenance only, so a stale or foreign id is dropped
+    // rather than blocking the interview; ownership is still checked so one
+    // student can never point their interview at another's application.
+    let applicationId: string | null = null;
+    if (input.applicationId) {
+      const { getOwnedApplication } = await import("@/lib/db");
+      if (getOwnedApplication(input.applicationId, userEmail)) {
+        applicationId = input.applicationId;
+      }
+    }
+
     const interviewId = createInterview({
       userEmail,
       modelId: input.modelId,
@@ -175,6 +190,7 @@ export async function POST(req: Request) {
       gradeLevel: input.gradeLevel ?? null,
       major: input.major ?? null,
       plannedQuestions: input.questionCount,
+      applicationId,
     });
 
     const first = await nextQuestion({

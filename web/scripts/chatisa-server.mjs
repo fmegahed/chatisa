@@ -111,6 +111,13 @@ const RECOMMENDED = [
 for (const k of RECOMMENDED.filter((k) => !process.env[k]?.trim())) {
   console.warn(`[chatisa] note: ${k} is not set; the models it serves will be hidden`);
 }
+// Job Scout's weekly harvest sources (2026-07-28). Absent keys leave the
+// feed empty rather than hiding models, so they get their own note.
+for (const k of ["RAPIDAPI_KEY", "USAJOBS_API_KEY", "USAJOBS_EMAIL"].filter(
+  (k) => !process.env[k]?.trim(),
+)) {
+  console.warn(`[chatisa] note: ${k} is not set; Job Scout's weekly feed will be missing that source`);
+}
 
 const INTERNAL_PORT = 3000;
 const PUBLIC_PORT = Number(process.env.CHATISA_HTTPS_PORT ?? 443);

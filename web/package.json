@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -15,7 +15,9 @@
     "verify:models": "tsx scripts/verify-models.ts",
     "models:discover": "tsx scripts/discover-models.ts",
     "models:audit": "tsx scripts/audit-catalog.ts",
-    "setup:runtimes": "node scripts/setup-runtimes.mjs"
+    "setup:runtimes": "node scripts/setup-runtimes.mjs",
+    "scout:course-skills": "tsx scripts/generate-course-skills.ts",
+    "scout:harvest": "node --conditions=react-server --import tsx scripts/run-harvest.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.18",
