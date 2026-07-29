@@ -22,7 +22,7 @@ export interface FeedPosting {
 export interface FeedFreshness {
   updatedAt: string | null;
   totalActive: number;
-  sourceErrors: { jsearch?: string; usajobs?: string; tagging?: string };
+  sourceErrors: { activejobs?: string; usajobs?: string; tagging?: string };
 }
 
 export interface FeedIndex {

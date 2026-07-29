@@ -7,7 +7,7 @@
 export type Fetcher = typeof fetch;
 
 export interface RawPosting {
-  source: "jsearch" | "usajobs";
+  source: "activejobs" | "usajobs";
   externalId: string;
   title: string;
   company: string;
@@ -30,10 +30,10 @@ export interface SourceResult {
 }
 
 /**
- * Full state names → postal codes. JSearch's /search-v2 sends "Ohio" and
- * USAJobs sends "District of Columbia"; slicing two characters corrupted
- * Kentucky to "KE" (found 2026-07-28 on the first real payload), so both
- * sources normalize through this table.
+ * Full state names → postal codes. Active Jobs DB's regions_derived and
+ * USAJobs both send full names ("Ohio", "District of Columbia"); slicing two
+ * characters corrupted Kentucky to "KE" (found 2026-07-28 on the first real
+ * JSearch payload), so every source normalizes through this table.
  */
 const STATE_CODES: Record<string, string> = {
   alabama: "AL", alaska: "AK", arizona: "AZ", arkansas: "AR",

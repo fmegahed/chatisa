@@ -7,8 +7,14 @@ import {
   upsertScoutPosting,
 } from "@/lib/db";
 import { logger } from "@/lib/log";
-import { HARVEST_QUERIES, USAJOBS_KEYWORDS, isRelevantTitle } from "./queries";
-import { searchJsearch } from "./sources/jsearch";
+import {
+  ACTIVEJOBS_LOCATION,
+  ACTIVEJOBS_QUERIES,
+  TARGET_STATE_CODES,
+  USAJOBS_KEYWORDS,
+  isRelevantTitle,
+} from "./queries";
+import { searchActiveJobs } from "./sources/activejobs";
 import { searchUsajobs } from "./sources/usajobs";
 import { fingerprintOf, type Fetcher, type RawPosting } from "./sources/types";
 import { maxRunUsd, tagPosting, TAXONOMY_VERSION, type TagResult } from "./tag";
@@ -31,13 +37,13 @@ const MAX_POSTING_AGE_DAYS = 30;
 export interface ScoutRunSummary {
   runId: string;
   status: "completed" | "partial" | "failed";
-  jsearchFound: number;
+  activejobsFound: number;
   usajobsFound: number;
   tagged: number;
   /** Postings dropped because the cost cap ended tagging early. */
   droppedByCap: number;
   costUsd: number;
-  sourceErrors: { jsearch?: string; usajobs?: string; tagging?: string };
+  sourceErrors: { activejobs?: string; usajobs?: string; tagging?: string };
 }
 
 /** Injectable for tests; production callers pass nothing. */
@@ -81,27 +87,39 @@ export async function runHarvest(
     // Errors keep the LAST message plus a failure count: the 2026-07-28 run
     // recorded only the first error, which hid that the other 159 queries
     // were failing for a different reason.
-    let jsearchRequests = 0;
-    let jsearchFailures = 0;
-    let jsearchError: string | undefined;
-    const jsearchPostings: RawPosting[] = [];
-    for (const q of HARVEST_QUERIES) {
-      const result = await searchJsearch(q, fetcher);
-      jsearchRequests += result.requests;
-      jsearchPostings.push(...result.postings);
+    let activejobsRequests = 0;
+    let activejobsFailures = 0;
+    let activejobsError: string | undefined;
+    const activejobsPostings: RawPosting[] = [];
+    for (const q of ACTIVEJOBS_QUERIES) {
+      const result = await searchActiveJobs(
+        {
+          title: q.title,
+          location: ACTIVEJOBS_LOCATION,
+          timeFrame: "7d",
+          limit: q.limit,
+          category: q.category,
+          preferStates: TARGET_STATE_CODES,
+          experienceLevels: q.experienceLevels,
+          employmentTypes: q.employmentTypes,
+        },
+        fetcher,
+      );
+      activejobsRequests += result.requests;
+      activejobsPostings.push(...result.postings);
       if (result.error) {
-        jsearchFailures += 1;
-        jsearchError = result.error;
+        activejobsFailures += 1;
+        activejobsError = result.error;
         if (result.requests === 0) break; // not configured: stop looping
-        // Quota exhausted: every further request burns the same dead quota.
+        // Quota exhausted: every further request burns the same dead pool.
         if (result.quotaExhausted) break;
       }
     }
-    if (jsearchError) {
-      sourceErrors.jsearch =
-        jsearchFailures > 1
-          ? `${jsearchError} (${jsearchFailures} of ${jsearchRequests} queries failed)`
-          : jsearchError;
+    if (activejobsError) {
+      sourceErrors.activejobs =
+        activejobsFailures > 1
+          ? `${activejobsError} (${activejobsFailures} of ${activejobsRequests} queries failed)`
+          : activejobsError;
     }
 
     let usajobsRequests = 0;
@@ -134,7 +152,7 @@ export async function runHarvest(
       .toISOString()
       .slice(0, 10);
     const candidates: RawPosting[] = [];
-    for (const p of [...jsearchPostings, ...usajobsPostings]) {
+    for (const p of [...activejobsPostings, ...usajobsPostings]) {
       const externalKey = `${p.source}|${p.externalId}`;
       const fp = fingerprintOf(p);
       if (seenExternal.has(externalKey) || seenFingerprint.has(fp)) continue;
@@ -206,9 +224,9 @@ export async function runHarvest(
     });
 
     const bothFailed =
-      jsearchPostings.length === 0 &&
+      activejobsPostings.length === 0 &&
       usajobsPostings.length === 0 &&
-      Boolean(sourceErrors.jsearch) &&
+      Boolean(sourceErrors.activejobs) &&
       Boolean(sourceErrors.usajobs);
     const status: ScoutRunSummary["status"] = bothFailed
       ? "failed"
@@ -218,8 +236,8 @@ export async function runHarvest(
 
     finishScoutRun(runId, {
       status,
-      jsearchRequests,
-      jsearchFound: jsearchPostings.length,
+      activejobsRequests,
+      activejobsFound: activejobsPostings.length,
       usajobsRequests,
       usajobsFound: usajobsPostings.length,
       dedupedCount: candidates.length,
@@ -235,7 +253,7 @@ export async function runHarvest(
     return {
       runId,
       status,
-      jsearchFound: jsearchPostings.length,
+      activejobsFound: activejobsPostings.length,
       usajobsFound: usajobsPostings.length,
       tagged,
       droppedByCap,
@@ -252,7 +270,7 @@ export async function runHarvest(
     return {
       runId,
       status: "failed",
-      jsearchFound: 0,
+      activejobsFound: 0,
       usajobsFound: 0,
       tagged: 0,
       droppedByCap: 0,

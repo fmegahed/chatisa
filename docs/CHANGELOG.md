@@ -4,6 +4,31 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.2.0 - July 29, 2026
+
+**Job Scout feed rebuilt on employer-direct sources.** Full notes:
+`docs/releases/v6.2.0.md`.
+
+### Changed
+- Job Scout's board is now sourced from **Active Jobs DB** (employer career
+  sites and 54 ATS platforms, direct apply links) plus USAJobs; JSearch is
+  removed after one production week showed its aggregator-heavy results
+  (ADR-027). The harvest query matrix becomes six role-cluster requests
+  budgeted against the plan's monthly returned-jobs quota.
+- Every search is filtered to ISA fresh grads and internships at the API
+  itself: full-time clusters carry the source's 0-2/2-5 years experience
+  band, internship clusters its INTERN employment type, so senior postings
+  are never fetched. People-management titles (manager, lead, supervisor)
+  no longer pass the relevance gate; leadership development programs still
+  do.
+- Scout postings move to their own database file (`scout.db`); the
+  aggregator-era rows remain in `chatisa.db`, preserved but no longer read.
+  The board refills automatically on the first boot after deploy.
+- Clearly senior postings and source-flagged duplicates are dropped before
+  any model spend.
+
+---
+
 ## v6.1.1 - July 29, 2026
 
 **Code and notebook files as first-class uploads.**

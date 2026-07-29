@@ -17,6 +17,8 @@ type Db = BetterSQLite3Database<typeof schema>;
 const globalForDb = globalThis as unknown as {
   __chatisaDb?: Db;
   __chatisaDbClient?: Database.Database;
+  __chatisaScoutDb?: Db;
+  __chatisaScoutDbClient?: Database.Database;
 };
 
 function createDb(): Db {
@@ -38,6 +40,82 @@ export function getDb(): Db {
 }
 
 /**
+ * Job Scout's OWN database file, scout.db beside chatisa.db (ADR-027).
+ * Separate on purpose: the 2026-07-29 source swap (JSearch out, Active Jobs
+ * DB in) must not mix aggregator-era postings with the employer-direct feed,
+ * and the user chose to keep the old rows rather than delete them. They stay
+ * in chatisa.db's scout tables, which nothing reads anymore; this fresh file
+ * starts empty and only ever holds the new sources. Postings are a public
+ * cache with their own lifecycle, so a future source swap can reset this
+ * file without touching users or usage events.
+ *
+ * Tables are created inline rather than through drizzle migrations: the main
+ * migration chain targets chatisa.db, and a second chain for two tables
+ * would be more machinery than the DDL it manages.
+ */
+const SCOUT_DDL = `
+CREATE TABLE IF NOT EXISTS scout_postings (
+  id text PRIMARY KEY NOT NULL,
+  source text NOT NULL,
+  external_id text NOT NULL,
+  fingerprint text NOT NULL,
+  title text NOT NULL,
+  company text NOT NULL,
+  location_city text,
+  location_state text,
+  remote integer DEFAULT false NOT NULL,
+  category text NOT NULL,
+  apply_url text NOT NULL,
+  description text NOT NULL,
+  posted_at text,
+  harvested_at text NOT NULL,
+  last_seen_at text NOT NULL,
+  skills_json text DEFAULT '[]' NOT NULL,
+  taxonomy_version integer NOT NULL,
+  active integer DEFAULT true NOT NULL,
+  visa_sponsorship text DEFAULT 'unknown' NOT NULL
+);
+CREATE UNIQUE INDEX IF NOT EXISTS scout_postings_source_external
+  ON scout_postings (source, external_id);
+CREATE INDEX IF NOT EXISTS scout_postings_active_category
+  ON scout_postings (active, category);
+CREATE TABLE IF NOT EXISTS scout_runs (
+  id text PRIMARY KEY NOT NULL,
+  started_at text NOT NULL,
+  finished_at text,
+  status text NOT NULL,
+  trigger text NOT NULL,
+  activejobs_requests integer DEFAULT 0 NOT NULL,
+  activejobs_found integer DEFAULT 0 NOT NULL,
+  usajobs_requests integer DEFAULT 0 NOT NULL,
+  usajobs_found integer DEFAULT 0 NOT NULL,
+  deduped_count integer DEFAULT 0 NOT NULL,
+  tagged_count integer DEFAULT 0 NOT NULL,
+  cost_usd real DEFAULT 0 NOT NULL,
+  source_errors_json text DEFAULT '{}' NOT NULL,
+  error text
+);
+CREATE INDEX IF NOT EXISTS scout_runs_started ON scout_runs (started_at);
+`;
+
+function createScoutDb(): Db {
+  const dataDir =
+    process.env.CHATISA_DATA_DIR ?? path.join(process.cwd(), "data");
+  fs.mkdirSync(dataDir, { recursive: true });
+  const client = new Database(path.join(dataDir, "scout.db"));
+  client.pragma("journal_mode = WAL");
+  client.exec(SCOUT_DDL);
+  globalForDb.__chatisaScoutDbClient = client;
+  return drizzle(client, { schema });
+}
+
+export function getScoutDb(): Db {
+  if (!globalForDb.__chatisaScoutDb)
+    globalForDb.__chatisaScoutDb = createScoutDb();
+  return globalForDb.__chatisaScoutDb;
+}
+
+/**
  * Releases the database file. Needed for tidy shutdown and for tests, since
  * Windows will not delete a file while a handle is open.
  */
@@ -45,6 +123,9 @@ export function closeDb(): void {
   globalForDb.__chatisaDbClient?.close();
   globalForDb.__chatisaDbClient = undefined;
   globalForDb.__chatisaDb = undefined;
+  globalForDb.__chatisaScoutDbClient?.close();
+  globalForDb.__chatisaScoutDbClient = undefined;
+  globalForDb.__chatisaScoutDb = undefined;
 }
 
 /** Record a successful sign-in, creating the user on first visit. */
@@ -871,7 +952,7 @@ export function saveDocumentContent(params: {
 
 /** A posting as the harvest pipeline hands it over, pre-tagging. */
 export interface ScoutPostingInput {
-  source: "jsearch" | "usajobs";
+  source: "activejobs" | "usajobs";
   externalId: string;
   fingerprint: string;
   title: string;
@@ -895,7 +976,7 @@ export interface ScoutPostingInput {
  * lastSeenAt and tags refreshed.
  */
 export function upsertScoutPosting(input: ScoutPostingInput): string {
-  const db = getDb();
+  const db = getScoutDb();
   const now = new Date().toISOString();
   const existing = db
     .select({ id: schema.scoutPostings.id })
@@ -939,7 +1020,7 @@ export function upsertScoutPosting(input: ScoutPostingInput): string {
 /** True when any active posting already carries this cross-source fingerprint. */
 export function scoutFingerprintExists(fingerprint: string): boolean {
   return Boolean(
-    getDb()
+    getScoutDb()
       .select({ id: schema.scoutPostings.id })
       .from(schema.scoutPostings)
       .where(
@@ -972,7 +1053,7 @@ export function listScoutPostings(filters: ScoutFeedFilters) {
     conditions.push(eq(schema.scoutPostings.locationState, filters.state));
   if (filters.remote !== undefined)
     conditions.push(eq(schema.scoutPostings.remote, filters.remote));
-  return getDb()
+  return getScoutDb()
     .select({
       id: schema.scoutPostings.id,
       source: schema.scoutPostings.source,
@@ -997,7 +1078,7 @@ export function listScoutPostings(filters: ScoutFeedFilters) {
 }
 
 export function countScoutPostings(): number {
-  const row = getDb()
+  const row = getScoutDb()
     .select({ n: sql<number>`count(*)` })
     .from(schema.scoutPostings)
     .where(eq(schema.scoutPostings.active, true))
@@ -1008,7 +1089,7 @@ export function countScoutPostings(): number {
 /** Full row, description included, for the expanded card and the handoff. */
 export function getScoutPosting(id: string) {
   return (
-    getDb()
+    getScoutDb()
       .select()
       .from(schema.scoutPostings)
       .where(eq(schema.scoutPostings.id, id))
@@ -1027,7 +1108,7 @@ export function retireScoutPostings(params: {
    * (user decision 2026-07-28: nothing older than a month stays listed). */
   postedBeforeIso: string;
 }): { deactivated: number; purged: number } {
-  const db = getDb();
+  const db = getScoutDb();
   const deactivated = db
     .update(schema.scoutPostings)
     .set({ active: false })
@@ -1049,7 +1130,7 @@ export function retireScoutPostings(params: {
 
 export function createScoutRun(trigger: "schedule" | "manual"): string {
   const id = randomUUID();
-  getDb()
+  getScoutDb()
     .insert(schema.scoutRuns)
     .values({
       id,
@@ -1065,8 +1146,8 @@ export function finishScoutRun(
   id: string,
   patch: {
     status: "completed" | "partial" | "failed";
-    jsearchRequests?: number;
-    jsearchFound?: number;
+    activejobsRequests?: number;
+    activejobsFound?: number;
     usajobsRequests?: number;
     usajobsFound?: number;
     dedupedCount?: number;
@@ -1076,7 +1157,7 @@ export function finishScoutRun(
     error?: string | null;
   },
 ): void {
-  getDb()
+  getScoutDb()
     .update(schema.scoutRuns)
     .set({ finishedAt: new Date().toISOString(), ...patch })
     .where(eq(schema.scoutRuns.id, id))
@@ -1086,7 +1167,7 @@ export function finishScoutRun(
 /** The scheduler's persisted memory: when did a harvest last succeed. */
 export function latestSuccessfulScoutRun() {
   return (
-    getDb()
+    getScoutDb()
       .select()
       .from(schema.scoutRuns)
       .where(
@@ -1107,7 +1188,7 @@ export function latestSuccessfulScoutRun() {
 export function scoutRunInProgress(): boolean {
   const staleCutoff = new Date(Date.now() - 2 * 3_600_000).toISOString();
   return Boolean(
-    getDb()
+    getScoutDb()
       .select({ id: schema.scoutRuns.id })
       .from(schema.scoutRuns)
       .where(
@@ -1127,7 +1208,7 @@ export function scoutRunInProgress(): boolean {
  * is roughly 600 KB before gzip (user scale question, 2026-07-29).
  */
 export function listAllScoutPostings() {
-  return getDb()
+  return getScoutDb()
     .select({
       id: schema.scoutPostings.id,
       source: schema.scoutPostings.source,

@@ -536,7 +536,7 @@ SEMANTIC_SCHOLAR_API_KEY=
 OPENALEX_MAILTO=
 
 # --- Job Scout weekly job feed -----------------------------------------------
-# Without RAPIDAPI_KEY the JSearch source is skipped; without the USAJobs pair
+# Without RAPIDAPI_KEY the Active Jobs DB source is skipped; without the USAJobs pair
 # the federal track is skipped. Both absent = the feed stays empty and the
 # module says so to students. USAJOBS_EMAIL is the registered account email,
 # sent as the User-Agent per data.usajobs.gov terms.

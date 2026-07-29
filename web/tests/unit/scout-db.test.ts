@@ -9,7 +9,7 @@ process.env.CHATISA_DATA_DIR = dataDir;
 
 const {
   closeDb,
-  getDb,
+  getScoutDb,
   countScoutPostings,
   createScoutRun,
   finishScoutRun,
@@ -30,7 +30,7 @@ afterAll(() => {
 
 function makePosting(overrides: Record<string, unknown> = {}) {
   return {
-    source: "jsearch" as const,
+    source: "activejobs" as const,
     externalId: "job-1",
     fingerprint: "acme corp|data analyst|OH",
     title: "Data Analyst",
@@ -63,6 +63,27 @@ describe("scout postings", () => {
   it("detects cross-source duplicates by fingerprint", () => {
     expect(scoutFingerprintExists("acme corp|data analyst|OH")).toBe(true);
     expect(scoutFingerprintExists("nobody|nothing|XX")).toBe(false);
+  });
+
+  it("writes to its OWN scout.db, never chatisa.db's legacy scout tables (ADR-027)", async () => {
+    const { existsSync } = await import("node:fs");
+    expect(existsSync(path.join(dataDir, "scout.db"))).toBe(true);
+    // The main database's scout tables (created by the old migrations) must
+    // stay empty: the JSearch-era rows on real installs are preserved there
+    // but disconnected, and nothing may write new rows beside them. Touch
+    // the main db once so migrations have created it, then read it raw.
+    const { getDb } = await import("@/lib/db");
+    getDb();
+    const { default: Database } = await import("better-sqlite3");
+    const raw = new Database(path.join(dataDir, "chatisa.db"), {
+      readonly: true,
+    });
+    const legacy = raw
+      .prepare("SELECT COUNT(*) AS n FROM scout_postings")
+      .get() as { n: number };
+    raw.close();
+    expect(legacy.n).toBe(0);
+    expect(countScoutPostings()).toBeGreaterThan(0);
   });
 
   it("filters the feed by category and state without descriptions", () => {
@@ -124,7 +145,7 @@ describe("scout postings", () => {
 
 describe("scout runs", () => {
   it("treats a running row older than two hours as dead, not in progress", () => {
-    getDb()
+    getScoutDb()
       .insert(dbSchema.scoutRuns)
       .values({
         id: "stale-run",

@@ -15,7 +15,7 @@ const { runHarvest } = await import("@/lib/scout/harvest");
 const { closeDb, countScoutPostings, latestSuccessfulScoutRun } = await import(
   "@/lib/db"
 );
-const { getDb } = await import("@/lib/db");
+const { getScoutDb } = await import("@/lib/db");
 const schema = await import("@/lib/db/schema");
 import type { RawPosting } from "@/lib/scout/sources/types";
 import type { TagResult } from "@/lib/scout/tag";
@@ -23,8 +23,9 @@ import type { TagResult } from "@/lib/scout/tag";
 beforeAll(() => {
   // Freeze the calendar (Date only; real timers stay live for fetch/promises)
   // so the fixtures' postedAt values never age past the 30-day drop rule and
-  // start failing these tests months from now.
-  vi.useFakeTimers({ now: new Date("2026-07-28T12:00:00.000Z"), toFake: ["Date"] });
+  // start failing these tests months from now. The Active Jobs DB fixture was
+  // captured 2026-07-29.
+  vi.useFakeTimers({ now: new Date("2026-07-30T12:00:00.000Z"), toFake: ["Date"] });
 });
 
 afterAll(() => {
@@ -34,14 +35,14 @@ afterAll(() => {
 });
 
 beforeEach(() => {
-  const db = getDb();
+  const db = getScoutDb();
   db.delete(schema.scoutPostings).run();
   db.delete(schema.scoutRuns).run();
   delete process.env.CHATISA_SCOUT_MAX_RUN_USD;
 });
 
-const jsearchPage = readFileSync(
-  path.join(process.cwd(), "tests", "fixtures", "scout", "jsearch-page.json"),
+const activejobsPage = readFileSync(
+  path.join(process.cwd(), "tests", "fixtures", "scout", "activejobs-page.json"),
   "utf8",
 );
 const usajobsPage = readFileSync(
@@ -58,11 +59,25 @@ const jsonResponse = (body: string) =>
 function fakeFetcher(opts: { failUsajobs?: boolean } = {}) {
   return async (input: string | URL | Request) => {
     const url = String(input);
-    if (url.includes("jsearch")) return jsonResponse(jsearchPage);
+    if (url.includes("active-jobs-db")) return jsonResponse(activejobsPage);
     if (opts.failUsajobs) return new Response("nope", { status: 500 });
     return jsonResponse(usajobsPage);
   };
 }
+
+/** An /active-ats row in the captured payload's shape. */
+const atsRow = (i: number, overrides: Record<string, unknown> = {}) => ({
+  id: 9000 + i,
+  title: "Data Analyst",
+  organization: `Employer ${i}`,
+  url: `https://employer${i}.wd1.myworkdayjobs.com/job/${i}`,
+  description_text:
+    "A full-length posting describing analytics duties, SQL reporting, dashboard development, and stakeholder communication for an entry-level analyst position.",
+  regions_derived: ["Ohio"],
+  cities_derived: ["Columbus"],
+  date_posted: "2026-07-25T09:00:00.000",
+  ...overrides,
+});
 
 const okTag = (skills: TagResult["skills"]): ((p: RawPosting) => Promise<TagResult>) =>
   async (p) => ({
@@ -83,9 +98,11 @@ describe("runHarvest", () => {
       },
     );
     if ("alreadyRunning" in summary) throw new Error("unexpected");
-    // Fixture yields, after external-id + fingerprint dedupe and the title
-    // gate: js-001 (Data Analyst) and usaj-800100 (Management Analyst).
-    // js-002 is senior; js-003 is a cross-board duplicate of js-001.
+    // The captured page normalizes to two rows (the "5-10" senior row is
+    // dropped at the source), then the title gate removes "Sr Clinical Data
+    // Analyst" (the \bsr\b rule). Every query pass returns the SAME page, so
+    // external-id dedupe collapses the repeats. Stored: Metronet's
+    // "Data Engineer - SQL & Analytics" plus the USAJobs Management Analyst.
     expect(summary.status).toBe("completed");
     expect(summary.tagged).toBe(2);
     expect(countScoutPostings()).toBe(2);
@@ -110,25 +127,12 @@ describe("runHarvest", () => {
     process.env.CHATISA_SCOUT_MAX_RUN_USD = "5";
     // Six unique relevant postings so the four concurrent workers pass the
     // pre-flight check and the remaining two hit the cap deterministically.
-    const sixJobs = {
-      data: Array.from({ length: 6 }, (_, i) => ({
-        job_id: `bulk-${i}`,
-        job_title: "Data Analyst",
-        employer_name: `Employer ${i}`,
-        job_city: "Columbus",
-        job_state: "OH",
-        job_is_remote: false,
-        job_apply_link: `https://example.com/${i}`,
-        job_description:
-          "A full-length posting describing analytics duties, SQL reporting, dashboard development, and stakeholder communication for an entry-level analyst position.",
-        job_posted_at_datetime_utc: "2026-07-22T09:00:00.000Z",
-      })),
-    };
+    const sixJobs = Array.from({ length: 6 }, (_, i) => atsRow(i));
     const summary = await runHarvest(
       { trigger: "manual" },
       {
         fetcher: (async (input: string | URL | Request) =>
-          String(input).includes("jsearch")
+          String(input).includes("active-jobs-db")
             ? jsonResponse(JSON.stringify(sixJobs))
             : new Response("nope", { status: 500 })) as typeof fetch,
         tagger: async (p) => ({
@@ -147,40 +151,16 @@ describe("runHarvest", () => {
   });
 
   it("drops postings older than a month before any model spend", async () => {
-    const twoJobs = {
-      data: [
-        {
-          job_id: "fresh-1",
-          job_title: "Data Analyst",
-          employer_name: "Fresh Co",
-          job_city: "Columbus",
-          job_state: "OH",
-          job_is_remote: false,
-          job_apply_link: "https://example.com/fresh",
-          job_description:
-            "A full-length posting describing analytics duties, SQL reporting, dashboard development, and stakeholder communication for an entry-level analyst position.",
-          job_posted_at_datetime_utc: "2026-07-20T09:00:00.000Z",
-        },
-        {
-          job_id: "stale-1",
-          job_title: "Data Analyst",
-          employer_name: "Stale Co",
-          job_city: "Columbus",
-          job_state: "OH",
-          job_is_remote: false,
-          job_apply_link: "https://example.com/stale",
-          job_description:
-            "An equally full-length posting describing analytics duties, SQL reporting, dashboard development, and stakeholder communication, posted well over a month ago.",
-          // Frozen "today" is 2026-07-28, so this is 57 days old.
-          job_posted_at_datetime_utc: "2026-06-01T09:00:00.000Z",
-        },
-      ],
-    };
+    const twoJobs = [
+      atsRow(0, { organization: "Fresh Co" }),
+      // Frozen "today" is 2026-07-30, so this one is two months old.
+      atsRow(1, { organization: "Stale Co", date_posted: "2026-06-01T09:00:00.000" }),
+    ];
     const summary = await runHarvest(
       { trigger: "manual" },
       {
         fetcher: (async (input: string | URL | Request) =>
-          String(input).includes("jsearch")
+          String(input).includes("active-jobs-db")
             ? jsonResponse(JSON.stringify(twoJobs))
             : new Response("nope", { status: 500 })) as typeof fetch,
         tagger: okTag([{ skillId: "sql", importance: "required" }]),
@@ -191,14 +171,14 @@ describe("runHarvest", () => {
     expect(countScoutPostings()).toBe(1);
   });
 
-  it("stops querying JSearch after the first 429 instead of burning quota", async () => {
-    let jsearchCalls = 0;
+  it("stops querying Active Jobs DB after the first 429 instead of burning quota", async () => {
+    let activejobsCalls = 0;
     const summary = await runHarvest(
       { trigger: "manual" },
       {
         fetcher: (async (input: string | URL | Request) => {
-          if (String(input).includes("jsearch")) {
-            jsearchCalls += 1;
+          if (String(input).includes("active-jobs-db")) {
+            activejobsCalls += 1;
             return new Response("quota", { status: 429 });
           }
           return jsonResponse(usajobsPage);
@@ -207,10 +187,10 @@ describe("runHarvest", () => {
       },
     );
     if ("alreadyRunning" in summary) throw new Error("unexpected");
-    // The 2026-07-28 live run burned 160 requests against a dead quota;
-    // this pins the fix: one request, then stop and degrade to USAJobs.
-    expect(jsearchCalls).toBe(1);
-    expect(summary.sourceErrors.jsearch).toContain("quota");
+    // The 2026-07-28 JSearch run burned 160 requests against a dead quota;
+    // this pins the same fix here: one request, then degrade to USAJobs.
+    expect(activejobsCalls).toBe(1);
+    expect(summary.sourceErrors.activejobs).toContain("quota");
     expect(summary.status).toBe("completed");
     expect(summary.tagged).toBe(1);
   });
@@ -225,7 +205,7 @@ describe("runHarvest", () => {
     );
     if ("alreadyRunning" in summary) throw new Error("unexpected");
     expect(summary.status).toBe("failed");
-    expect(summary.sourceErrors.jsearch).toBeDefined();
+    expect(summary.sourceErrors.activejobs).toBeDefined();
     expect(summary.sourceErrors.usajobs).toBeDefined();
   });
 });

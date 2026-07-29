@@ -35,8 +35,8 @@ export default async function JobScoutPage() {
       {/* Said once, plainly: what stays on the device and what the feed is. */}
       <p className="mt-6 rounded-card border border-medium-tan bg-light-tan p-4">
         Your course list, confirmed skills, and saved jobs live only in this
-        browser. The job postings are public employer listings gathered weekly
-        from JSearch and USAJobs; applying always happens on the employer&apos;s
+        browser. The job postings are gathered weekly from employer career
+        sites and USAJobs; applying always happens on the employer&apos;s
         own site.
       </p>
 

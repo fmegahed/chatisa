@@ -351,7 +351,8 @@ export const scoutPostings = sqliteTable(
   "scout_postings",
   {
     id: text("id").primaryKey(),
-    /** jsearch | usajobs */
+    /** activejobs | usajobs (jsearch until 2026-07-29; those rows live only
+     * in the retired chatisa.db copy of these tables, see ADR-027). */
     source: text("source").notNull(),
     /** The source's own job id; uniqueness is per source. */
     externalId: text("external_id").notNull(),
@@ -405,14 +406,15 @@ export const scoutRuns = sqliteTable(
     status: text("status").notNull(),
     /** schedule | manual */
     trigger: text("trigger").notNull(),
-    jsearchRequests: integer("jsearch_requests").notNull().default(0),
-    jsearchFound: integer("jsearch_found").notNull().default(0),
+    activejobsRequests: integer("activejobs_requests").notNull().default(0),
+    activejobsFound: integer("activejobs_found").notNull().default(0),
     usajobsRequests: integer("usajobs_requests").notNull().default(0),
     usajobsFound: integer("usajobs_found").notNull().default(0),
     dedupedCount: integer("deduped_count").notNull().default(0),
     taggedCount: integer("tagged_count").notNull().default(0),
     costUsd: real("cost_usd").notNull().default(0),
-    /** Per-source failure notes, JSON {jsearch?: string, usajobs?: string}. */
+    /** Per-source failure notes, JSON {activejobs?: string, usajobs?: string,
+     * tagging?: string}. */
     sourceErrorsJson: text("source_errors_json").notNull().default("{}"),
     error: text("error"),
   },

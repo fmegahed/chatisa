@@ -127,7 +127,7 @@ export function seedScoutFixtures(): void {
   if (countScoutPostings() > 0) return;
   for (const f of FIXTURES) {
     upsertScoutPosting({
-      source: "jsearch",
+      source: "activejobs",
       externalId: f.externalId,
       fingerprint: `${f.company.toLowerCase()}|${f.title.toLowerCase()}|${f.locationState ?? ""}`,
       title: f.title,

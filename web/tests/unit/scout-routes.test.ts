@@ -28,7 +28,7 @@ afterAll(() => {
 });
 
 const posting = (overrides: Record<string, unknown> = {}) => ({
-  source: "jsearch" as const,
+  source: "activejobs" as const,
   externalId: `ext-${Math.random().toString(36).slice(2)}`,
   fingerprint: `fp-${Math.random().toString(36).slice(2)}`,
   title: "Data Analyst",

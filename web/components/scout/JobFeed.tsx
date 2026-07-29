@@ -315,8 +315,8 @@ export function JobFeed(props: {
       })
     : null;
   const sourceNotes: string[] = [];
-  if (props.freshness?.sourceErrors?.jsearch)
-    sourceNotes.push("some job boards were unavailable last harvest");
+  if (props.freshness?.sourceErrors?.activejobs)
+    sourceNotes.push("some employer boards were unavailable last harvest");
   if (props.freshness?.sourceErrors?.usajobs)
     sourceNotes.push("federal listings were unavailable last harvest");
 
@@ -329,7 +329,7 @@ export function JobFeed(props: {
         {props.loadState === "loading"
           ? "Loading this week's postings..."
           : props.freshness && props.freshness.totalActive > 0
-            ? `Updated ${updatedDate ?? "recently"} · ${props.freshness.totalActive} postings from JSearch and USAJobs${sourceNotes.length ? ` · Note: ${sourceNotes.join("; ")}` : ""}`
+            ? `Updated ${updatedDate ?? "recently"} · ${props.freshness.totalActive} postings from employer career sites and USAJobs${sourceNotes.length ? ` · Note: ${sourceNotes.join("; ")}` : ""}`
             : "No postings yet. The feed fills after the first Sunday harvest; ask the ChatISA maintainers if this persists."}
       </p>
       <p className="text-dark-tan">

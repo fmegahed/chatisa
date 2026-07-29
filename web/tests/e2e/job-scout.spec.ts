@@ -74,7 +74,7 @@ test.describe("Job Scout", () => {
       .getByRole("button", { name: "Save profile and see this week's jobs" })
       .click();
 
-    await expect(page.getByText(/postings from JSearch and USAJobs/)).toBeVisible();
+    await expect(page.getByText(/postings from employer career sites and USAJobs/)).toBeVisible();
     await expect(page.getByText(/required skills covered/).first()).toBeVisible();
     await expect(
       page.getByText(/Strong match|Good match|Stretch/).first(),
