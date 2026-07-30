@@ -4,6 +4,22 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.2.1 - July 30, 2026
+
+**Job board quality and resume export fixes**, all found while filming the
+v6.2.0 demo videos.
+
+### Fixed
+- Exported resumes no longer print the Education or Skills sections twice
+  (the renderer drew its structured blocks and the model's own sections),
+  and the school name no longer leaks into the degree line.
+- Academic postings (professor, faculty, lecturer, instructor, adjunct)
+  no longer pass the harvest relevance gate; they are not jobs students
+  apply to.
+- Feed ranking now shrinks by tag evidence, so a posting tagged with a
+  single skill can no longer score a perfect 1/1 and outrank a broad 6/7
+  match. Displayed scores and coverage are unchanged; only ordering.
+
 ## v6.2.0 - July 29, 2026
 
 **Job Scout feed rebuilt on employer-direct sources.** Full notes:

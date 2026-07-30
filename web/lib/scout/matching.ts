@@ -113,6 +113,8 @@ export interface SkillMatch {
 
 export interface JobMatch {
   score: number;
+  /** Sort key: score shrunk by evidence count; thin one-skill tags rank low. */
+  rank: number;
   band: MatchBand;
   coveredRequired: number;
   totalRequired: number;
@@ -185,9 +187,17 @@ export function scoreJob(
   const band: MatchBand =
     score >= 0.7 ? "strong" : score >= 0.45 ? "good" : "stretch";
 
+  // Ranking value, distinct from the displayed score: a posting tagged with
+  // ONE skill the student has scores a perfect 1/1 and used to top the whole
+  // board (a GIS professorship outranked a 6/7 BI Analyst match, video
+  // review 2026-07-29). Shrink by evidence count so thin tags rank below
+  // broad real matches; the card's score and band are untouched.
+  const rank = score * (matches.length / (matches.length + 1));
+
   const importanceOrder = (m: SkillMatch) => (m.importance === "required" ? 0 : 1);
   return {
     score,
+    rank,
     band,
     coveredRequired: required.filter((m) => m.covered).length,
     totalRequired: required.length,

@@ -67,6 +67,32 @@ describe("profileStrengths (noisy-OR, credit-scaled)", () => {
   });
 });
 
+describe("ranking shrinks thin tags", () => {
+  it("a one-skill 1/1 never outranks a broad near-complete match", () => {
+    const strengths = new Map([
+      ["sql", 1.0], ["data_visualization", 1.0], ["python", 1.0],
+      ["excel", 1.0], ["statistics", 1.0], ["power_bi", 1.0],
+    ]);
+    const thin = scoreJob(strengths, [
+      { skillId: "sql", importance: "required" },
+    ]);
+    const broad = scoreJob(strengths, [
+      { skillId: "sql", importance: "required" },
+      { skillId: "python", importance: "required" },
+      { skillId: "excel", importance: "required" },
+      { skillId: "data_visualization", importance: "required" },
+      { skillId: "statistics", importance: "preferred" },
+      { skillId: "power_bi", importance: "preferred" },
+    ]);
+    // The thin posting still DISPLAYS a perfect score and 1/1 coverage...
+    expect(thin.score).toBe(1);
+    expect(thin.coveredRequired).toBe(1);
+    // ...but ranks below the posting with real evidence (the GIS
+    // professorship problem, video review 2026-07-29).
+    expect(broad.rank).toBeGreaterThan(thin.rank);
+  });
+});
+
 describe("scoreJob (requirement coverage)", () => {
   it("computes the hand-worked example", () => {
     const strengths = new Map([

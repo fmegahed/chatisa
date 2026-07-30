@@ -198,6 +198,11 @@ describe("isRelevantTitle", () => {
       "Business Intelligence Manager",
       "Data Team Lead",
       "Analytics Supervisor",
+      // Academic posts are not student jobs ("Professor, Geospatial
+      // Information Systems" topped the filmed board, 2026-07-29).
+      "Professor, Geospatial Information Systems",
+      "Adjunct Instructor of Business Analytics",
+      "Visiting Lecturer, Information Systems",
     ]) {
       expect(isRelevantTitle(t), t).toBe(false);
     }

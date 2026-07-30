@@ -122,9 +122,12 @@ const RELEVANT_TITLE =
 // manager/lead/supervisor added 2026-07-29: the first Active Jobs DB smoke
 // surfaced "Business Intelligence Manager" twice, and people-management
 // roles are never fresh-grad postings. \blead\b leaves "Leadership
-// Development Program" alone.
+// Development Program" alone. Academic posts (professor, faculty, adjunct)
+// added the same day after "Professor, Geospatial Information Systems"
+// topped the filmed board: undergrads and MSBA students do not apply to
+// professorships.
 const EXCLUDED_TITLE =
-  /(senior|\bsr\.?\b|principal|\bstaff\b|director|vice president|\bvp\b|chief|head of|\biii\b|\biv\b|architect|\bmanager\b|\blead\b|supervisor|nurse|physician|therapist|driver|warehouse|retail|cashier|custodian|cook|mechanic|electrician)/i;
+  /(senior|\bsr\.?\b|principal|\bstaff\b|director|vice president|\bvp\b|chief|head of|\biii\b|\biv\b|architect|\bmanager\b|\blead\b|supervisor|professor|faculty|lecturer|instructor|adjunct|postdoc|\bdean\b|nurse|physician|therapist|driver|warehouse|retail|cashier|custodian|cook|mechanic|electrician)/i;
 
 export function isRelevantTitle(title: string): boolean {
   return RELEVANT_TITLE.test(title) && !EXCLUDED_TITLE.test(title);

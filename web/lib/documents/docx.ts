@@ -145,6 +145,25 @@ export async function renderResumeDocx(
       font,
     ),
   );
+  // Models sometimes stuff the school and city into the degree string too,
+  // printing "Miami University... | Oxford, OH Bachelor of Science..." under
+  // the school line that already says both (v6.2.0 video review). The school
+  // line above is authoritative; strip it out of the degree.
+  {
+    const scrub = (s: string) =>
+      s
+        .replace(style.schoolLine, "")
+        .replace(content.education.location || "Oxford, OH", "")
+        .replace(/^[\s|,·-]+/, "")
+        .trim();
+    content = {
+      ...content,
+      education: {
+        ...content.education,
+        degree: content.education.degree ? scrub(content.education.degree) || null : null,
+      },
+    };
+  }
   if (content.education.degree) {
     children.push(
       twoColumn(
@@ -163,8 +182,15 @@ export async function renderResumeDocx(
     children.push(bullet(honor, font));
   }
 
-  // Experience and the rest
-  for (const section of content.sections) {
+  // Experience and the rest. The structured Education block above and the
+  // Skills/Certifications block below are authoritative; models sometimes
+  // emit their own Education or Skills sections as well, which printed the
+  // same content twice on the exported resume (user-visible bug, found on
+  // the v6.2.0 video review, 2026-07-29).
+  const OWN_SECTIONS = /^\s*(education|skills?(\s*\/?\s*certifications?)?)\s*$/i;
+  for (const section of content.sections.filter(
+    (s) => !OWN_SECTIONS.test(s.heading),
+  )) {
     children.push(sectionHeading(section.heading, template));
     for (const entry of section.entries) {
       const place = [entry.location].filter(Boolean).join(", ");

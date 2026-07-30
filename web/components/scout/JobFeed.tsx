@@ -242,11 +242,13 @@ export function JobFeed(props: {
     // Ranking (user request to document, 2026-07-29): postings sort by the
     // requirement-coverage match score (design §2.4 — how much of what the
     // job asks for the student covers, required skills weighted double),
-    // with newer postings breaking ties. Filters below narrow but never
-    // reorder, so the best fits are always at the top of any view.
+    // shrunk by how much evidence the tag carries so a thin one-skill 1/1
+    // never outranks a broad 6/7 match, with newer postings breaking ties.
+    // Filters below narrow but never reorder, so the best fits are always
+    // at the top of any view.
     rows.sort(
       (a, b) =>
-        b.match.score - a.match.score ||
+        b.match.rank - a.match.rank ||
         (b.posting.postedAt ?? "").localeCompare(a.posting.postedAt ?? ""),
     );
     return rows;
