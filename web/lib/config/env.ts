@@ -59,6 +59,16 @@ const serverEnvSchema = z.object({
   /** Per-run tagging cost ceiling in USD; defaults to 10 in lib/scout/tag.ts. */
   CHATISA_SCOUT_MAX_RUN_USD: optional(z.string().min(1)),
 
+  /**
+   * Job Scout's GitHub auto-push (v6.3.0). A registered GitHub OAuth App;
+   * the server uses these ONLY to exchange the OAuth code for a token, which
+   * is then handed to the browser and never stored server-side. Absent pair:
+   * the Connect/Push/Publish buttons are hidden and students keep the manual
+   * zip-and-CLI flow.
+   */
+  GITHUB_OAUTH_CLIENT_ID: optional(z.string().min(1)),
+  GITHUB_OAUTH_CLIENT_SECRET: optional(z.string().min(1)),
+
   /** Auth (required in production). */
   AUTH_SECRET: optional(z.string().min(32)),
   AUTH_GOOGLE_ID: optional(z.string().min(1)),

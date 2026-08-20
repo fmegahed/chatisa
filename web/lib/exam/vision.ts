@@ -49,11 +49,14 @@ async function mapWithConcurrency<T, R>(
  * request instead of here.
  */
 const VISION_PREFERENCE: string[] = [
-  "gemini-3.6-flash",
+  "gemini-3.7-flash",
   "gpt-5.6-luna",
   "claude-sonnet-5",
   "gpt-5.6-terra",
-  "Qwen/Qwen3.6-35B-A3B:scaleway",
+  // Muse Glimmer replaced Qwen3.6-35B here in v6.3.0: cheaper and its route's
+  // vision was verified live. Qwen3.8-27B was considered and rejected for this
+  // slot: transcription runs per page and its only route answered in 10-17s.
+  "meta-models/Muse-Glimmer-30B:together",
   "gemini-3.1-pro-preview-customtools",
 ].filter((id) => MODELS[id]?.supportsVision);
 

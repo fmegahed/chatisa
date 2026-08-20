@@ -46,6 +46,51 @@ async function setUpProfile(page: Page) {
   ).toBeVisible();
 }
 
+/**
+ * An in-test GitHub API: the push engine runs in the browser against
+ * api.github.com, so the e2e suite intercepts that origin and answers like
+ * GitHub would. No test traffic ever reaches the real GitHub.
+ */
+async function fakeGithubApi(page: Page) {
+  const repos = new Set<string>();
+  await page.route("https://api.github.com/**", async (route) => {
+    const req = route.request();
+    const path = new URL(req.url()).pathname;
+    const method = req.method();
+    const reply = (status: number, body: unknown) =>
+      route.fulfill({
+        status,
+        contentType: "application/json",
+        body: JSON.stringify(body),
+      });
+
+    if (method === "POST" && path === "/user/repos") {
+      const name = (JSON.parse(req.postData() ?? "{}") as { name: string }).name;
+      repos.add(name);
+      return reply(201, { default_branch: "main" });
+    }
+    const repoMatch = /^\/repos\/mockstudent\/([^/]+)(\/.*)?$/.exec(path);
+    if (repoMatch) {
+      const [, name, rest] = repoMatch;
+      if (!rest) {
+        return repos.has(name)
+          ? reply(200, {
+              html_url: `https://github.com/mockstudent/${name}`,
+              default_branch: "main",
+            })
+          : reply(404, {});
+      }
+      if (rest.startsWith("/git/ref/")) return reply(200, { object: { sha: "p" } });
+      if (rest.startsWith("/git/commits/")) return reply(200, { tree: { sha: "b" } });
+      if (rest === "/git/trees") return reply(201, { sha: "t" });
+      if (rest === "/git/commits") return reply(201, { sha: "c" });
+      if (rest.startsWith("/git/refs/")) return reply(200, {});
+      if (rest === "/pages") return reply(201, {});
+    }
+    return reply(500, { unexpected: path });
+  });
+}
+
 test.describe("Job Scout", () => {
   test.beforeEach(async ({ page }) => {
     // Profiles live in localStorage and the resume in IndexedDB; start clean.
@@ -211,6 +256,9 @@ test.describe("Job Scout", () => {
     await expect(
       page.getByRole("heading", { name: "retail-demand-analytics" }).first(),
     ).toBeVisible({ timeout: 30_000 });
+    // The CLI instructions moved behind a disclosure in v6.3.0; they must
+    // still be there for students who prefer that path.
+    await page.getByText("Prefer the command line?").click();
     await expect(page.getByText("gh repo create")).toBeVisible();
 
     // The artifact card persists in "Your projects" with its actions.
@@ -225,6 +273,88 @@ test.describe("Job Scout", () => {
     await expect(
       page.getByText("Built. Its skills count in your profile."),
     ).toBeVisible();
+  });
+
+  test("one click pushes a scaffold to GitHub and records the repo link", async ({
+    page,
+  }) => {
+    await setUpProfile(page);
+    await fakeGithubApi(page);
+    await page.getByRole("tab", { name: "My Projects" }).click();
+    await page.getByRole("radio", { name: "Start something new" }).check();
+    await page.locator("select").last().selectOption({ label: "SQL" });
+    await page.getByRole("button", { name: "Generate project scaffold" }).click();
+    await expect(
+      page.getByRole("heading", { name: "retail-demand-analytics" }).first(),
+    ).toBeVisible({ timeout: 30_000 });
+
+    // Connect through the real popup flow (mock GitHub server-side).
+    const popupPromise = page.waitForEvent("popup");
+    await page.getByRole("button", { name: "Connect GitHub" }).click();
+    await popupPromise;
+    await expect(
+      page.getByText("Connected to GitHub as").first(),
+    ).toBeVisible({ timeout: 15_000 });
+
+    // The push flips the card to built with no manual link entry.
+    await page.getByRole("button", { name: "Push to GitHub", exact: true }).first().click();
+    await expect(
+      page.getByText("Built. Its skills count in your profile."),
+    ).toBeVisible({ timeout: 15_000 });
+    // The CLI path survives for students who prefer it.
+    await expect(page.getByText("Prefer the command line?")).toBeVisible();
+  });
+
+  test("an unverifiable OAuth callback is rejected with plain language", async ({
+    page,
+  }) => {
+    // No state cookie exists, so this forged callback must not connect.
+    await page.goto("/api/scout/github/callback?code=x&state=forged");
+    await expect(page).toHaveURL(/\/job-scout\/github-connected/);
+    // Role-scoped and filtered: the test-mode banner is also an alert.
+    await expect(
+      page.getByRole("alert").filter({ hasText: "could not be verified" }),
+    ).toBeVisible();
+    const connected = await page.evaluate(() => localStorage.getItem("js-github-v1"));
+    expect(connected).toBeNull();
+  });
+
+  test("a tailored portfolio site generates from saved jobs and publishes", async ({
+    page,
+  }) => {
+    await setUpProfile(page);
+    await fakeGithubApi(page);
+    await page.getByRole("button", { name: "Save", exact: true }).first().click();
+    await page.getByRole("tab", { name: "Portfolio Site" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Build your portfolio site" }),
+    ).toBeVisible();
+
+    await page.getByRole("checkbox").first().check();
+    await page.getByRole("button", { name: "Generate my site" }).click();
+    await expect(page.getByRole("heading", { name: "Preview" })).toBeVisible({
+      timeout: 30_000,
+    });
+    // The tailoring evidence: private notes name the picked job.
+    await expect(
+      page.getByRole("heading", { name: "How this speaks to the jobs you picked" }),
+    ).toBeVisible();
+
+    const popupPromise = page.waitForEvent("popup");
+    await page.getByRole("button", { name: "Connect GitHub" }).click();
+    await popupPromise;
+    await expect(page.getByText("Connected to GitHub as").first()).toBeVisible({
+      timeout: 15_000,
+    });
+    await page.getByRole("button", { name: "Publish to GitHub Pages" }).click();
+    await expect(
+      page.getByText(/Your site is live at https:\/\/mockstudent\.github\.io\/portfolio/),
+    ).toBeVisible({ timeout: 15_000 });
+
+    const portfolioScan = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa"])
+      .analyze();
+    expect(portfolioScan.violations).toEqual([]);
   });
 
   test("the resume saved in the profile forwards into JobApp Drafter", async ({
@@ -293,6 +423,8 @@ test.describe("Job Scout access control", () => {
       "/api/scout/feed",
       "/api/scout/feed?shape=index",
       "/api/scout/postings/x",
+      "/api/scout/github/start",
+      "/api/scout/github/callback?code=x&state=y",
     ]) {
       const res = await request.get(path);
       expect(res.status(), path).toBe(401);
@@ -303,5 +435,7 @@ test.describe("Job Scout access control", () => {
     expect(post.status()).toBe(401);
     const refresh = await request.post("/api/scout/refresh");
     expect(refresh.status()).toBe(401);
+    const portfolio = await request.post("/api/scout/portfolio");
+    expect(portfolio.status()).toBe(401);
   });
 });

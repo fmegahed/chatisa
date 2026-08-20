@@ -6,7 +6,7 @@ import { getPageModels } from "@/lib/config/models";
 import { getLanguageModel, isModelAvailable } from "@/lib/providers";
 import { getMockModel } from "@/lib/providers/mock";
 import { resolveSkillId } from "@/lib/scout/taxonomy";
-import { checkRateLimit } from "@/lib/ratelimit";
+import { checkRateLimit, SCOUT_PROJECT_RATE_LIMIT } from "@/lib/ratelimit";
 import { recordUsageEvent } from "@/lib/db";
 import { logger } from "@/lib/log";
 import { outputTokenBudget } from "@/lib/chat/budget";
@@ -118,10 +118,7 @@ export async function POST(req: Request) {
   if (!email) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   }
-  const limit = checkRateLimit(`scout-project:${email}`, {
-    limit: 4,
-    windowMs: 60_000,
-  });
+  const limit = checkRateLimit(`scout-project:${email}`, SCOUT_PROJECT_RATE_LIMIT);
   if (!limit.allowed) {
     return NextResponse.json(
       {

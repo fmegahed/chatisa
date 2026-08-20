@@ -285,8 +285,9 @@ test.describe("chat API contract", () => {
  * instead. The professor put it as a trust problem, which is the right frame: a
  * button that always fails teaches students not to believe the app.
  *
- * The mock model returns a statsforecast snippet for any message mentioning it,
- * so this is deterministic and costs nothing.
+ * The mock model returns a pyreadr snippet for any message mentioning it, so
+ * this is deterministic and costs nothing. (statsforecast held this role until
+ * v6.3.0, when the app started shipping its own wasm build of it.)
  */
 test.describe("package availability gates the Run button", () => {
   test("offers no Run button, and says why, for an impossible package", async ({
@@ -295,14 +296,14 @@ test.describe("package availability gates the Run button", () => {
     await page.goto("/coding-tutor");
     await page
       .getByLabel("Your message")
-      .fill("Show me a forecast with statsforecast");
+      .fill("Show me how to read an RData file with pyreadr");
     await page.getByRole("button", { name: "Send message" }).click();
 
     const reply = page.getByRole("article", { name: "ChatISA" });
-    await expect(reply).toContainText("statsforecast", { timeout: 15_000 });
+    await expect(reply).toContainText("pyreadr", { timeout: 15_000 });
 
     const figure = reply.locator("figure").first();
-    await expect(figure.locator("pre")).toContainText("from statsforecast");
+    await expect(figure.locator("pre")).toContainText("import pyreadr");
 
     // The verdict needs a fetch of the package index, so the button may appear
     // for a moment first. What matters is where it lands.
@@ -310,7 +311,7 @@ test.describe("package availability gates the Run button", () => {
       timeout: 15_000,
     });
     await expect(figure).toContainText("cannot run here");
-    await expect(figure).toContainText("statsforecast");
+    await expect(figure).toContainText("pyreadr");
     // It must say what to do instead, not just refuse.
     await expect(figure).toContainText("on your computer");
 

@@ -14,6 +14,7 @@ import { ProfileTab } from "./ProfileTab";
 import { ProjectsTab } from "./ProjectsTab";
 import { JobFeed } from "./JobFeed";
 import { SavedTab } from "./SavedTab";
+import { PortfolioTab } from "./PortfolioTab";
 
 /**
  * Job Scout's client root: four tabs (user flow decision, 2026-07-29,
@@ -28,6 +29,8 @@ const TABS = [
   { id: "projects", label: "My Projects" },
   { id: "jobs", label: "This Week's Jobs" },
   { id: "saved", label: "Saved Jobs" },
+  // After Saved on purpose: the portfolio consumes saved jobs (v6.3.0).
+  { id: "portfolio", label: "Portfolio Site" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -41,6 +44,10 @@ function tabFromUrl(): TabId | null {
 export function JobScout(props: {
   models: ModelOption[];
   defaultModelId: string;
+  /** GitHub OAuth is configured server-side, so push/publish is offered. */
+  githubEnabled: boolean;
+  /** The signed-in student's display name, seeding the portfolio site. */
+  studentName: string;
 }) {
   const [profile, setProfile] = useScoutProfile();
   const { saved, toggle, hide } = useScoutSaved();
@@ -178,6 +185,7 @@ export function JobScout(props: {
               profile={profile}
               store={projectsStore}
               seedSkills={seedSkills}
+              githubEnabled={props.githubEnabled}
             />
           )
         ) : null}
@@ -214,6 +222,23 @@ export function JobScout(props: {
             onToggleSaved={toggle}
             onGoJobs={() => switchTab("jobs")}
           />
+        ) : null}
+
+        {activeTab === "portfolio" ? (
+          profile === false ? (
+            <EmptyState onGoProfile={() => switchTab("profile")} />
+          ) : (
+            <PortfolioTab
+              models={props.models}
+              defaultModelId={props.defaultModelId}
+              profile={profile}
+              saved={saved}
+              projects={projectsStore.projects}
+              githubEnabled={props.githubEnabled}
+              studentName={props.studentName}
+              onGoJobs={() => switchTab("jobs")}
+            />
+          )
         ) : null}
       </div>
     </div>

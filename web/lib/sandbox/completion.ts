@@ -8,12 +8,16 @@
 export const COMPLETION_DEFAULT_MODEL = "openai/gpt-oss-120b:cerebras";
 
 /** Code-capable models the completion route will accept as an override. */
+// v6.3.0: Qwen3.6-35B left the catalog and its replacement's only route is far
+// too slow for inline completion (10-17s to answer), so Muse Glimmer takes the
+// small-multimodal slot (0.6s first token); Kimi K3 replaces Kimi K2.7 Code on
+// a faster route (0.5s first token).
 export const COMPLETION_MODELS = [
   "openai/gpt-oss-20b:groq",
   "openai/gpt-oss-120b:cerebras",
   "google/gemma-4-31B-it:cerebras",
-  "Qwen/Qwen3.6-35B-A3B:scaleway",
-  "moonshotai/Kimi-K2.7-Code:together",
+  "meta-models/Muse-Glimmer-30B:together",
+  "moonshotai/Kimi-K3:baseten",
 ];
 
 /** The languages the Sandbox editor can request completions for. */

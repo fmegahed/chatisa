@@ -141,13 +141,27 @@ describe("assessRunnability, Python", () => {
   });
 
   it("blocks a package that provably needs compiling", () => {
-    const v = assessRunnability("python", "import statsforecast", indexes);
+    // pyreadr took this role in v6.3.0, when statsforecast (the previous
+    // canonical impossible package) got its own shipped wasm build.
+    const v = assessRunnability("python", "import pyreadr", indexes);
     expect(v.status).toBe("blocked");
-    expect(v.impossible).toEqual(["statsforecast"]);
+    expect(v.impossible).toEqual(["pyreadr"]);
     expect(v.message).toMatch(/cannot run here/i);
     // It must name the package and tell them what to do instead.
-    expect(v.message).toContain("statsforecast");
+    expect(v.message).toContain("pyreadr");
     expect(v.message).toMatch(/on your computer/i);
+  });
+
+  it("treats the shipped forecasting stack as ready, never blocked", () => {
+    // These were blocked before v6.3.0; the wasm build flips them, and a
+    // regression here would silently hide Run from working forecast code.
+    const v = assessRunnability(
+      "python",
+      "import pandas\nfrom statsforecast import StatsForecast\nimport utilsforecast",
+      indexes,
+    );
+    expect(v.status).toBe("ready");
+    expect(v.impossible).toEqual([]);
   });
 
   it("does NOT block a package it merely does not recognise", () => {
@@ -170,7 +184,7 @@ describe("assessRunnability, Python", () => {
   it("blocks the whole snippet when any one package is impossible", () => {
     const v = assessRunnability(
       "python",
-      "import pandas\nimport statsforecast",
+      "import pandas\nimport pyreadr",
       indexes,
     );
     expect(v.status).toBe("blocked");

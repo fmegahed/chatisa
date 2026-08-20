@@ -70,6 +70,16 @@ const PYTHON_PACKAGES = [
   "lxml",
   "html5lib",
   "requests",
+  // Runtime dependencies of statsforecast (v6.3.0), which we ship as our own
+  // wasm wheel. They are Pyodide-built, but a hosted wheel installs with deps
+  // off, so anything it imports must be mirrored here or it 404s offline.
+  "cloudpickle",
+  "tqdm",
+  "threadpoolctl",
+  "narwhals", // utilsforecast's dataframe abstraction
+  "packaging",
+  "six", // triad (fugue's core) imports these two
+  "fsspec",
   // scipy is pulled in automatically as a dependency of several of the above.
 ];
 
@@ -92,7 +102,56 @@ const PYPI_WHEELS = [
   "et_xmlfile",
   "adjustText", // non-overlapping annotations, the adjust_text function
   "highlight_text", // coloured words inside a title or subtitle
+  // The statsforecast support cast (v6.3.0), all pure Python. utilsforecast
+  // is Nixtla's helper library; fugue (with triad and adagio) is imported
+  // unconditionally at the top of statsforecast.core, even though only its
+  // cluster backends would ever use it. Their pandas<3 pins are metadata
+  // only: verified working against Pyodide's pandas 3.0.2 on 2026-08-20, and
+  // deps=False installs never consult the pin anyway.
+  "utilsforecast",
+  "fugue",
+  "triad",
+  "adagio",
 ];
+
+/**
+ * Wheels we CROSS-COMPILED for this exact Pyodide ABI because PyPI only ships
+ * native builds: the Nixtla forecasting stack (statsforecast and its compiled
+ * kernel library coreforecast) has no public wasm build, so
+ * scripts/build-wasm-wheels.sh produces one in a Docker container and the
+ * artifacts are checked into vendor/pyodide-wasm-wheels/. This copies them
+ * into the served wheel directory beside the PyPI ones and adds them to the
+ * same manifest, keyed by import name like everything else.
+ *
+ * ABI-PINNED: these wheels are valid only for the Pyodide in package.json.
+ * After a Pyodide upgrade, re-run scripts/build-wasm-wheels.sh; the tag check
+ * below fails the setup loudly rather than serving an incompatible wheel.
+ */
+async function copyWasmWheels(out, manifest) {
+  const { readdir } = await import("node:fs/promises");
+  const vendorDir = join(root, "vendor", "pyodide-wasm-wheels");
+  if (!existsSync(vendorDir)) {
+    console.log("  vendor/pyodide-wasm-wheels: absent, skipping (forecast stack unavailable)");
+    return;
+  }
+  const lock = JSON.parse(
+    await readFile(join(root, "public", "runtimes", "pyodide", "pyodide-lock.json"), "utf8"),
+  );
+  const abi = lock.info.abi_version; // e.g. "2026_0"
+  for (const file of (await readdir(vendorDir)).filter((f) => f.endsWith(".whl"))) {
+    if (!file.includes("pyodide") && !file.includes("emscripten")) {
+      throw new Error(`vendor wheel ${file} is not a wasm wheel`);
+    }
+    if (!file.includes(abi) && !file.includes(lock.info.platform)) {
+      throw new Error(
+        `vendor wheel ${file} does not match the Pyodide ABI ${abi} / ${lock.info.platform}; re-run scripts/build-wasm-wheels.sh`,
+      );
+    }
+    const importName = file.split("-")[0];
+    await copyFile(join(vendorDir, file), join(out, file));
+    manifest[importName] = file;
+  }
+}
 
 /** The transitive closure of `roots` over the lock file's `depends` edges. */
 function packageClosure(lockPackages, roots) {
@@ -182,6 +241,7 @@ async function setupPypiWheels() {
     await downloadFile(wheel.url, join(out, wheel.filename));
     manifest[name] = wheel.filename;
   }
+  await copyWasmWheels(out, manifest);
   await writeFile(join(out, "wheels.json"), JSON.stringify(manifest, null, 2) + "\n");
 }
 

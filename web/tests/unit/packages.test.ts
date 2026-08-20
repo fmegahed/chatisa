@@ -56,9 +56,16 @@ describe("classifyPythonPackage", () => {
   });
 
   it("calls out a known-unavailable package by name", () => {
-    const r = classifyPythonPackage("statsforecast", idx);
+    const r = classifyPythonPackage("pyreadr", idx);
     expect(r?.status).toBe("unavailable");
     expect(r?.message).toMatch(/needs compiling/i);
+  });
+
+  it("marks the shipped forecasting stack ready (v6.3.0 wasm build)", () => {
+    for (const name of ["statsforecast", "coreforecast", "utilsforecast"]) {
+      const r = classifyPythonPackage(name, idx);
+      expect(r?.status, name).toBe("ready");
+    }
   });
 
   it("is honest about an unknown package", () => {

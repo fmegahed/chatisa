@@ -126,8 +126,12 @@ test.describe("AI Sandbox", () => {
     await box.fill("requests");
     await expect(page.getByText(/requests is available/i)).toBeVisible();
     // A package that needs compiling cannot be installed.
+    await box.fill("pyreadr");
+    await expect(page.getByText(/pyreadr cannot be installed/i)).toBeVisible();
+    // statsforecast used to be the impossible example; since v6.3.0 the app
+    // ships its own wasm build, so the checker must now call it ready.
     await box.fill("statsforecast");
-    await expect(page.getByText(/statsforecast cannot be installed/i)).toBeVisible();
+    await expect(page.getByText(/statsforecast is ready to use/i)).toBeVisible();
   });
 
   test("the R mirror lists the bundled packages", async ({ request }) => {
@@ -212,6 +216,45 @@ test.describe("AI Sandbox", () => {
     await expect(consoleOut).toContainText("PROXY_OK 200 True True", {
       timeout: 30_000,
     });
+  });
+
+  test("statsforecast fits real models from our own wasm build", async ({
+    page,
+  }) => {
+    // statsforecast was the app's canonical "cannot install in the browser"
+    // example until v6.3.0, when we cross-compiled it (and coreforecast) to
+    // wasm and started hosting the wheels. This runs an actual AutoETS fit
+    // end to end: the wheel chain (statsforecast, coreforecast,
+    // utilsforecast, fugue, triad, adagio) installs from our origin, the
+    // compiled kernels execute, and a forecast lands in the console. If a
+    // Pyodide upgrade invalidates the ABI-pinned wheels, this is the test
+    // that says so.
+    test.setTimeout(240_000);
+    await page.goto("/coding-studio");
+    await page.getByRole("radio", { name: "Python" }).click();
+    const editor = page.locator(".cm-content").first();
+    await expect(editor).toBeVisible({ timeout: 30_000 });
+    await editor.click();
+    await page.keyboard.press("ControlOrMeta+A");
+    await page.keyboard.press("Delete");
+    await page.keyboard.insertText(
+      [
+        "import numpy as np, pandas as pd",
+        "from statsforecast import StatsForecast",
+        "from statsforecast.models import AutoETS",
+        "t = np.arange(48)",
+        "df = pd.DataFrame({'unique_id': 'sales', 'ds': pd.date_range('2022-01-01', periods=48, freq='MS'),",
+        "                   'y': 20 + 0.4 * t + 6 * np.sin(2 * np.pi * t / 12)})",
+        "sf = StatsForecast(models=[AutoETS(season_length=12)], freq='MS')",
+        "fc = sf.forecast(df=df, h=3)",
+        "print('FORECAST_OK', fc.shape[0], fc['AutoETS'].notna().all())",
+      ].join("\n"),
+    );
+    await page.getByRole("button", { name: "Run", exact: true }).click();
+    await expect(page.getByLabel("Console output")).toContainText(
+      "FORECAST_OK 3 True",
+      { timeout: 210_000 },
+    );
   });
 
   test("console shows a Clear button, distinct from Restart, on every language", async ({

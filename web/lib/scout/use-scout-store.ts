@@ -17,6 +17,12 @@ import {
   type SavedState,
   type ScoutProfile,
 } from "./profile-store";
+import {
+  clearGithubConnection,
+  loadGithubConnection,
+  saveGithubConnection,
+  type GithubConnection,
+} from "./github-store";
 
 /**
  * React bindings for the local profile/saved/project stores.
@@ -97,6 +103,68 @@ export function useScoutSaved(): {
     },
     hide: (id: string) => {
       savedCache = hidePosting(id);
+      notify();
+    },
+  };
+}
+
+let githubCache: GithubConnection | null | undefined;
+
+function githubSnapshot(): GithubConnection | null {
+  if (githubCache === undefined) githubCache = loadGithubConnection();
+  return githubCache;
+}
+
+/**
+ * The OAuth popup writes localStorage from ANOTHER document, which this
+ * document's caches cannot see. Both signals it can produce (a same-origin
+ * postMessage, and the storage event when the write comes from another
+ * window) invalidate the cache and re-render.
+ */
+function subscribeGithub(listener: () => void): () => void {
+  listeners.add(listener);
+  const invalidate = (e: MessageEvent | StorageEvent) => {
+    if (e instanceof StorageEvent && e.key !== null && e.key !== "js-github-v1") {
+      return;
+    }
+    if (
+      e instanceof MessageEvent &&
+      (e.origin !== window.location.origin ||
+        (e.data as { type?: string } | null)?.type !== "chatisa:github-connected")
+    ) {
+      return;
+    }
+    githubCache = undefined;
+    notify();
+  };
+  window.addEventListener("storage", invalidate);
+  window.addEventListener("message", invalidate);
+  return () => {
+    listeners.delete(listener);
+    window.removeEventListener("storage", invalidate);
+    window.removeEventListener("message", invalidate);
+  };
+}
+
+export function useGithubConnection(): {
+  connection: GithubConnection | null;
+  set: (value: { token: string; login: string }) => void;
+  clear: () => void;
+} {
+  const connection = useSyncExternalStore(
+    subscribeGithub,
+    githubSnapshot,
+    () => null,
+  );
+  return {
+    connection,
+    set: (value) => {
+      githubCache = saveGithubConnection(value);
+      notify();
+    },
+    clear: () => {
+      clearGithubConnection();
+      githubCache = null;
       notify();
     },
   };

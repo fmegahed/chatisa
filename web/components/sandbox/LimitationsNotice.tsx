@@ -91,8 +91,9 @@ function PackageHelp({ languageId }: { languageId: string }) {
       <>
         <p>
           <strong>Ready now (preloaded):</strong> pandas, numpy, matplotlib,
-          scikit-learn, statsmodels, pyarrow, polars, seaborn, openpyxl. Just
-          import them. <strong>Available on import:</strong> hundreds more that
+          scikit-learn, statsmodels, statsforecast (with utilsforecast),
+          pyarrow, polars, seaborn, openpyxl. Just import them.{" "}
+          <strong>Available on import:</strong> hundreds more that
           Pyodide builds (requests, beautifulsoup4, networkx, sympy and so on)
           download the first time you import them, or add one up front with
           micropip:
@@ -102,7 +103,7 @@ function PackageHelp({ languageId }: { languageId: string }) {
         </pre>
         <p>
           <strong>Not available:</strong> a package that has to be compiled (for
-          example statsforecast) or is not built for the browser. Check any
+          example pyreadr) or is not built for the browser. Check any
           package below:
         </p>
         <PythonPackageChecker />

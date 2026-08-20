@@ -167,15 +167,16 @@ function mockStreamParts(
   const hasTools = (options.tools ?? []).length > 0;
 
   // A snippet needing a package that CANNOT exist in the browser, so the Run
-  // button gate (2026-07-26) has something deterministic to act on. statsforecast
-  // is in KNOWN_UNAVAILABLE_PYTHON because it needs compiling; the default canned
-  // answer deliberately uses readr and pandas, which are both available, so the
-  // tests asserting Run buttons appear are unaffected.
-  if (/statsforecast/i.test(userText)) {
+  // button gate (2026-07-26) has something deterministic to act on. Was
+  // statsforecast until v6.3.0, when we started shipping our own wasm build of
+  // it; pyreadr keeps needing compilation, so it inherits the role. The default
+  // canned answer deliberately uses readr and pandas, which are both available,
+  // so the tests asserting Run buttons appear are unaffected.
+  if (/pyreadr/i.test(userText)) {
     return textParts([
-      "Here is a forecast with statsforecast.\n\n",
-      "```python\nimport pandas as pd\nfrom statsforecast import StatsForecast\n",
-      "sf = StatsForecast(models=[], freq='M')\n```\n\n",
+      "Here is how to read an RData file with pyreadr.\n\n",
+      "```python\nimport pyreadr\n",
+      "result = pyreadr.read_r('grades.RData')\n```\n\n",
       "Run it locally, since it needs compiled dependencies.",
     ]);
   }
@@ -562,6 +563,51 @@ function mockObjectFor(options: LanguageModelV4CallOptions): string {
         "Organized and documented an end-to-end analytics project for [N] records",
       ],
       skillIds: ["sql", "data_visualization"],
+    });
+  }
+
+  // Job Scout: tailored portfolio site content (v6.3.0). Must precede the
+  // scaffold branch: both schemas exist, but only this one has skillGroups.
+  // The focus notes echo the fenced job titles from the prompt so the
+  // "optimized for your picked jobs" claim is genuinely exercised.
+  if (keys.includes("skillGroups")) {
+    const prompt = promptText(options);
+    const jobTitles = [...prompt.matchAll(/<job nonce="[^"]+">\n([^\n]+?) at ([^\n]+)/g)].map(
+      (m) => ({ jobTitle: m[1].trim(), company: m[2].trim() }),
+    );
+    const repoUrls = [...prompt.matchAll(/repoUrl: (\S+)/g)].map((m) => m[1]);
+    return JSON.stringify({
+      siteTitle: "Analytics Portfolio",
+      headline: "Analytics student who builds with SQL and clear visuals.",
+      about:
+        "I am an information systems and analytics student at Miami University. I like turning messy data into decisions people can act on.",
+      skillGroups: [
+        { title: "Data", skills: ["SQL", "Data visualization"] },
+        { title: "Tools", skills: ["Python", "Git"] },
+      ],
+      projectCards: repoUrls.slice(0, 3).map((url, i) => ({
+        repoName: `project-${i + 1}`,
+        title: `Project ${i + 1}`,
+        blurb: "A portfolio project demonstrating analytics skills end to end.",
+        skillLabels: ["SQL"],
+        repoUrl: url,
+      })),
+      courseHighlights: [
+        { course: "ISA 245", why: "Database design and SQL fluency." },
+      ],
+      focusNotes:
+        jobTitles.length > 0
+          ? jobTitles.map((j) => ({
+              ...j,
+              how: "The SQL project speaks directly to this role's data requirements.",
+            }))
+          : [
+              {
+                jobTitle: "Data Analyst",
+                company: "Acme",
+                how: "The SQL project speaks directly to this role's data requirements.",
+              },
+            ],
     });
   }
 

@@ -110,7 +110,9 @@ describe("how models are presented to students", () => {
   });
 
   it("derives badges from fields rather than from the name", () => {
-    const free = badgesFor("google/gemma-4-31B-it:cerebras");
+    // Gemma stopped being free on the 2026-08-20 audit, so the free-badge
+    // example is now Ternary Bonsai, the catalog's remaining $0 model.
+    const free = badgesFor("prism-ml/Ternary-Bonsai-27B-gguf:together");
     expect(free).toContain("open weight");
     expect(free).toContain("free");
 
@@ -283,18 +285,18 @@ describe("calculateCost arithmetic, unchanged from legacy config.py", () => {
   });
 
   it("computes cost for a current model", () => {
-    // gpt-5.6-terra: $2.50 per million in, $15.00 per million out.
+    // gpt-5.6-terra: $2.00 per million in, $12.00 per million out (2026-08-20).
     const result = calculateCost("gpt-5.6-terra", 10_000, 2_000);
     expect(result).not.toHaveProperty("error");
     if ("error" in result) throw new Error("unreachable");
-    expect(result.inputCost).toBeCloseTo(0.025, 6);
-    expect(result.outputCost).toBeCloseTo(0.03, 6);
-    expect(result.totalCost).toBeCloseTo(0.055, 6);
+    expect(result.inputCost).toBeCloseTo(0.02, 6);
+    expect(result.outputCost).toBeCloseTo(0.024, 6);
+    expect(result.totalCost).toBeCloseTo(0.044, 6);
     expect(result.currency).toBe("USD");
   });
 
   it("charges nothing for the free models", () => {
-    const result = calculateCost("google/gemma-4-31B-it:cerebras", 50_000, 5_000);
+    const result = calculateCost("prism-ml/Ternary-Bonsai-27B-gguf:together", 50_000, 5_000);
     if ("error" in result) throw new Error("unreachable");
     expect(result.totalCost).toBe(0);
   });

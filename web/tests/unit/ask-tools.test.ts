@@ -64,8 +64,10 @@ describe("enrichPythonError", () => {
   });
 
   it("appends the package-checker verdict for an import failure", () => {
+    // pyreadr took over as the canonical impossible package in v6.3.0, when
+    // statsforecast got its own shipped wasm build.
     const enriched = enrichPythonError(
-      "ModuleNotFoundError: No module named 'statsforecast'",
+      "ModuleNotFoundError: No module named 'pyreadr'",
       index,
     );
     expect(enriched).toContain("No module named");

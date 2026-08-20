@@ -156,3 +156,20 @@ export async function getScaffold<T>(projectId: string): Promise<T | null> {
 export async function deleteScaffold(projectId: string): Promise<void> {
   return remove(`scaffold:${projectId}`);
 }
+
+// --------------------------------------------------------------- portfolio
+
+/** One portfolio per device (v6.3.0): retailoring overwrites it, matching
+ * the one-repo publish model. Holds the rendered html plus the content the
+ * model produced, so the site can be republished without regenerating. */
+export async function putPortfolio(value: unknown): Promise<boolean> {
+  return put("portfolio", value);
+}
+
+export async function getPortfolio<T>(): Promise<T | null> {
+  return get<T>("portfolio");
+}
+
+export async function deletePortfolio(): Promise<void> {
+  return remove("portfolio");
+}

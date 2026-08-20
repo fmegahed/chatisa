@@ -59,7 +59,7 @@ export function askToolDefs() {
   return {
     run_python: tool({
       description:
-        `Run Python in the student's browser (Pyodide). Preloaded: numpy, pandas, matplotlib, scipy, scikit-learn, statsmodels, pyarrow, polars, seaborn, openpyxl, beautifulsoup4, lxml, requests. Only Pyodide-built or pure-Python packages can be added; compiled packages (statsforecast, tensorflow) can never install. requests can reach the web: GET and POST are routed through a built-in guarded proxy (${proxyCapText()} response cap, private hosts blocked), so requests.get plus BeautifulSoup works on ordinary websites. A response body starting with 'ChatISA proxy:' explains why a fetch was refused. Variables persist across calls in this chat. Plots (matplotlib) are captured automatically and shown to the student.`,
+        `Run Python in the student's browser (Pyodide). Preloaded: numpy, pandas, matplotlib, scipy, scikit-learn, statsmodels, statsforecast (with utilsforecast and coreforecast), pyarrow, polars, seaborn, openpyxl, beautifulsoup4, lxml, requests. Only Pyodide-built or pure-Python packages can be added; compiled packages (pyreadr, tensorflow) can never install. requests can reach the web: GET and POST are routed through a built-in guarded proxy (${proxyCapText()} response cap, private hosts blocked), so requests.get plus BeautifulSoup works on ordinary websites. A response body starting with 'ChatISA proxy:' explains why a fetch was refused. Variables persist across calls in this chat. Plots (matplotlib) are captured automatically and shown to the student.`,
       inputSchema: codeInput("Python code"),
     }),
     run_r: tool({

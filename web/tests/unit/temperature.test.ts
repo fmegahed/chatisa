@@ -29,7 +29,7 @@ describe("temperatureFor", () => {
   it("passes it through for models that accept it", () => {
     expect(temperatureFor("gpt-5.6-sol", 0.7)).toBe(0.7);
     expect(temperatureFor("gpt-5.6-luna", 0)).toBe(0);
-    expect(temperatureFor("gemini-3.6-flash", 0.25)).toBe(0.25);
+    expect(temperatureFor("gemini-3.7-flash", 0.25)).toBe(0.25);
   });
 
   it("treats an unknown model id as accepting it", () => {

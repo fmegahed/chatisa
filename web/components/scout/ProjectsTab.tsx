@@ -17,6 +17,9 @@ import {
   putScaffold,
 } from "@/lib/scout/device-files";
 import { notebookToText } from "@/lib/files/notebook-text";
+import { polishFileSet, scaffoldFileSet } from "@/lib/scout/github";
+import { GithubConnect } from "@/components/scout/GithubConnect";
+import { PushToGithubButton } from "@/components/scout/PushToGithubButton";
 
 /**
  * My Projects: generate a job-agnostic portfolio scaffold, and keep every
@@ -106,6 +109,8 @@ export function ProjectsTab(props: {
   };
   /** Gap skills handed over by a job card's "close these gaps" button. */
   seedSkills: string[];
+  /** GitHub OAuth is configured on this server, so pushing is offered. */
+  githubEnabled: boolean;
 }) {
   const [selected, setSelected] = useState<string[]>(() =>
     props.seedSkills.slice(0, MAX_SKILLS),
@@ -114,6 +119,7 @@ export function ProjectsTab(props: {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [scaffold, setScaffold] = useState<Scaffold | null>(null);
+  const [scaffoldRecordId, setScaffoldRecordId] = useState<string | null>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
 
   /** The student's own evidence for the selected skills, sent for grounding. */
@@ -148,6 +154,7 @@ export function ProjectsTab(props: {
       }
       const generated = body.scaffold as Scaffold;
       setScaffold(generated);
+      setScaffoldRecordId(null);
       // The artifact gets a permanent local home immediately.
       const record: ProjectRecord = {
         id: crypto.randomUUID(),
@@ -159,6 +166,7 @@ export function ProjectsTab(props: {
         repoUrl: null,
       };
       props.store.add(record);
+      setScaffoldRecordId(record.id);
       void putScaffold(record.id, generated);
     } catch {
       setError("The scaffold did not generate. Try again.");
@@ -203,6 +211,11 @@ export function ProjectsTab(props: {
         <PolishPane
           models={props.models}
           defaultModelId={props.defaultModelId}
+          githubEnabled={props.githubEnabled}
+          repoUrlFor={(id) =>
+            props.store.projects.projects.find((p) => p.id === id)?.repoUrl ?? null
+          }
+          onPushed={(id, repoUrl) => props.store.setRepoUrl(id, repoUrl)}
           onRecord={(record, stored) => {
             props.store.add(record);
             void putScaffold(record.id, stored);
@@ -307,13 +320,40 @@ export function ProjectsTab(props: {
               </button>
             </div>
             <h4 className="mt-4 font-bold">Put it on GitHub</h4>
-            <p className="text-dark-tan">
-              Unzip, then run these in the project folder (needs the GitHub
-              CLI, <code>gh</code>, signed in):
-            </p>
-            <pre className="mt-2 overflow-x-auto rounded-card bg-light-tan p-3">
-              {scaffold.instructions.join("\n")}
-            </pre>
+            {props.githubEnabled ? (
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <GithubConnect returnPath="/job-scout" />
+                {scaffoldRecordId ? (
+                  <PushToGithubButton
+                    repoName={scaffold.repoName}
+                    getFiles={async () => scaffoldFileSet(scaffold)}
+                    expectedRepoUrl={
+                      props.store.projects.projects.find(
+                        (p) => p.id === scaffoldRecordId,
+                      )?.repoUrl ?? null
+                    }
+                    commitMessage="Project scaffold from ChatISA Job Scout"
+                    onPushed={(repoUrl) =>
+                      props.store.setRepoUrl(scaffoldRecordId, repoUrl)
+                    }
+                  />
+                ) : null}
+              </div>
+            ) : null}
+            <details className="mt-2">
+              <summary className="cursor-pointer font-bold">
+                {props.githubEnabled
+                  ? "Prefer the command line?"
+                  : "Push it with the command line"}
+              </summary>
+              <p className="mt-1 text-dark-tan">
+                Unzip, then run these in the project folder (needs the GitHub
+                CLI, <code>gh</code>, signed in):
+              </p>
+              <pre className="mt-2 overflow-x-auto rounded-card bg-light-tan p-3">
+                {scaffold.instructions.join("\n")}
+              </pre>
+            </details>
             {scaffold.resumeBullets.length > 0 ? (
               <>
                 <h4 className="mt-4 font-bold">
@@ -355,6 +395,7 @@ export function ProjectsTab(props: {
               <ProjectCard
                 key={p.id}
                 project={p}
+                githubEnabled={props.githubEnabled}
                 onSetRepoUrl={(url) => props.store.setRepoUrl(p.id, url)}
                 onRemove={() => {
                   props.store.remove(p.id);
@@ -369,8 +410,20 @@ export function ProjectsTab(props: {
   );
 }
 
+/** Loads a project's stored files and shapes them for a push, or null when
+ * this device no longer holds them. */
+async function storedPushFiles(projectId: string) {
+  const stored = await getScaffold<Scaffold | StoredPolish>(projectId);
+  if (!stored) return null;
+  if ("mode" in stored && stored.mode === "polished") {
+    return polishFileSet(stored);
+  }
+  return scaffoldFileSet(stored as Scaffold);
+}
+
 function ProjectCard(props: {
   project: ProjectRecord;
+  githubEnabled: boolean;
   onSetRepoUrl: (url: string | null) => void;
   onRemove: () => void;
 }) {
@@ -461,6 +514,22 @@ function ProjectCard(props: {
         >
           Download the zip again
         </button>
+        {/* Push is offered only while unlinked. Once a repo URL exists the
+            student may have built real work there, and re-pushing the stored
+            stubs would overwrite files of the same name. */}
+        {props.githubEnabled && !p.repoUrl ? (
+          <PushToGithubButton
+            repoName={p.repoName}
+            getFiles={() => storedPushFiles(p.id)}
+            expectedRepoUrl={null}
+            commitMessage={
+              p.mode === "polished"
+                ? "Course project organized with ChatISA Job Scout"
+                : "Project scaffold from ChatISA Job Scout"
+            }
+            onPushed={(repoUrl) => props.onSetRepoUrl(repoUrl)}
+          />
+        ) : null}
         {editingUrl ? (
           <span className="flex flex-wrap items-center gap-2">
             <label htmlFor={`repo-${p.id}`} className="sr-only">
@@ -546,6 +615,9 @@ async function downloadPolishZip(
 function PolishPane(props: {
   models: ModelOption[];
   defaultModelId: string;
+  githubEnabled: boolean;
+  repoUrlFor: (recordId: string) => string | null;
+  onPushed: (recordId: string, repoUrl: string) => void;
   onRecord: (record: ProjectRecord, stored: StoredPolish) => void;
 }) {
   const [files, setFiles] = useState<File[]>([]);
@@ -555,6 +627,10 @@ function PolishPane(props: {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [plan, setPlan] = useState<PolishPlan | null>(null);
+  const [pushable, setPushable] = useState<{
+    recordId: string;
+    stored: StoredPolish;
+  } | null>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
 
   const fail = (message: string) => {
@@ -566,6 +642,7 @@ function PolishPane(props: {
     setError(null);
     setBusy(true);
     setPlan(null);
+    setPushable(null);
     try {
       // The stored copy keeps the FULL raw text (bounded by the size caps)
       // so later re-downloads are faithful; the model payload is extracted
@@ -621,7 +698,7 @@ function PolishPane(props: {
         mode: "polished",
         repoUrl: null,
       };
-      props.onRecord(record, {
+      const stored: StoredPolish = {
         mode: "polished",
         plan: nextPlan,
         textFiles: nextPlan.layout.flatMap((m) => {
@@ -631,7 +708,9 @@ function PolishPane(props: {
         binaryPaths: nextPlan.layout
           .filter((m) => !storedByName.has(m.from))
           .map((m) => m.to),
-      });
+      };
+      props.onRecord(record, stored);
+      setPushable({ recordId: record.id, stored });
     } catch {
       fail("The organization plan did not generate. Try again.");
     } finally {
@@ -771,7 +850,7 @@ function PolishPane(props: {
             Its skills now count in your profile: real work, already built.
           </p>
 
-          <div className="mt-3 flex flex-wrap gap-3">
+          <div className="mt-3 flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={() => void downloadPolishZip(plan, originals)}
@@ -779,7 +858,28 @@ function PolishPane(props: {
             >
               Download {plan.repoName}.zip
             </button>
+            {props.githubEnabled && pushable ? (
+              <>
+                <GithubConnect returnPath="/job-scout" />
+                <PushToGithubButton
+                  repoName={pushable.stored.plan.repoName}
+                  getFiles={async () => polishFileSet(pushable.stored)}
+                  expectedRepoUrl={props.repoUrlFor(pushable.recordId)}
+                  commitMessage="Course project organized with ChatISA Job Scout"
+                  onPushed={(repoUrl) => props.onPushed(pushable.recordId, repoUrl)}
+                />
+              </>
+            ) : null}
           </div>
+          {props.githubEnabled &&
+          pushable &&
+          pushable.stored.binaryPaths.length > 0 ? (
+            <p className="mt-2 text-sm text-dark-tan">
+              A push includes your text files and the generated ones. These
+              were not kept in the browser, so add them on github.com
+              afterwards: {pushable.stored.binaryPaths.join(", ")}.
+            </p>
+          ) : null}
 
           <h4 className="mt-4 font-bold">How your files are organized</h4>
           <ul className="mt-1 list-inside list-disc">

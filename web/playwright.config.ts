@@ -62,11 +62,15 @@ export default defineConfig({
         "chatisa-e2e-only-not-a-real-secret-0123456789",
       // Deterministic stand-in model: no provider calls, no spend.
       CHATISA_MOCK_LLM: "1",
+      // Deterministic stand-in GitHub OAuth: the start route skips github.com
+      // and redirects straight to the callback with a mock code.
+      CHATISA_MOCK_GITHUB: "1",
       // Keep test data out of the development database.
       CHATISA_DATA_DIR: "tests/e2e/.data",
       // The suite uploads more often than a person would; the limiter itself
       // is covered by its own unit tests.
       CHATISA_UPLOAD_LIMIT_PER_MINUTE: "200",
+      CHATISA_SCOUT_PROJECT_LIMIT_PER_MINUTE: "200",
       CHATISA_EXAM_LIMIT_PER_MINUTE: "200",
       // Every chat module runs in parallel through one shared account, and the
       // Ask Anything loop sends a second request per tool turn; a production

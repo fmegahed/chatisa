@@ -279,7 +279,12 @@ export async function renderCoverLetterDocx(
   children.push(body(content.salutation, 160));
   for (const paragraph of content.paragraphs) children.push(body(paragraph.text));
 
-  children.push(body(content.closing, 0));
+  // Models sometimes pack a signed name into the closing ("Sincerely, Jane
+  // Doe"); the renderer prints the authoritative name below, which doubled
+  // the signature on the exported letter (v6.2.1 video review, 2026-07-30).
+  // Keep only the conventional phrase up to its comma.
+  const closingMatch = /^\s*([A-Za-z ]+,)/.exec(content.closing);
+  children.push(body(closingMatch ? closingMatch[1] : content.closing, 0));
   // Space to sign a printed copy, as the template specifies.
   children.push(body("", 240));
   children.push(body(content.name, 0));

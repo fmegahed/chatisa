@@ -97,6 +97,34 @@ const HOSTED_WHEELS = {
   // ggtext. Keys are the IMPORT names, which is what neededHostedWheels matches.
   adjustText: { pyodideDeps: ["numpy", "matplotlib", "scipy"], wheelDeps: [] },
   highlight_text: { pyodideDeps: ["matplotlib"], wheelDeps: [] },
+  // The Nixtla forecasting stack (v6.3.0). statsforecast and coreforecast are
+  // OUR OWN wasm builds (vendor/pyodide-wasm-wheels, ABI-pinned to this
+  // Pyodide); the rest are pure PyPI wheels. fugue, triad and adagio ride
+  // along because statsforecast.core imports fugue unconditionally even
+  // though only its cluster backends (spark, dask, ray; none installable
+  // here) would ever use it.
+  utilsforecast: { pyodideDeps: ["numpy", "pandas", "packaging", "narwhals"], wheelDeps: [] },
+  coreforecast: { pyodideDeps: ["numpy"], wheelDeps: [] },
+  triad: {
+    pyodideDeps: ["numpy", "pandas", "six", "pyarrow", "fsspec"],
+    wheelDeps: [],
+  },
+  adagio: { pyodideDeps: [], wheelDeps: ["triad"] },
+  fugue: { pyodideDeps: ["numpy", "pandas"], wheelDeps: ["triad", "adagio"] },
+  statsforecast: {
+    pyodideDeps: [
+      "numpy",
+      "pandas",
+      "scipy",
+      "statsmodels",
+      "cloudpickle",
+      "tqdm",
+      "threadpoolctl",
+      "packaging",
+      "narwhals",
+    ],
+    wheelDeps: ["coreforecast", "utilsforecast", "fugue"],
+  },
 };
 
 let wheelManifest = null;
@@ -216,7 +244,7 @@ __chatisa_capture_plot()
 function friendlyError(error) {
   const message = error instanceof Error ? error.message : String(error);
   const bundled =
-    "numpy, pandas, matplotlib, scikit-learn, statsmodels, pyarrow, polars, seaborn and openpyxl";
+    "numpy, pandas, matplotlib, scikit-learn, statsmodels, statsforecast, pyarrow, polars, seaborn and openpyxl";
   const missing = /ModuleNotFoundError: No module named '([^']+)'/.exec(message);
   if (missing) {
     const pkg = missing[1].split(".")[0];

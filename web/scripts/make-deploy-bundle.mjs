@@ -549,6 +549,18 @@ CHATISA_SCOUT_ADMINS=
 # Per-run tagging cost ceiling in USD (default 10 when unset).
 CHATISA_SCOUT_MAX_RUN_USD=
 
+# --- Job Scout: GitHub auto-push (optional) ----------------------------------
+# A GitHub OAuth App (github.com > Settings > Developer settings > OAuth Apps;
+# an OAuth App, NOT a "GitHub App"). Authorization callback URL to register:
+#   https://chatisa.fsb.miamioh.edu/api/scout/github/callback
+# The server uses this pair ONLY to exchange the OAuth code for a token; the
+# token lives in the student's browser and pushes go straight to GitHub.
+# Scope requested: public_repo (cannot touch private repositories).
+# Leave unset to hide the Connect/Push/Publish buttons; students keep the
+# manual zip-and-CLI flow.
+GITHUB_OAUTH_CLIENT_ID=
+GITHUB_OAUTH_CLIENT_SECRET=
+
 # --- Data (REQUIRED): folder for the usage database; BACK THIS FOLDER UP -----
 CHATISA_DATA_DIR=C:\\chatisa-data
 
@@ -560,7 +572,7 @@ CHATISA_GUEST_EXPIRES=
 CHATISA_SSL_CERT=C:\\Users\\webapp\\.conda\\chat_isa\\ssl\\chatisa.pem
 CHATISA_SSL_KEY=C:\\Users\\webapp\\.conda\\chat_isa\\ssl\\chatisapriv.key
 
-# NEVER set on the server: AUTH_TEST_MODE, CHATISA_MOCK_LLM,
+# NEVER set on the server: AUTH_TEST_MODE, CHATISA_MOCK_LLM, CHATISA_MOCK_GITHUB,
 # CHATISA_PROXY_ALLOW_LOCAL. They are test-only and refused in production.
 `,
 );

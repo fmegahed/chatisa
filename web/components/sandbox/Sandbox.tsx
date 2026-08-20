@@ -81,11 +81,11 @@ const SB_LANG_KEY = "sb-language";
  * wall of code. */
 const STARTERS: Record<string, string> = {
   python: `# Python runs in your browser. No setup needed.
-# Bundled: pandas, numpy, matplotlib, scikit-learn, statsmodels, pyarrow, polars, seaborn, openpyxl.
+# Bundled: pandas, numpy, matplotlib, scikit-learn, statsmodels, statsforecast, pyarrow, polars, seaborn, openpyxl.
 # To add a pure-Python package, install it at runtime:
 #   import micropip
 #   await micropip.install("package-name")
-# Packages that need compiling (for example statsforecast) cannot be installed here.
+# Packages that need compiling (for example pyreadr) cannot be installed here.
 # Click "Insert example" above to load a sample chart.
 `,
   r: `# R runs in your browser. No setup needed.

@@ -118,6 +118,16 @@ for (const k of ["RAPIDAPI_KEY", "USAJOBS_API_KEY", "USAJOBS_EMAIL"].filter(
 )) {
   console.warn(`[chatisa] note: ${k} is not set; Job Scout's weekly feed will be missing that source`);
 }
+// GitHub auto-push (v6.3.0). Both absent is a valid configuration: students
+// simply keep the manual zip-and-CLI flow, so this is a note, not an error.
+if (
+  !process.env.GITHUB_OAUTH_CLIENT_ID?.trim() ||
+  !process.env.GITHUB_OAUTH_CLIENT_SECRET?.trim()
+) {
+  console.warn(
+    "[chatisa] note: GITHUB_OAUTH_CLIENT_ID/SECRET are not set; Job Scout students push repos by hand",
+  );
+}
 
 const INTERNAL_PORT = 3000;
 const PUBLIC_PORT = Number(process.env.CHATISA_HTTPS_PORT ?? 443);

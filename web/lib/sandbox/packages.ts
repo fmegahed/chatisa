@@ -27,14 +27,23 @@ export const BUNDLED_PYTHON = new Set(
     "seaborn",
     "openpyxl",
     "micropip",
+    // The Nixtla forecasting stack (v6.3.0). statsforecast and coreforecast
+    // are compiled packages with no public wasm build, so we cross-compiled
+    // them for this exact Pyodide ABI ourselves (vendor/pyodide-wasm-wheels,
+    // built by scripts/build-wasm-wheels; see the README there). They were
+    // the app's canonical "cannot install" example before this.
+    "statsforecast",
+    "coreforecast",
+    "utilsforecast",
   ].map(normalizePkg),
 );
 
 /** Names that categorically cannot be installed in the browser (need compiling or
  * a native toolchain Pyodide does not provide), called out by name so the answer is
- * concrete rather than a vague "maybe". */
+ * concrete rather than a vague "maybe". statsforecast left this list in v6.3.0
+ * when we started shipping our own wasm build of it. */
 export const KNOWN_UNAVAILABLE_PYTHON = new Set(
-  ["statsforecast", "pyreadr"].map(normalizePkg),
+  ["pyreadr", "tensorflow"].map(normalizePkg),
 );
 
 /**
@@ -150,6 +159,6 @@ export function classifyPythonPackage(
   }
   return {
     status: "unavailable",
-    message: `${query} is not in the browser's built package set. micropip can still add it if it is a pure-Python package; packages with C or Fortran code (for example statsforecast, pyreadr) cannot be installed.`,
+    message: `${query} is not in the browser's built package set. micropip can still add it if it is a pure-Python package; packages with C or Fortran code (for example pyreadr, tensorflow) cannot be installed.`,
   };
 }

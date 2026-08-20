@@ -72,3 +72,7 @@ tests/e2e/.data-manual/
 *.db
 *.db-shm
 *.db-wal
+
+# Playwright's per-failure artifacts (traces, screenshots, error contexts).
+# Regenerated every run; the one tracked file here was an oversight (v6.3.0).
+test-results/

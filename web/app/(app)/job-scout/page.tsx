@@ -5,6 +5,7 @@ import { JobScout } from "@/components/scout/JobScout";
 import { buildModelOptions, getPageModels } from "@/lib/config/models";
 import { filterAvailableModels } from "@/lib/providers";
 import { recordUsageEvent } from "@/lib/db";
+import { githubOauthConfigured } from "@/lib/scout/github-oauth";
 
 export const metadata: Metadata = { title: "Job Scout" };
 
@@ -53,7 +54,12 @@ export default async function JobScoutPage() {
         </div>
       ) : (
         <div className="mt-8">
-          <JobScout models={options} defaultModelId={defaultModelId} />
+          <JobScout
+            models={options}
+            defaultModelId={defaultModelId}
+            githubEnabled={githubOauthConfigured()}
+            studentName={session.user.name ?? ""}
+          />
         </div>
       )}
     </div>

@@ -26,25 +26,34 @@ type Proposed = {
   outputPerM: number;
 };
 
+// v6.3.0 list (2026-08-20). Prices are the providers' published rates that
+// day; where a route publishes none through the router (fireworks for the Qwen
+// flagship, featherless for Qwen3.8-27B) the stored figure comes from the
+// provider's own docs or is zero, and the price check simply has nothing to
+// compare against.
 const PROPOSED: Proposed[] = [
   { id: "gpt-5.6-sol", provider: "openai", inputPerM: 5, outputPerM: 30 },
-  { id: "gpt-5.6-terra", provider: "openai", inputPerM: 2.5, outputPerM: 15 },
-  { id: "gpt-5.6-luna", provider: "openai", inputPerM: 1, outputPerM: 6 },
+  { id: "gpt-5.6-terra", provider: "openai", inputPerM: 2, outputPerM: 12 },
+  { id: "gpt-5.6-luna", provider: "openai", inputPerM: 0.2, outputPerM: 1.2 },
   { id: "claude-sonnet-5", provider: "anthropic", inputPerM: 3, outputPerM: 15 },
   { id: "claude-opus-5", provider: "anthropic", inputPerM: 5, outputPerM: 25 },
-  { id: "zai-org/GLM-5.2:fireworks-ai", provider: "huggingface", inputPerM: 1.4, outputPerM: 4.4 },
+  { id: "zai-org/GLM-5.2:deepinfra", provider: "huggingface", inputPerM: 0.75, outputPerM: 2.4 },
   { id: "thinkingmachines/Inkling:together", provider: "huggingface", inputPerM: 1.0, outputPerM: 4.05 },
-  { id: "deepseek-ai/DeepSeek-V4-Pro:fireworks-ai", provider: "huggingface", inputPerM: 1.74, outputPerM: 3.48 },
-  { id: "deepseek-ai/DeepSeek-V4-Flash:fireworks-ai", provider: "huggingface", inputPerM: 0.14, outputPerM: 0.28 },
+  { id: "deepseek-ai/DeepSeek-V4-Pro:together", provider: "huggingface", inputPerM: 1.74, outputPerM: 3.48 },
+  { id: "deepseek-ai/DeepSeek-V4-Flash:deepinfra", provider: "huggingface", inputPerM: 0.09, outputPerM: 0.18 },
   { id: "prism-ml/Ternary-Bonsai-27B-gguf:together", provider: "huggingface", inputPerM: 0, outputPerM: 0 },
-  { id: "google/gemma-4-31B-it:cerebras", provider: "huggingface", inputPerM: 0, outputPerM: 0 },
-  { id: "moonshotai/Kimi-K2.7-Code:fireworks-ai", provider: "huggingface", inputPerM: 0.95, outputPerM: 4.0 },
-  { id: "Qwen/Qwen3.6-35B-A3B:scaleway", provider: "huggingface", inputPerM: 0.29, outputPerM: 1.71 },
-  { id: "openai/gpt-oss-120b:cerebras", provider: "huggingface", inputPerM: 0.25, outputPerM: 0.69 },
+  { id: "google/gemma-4-31B-it:cerebras", provider: "huggingface", inputPerM: 0.99, outputPerM: 1.49 },
+  { id: "moonshotai/Kimi-K3:baseten", provider: "huggingface", inputPerM: 3, outputPerM: 15 },
+  { id: "Qwen/Qwen3.8-2.4T-A95B:fireworks-ai", provider: "huggingface", inputPerM: 2, outputPerM: 6 },
+  { id: "Qwen/Qwen3.8-27B:featherless-ai", provider: "huggingface", inputPerM: 0, outputPerM: 0 },
+  { id: "meta-models/Muse-Glimmer-30B:together", provider: "huggingface", inputPerM: 0.35, outputPerM: 1.5 },
+  { id: "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4:together", provider: "huggingface", inputPerM: 0.6, outputPerM: 3.6 },
+  { id: "openai/gpt-oss-120b:cerebras", provider: "huggingface", inputPerM: 0.35, outputPerM: 0.75 },
   { id: "openai/gpt-oss-20b:groq", provider: "huggingface", inputPerM: 0.1, outputPerM: 0.5 },
   { id: "microsoft/phi-4:deepinfra", provider: "huggingface", inputPerM: 0.07, outputPerM: 0.14 },
   { id: "gemini-3.1-pro-preview-customtools", provider: "google", inputPerM: 2, outputPerM: 12 },
-  { id: "gemini-3.6-flash", provider: "google", inputPerM: 1.5, outputPerM: 7.5 },
+  // Promotional price through 2026-12-31; $1.5/$7.5 from 2027-01-01.
+  { id: "gemini-3.7-flash", provider: "google", inputPerM: 0.75, outputPerM: 3.75 },
 ];
 
 type HfProvider = {
@@ -180,8 +189,26 @@ async function main() {
     }
 
     const [baseId, pinned] = p.id.split(":");
-    const providers = hfModels.get(baseId);
+    let providers = hfModels.get(baseId);
     if (!providers) {
+      // The bulk /v1/models listing omits some models the router does serve
+      // (observed 2026-08-20 with Qwen/Qwen3.8-27B, served only by
+      // featherless-ai). The per-model endpoint is authoritative, so ask it
+      // before declaring a model unserved.
+      try {
+        const single = await getJson(
+          `https://router.huggingface.co/v1/models/${baseId}`,
+          { authorization: `Bearer ${process.env.HF_TOKEN}` },
+        );
+        providers = single.data?.providers ?? undefined;
+        if (providers && providers.length > 0) {
+          console.log(`  absent from the bulk listing; per-model endpoint has it`);
+        }
+      } catch {
+        // Fall through to the unserved report.
+      }
+    }
+    if (!providers || providers.length === 0) {
       console.log(`  NOT SERVED: the router does not list ${baseId}`);
       problems.push(`${baseId} is not on the HF router`);
       continue;

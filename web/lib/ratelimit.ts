@@ -94,6 +94,18 @@ export const EXAM_GENERATE_RATE_LIMIT = {
 };
 
 /**
+ * Job Scout project generation (scaffold and polish share one bucket: both
+ * are "design me a project" model calls). Was an inline {limit: 4} in each
+ * route until v6.3.0, when the e2e suite's parallel projects started
+ * legitimately exceeding it from one shared account; now overridable like
+ * every other limit here.
+ */
+export const SCOUT_PROJECT_RATE_LIMIT = {
+  limit: Number(process.env.CHATISA_SCOUT_PROJECT_LIMIT_PER_MINUTE ?? 4),
+  windowMs: 60_000,
+};
+
+/**
  * Minting a speech token is cheap, but the browser re-mints whenever it
  * reconnects, so this is set to tolerate a flaky network without becoming a
  * free way to farm credentials.
