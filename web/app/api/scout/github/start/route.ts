@@ -6,7 +6,11 @@ import {
   githubAuthorizeUrl,
   githubOauthConfigured,
 } from "@/lib/scout/github-oauth";
-import { encodeOauthState, safeReturnPath } from "@/lib/scout/github-state";
+import {
+  encodeOauthState,
+  publicOrigin,
+  safeReturnPath,
+} from "@/lib/scout/github-state";
 
 /**
  * Begins the GitHub connect flow (v6.3.0). Opened in a popup (or as a
@@ -44,7 +48,9 @@ export async function GET(req: Request) {
   const returnPath = safeReturnPath(url.searchParams.get("return"));
   const state = randomUUID();
 
-  const callbackUrl = new URL("/api/scout/github/callback", url.origin);
+  // Public origin, not url.origin: behind the TLS relay the latter is the
+  // internal 127.0.0.1 address and GitHub rejects the redirect_uri.
+  const callbackUrl = new URL("/api/scout/github/callback", publicOrigin(req));
   const destination =
     process.env.CHATISA_MOCK_GITHUB === "1"
       ? `${callbackUrl.toString()}?code=mock-code&state=${state}`

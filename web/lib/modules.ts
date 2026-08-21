@@ -44,6 +44,13 @@ export const MODULES: ModuleInfo[] = [
     group: "coursework",
   },
   {
+    slug: "portfolio",
+    name: "Portfolio Builder",
+    description:
+      "Publish a portfolio site or a single project showcase to GitHub Pages, with a preview you can edit first.",
+    group: "jobs",
+  },
+  {
     slug: "job-scout",
     name: "Job Scout",
     description:

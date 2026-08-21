@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   decodeOauthState,
   encodeOauthState,
+  publicOrigin,
   safeReturnPath,
 } from "@/lib/scout/github-state";
 import {
@@ -11,16 +12,10 @@ import {
 } from "@/lib/scout/github-store";
 import {
   enablePages,
-  polishFileSet,
-  portfolioFileSet,
+  pushFileBytes,
   pushToRepo,
   scaffoldFileSet,
 } from "@/lib/scout/github";
-import {
-  escapeHtml,
-  renderPortfolioHtml,
-  type PortfolioContent,
-} from "@/lib/scout/portfolio-html";
 
 /**
  * The GitHub push path runs entirely in the student's browser with their
@@ -74,10 +69,49 @@ describe("oauth state cookie", () => {
 
   it("refuses off-origin return paths (open-redirect guard)", () => {
     expect(safeReturnPath("/job-scout?tab=projects")).toBe("/job-scout?tab=projects");
-    expect(safeReturnPath("//evil.example/phish")).toBe("/job-scout");
-    expect(safeReturnPath("https://evil.example")).toBe("/job-scout");
-    expect(safeReturnPath("/\\evil")).toBe("/job-scout");
-    expect(safeReturnPath(null)).toBe("/job-scout");
+    expect(safeReturnPath("//evil.example/phish")).toBe("/portfolio");
+    expect(safeReturnPath("https://evil.example")).toBe("/portfolio");
+    expect(safeReturnPath("/\\evil")).toBe("/portfolio");
+    expect(safeReturnPath(null)).toBe("/portfolio");
+  });
+});
+
+describe("publicOrigin", () => {
+  const internal = (headers: Record<string, string> = {}) =>
+    new Request("http://127.0.0.1:3000/api/scout/github/start", { headers });
+
+  it("prefers AUTH_URL: the OAuth app is registered against the public origin", () => {
+    expect(
+      publicOrigin(internal({ "x-forwarded-host": "other.example" }), {
+        AUTH_URL: "https://chatisa.fsb.miamioh.edu/",
+      }),
+    ).toBe("https://chatisa.fsb.miamioh.edu");
+  });
+
+  it("falls back to forwarded headers behind the TLS relay", () => {
+    expect(
+      publicOrigin(
+        internal({
+          "x-forwarded-proto": "https",
+          "x-forwarded-host": "chatisa.fsb.miamioh.edu",
+        }),
+        {},
+      ),
+    ).toBe("https://chatisa.fsb.miamioh.edu");
+  });
+
+  it("uses the request origin in plain local development", () => {
+    expect(
+      publicOrigin(new Request("http://localhost:3000/api/x"), {}),
+    ).toBe("http://localhost:3000");
+  });
+
+  it("ignores a malformed AUTH_URL and an empty forwarded host", () => {
+    expect(
+      publicOrigin(internal({ "x-forwarded-proto": "https", "x-forwarded-host": "" }), {
+        AUTH_URL: "not a url",
+      }),
+    ).toBe("http://127.0.0.1:3000");
   });
 });
 
@@ -271,79 +305,57 @@ describe("file-set assemblers", () => {
     });
     expect(files.map((f) => f.path)).toEqual(["README.md", "src/a.py"]);
   });
-
-  it("polish: lists never-persisted binaries instead of silently dropping them", () => {
-    const files = polishFileSet({
-      plan: {
-        readme: "# R",
-        gitignore: "data/",
-        extraFiles: [{ path: "data/README.md", contents: "where" }],
-      },
-      textFiles: [{ path: "src/f.R", contents: "x" }],
-      binaryPaths: ["docs/report.pdf"],
-    });
-    const note = files.find((f) => f.path === "ADD_THESE_FILES.md");
-    expect(note?.contents).toContain("docs/report.pdf");
-    expect(
-      polishFileSet({
-        plan: { readme: "", gitignore: "", extraFiles: [] },
-        textFiles: [],
-        binaryPaths: [],
-      }).some((f) => f.path === "ADD_THESE_FILES.md"),
-    ).toBe(false);
-  });
-
-  it("portfolio: index.html plus .nojekyll so Pages serves files verbatim", () => {
-    expect(portfolioFileSet("<html/>").map((f) => f.path)).toEqual([
-      "index.html",
-      ".nojekyll",
-      "README.md",
-    ]);
-  });
 });
 
-describe("portfolio site renderer", () => {
-  const content: PortfolioContent = {
-    siteTitle: "Portfolio",
-    headline: 'Analyst <script>alert("x")</script>',
-    about: "About & more",
-    skillGroups: [{ title: "Data", skills: ["SQL <img onerror=1>"] }],
-    projectCards: [
-      {
-        repoName: "demo",
-        title: "Demo",
-        blurb: "b",
-        skillLabels: ["SQL"],
-        repoUrl: "https://github.com/student/demo",
-      },
-    ],
-    courseHighlights: [{ course: "ISA 245", why: "SQL" }],
-  };
-  const student = {
-    name: "Kaitlin",
-    links: [
-      { label: "LinkedIn", url: "https://linkedin.com/in/k" },
-      // A hostile link must render as nothing, not as an executable href.
-      { label: "Evil", url: "javascript:alert(1)" },
-    ],
-  };
-
-  it("escapes every interpolated string, so employer text cannot inject markup", () => {
-    const html = renderPortfolioHtml(content, student);
-    expect(html).not.toContain("<script>alert");
-    expect(html).toContain("&lt;script&gt;");
-    expect(html).not.toContain("<img onerror");
-    expect(html).not.toContain("javascript:");
-    expect(html).toContain("About &amp; more");
+describe("push engine binary files", () => {
+  it("counts decoded bytes for base64 files", () => {
+    // "aGVsbG8=" is "hello": 5 bytes, not 8.
+    expect(pushFileBytes({ path: "a.bin", contents: "aGVsbG8=", encoding: "base64" })).toBe(5);
+    expect(pushFileBytes({ path: "a.txt", contents: "héllo" })).toBe(6);
   });
 
-  it("is deterministic: same content, same bytes", () => {
-    expect(renderPortfolioHtml(content, student)).toBe(
-      renderPortfolioHtml(content, student),
-    );
-  });
-
-  it("escapeHtml covers the five HTML metacharacters", () => {
-    expect(escapeHtml(`&<>"'`)).toBe("&amp;&lt;&gt;&quot;&#39;");
+  it("uploads base64 files as blobs and references their sha in the tree", async () => {
+    const calls: { method: string; path: string; body: unknown }[] = [];
+    const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
+      const path = new URL(url).pathname;
+      const method = init?.method ?? "GET";
+      const body = init?.body ? JSON.parse(String(init.body)) : undefined;
+      calls.push({ method, path, body });
+      const json = (status: number, data: unknown) =>
+        new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json" } });
+      if (method === "GET" && path === "/repos/me/site") return json(404, {});
+      if (method === "POST" && path === "/user/repos") return json(201, { default_branch: "main" });
+      if (path.includes("/git/ref/heads/")) return json(200, { object: { sha: "p" } });
+      if (path.includes("/git/commits/p")) return json(200, { tree: { sha: "b" } });
+      if (path.endsWith("/git/blobs")) return json(201, { sha: "blob-sha" });
+      if (path.endsWith("/git/trees")) return json(201, { sha: "t" });
+      if (path.endsWith("/git/commits")) return json(201, { sha: "c" });
+      if (path.includes("/git/refs/heads/")) return json(200, {});
+      return json(500, { path });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    try {
+      const result = await pushToRepo(
+        { v: 1, token: "t", login: "me", connectedAt: "" },
+        "site",
+        [
+          { path: "index.html", contents: "<p>hi</p>" },
+          { path: "assets/photo.jpg", contents: "aGVsbG8=", encoding: "base64" },
+        ],
+        { message: "m", expectedRepoUrl: null },
+      );
+      expect(result.ok).toBe(true);
+      const blob = calls.find((c) => c.path.endsWith("/git/blobs"));
+      expect(blob?.body).toEqual({ content: "aGVsbG8=", encoding: "base64" });
+      const tree = calls.find((c) => c.path.endsWith("/git/trees"))?.body as {
+        tree: { path: string; sha?: string; content?: string }[];
+      };
+      expect(tree.tree).toEqual([
+        { path: "index.html", mode: "100644", type: "blob", content: "<p>hi</p>" },
+        { path: "assets/photo.jpg", mode: "100644", type: "blob", sha: "blob-sha" },
+      ]);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });

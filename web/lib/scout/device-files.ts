@@ -41,7 +41,7 @@ function openDb(): Promise<IDBDatabase | null> {
   });
 }
 
-async function put(id: string, value: unknown): Promise<boolean> {
+export async function putItem(id: string, value: unknown): Promise<boolean> {
   const db = await openDb();
   if (!db) return false;
   return new Promise((resolve) => {
@@ -63,7 +63,7 @@ async function put(id: string, value: unknown): Promise<boolean> {
   });
 }
 
-async function get<T>(id: string): Promise<T | null> {
+export async function getItem<T>(id: string): Promise<T | null> {
   const db = await openDb();
   if (!db) return null;
   return new Promise((resolve) => {
@@ -91,7 +91,7 @@ async function get<T>(id: string): Promise<T | null> {
   });
 }
 
-async function remove(id: string): Promise<void> {
+export async function removeItem(id: string): Promise<void> {
   const db = await openDb();
   if (!db) return;
   await new Promise<void>((resolve) => {
@@ -116,7 +116,7 @@ async function remove(id: string): Promise<void> {
 // ------------------------------------------------------------------ resume
 
 export async function putResume(name: string, dataUrl: string): Promise<boolean> {
-  return put(RESUME_KEY, {
+  return putItem(RESUME_KEY, {
     name,
     dataUrl,
     addedAt: new Date().toISOString(),
@@ -124,11 +124,11 @@ export async function putResume(name: string, dataUrl: string): Promise<boolean>
 }
 
 export async function getResume(): Promise<DeviceResume | null> {
-  return get<DeviceResume>(RESUME_KEY);
+  return getItem<DeviceResume>(RESUME_KEY);
 }
 
 export async function deleteResume(): Promise<void> {
-  return remove(RESUME_KEY);
+  return removeItem(RESUME_KEY);
 }
 
 /** Rehydrates the stored resume into a real File for a form upload. */
@@ -146,30 +146,13 @@ export async function resumeAsFile(): Promise<File | null> {
 // --------------------------------------------------------------- scaffolds
 
 export async function putScaffold(projectId: string, scaffold: unknown): Promise<boolean> {
-  return put(`scaffold:${projectId}`, scaffold);
+  return putItem(`scaffold:${projectId}`, scaffold);
 }
 
 export async function getScaffold<T>(projectId: string): Promise<T | null> {
-  return get<T>(`scaffold:${projectId}`);
+  return getItem<T>(`scaffold:${projectId}`);
 }
 
 export async function deleteScaffold(projectId: string): Promise<void> {
-  return remove(`scaffold:${projectId}`);
-}
-
-// --------------------------------------------------------------- portfolio
-
-/** One portfolio per device (v6.3.0): retailoring overwrites it, matching
- * the one-repo publish model. Holds the rendered html plus the content the
- * model produced, so the site can be republished without regenerating. */
-export async function putPortfolio(value: unknown): Promise<boolean> {
-  return put("portfolio", value);
-}
-
-export async function getPortfolio<T>(): Promise<T | null> {
-  return get<T>("portfolio");
-}
-
-export async function deletePortfolio(): Promise<void> {
-  return remove("portfolio");
+  return removeItem(`scaffold:${projectId}`);
 }

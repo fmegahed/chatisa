@@ -4,6 +4,63 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.4.0 - August 21, 2026
+
+**Portfolio Builder: publish a portfolio site or a project showcase to GitHub
+Pages, with a preview you edit first.** Full notes:
+`docs/releases/v6.4.0.md`.
+
+### Added
+- **Portfolio Builder** at `/portfolio`, listed first under "For your job
+  search", in two modes: a **career portfolio** (resume, classes, one to five
+  projects, optional photo, links) published to a single `portfolio`
+  repository, and a **project showcase** (one course project told as problem,
+  data, approach, findings, deliverables, team) published to its own
+  `<course>-<title>` repository.
+- A review step that shows the generated page in a sandboxed preview beside a
+  field-by-field editor; nothing reaches GitHub until Publish, and
+  republishing updates the same repository.
+- Browser-only storage: site records in localStorage, drafts and files in
+  IndexedDB. The server reads uploads transiently and keeps nothing; the only
+  server records are the existing content-free usage events.
+- Publishing safeguards: data files start unpublished with a reminder that
+  course datasets are often licensed or instructor-provided; the photo is
+  resized in the browser to a 512 px JPEG, which strips EXIF; the resume PDF
+  is published only behind an opt-in checkbox that warns the phone number and
+  address on it become public; and the push limits (60 files, 400 KB per
+  file, 2 MB total) are metered and enforced before generation, not at push.
+- New routes `POST /api/portfolio/generate` (both modes; the model emits
+  content JSON only, and the server re-validates slugs, figures, deliverables
+  and skills against the material that was actually submitted) and
+  `POST /api/portfolio/event` (a content-free publish count).
+- JobApp Drafter: an opt-in **"Include my published work"** toggle, off by
+  default, that adds portfolio and showcase links and summaries to the
+  candidate material.
+
+### Changed
+- The browser push engine (`lib/scout/github.ts`) uploads binary files as
+  base64 blobs, so photos, PDFs, figures, notebooks and Office documents
+  survive a push.
+- Job Scout loses the **Portfolio Site** tab and the **Polish a project I
+  already built** pane; both live in the Portfolio Builder now, and link
+  cards point at the mode that replaced them. `/job-scout?tab=portfolio` and
+  `/job-scout/github-connected` redirect, and the connect landing page is
+  module-neutral at `/portfolio/github-connected`.
+- A published site's skills count toward the Job Scout profile exactly as a
+  built project's do. Projects polished under v6.3.0 keep their records and
+  their skills but can no longer be re-pushed.
+
+### Fixed
+- GitHub connect failed in production with "redirect_uri is not associated
+  with this application": the OAuth redirect was built from the internal
+  request origin behind the TLS relay, and is now built from `AUTH_URL`.
+- Zip downloads and the command-line instructions are removed from Job
+  Scout's projects. GitHub is the only destination.
+
+## v6.3.0 - August 20, 2026
+
+Full notes: `docs/releases/v6.3.0.md`.
+
 ## v6.2.1 - July 30, 2026
 
 **Job board quality and resume export fixes**, all found while filming the

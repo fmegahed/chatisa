@@ -11,6 +11,8 @@ import {
 } from "@/components/jobs/DocumentEditor";
 import type { ModelOption } from "@/lib/config/models";
 import type { CoverLetterContent, ResumeContent } from "@/lib/documents/schema";
+import { usePublishedWork } from "@/lib/portfolio/published";
+import { getSkill } from "@/lib/scout/taxonomy";
 
 interface FlaggedClaim {
   text: string;
@@ -64,6 +66,10 @@ export function JobAppAssistant(props: {
     props.initialJob?.postingText ?? "",
   );
   const [resumeFile, setResumeFile] = useState<File | null>(null);
+  // Sites published with the Portfolio Builder, offered but never assumed:
+  // the student decides whether the drafts may cite them.
+  const published = usePublishedWork();
+  const [includePublished, setIncludePublished] = useState(false);
   const [template, setTemplate] = useState<1 | 2 | 3>(1);
 
   const [fullName, setFullName] = useState(props.studentName);
@@ -116,6 +122,12 @@ export function JobAppAssistant(props: {
         form.append("postingSource", "job_scout");
       }
       form.append("resume", resumeFile);
+      if (includePublished && published.length > 0) {
+        form.append("publishedWork", JSON.stringify(published.map((w) => ({
+          title: w.title, summary: w.summary, url: w.pagesUrl ?? w.repoUrl,
+          skills: w.skillIds.map((id) => getSkill(id)?.label ?? id),
+        }))));
+      }
 
       const created = await call("/api/applications", {
         method: "POST",
@@ -328,6 +340,20 @@ export function JobAppAssistant(props: {
               onUse={setResumeFile}
             />
             <ResumePicker file={resumeFile} onChoose={setResumeFile} />
+            {published.length > 0 ? (
+              <label className="mt-3 flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  checked={includePublished}
+                  onChange={(e) => setIncludePublished(e.target.checked)}
+                />
+                <span>
+                  Include my published work ({published.length}). Adds your
+                  portfolio and showcase links so the resume and cover letter
+                  can point to real, visible deliverables.
+                </span>
+              </label>
+            ) : null}
 
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>

@@ -6,6 +6,7 @@ import {
   loadProjects,
   loadSaved,
   projectExtras,
+  publishedExtras,
   removeProject,
   saveProfile,
   setProjectRepoUrl,
@@ -141,5 +142,17 @@ describe("popular course subsets", () => {
         expect(getCourse(code)?.code, code).toBe(code);
       }
     }
+  });
+});
+
+describe("publishedExtras", () => {
+  it("turns published work skills into applied extras with evidence", () => {
+    const extras = publishedExtras([
+      { id: "a", kind: "showcase", title: "Churn", summary: "s", skillIds: ["r", "sql"], repoUrl: "https://github.com/x/y", pagesUrl: null, publishedAt: "p" },
+    ]);
+    expect(extras).toEqual([
+      { skillId: "r", level: "applied", source: "manual", evidence: "published Churn" },
+      { skillId: "sql", level: "applied", source: "manual", evidence: "published Churn" },
+    ]);
   });
 });

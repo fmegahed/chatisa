@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import type { ModelOption } from "@/lib/config/models";
 import { ModelChooser } from "@/components/ModelChooser";
-import { COURSES, POPULAR_CODES, type CourseDef } from "@/lib/scout/courses";
+import { type CourseDef } from "@/lib/scout/courses";
+import { buildTiers } from "@/lib/scout/course-tiers";
 import { getSkill } from "@/lib/scout/taxonomy";
 import type { CourseSkillLevel } from "@/lib/scout/course-skills";
 import type {
@@ -41,52 +43,6 @@ interface Suggestion {
   level: CourseSkillLevel;
   evidence: string;
   source: "resume" | "freeform";
-}
-
-interface Tier {
-  name: string;
-  popular: CourseDef[];
-  more: CourseDef[];
-  collapsedByDefault?: boolean;
-}
-
-function tierOf(code: string): number {
-  return Number(code.replace(/\D/g, "").slice(0, 1));
-}
-
-function buildTiers(): Tier[] {
-  const byCode = new Map(COURSES.map((c) => [c.code, c]));
-  const pick = (codes: string[]) =>
-    codes.flatMap((c) => (byCode.has(c) ? [byCode.get(c)!] : []));
-  const popularSet = new Set(Object.values(POPULAR_CODES).flat());
-  const rest = (min: number, max: number) =>
-    COURSES.filter((c) => {
-      const n = tierOf(c.code);
-      return n >= min && n <= max && !popularSet.has(c.code);
-    });
-  return [
-    {
-      name: "Foundations (100 and 200 level)",
-      popular: pick(POPULAR_CODES.foundations),
-      more: rest(1, 2),
-    },
-    {
-      name: "Core (300 level)",
-      popular: pick(POPULAR_CODES.core300),
-      more: rest(3, 3),
-    },
-    {
-      name: "Advanced (400 level)",
-      popular: pick(POPULAR_CODES.advanced400),
-      more: rest(4, 5),
-    },
-    {
-      name: "Graduate (600 level)",
-      popular: [],
-      more: rest(6, 6),
-      collapsedByDefault: true,
-    },
-  ];
 }
 
 /** Device-resume mirror (async IndexedDB behind a tiny external store). */
@@ -248,7 +204,16 @@ export function ProfileTab(props: {
         </p>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <p className="mt-4 rounded-card border border-medium-tan bg-light-tan p-4">
+        Want a site that shows this off?{" "}
+        <Link href="/portfolio?mode=career" className="font-bold underline">
+          Build your portfolio
+        </Link>{" "}
+        with the Portfolio Builder. Published sites count toward your skills
+        here.
+      </p>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* ------------------------------------------------ courses column */}
         <section aria-labelledby="profile-courses">
           <h2 id="profile-courses" className="text-2xl">

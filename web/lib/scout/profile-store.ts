@@ -6,6 +6,7 @@
  * when they hand a job to JobApp Drafter.
  */
 
+import type { PublishedWork } from "@/lib/portfolio/published";
 import type { CourseSkillLevel } from "./course-skills";
 
 const PROFILE_KEY = "js-profile-v1";
@@ -200,50 +201,6 @@ export function removeProject(id: string): ProjectsState {
   return writeProjects(state);
 }
 
-// -------------------------------------------------------------- portfolio
-
-const PORTFOLIO_KEY = "js-portfolio-v1";
-
-/**
- * The published portfolio site's record (v6.3.0). Deliberately NOT a
- * ProjectRecord: the site showcases projects, it is not itself evidence of
- * a skill, so it must never feed projectExtras.
- */
-export interface PortfolioRecord {
-  v: 1;
-  repoName: string;
-  repoUrl: string | null;
-  pagesUrl: string | null;
-  generatedAt: string;
-  publishedAt: string | null;
-  /** The saved-job ids this generation was tailored to. */
-  jobIds: string[];
-}
-
-export function loadPortfolio(): PortfolioRecord | null {
-  try {
-    const raw = localStorage.getItem(PORTFOLIO_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as PortfolioRecord;
-    return parsed.v === 1 ? parsed : null;
-  } catch {
-    return null;
-  }
-}
-
-export function savePortfolio(record: PortfolioRecord): PortfolioRecord {
-  localStorage.setItem(PORTFOLIO_KEY, JSON.stringify(record));
-  return record;
-}
-
-export function clearPortfolio(): void {
-  try {
-    localStorage.removeItem(PORTFOLIO_KEY);
-  } catch {
-    // Best-effort, like the other stores.
-  }
-}
-
 /**
  * The profile contribution earned by REAL projects: a polished project
  * counts immediately (it was organized from work the student already did),
@@ -261,4 +218,17 @@ export function projectExtras(state: ProjectsState): ProfileExtra[] {
         evidence: `built ${p.repoName}`,
       })),
     );
+}
+
+/** Skills demonstrated by sites published with the Portfolio Builder count
+ * like built projects: the repo exists, so the work is real. */
+export function publishedExtras(works: PublishedWork[]): ProfileExtra[] {
+  return works.flatMap((w) =>
+    w.skillIds.map((skillId) => ({
+      skillId,
+      level: "applied" as const,
+      source: "manual" as const,
+      evidence: `published ${w.title}`,
+    })),
+  );
 }

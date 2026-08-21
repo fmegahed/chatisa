@@ -63,6 +63,65 @@ test.describe("JobApp Assistant", () => {
     await expect(page.getByRole("link", { name: "Download as Word" })).toBeVisible();
   });
 
+  test("published work rides along only when the student opts in", async ({
+    page,
+  }) => {
+    // The Portfolio Builder keeps published sites in this browser only, so
+    // seeding localStorage is exactly what a real publish leaves behind.
+    await page.goto("/jobapp-drafter");
+    await page.evaluate(() => {
+      localStorage.setItem(
+        "pb-published-v1",
+        JSON.stringify([
+          {
+            id: "s1",
+            kind: "showcase",
+            title: "Churn Showcase",
+            summary: "A churn model with a write-up.",
+            skillIds: ["sql"],
+            repoUrl: "https://github.com/mockstudent/churn",
+            pagesUrl: "https://mockstudent.github.io/churn/",
+            publishedAt: "2026-08-20T00:00:00.000Z",
+          },
+        ]),
+      );
+    });
+
+    let body = "";
+    await page.route("**/api/applications", async (route) => {
+      if (route.request().method() === "POST") {
+        body = route.request().postData() ?? "";
+      }
+      await route.continue();
+    });
+
+    await page.goto("/jobapp-drafter");
+    const toggle = page.getByRole("checkbox", {
+      name: /Include my published work \(1\)/,
+    });
+    // Default off: nothing leaves the browser unless the student says so.
+    await expect(toggle).not.toBeChecked();
+    await toggle.check();
+
+    await page.getByLabel("Company").fill("Northwind Analytics");
+    await page.getByLabel("Position title").fill("Analytics Intern");
+    await page
+      .getByLabel("Or paste the job description")
+      .fill("We need an analyst comfortable with SQL, reporting and clean data.");
+    await page.locator("#resume-file").setInputFiles({
+      name: "resume.pdf",
+      mimeType: "application/pdf",
+      buffer: resumePdf(),
+    });
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(
+      page.getByRole("heading", { name: /Analytics Intern at Northwind/ }),
+    ).toBeVisible({ timeout: 60_000 });
+
+    expect(body).toContain("publishedWork");
+    expect(body).toContain("https://mockstudent.github.io/churn/");
+  });
+
   test("warns about a line it cannot trace, and keeps it", async ({ page }) => {
     // The mock generates "Directed a team of forty consultants across three
     // continents", which is nowhere in the resume. It must be flagged loudly

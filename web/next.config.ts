@@ -38,15 +38,26 @@ const nextConfig: NextConfig = {
       ["/jobapp-assistant", "/jobapp-drafter"],
       ["/general-chat", "/ask-anything"],
       ["/ai-comparisons", "/ai-comparison"],
+      ["/job-scout/github-connected", "/portfolio/github-connected"],
     ];
-    return renames.flatMap(([from, to]) => [
-      { source: from, destination: to, permanent: false },
+    return [
+      ...renames.flatMap(([from, to]) => [
+        { source: from, destination: to, permanent: false },
+        {
+          source: `${from}/:path*`,
+          destination: `${to}/:path*`,
+          permanent: false,
+        },
+      ]),
+      // The Portfolio Builder took over Job Scout's portfolio tab (2026-08-20),
+      // so a saved deep link to that tab lands on the new module.
       {
-        source: `${from}/:path*`,
-        destination: `${to}/:path*`,
+        source: "/job-scout",
+        has: [{ type: "query", key: "tab", value: "portfolio" }],
+        destination: "/portfolio",
         permanent: false,
       },
-    ]);
+    ];
   },
 };
 

@@ -71,6 +71,9 @@ export default defineConfig({
       // is covered by its own unit tests.
       CHATISA_UPLOAD_LIMIT_PER_MINUTE: "200",
       CHATISA_SCOUT_PROJECT_LIMIT_PER_MINUTE: "200",
+      // Portfolio Builder generates a site per wizard run, and both browser
+      // projects run the wizard specs against one shared account.
+      CHATISA_PORTFOLIO_LIMIT_PER_MINUTE: "200",
       CHATISA_EXAM_LIMIT_PER_MINUTE: "200",
       // Every chat module runs in parallel through one shared account, and the
       // Ask Anything loop sends a second request per tool turn; a production

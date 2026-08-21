@@ -21,7 +21,7 @@ function errorCopy(error: PushError): string {
         ? `GitHub is rate limiting your account. Try again after ${new Date(error.resetAt).toLocaleTimeString()}.`
         : "GitHub is rate limiting your account. Try again in a few minutes.";
     case "too-large":
-      return "This project is too large to push from the browser. Download the zip and push it yourself.";
+      return "This project is too large to push from the browser. Remove some large files and try again.";
     case "network":
       return "Could not reach GitHub. Check your connection and try again.";
     case "name-taken":

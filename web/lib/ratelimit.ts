@@ -106,6 +106,18 @@ export const SCOUT_PROJECT_RATE_LIMIT = {
 };
 
 /**
+ * Portfolio Builder generation (career sites and project showcases share one
+ * bucket: both are one "write my page" model call over uploaded material).
+ * Same shape and same default as the Job Scout bucket above, and overridable
+ * for the same reason: the e2e suite's parallel projects generate several
+ * sites a minute from one shared account.
+ */
+export const PORTFOLIO_RATE_LIMIT = {
+  limit: Number(process.env.CHATISA_PORTFOLIO_LIMIT_PER_MINUTE ?? 4),
+  windowMs: 60_000,
+};
+
+/**
  * Minting a speech token is cheap, but the browser re-mints whenever it
  * reconnects, so this is set to tolerate a flaky network without becoming a
  * free way to farm credentials.

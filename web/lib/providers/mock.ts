@@ -527,87 +527,109 @@ function mockObjectFor(options: LanguageModelV4CallOptions): string {
     });
   }
 
-  // Job Scout: polishing a student's real project (organize + suggest).
-  // Maps the actual uploaded filenames from the prompt so the client-side
-  // zip assembly is genuinely exercised.
-  if (keys.includes("layout") && keys.includes("gitignore")) {
+  // Portfolio Builder: career site content (v2, 2026-08-20). The project
+  // slugs are lifted from the prompt so the route's slug filter is exercised
+  // for real, and one fabricated project is added so the filter has
+  // something to drop.
+  if (keys.includes("skillGroups") && keys.includes("experience")) {
     const prompt = promptText(options);
-    const names = [...prompt.matchAll(/^FILE: ([^\n(]+?)(?: \(binary.*)?$/gm)].map(
-      (m) => m[1].trim(),
-    );
-    const dataFiles = names.filter((n) => /\.(csv|xlsx|db)$/i.test(n));
-    const kept = names.filter((n) => !dataFiles.includes(n));
+    const slugs = [...prompt.matchAll(/^Project slug: (\S+)$/gm)].map((m) => m[1]);
+    const codes = [
+      ...(/Courses taken:\n([\s\S]*?)(?:\n\n|$)/.exec(prompt)?.[1] ?? "").matchAll(
+        /^([^:\n]+):/gm,
+      ),
+    ].map((m) => m[1].trim());
     return JSON.stringify({
-      repoName: "course-project-polished",
-      summary: "A coursework project organized for a public portfolio.",
-      readme:
-        "# Course Project\n\nWhat this shows, how it is organized, and how to run it.\n\n## Suggested improvements\n- Add unit tests for the loading step.",
-      gitignore: "data/raw/\n.env\n",
-      layout: kept.map((n) => ({
-        from: n,
-        to: /\.ipynb$/i.test(n)
-          ? `notebooks/${n}`
-          : /\.(md|pdf|docx)$/i.test(n)
-            ? `docs/${n}`
-            : `src/${n}`,
-      })),
-      exclude: dataFiles.map((n) => ({
-        name: n,
-        reason: "Raw course data should not be published; point to the source instead.",
-      })),
-      extraFiles: [
-        { path: "data/README.md", contents: "Where to obtain the data." },
-      ],
-      suggestions: ["Add unit tests for the loading step."],
-      resumeBullets: [
-        "Organized and documented an end-to-end analytics project for [N] records",
-      ],
-      skillIds: ["sql", "data_visualization"],
-    });
-  }
-
-  // Job Scout: tailored portfolio site content (v6.3.0). Must precede the
-  // scaffold branch: both schemas exist, but only this one has skillGroups.
-  // The focus notes echo the fenced job titles from the prompt so the
-  // "optimized for your picked jobs" claim is genuinely exercised.
-  if (keys.includes("skillGroups")) {
-    const prompt = promptText(options);
-    const jobTitles = [...prompt.matchAll(/<job nonce="[^"]+">\n([^\n]+?) at ([^\n]+)/g)].map(
-      (m) => ({ jobTitle: m[1].trim(), company: m[2].trim() }),
-    );
-    const repoUrls = [...prompt.matchAll(/repoUrl: (\S+)/g)].map((m) => m[1]);
-    return JSON.stringify({
+      v: 2,
       siteTitle: "Analytics Portfolio",
       headline: "Analytics student who builds with SQL and clear visuals.",
       about:
         "I am an information systems and analytics student at Miami University. I like turning messy data into decisions people can act on.",
       skillGroups: [
-        { title: "Data", skills: ["SQL", "Data visualization"] },
-        { title: "Tools", skills: ["Python", "Git"] },
+        { title: "Tools", skills: ["SQL", "R", "Python"] },
+        { title: "Methods", skills: ["Regression", "Data visualization"] },
       ],
-      projectCards: repoUrls.slice(0, 3).map((url, i) => ({
-        repoName: `project-${i + 1}`,
-        title: `Project ${i + 1}`,
-        blurb: "A portfolio project demonstrating analytics skills end to end.",
-        skillLabels: ["SQL"],
-        repoUrl: url,
+      projects: [
+        ...slugs.slice(0, 4).map((slug, i) => ({
+          slug,
+          title: `Project ${i + 1}`,
+          blurb:
+            "An end to end analysis built from the submitted files, from loading the data to the write-up.",
+          skills: ["SQL"],
+          externalUrl: null,
+        })),
+        {
+          slug: "fabricated-project",
+          title: "Fabricated Project",
+          blurb: "A project the student never submitted; the route must drop it.",
+          skills: ["SQL"],
+          externalUrl: null,
+        },
+      ],
+      courses: (codes.length > 0 ? codes.slice(0, 8) : ["ISA 401"]).map((code) => ({
+        code,
+        why: "It built the database and analysis skills these projects rely on.",
       })),
-      courseHighlights: [
-        { course: "ISA 245", why: "Database design and SQL fluency." },
+      experience: [
+        {
+          org: "Farmer School of Business",
+          role: "Analytics Assistant",
+          dates: "2025",
+          bullets: ["Prepared course datasets for [N] student teams"],
+        },
       ],
-      focusNotes:
-        jobTitles.length > 0
-          ? jobTitles.map((j) => ({
-              ...j,
-              how: "The SQL project speaks directly to this role's data requirements.",
-            }))
-          : [
-              {
-                jobTitle: "Data Analyst",
-                company: "Acme",
-                how: "The SQL project speaks directly to this role's data requirements.",
-              },
-            ],
+      education: [
+        { school: "Miami University", degree: "BS Business Analytics", dates: "2026" },
+      ],
+    });
+  }
+
+  // Portfolio Builder: project showcase content (v1, 2026-08-20). Echoes the
+  // published paths out of the prompt, then deliberately adds one unpublished
+  // figure and one unpublished deliverable so the route's allow-list filters
+  // are genuinely exercised.
+  if (keys.includes("findings") && keys.includes("deliverables")) {
+    const prompt = promptText(options);
+    const block = (label: string): string[] =>
+      (new RegExp(`${label}[^\\n]*:\\n([\\s\\S]*?)(?:\\n\\n|$)`).exec(prompt)?.[1] ?? "")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0 && line !== "(none)");
+    const paths = block("Published paths");
+    const figures = block("Published figures");
+    return JSON.stringify({
+      v: 1,
+      title: "Course Project Showcase",
+      tagline: "What we asked, what the data said, and what we would do next.",
+      problem:
+        "The team needed to know which customers were most likely to leave before the next renewal window.",
+      data: "The uploaded files carry the modelling data and the script that fits the model.",
+      approach:
+        "We loaded the data, fit a model in the submitted script, and read the results against a simple baseline.",
+      findings: [
+        {
+          heading: "The model separates the two groups",
+          body: "The fitted model beats the baseline by [X%] on the held-out rows.",
+          figure: figures[0] ?? null,
+        },
+        {
+          heading: "A finding pointing at a figure nobody uploaded",
+          body: "This references a figure outside the published set, so the route must null it.",
+          figure: "figures/not-uploaded.png",
+        },
+      ],
+      deliverables: [
+        ...paths.map((path) => ({
+          label: path.split("/").pop() ?? path,
+          path,
+        })),
+        { label: "Ghost", path: "report/ghost.pdf" },
+      ],
+      skills: ["r", "sql", "not-a-skill"],
+      nextSteps:
+        "With more time we would test a second model family and check how the results hold up over a longer window.",
+      readme:
+        "# Course Project Showcase\n\nWhat this project shows and how it is organized.\n\n## Layout\n- `code/`: the analysis script, shipped verbatim.\n- `figures/`: the figures published with the write-up.\n\n## How to run\nOpen the script in RStudio and run it top to bottom.\n\n## Suggested improvements\n- Add a held-out evaluation split.",
     });
   }
 

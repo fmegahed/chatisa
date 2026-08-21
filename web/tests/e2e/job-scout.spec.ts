@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { makeTextPdf } from "../helpers/make-pdf";
+import { fakeGithubApi } from "./support/fake-github";
 
 /**
  * Job Scout end to end, against the mock-mode fixture feed (six postings
@@ -46,51 +47,6 @@ async function setUpProfile(page: Page) {
   ).toBeVisible();
 }
 
-/**
- * An in-test GitHub API: the push engine runs in the browser against
- * api.github.com, so the e2e suite intercepts that origin and answers like
- * GitHub would. No test traffic ever reaches the real GitHub.
- */
-async function fakeGithubApi(page: Page) {
-  const repos = new Set<string>();
-  await page.route("https://api.github.com/**", async (route) => {
-    const req = route.request();
-    const path = new URL(req.url()).pathname;
-    const method = req.method();
-    const reply = (status: number, body: unknown) =>
-      route.fulfill({
-        status,
-        contentType: "application/json",
-        body: JSON.stringify(body),
-      });
-
-    if (method === "POST" && path === "/user/repos") {
-      const name = (JSON.parse(req.postData() ?? "{}") as { name: string }).name;
-      repos.add(name);
-      return reply(201, { default_branch: "main" });
-    }
-    const repoMatch = /^\/repos\/mockstudent\/([^/]+)(\/.*)?$/.exec(path);
-    if (repoMatch) {
-      const [, name, rest] = repoMatch;
-      if (!rest) {
-        return repos.has(name)
-          ? reply(200, {
-              html_url: `https://github.com/mockstudent/${name}`,
-              default_branch: "main",
-            })
-          : reply(404, {});
-      }
-      if (rest.startsWith("/git/ref/")) return reply(200, { object: { sha: "p" } });
-      if (rest.startsWith("/git/commits/")) return reply(200, { tree: { sha: "b" } });
-      if (rest === "/git/trees") return reply(201, { sha: "t" });
-      if (rest === "/git/commits") return reply(201, { sha: "c" });
-      if (rest.startsWith("/git/refs/")) return reply(200, {});
-      if (rest === "/pages") return reply(201, {});
-    }
-    return reply(500, { unexpected: path });
-  });
-}
-
 test.describe("Job Scout", () => {
   test.beforeEach(async ({ page }) => {
     // Profiles live in localStorage and the resume in IndexedDB; start clean.
@@ -105,6 +61,12 @@ test.describe("Job Scout", () => {
     page,
   }) => {
     await page.goto("/job-scout");
+    // The portfolio work moved out of Job Scout (2026-08-20): the profile
+    // points at the builder instead of carrying a Portfolio Site tab.
+    await expect(
+      page.getByRole("link", { name: "Build your portfolio" }),
+    ).toHaveAttribute("href", "/portfolio?mode=career");
+    await expect(page.getByRole("tab", { name: "Portfolio Site" })).toHaveCount(0);
     // Checking a course updates the skills panel without saving anything.
     await page.getByRole("button", { name: /Show 4 more/ }).click();
     await page.getByTitle("Database for Analytics").click();
@@ -168,103 +130,23 @@ test.describe("Job Scout", () => {
     await expect(page.getByText("Nothing saved yet")).toBeVisible();
   });
 
-  test("polishing real coursework files yields a plan and an artifact", async ({
-    page,
-  }) => {
-    await setUpProfile(page);
-    await page.getByRole("tab", { name: "My Projects" }).click();
-    // Polish is the default mode (user decision, 2026-07-29).
-    await page.locator('input[type="file"]').setInputFiles([
-      {
-        name: "forecast.R",
-        mimeType: "text/plain",
-        buffer: Buffer.from("library(fpp3)\n# ARIMA model for weekly sales\n"),
-      },
-      {
-        name: "sales.csv",
-        mimeType: "text/csv",
-        buffer: Buffer.from("week,units\n1,10\n2,12\n"),
-      },
-      {
-        // Space in the name on purpose: the guard hyphenates repo paths
-        // instead of failing the request (v6.1.1).
-        name: "Final Project.ipynb",
-        mimeType: "application/octet-stream",
-        buffer: Buffer.from(
-          JSON.stringify({
-            nbformat: 4,
-            nbformat_minor: 5,
-            metadata: { kernelspec: { language: "python" } },
-            cells: [
-              {
-                cell_type: "code",
-                metadata: {},
-                execution_count: 1,
-                source: "df.groupby('week').sum()",
-                outputs: [],
-              },
-            ],
-          }),
-        ),
-      },
-    ]);
-    await page
-      .getByLabel("One line about the project (optional)")
-      .fill("ISA 444 forecasting project");
-    await page.getByRole("button", { name: "Organize my project" }).click();
-
-    // The name renders twice on success (result pane + the artifact card),
-    // which is the feature working; assert both explicitly.
-    await expect(
-      page.getByRole("heading", { name: "course-project-polished" }).first(),
-    ).toBeVisible({ timeout: 30_000 });
-    await expect(
-      page.getByRole("heading", { name: "course-project-polished" }),
-    ).toHaveCount(2);
-    // Their file is placed, the data file is excluded with a reason, and
-    // the code is never rewritten (suggestions only).
-    await expect(page.getByText("forecast.R", { exact: false }).first()).toBeVisible();
-    // The notebook is placed under notebooks/ with the space hyphenated.
-    await expect(
-      page.getByText("notebooks/Final-Project.ipynb", { exact: false }).first(),
-    ).toBeVisible();
-    // Role-scoped: the README preview repeats these phrases as markdown.
-    await expect(
-      page.getByRole("heading", { name: "Left out on purpose" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: "Suggested improvements" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /Download course-project-polished/ }),
-    ).toBeVisible();
-    // It is recorded as an artifact immediately (real work counts now).
-    await expect(
-      page.getByText("Its skills now count in your profile", { exact: false }),
-    ).toBeVisible();
-  });
-
   test("projects become artifacts, and a repo link marks them built", async ({
     page,
   }) => {
     await setUpProfile(page);
     await page.getByRole("tab", { name: "My Projects" }).click();
-    await page.getByRole("radio", { name: "Start something new" }).check();
 
     await page.locator("select").last().selectOption({ label: "SQL" });
     await page.getByRole("button", { name: "Generate project scaffold" }).click();
     await expect(
       page.getByRole("heading", { name: "retail-demand-analytics" }).first(),
     ).toBeVisible({ timeout: 30_000 });
-    // The CLI instructions moved behind a disclosure in v6.3.0; they must
-    // still be there for students who prefer that path.
-    await page.getByText("Prefer the command line?").click();
-    await expect(page.getByText("gh repo create")).toBeVisible();
+    // Zip downloads and the CLI disclosure were removed (2026-08-20):
+    // GitHub is the only destination, so neither may reappear.
+    await expect(page.getByText("Prefer the command line?")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /zip/i })).toHaveCount(0);
 
     // The artifact card persists in "Your projects" with its actions.
-    await expect(
-      page.getByRole("button", { name: "Download the zip again" }),
-    ).toBeVisible();
     await page.getByRole("button", { name: "I pushed it to GitHub" }).click();
     await page
       .getByLabel("GitHub repository URL")
@@ -281,7 +163,6 @@ test.describe("Job Scout", () => {
     await setUpProfile(page);
     await fakeGithubApi(page);
     await page.getByRole("tab", { name: "My Projects" }).click();
-    await page.getByRole("radio", { name: "Start something new" }).check();
     await page.locator("select").last().selectOption({ label: "SQL" });
     await page.getByRole("button", { name: "Generate project scaffold" }).click();
     await expect(
@@ -301,8 +182,8 @@ test.describe("Job Scout", () => {
     await expect(
       page.getByText("Built. Its skills count in your profile."),
     ).toBeVisible({ timeout: 15_000 });
-    // The CLI path survives for students who prefer it.
-    await expect(page.getByText("Prefer the command line?")).toBeVisible();
+    // The CLI disclosure went with the zip download (2026-08-20).
+    await expect(page.getByText("Prefer the command line?")).toHaveCount(0);
   });
 
   test("an unverifiable OAuth callback is rejected with plain language", async ({
@@ -310,51 +191,13 @@ test.describe("Job Scout", () => {
   }) => {
     // No state cookie exists, so this forged callback must not connect.
     await page.goto("/api/scout/github/callback?code=x&state=forged");
-    await expect(page).toHaveURL(/\/job-scout\/github-connected/);
+    await expect(page).toHaveURL(/\/portfolio\/github-connected/);
     // Role-scoped and filtered: the test-mode banner is also an alert.
     await expect(
       page.getByRole("alert").filter({ hasText: "could not be verified" }),
     ).toBeVisible();
     const connected = await page.evaluate(() => localStorage.getItem("js-github-v1"));
     expect(connected).toBeNull();
-  });
-
-  test("a tailored portfolio site generates from saved jobs and publishes", async ({
-    page,
-  }) => {
-    await setUpProfile(page);
-    await fakeGithubApi(page);
-    await page.getByRole("button", { name: "Save", exact: true }).first().click();
-    await page.getByRole("tab", { name: "Portfolio Site" }).click();
-    await expect(
-      page.getByRole("heading", { name: "Build your portfolio site" }),
-    ).toBeVisible();
-
-    await page.getByRole("checkbox").first().check();
-    await page.getByRole("button", { name: "Generate my site" }).click();
-    await expect(page.getByRole("heading", { name: "Preview" })).toBeVisible({
-      timeout: 30_000,
-    });
-    // The tailoring evidence: private notes name the picked job.
-    await expect(
-      page.getByRole("heading", { name: "How this speaks to the jobs you picked" }),
-    ).toBeVisible();
-
-    const popupPromise = page.waitForEvent("popup");
-    await page.getByRole("button", { name: "Connect GitHub" }).click();
-    await popupPromise;
-    await expect(page.getByText("Connected to GitHub as").first()).toBeVisible({
-      timeout: 15_000,
-    });
-    await page.getByRole("button", { name: "Publish to GitHub Pages" }).click();
-    await expect(
-      page.getByText(/Your site is live at https:\/\/mockstudent\.github\.io\/portfolio/),
-    ).toBeVisible({ timeout: 15_000 });
-
-    const portfolioScan = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa"])
-      .analyze();
-    expect(portfolioScan.violations).toEqual([]);
   });
 
   test("the resume saved in the profile forwards into JobApp Drafter", async ({
@@ -435,7 +278,5 @@ test.describe("Job Scout access control", () => {
     expect(post.status()).toBe(401);
     const refresh = await request.post("/api/scout/refresh");
     expect(refresh.status()).toBe(401);
-    const portfolio = await request.post("/api/scout/portfolio");
-    expect(portfolio.status()).toBe(401);
   });
 });

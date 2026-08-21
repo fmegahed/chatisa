@@ -13,4 +13,4 @@
  * Between bundle runs this holds the date of the last bundle, which is the
  * honest answer to "when was the running app last updated".
  */
-export const BUILD_DATE = "August 20, 2026";
+export const BUILD_DATE = "August 21, 2026";

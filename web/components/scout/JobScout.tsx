@@ -8,13 +8,13 @@ import {
   useScoutSaved,
 } from "@/lib/scout/use-scout-store";
 import { profileStrengths } from "@/lib/scout/matching";
-import { projectExtras } from "@/lib/scout/profile-store";
+import { projectExtras, publishedExtras } from "@/lib/scout/profile-store";
+import { usePublishedWork } from "@/lib/portfolio/published";
 import type { FeedIndex } from "@/lib/scout/feed-types";
 import { ProfileTab } from "./ProfileTab";
 import { ProjectsTab } from "./ProjectsTab";
 import { JobFeed } from "./JobFeed";
 import { SavedTab } from "./SavedTab";
-import { PortfolioTab } from "./PortfolioTab";
 
 /**
  * Job Scout's client root: four tabs (user flow decision, 2026-07-29,
@@ -29,8 +29,6 @@ const TABS = [
   { id: "projects", label: "My Projects" },
   { id: "jobs", label: "This Week's Jobs" },
   { id: "saved", label: "Saved Jobs" },
-  // After Saved on purpose: the portfolio consumes saved jobs (v6.3.0).
-  { id: "portfolio", label: "Portfolio Site" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -46,12 +44,13 @@ export function JobScout(props: {
   defaultModelId: string;
   /** GitHub OAuth is configured server-side, so push/publish is offered. */
   githubEnabled: boolean;
-  /** The signed-in student's display name, seeding the portfolio site. */
-  studentName: string;
 }) {
   const [profile, setProfile] = useScoutProfile();
   const { saved, toggle, hide } = useScoutSaved();
   const projectsStore = useScoutProjects();
+  // Sites published with the Portfolio Builder are real, built work, so
+  // their skills feed matching exactly like a pushed project does.
+  const published = usePublishedWork();
   // null until the student navigates; the effective tab falls back to
   // profile-aware defaults below. Safe to read the URL lazily: the tab UI
   // only renders client-side (profile === "unknown" during SSR).
@@ -86,10 +85,14 @@ export function JobScout(props: {
     if (profile === "unknown" || profile === false) return new Map<string, number>();
     return profileStrengths(
       profile.courses,
-      [...profile.extras, ...projectExtras(projectsStore.projects)],
+      [
+        ...profile.extras,
+        ...projectExtras(projectsStore.projects),
+        ...publishedExtras(published),
+      ],
       profile.overrides ?? [],
     );
-  }, [profile, projectsStore.projects]);
+  }, [profile, projectsStore.projects, published]);
 
   if (profile === "unknown") {
     // Only the server render sees this; hydration swaps in the stored value.
@@ -222,23 +225,6 @@ export function JobScout(props: {
             onToggleSaved={toggle}
             onGoJobs={() => switchTab("jobs")}
           />
-        ) : null}
-
-        {activeTab === "portfolio" ? (
-          profile === false ? (
-            <EmptyState onGoProfile={() => switchTab("profile")} />
-          ) : (
-            <PortfolioTab
-              models={props.models}
-              defaultModelId={props.defaultModelId}
-              profile={profile}
-              saved={saved}
-              projects={projectsStore.projects}
-              githubEnabled={props.githubEnabled}
-              studentName={props.studentName}
-              onGoJobs={() => switchTab("jobs")}
-            />
-          )
         ) : null}
       </div>
     </div>

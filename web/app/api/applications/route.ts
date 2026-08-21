@@ -9,6 +9,10 @@ import {
 } from "@/lib/db";
 import { fetchJobPosting } from "@/lib/jobs/fetch-posting";
 import { readResumePdf } from "@/lib/jobs/read-resume";
+import {
+  parsePublishedWork,
+  publishedWorkBlock,
+} from "@/lib/jobs/published-work";
 import { NoReadableTextError, UploadTooLargeError } from "@/lib/exam/upload";
 import { PdfError } from "@/lib/exam/pdf";
 import { PdfBusyError } from "@/lib/exam/pdf-pool";
@@ -128,6 +132,18 @@ export async function POST(req: Request) {
       logger.error({ err: String(err) }, "resume read failed");
       return errorResponse(500, "That resume could not be read. Try a different PDF.");
     }
+  }
+
+  // Opt-in only, and only ever what the browser sent: published sites live
+  // in the student's browser, so this is the one place they reach a draft.
+  // It rides along with the resume text rather than becoming a new record,
+  // and it goes FIRST: lib/documents/generate.ts fences the resume text at
+  // 20,000 characters, and a long resume would otherwise cut the block away.
+  const published = parsePublishedWork(form.get("publishedWork") as string | null);
+  if (published.length > 0) {
+    const block = publishedWorkBlock(published);
+    resumeText = resumeText ? `${block}\n\n${resumeText}` : block;
+    if (!resumeFilename) resumeFilename = "published-work.txt";
   }
 
   const id = createJobApplication({

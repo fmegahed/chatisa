@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { strToU8, zipSync } from "fflate";
+import Link from "next/link";
 import type { ModelOption } from "@/lib/config/models";
 import { ModelChooser } from "@/components/ModelChooser";
 import { getSkill, SKILLS } from "@/lib/scout/taxonomy";
@@ -16,8 +16,7 @@ import {
   getScaffold,
   putScaffold,
 } from "@/lib/scout/device-files";
-import { notebookToText } from "@/lib/files/notebook-text";
-import { polishFileSet, scaffoldFileSet } from "@/lib/scout/github";
+import { scaffoldFileSet } from "@/lib/scout/github";
 import { GithubConnect } from "@/components/scout/GithubConnect";
 import { PushToGithubButton } from "@/components/scout/PushToGithubButton";
 
@@ -25,8 +24,9 @@ import { PushToGithubButton } from "@/components/scout/PushToGithubButton";
  * My Projects: generate a job-agnostic portfolio scaffold, and keep every
  * generated project as an artifact with a home (user feedback, 2026-07-29:
  * "where does the GitHub from projects go?"). Records live in localStorage,
- * scaffold JSON in IndexedDB, so "Download the zip again" works long after
- * the original visit. Once a repo URL is added, the project's skills count
+ * scaffold JSON in IndexedDB, so a push to GitHub works long after the
+ * original visit (zip downloads were removed 2026-08-20: GitHub is the
+ * only destination). Once a repo URL is added, the project's skills count
  * toward the profile (gated on the repo existing; an unbuilt scaffold
  * never inflates a student).
  */
@@ -40,62 +40,7 @@ interface Scaffold {
   resumeBullets: string[];
 }
 
-/** The organize-only plan for a student's real project (2026-07-29). */
-interface PolishPlan {
-  repoName: string;
-  summary: string;
-  readme: string;
-  gitignore: string;
-  layout: { from: string; to: string }[];
-  exclude: { name: string; reason: string }[];
-  extraFiles: { path: string; contents: string }[];
-  suggestions: string[];
-  resumeBullets: string[];
-  skillIds: string[];
-}
-
-/** What device-files stores for a polished project so re-download works.
- * Text originals (code, notebooks) are stored in full; binary originals
- * (PDFs) are not, and the card says to re-add them. */
-interface StoredPolish {
-  mode: "polished";
-  plan: PolishPlan;
-  textFiles: { path: string; contents: string }[];
-  binaryPaths: string[];
-}
-
-const TEXT_EXTENSIONS =
-  /\.(py|r|ipynb|sql|md|txt|csv|qmd|rmd|js|ts|json|yml|yaml)$/i;
-const MAX_POLISH_FILES = 15;
-/** Text files above this are placed but not read. */
-const MAX_TEXT_BYTES = 400_000;
-/** Notebooks get a larger raw allowance: the bulk is base64 plots that the
- * cell extraction strips before anything is sent (v6.1.1). */
-const MAX_NOTEBOOK_BYTES = 5_000_000;
-
-function readableAsText(f: File): boolean {
-  if (!TEXT_EXTENSIONS.test(f.name)) return false;
-  const cap = /\.ipynb$/i.test(f.name) ? MAX_NOTEBOOK_BYTES : MAX_TEXT_BYTES;
-  return f.size <= cap;
-}
-
 const MAX_SKILLS = 6;
-
-function downloadScaffoldZip(scaffold: Scaffold) {
-  const entries: Record<string, Uint8Array> = {
-    "README.md": strToU8(scaffold.readme),
-  };
-  for (const file of scaffold.files) entries[file.path] = strToU8(file.contents);
-  const blob = new Blob([zipSync(entries) as BlobPart], {
-    type: "application/zip",
-  });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${scaffold.repoName}.zip`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
 
 export function ProjectsTab(props: {
   models: ModelOption[];
@@ -177,56 +122,21 @@ export function ProjectsTab(props: {
   }
 
   const projects = props.store.projects.projects;
-  const [mode, setMode] = useState<"polish" | "scratch">(
-    props.seedSkills.length > 0 ? "scratch" : "polish",
-  );
 
   return (
     <div>
-      <fieldset className="mb-4">
-        <legend className="sr-only">What kind of project help</legend>
-        <div className="flex flex-wrap gap-3">
-          <label className="flex items-center gap-1">
-            <input
-              type="radio"
-              name="project-mode"
-              checked={mode === "polish"}
-              onChange={() => setMode("polish")}
-            />
-            <span className="font-bold">Polish a project I already built</span>
-          </label>
-          <label className="flex items-center gap-1">
-            <input
-              type="radio"
-              name="project-mode"
-              checked={mode === "scratch"}
-              onChange={() => setMode("scratch")}
-            />
-            <span>Start something new</span>
-          </label>
-        </div>
-      </fieldset>
-
-      {mode === "polish" ? (
-        <PolishPane
-          models={props.models}
-          defaultModelId={props.defaultModelId}
-          githubEnabled={props.githubEnabled}
-          repoUrlFor={(id) =>
-            props.store.projects.projects.find((p) => p.id === id)?.repoUrl ?? null
-          }
-          onPushed={(id, repoUrl) => props.store.setRepoUrl(id, repoUrl)}
-          onRecord={(record, stored) => {
-            props.store.add(record);
-            void putScaffold(record.id, stored);
-          }}
-        />
-      ) : null}
+      <p className="mb-4 rounded-card border border-medium-tan bg-light-tan p-4">
+        Already built a course project?{" "}
+        <Link href="/portfolio?mode=project" className="font-bold underline">
+          Publish it as a showcase
+        </Link>{" "}
+        in the Portfolio Builder: organized repository, landing page, and it
+        counts toward your skills.
+      </p>
 
       <section
         aria-labelledby="generate-heading"
         className="rounded-card border border-medium-tan bg-paper p-5"
-        hidden={mode !== "scratch"}
       >
         <h2 id="generate-heading" className="text-2xl">
           Build a portfolio project
@@ -310,15 +220,6 @@ export function ProjectsTab(props: {
           <div className="mt-5 border-t border-medium-tan pt-4">
             <h3 className="text-xl">{scaffold.repoName}</h3>
             <p className="mt-1">{scaffold.summary}</p>
-            <div className="mt-3 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => downloadScaffoldZip(scaffold)}
-                className="rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red"
-              >
-                Download {scaffold.repoName}.zip
-              </button>
-            </div>
             <h4 className="mt-4 font-bold">Put it on GitHub</h4>
             {props.githubEnabled ? (
               <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -340,20 +241,6 @@ export function ProjectsTab(props: {
                 ) : null}
               </div>
             ) : null}
-            <details className="mt-2">
-              <summary className="cursor-pointer font-bold">
-                {props.githubEnabled
-                  ? "Prefer the command line?"
-                  : "Push it with the command line"}
-              </summary>
-              <p className="mt-1 text-dark-tan">
-                Unzip, then run these in the project folder (needs the GitHub
-                CLI, <code>gh</code>, signed in):
-              </p>
-              <pre className="mt-2 overflow-x-auto rounded-card bg-light-tan p-3">
-                {scaffold.instructions.join("\n")}
-              </pre>
-            </details>
             {scaffold.resumeBullets.length > 0 ? (
               <>
                 <h4 className="mt-4 font-bold">
@@ -385,9 +272,9 @@ export function ProjectsTab(props: {
         </h2>
         {projects.length === 0 ? (
           <p className="mt-2 rounded-card border border-medium-tan bg-light-tan p-4">
-            Projects you generate collect here, with their zips ready to
-            download again. Once you push one to GitHub and add the link,
-            its skills count in your profile.
+            Projects you generate collect here, ready to push to GitHub.
+            Once a project has a repository link, its skills count in your
+            profile.
           </p>
         ) : (
           <ul className="mt-3 space-y-3">
@@ -413,12 +300,11 @@ export function ProjectsTab(props: {
 /** Loads a project's stored files and shapes them for a push, or null when
  * this device no longer holds them. */
 async function storedPushFiles(projectId: string) {
-  const stored = await getScaffold<Scaffold | StoredPolish>(projectId);
-  if (!stored) return null;
-  if ("mode" in stored && stored.mode === "polished") {
-    return polishFileSet(stored);
-  }
-  return scaffoldFileSet(stored as Scaffold);
+  const stored = await getScaffold<Scaffold>(projectId);
+  // A record stored by the retired Polish pane has no scaffold shape; the
+  // button says the files are gone rather than pushing a broken tree.
+  if (!stored || !Array.isArray(stored.files)) return null;
+  return scaffoldFileSet(stored);
 }
 
 function ProjectCard(props: {
@@ -431,48 +317,6 @@ function ProjectCard(props: {
   const [editingUrl, setEditingUrl] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const p = props.project;
-
-  async function downloadAgain() {
-    const stored = await getScaffold<Scaffold | StoredPolish>(p.id);
-    if (!stored) {
-      setNote(
-        "The project files are no longer on this device (storage was cleared). Generate a fresh one.",
-      );
-      return;
-    }
-    if ("mode" in stored && stored.mode === "polished") {
-      // Re-zip from the stored plan and text originals. Binary originals
-      // (PDFs and the like) were never stored on this device, so the
-      // student re-adds those; the note says exactly which.
-      const entries: Record<string, Uint8Array> = {
-        "README.md": strToU8(stored.plan.readme),
-        ".gitignore": strToU8(stored.plan.gitignore),
-      };
-      for (const extra of stored.plan.extraFiles) {
-        entries[extra.path] = strToU8(extra.contents);
-      }
-      for (const file of stored.textFiles) {
-        entries[file.path] = strToU8(file.contents);
-      }
-      const blob = new Blob([zipSync(entries) as BlobPart], {
-        type: "application/zip",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${stored.plan.repoName}.zip`;
-      a.click();
-      URL.revokeObjectURL(url);
-      setNote(
-        stored.binaryPaths.length > 0
-          ? `Re-add these files yourself; they were not kept on this device: ${stored.binaryPaths.join(", ")}.`
-          : null,
-      );
-      return;
-    }
-    downloadScaffoldZip(stored as Scaffold);
-    setNote(null);
-  }
 
   return (
     <li className="rounded-card border border-medium-tan bg-paper p-4">
@@ -507,13 +351,6 @@ function ProjectCard(props: {
         </p>
       ) : null}
       <div className="mt-3 flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => void downloadAgain()}
-          className="rounded-card border-2 border-miami-red px-3 py-1 font-bold text-miami-red hover:bg-light-tan"
-        >
-          Download the zip again
-        </button>
         {/* Push is offered only while unlinked. Once a repo URL exists the
             student may have built real work there, and re-pushing the stored
             stubs would overwrite files of the same name. */}
@@ -522,11 +359,7 @@ function ProjectCard(props: {
             repoName={p.repoName}
             getFiles={() => storedPushFiles(p.id)}
             expectedRepoUrl={null}
-            commitMessage={
-              p.mode === "polished"
-                ? "Course project organized with ChatISA Job Scout"
-                : "Project scaffold from ChatISA Job Scout"
-            }
+            commitMessage="Project scaffold from ChatISA Job Scout"
             onPushed={(repoUrl) => props.onSetRepoUrl(repoUrl)}
           />
         ) : null}
@@ -574,371 +407,5 @@ function ProjectCard(props: {
         </button>
       </div>
     </li>
-  );
-}
-
-/** Zips generated parts plus the student's ORIGINAL files, placed per plan. */
-async function downloadPolishZip(
-  plan: PolishPlan,
-  originals: Map<string, File>,
-) {
-  const entries: Record<string, Uint8Array> = {
-    "README.md": strToU8(plan.readme),
-    ".gitignore": strToU8(plan.gitignore),
-  };
-  for (const extra of plan.extraFiles) {
-    entries[extra.path] = strToU8(extra.contents);
-  }
-  for (const move of plan.layout) {
-    const original = originals.get(move.from);
-    if (original) {
-      entries[move.to] = new Uint8Array(await original.arrayBuffer());
-    }
-  }
-  const blob = new Blob([zipSync(entries) as BlobPart], {
-    type: "application/zip",
-  });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${plan.repoName}.zip`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-/**
- * "Polish a project I already built": upload real coursework files, get an
- * organization plan back. The files are read transiently server-side; the
- * zip is assembled HERE from the student's own originals, so their code
- * ships verbatim (organize + suggest decision, 2026-07-29).
- */
-function PolishPane(props: {
-  models: ModelOption[];
-  defaultModelId: string;
-  githubEnabled: boolean;
-  repoUrlFor: (recordId: string) => string | null;
-  onPushed: (recordId: string, repoUrl: string) => void;
-  onRecord: (record: ProjectRecord, stored: StoredPolish) => void;
-}) {
-  const [files, setFiles] = useState<File[]>([]);
-  const [overflowed, setOverflowed] = useState(false);
-  const [hint, setHint] = useState("");
-  const [modelId, setModelId] = useState(props.defaultModelId);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [plan, setPlan] = useState<PolishPlan | null>(null);
-  const [pushable, setPushable] = useState<{
-    recordId: string;
-    stored: StoredPolish;
-  } | null>(null);
-  const errorRef = useRef<HTMLParagraphElement>(null);
-
-  const fail = (message: string) => {
-    setError(message);
-    setTimeout(() => errorRef.current?.focus(), 0);
-  };
-
-  async function polish() {
-    setError(null);
-    setBusy(true);
-    setPlan(null);
-    setPushable(null);
-    try {
-      // The stored copy keeps the FULL raw text (bounded by the size caps)
-      // so later re-downloads are faithful; the model payload is extracted
-      // (notebooks: cells only, plots dropped) and sliced.
-      const storedByName = new Map<string, string>();
-      const payload: (
-        | { kind: "text"; name: string; content: string }
-        | { kind: "binary"; name: string; sizeBytes: number }
-      )[] = [];
-      for (const f of files) {
-        if (!readableAsText(f)) {
-          payload.push({ kind: "binary", name: f.name, sizeBytes: f.size });
-          continue;
-        }
-        const raw = await f.text();
-        let content = raw;
-        if (/\.ipynb$/i.test(f.name)) {
-          const parsed = notebookToText(raw, { maxImages: 0 });
-          if (parsed) {
-            content = parsed.text;
-          } else if (f.size > MAX_TEXT_BYTES) {
-            // Huge and not actually a notebook: place it, do not read it.
-            payload.push({ kind: "binary", name: f.name, sizeBytes: f.size });
-            continue;
-          }
-        }
-        storedByName.set(f.name, raw);
-        payload.push({ kind: "text", name: f.name, content: content.slice(0, 30_000) });
-      }
-      const res = await fetch("/api/scout/polish", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          modelId,
-          projectHint: hint.trim(),
-          files: payload,
-        }),
-      });
-      const body = await res.json();
-      if (!res.ok) {
-        fail(body.error ?? "The organization plan did not generate. Try again.");
-        return;
-      }
-      const nextPlan = body.polish as PolishPlan;
-      setPlan(nextPlan);
-
-      const record: ProjectRecord = {
-        id: crypto.randomUUID(),
-        repoName: nextPlan.repoName,
-        summary: nextPlan.summary,
-        skillIds: nextPlan.skillIds,
-        createdAt: new Date().toISOString(),
-        mode: "polished",
-        repoUrl: null,
-      };
-      const stored: StoredPolish = {
-        mode: "polished",
-        plan: nextPlan,
-        textFiles: nextPlan.layout.flatMap((m) => {
-          const contents = storedByName.get(m.from);
-          return contents === undefined ? [] : [{ path: m.to, contents }];
-        }),
-        binaryPaths: nextPlan.layout
-          .filter((m) => !storedByName.has(m.from))
-          .map((m) => m.to),
-      };
-      props.onRecord(record, stored);
-      setPushable({ recordId: record.id, stored });
-    } catch {
-      fail("The organization plan did not generate. Try again.");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  const originals = new Map(files.map((f) => [f.name, f]));
-
-  return (
-    <section
-      aria-labelledby="polish-heading"
-      className="rounded-card border border-medium-tan bg-paper p-5"
-    >
-      <h2 id="polish-heading" className="text-2xl">
-        Polish a project you already built
-      </h2>
-      <p className="mt-1 text-dark-tan">
-        Upload the real files from a course project (code, notebooks, your
-        report). You get back a clean repo layout, a grounded README, and a
-        list of improvements. Your files are never rewritten and never
-        stored on the server; the zip is built right here from your
-        originals.
-      </p>
-
-      {error ? (
-        <p
-          ref={errorRef}
-          role="alert"
-          tabIndex={-1}
-          className="mt-3 rounded-card border-2 border-miami-red bg-paper p-3 font-bold text-miami-red"
-        >
-          {error}
-        </p>
-      ) : null}
-
-      <div className="mt-3 flex flex-wrap items-center gap-3">
-        <label className="inline-block cursor-pointer rounded-card border-2 border-miami-red px-4 py-2 font-bold text-miami-red hover:bg-light-tan has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-miami-red has-[:focus-visible]:outline-offset-2">
-          <input
-            type="file"
-            multiple
-            className="sr-only"
-            disabled={busy}
-            onChange={(e) => {
-              const picked = [...(e.target.files ?? [])];
-              const merged = [...files];
-              for (const f of picked) {
-                if (!merged.some((m) => m.name === f.name)) merged.push(f);
-              }
-              setOverflowed(merged.length > MAX_POLISH_FILES);
-              setFiles(merged.slice(0, MAX_POLISH_FILES));
-            }}
-          />
-          Choose project files
-        </label>
-        <span aria-live="polite">
-          {files.length === 0
-            ? "No files chosen yet"
-            : `${files.length} ${files.length === 1 ? "file" : "files"} chosen`}
-        </span>
-      </div>
-      {files.length > 0 ? (
-        <ul className="mt-2 flex flex-wrap gap-2">
-          {files.map((f) => (
-            <li key={f.name}>
-              <button
-                type="button"
-                onClick={() => setFiles(files.filter((x) => x.name !== f.name))}
-                className="rounded-card border border-medium-tan bg-light-tan px-2 py-1"
-                aria-label={`Remove ${f.name}`}
-              >
-                {f.name} ✕
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-      {(() => {
-        const unread = files
-          .filter((f) => TEXT_EXTENSIONS.test(f.name) && !readableAsText(f))
-          .map((f) => f.name);
-        return unread.length > 0 ? (
-          <p className="mt-2 text-sm text-dark-tan">
-            Too large to read, so placed in the layout without being read:{" "}
-            {unread.join(", ")}
-          </p>
-        ) : null;
-      })()}
-      {overflowed ? (
-        <p className="mt-2 text-sm text-dark-tan">
-          Only the first {MAX_POLISH_FILES} files are used. Remove some to
-          make room for others.
-        </p>
-      ) : null}
-
-      <div className="mt-3 max-w-xl">
-        <label htmlFor="polish-hint" className="block font-bold">
-          One line about the project (optional)
-        </label>
-        <input
-          id="polish-hint"
-          value={hint}
-          onChange={(e) => setHint(e.target.value)}
-          placeholder="ISA 444 forecasting project on retail demand"
-          className="mt-1 w-full rounded-card border border-medium-tan bg-paper px-3 py-2"
-        />
-      </div>
-
-      <div className="mt-4 max-w-xl">
-        <ModelChooser
-          options={props.models}
-          value={modelId}
-          onChange={setModelId}
-          disabled={busy}
-        />
-      </div>
-
-      <button
-        type="button"
-        disabled={busy || files.length === 0}
-        onClick={() => void polish()}
-        className="mt-4 rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:bg-medium-gray"
-      >
-        {busy ? "Organizing your project..." : "Organize my project"}
-      </button>
-      {busy ? (
-        <p role="status" className="mt-2 text-dark-tan">
-          Reading your files and drafting the plan. This takes up to a minute.
-        </p>
-      ) : null}
-
-      {plan ? (
-        <div className="mt-5 border-t border-medium-tan pt-4">
-          <h3 className="text-xl">{plan.repoName}</h3>
-          <p className="mt-1">{plan.summary}</p>
-          <p className="mt-1 font-bold">
-            Its skills now count in your profile: real work, already built.
-          </p>
-
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={() => void downloadPolishZip(plan, originals)}
-              className="rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red"
-            >
-              Download {plan.repoName}.zip
-            </button>
-            {props.githubEnabled && pushable ? (
-              <>
-                <GithubConnect returnPath="/job-scout" />
-                <PushToGithubButton
-                  repoName={pushable.stored.plan.repoName}
-                  getFiles={async () => polishFileSet(pushable.stored)}
-                  expectedRepoUrl={props.repoUrlFor(pushable.recordId)}
-                  commitMessage="Course project organized with ChatISA Job Scout"
-                  onPushed={(repoUrl) => props.onPushed(pushable.recordId, repoUrl)}
-                />
-              </>
-            ) : null}
-          </div>
-          {props.githubEnabled &&
-          pushable &&
-          pushable.stored.binaryPaths.length > 0 ? (
-            <p className="mt-2 text-sm text-dark-tan">
-              A push includes your text files and the generated ones. These
-              were not kept in the browser, so add them on github.com
-              afterwards: {pushable.stored.binaryPaths.join(", ")}.
-            </p>
-          ) : null}
-
-          <h4 className="mt-4 font-bold">How your files are organized</h4>
-          <ul className="mt-1 list-inside list-disc">
-            {plan.layout.map((m) => (
-              <li key={m.from}>
-                {m.from} <span aria-hidden="true">to</span>
-                <span className="sr-only">moves to</span> {m.to}
-              </li>
-            ))}
-            {plan.extraFiles.map((f) => (
-              <li key={f.path}>{f.path} (new)</li>
-            ))}
-          </ul>
-
-          {plan.exclude.length > 0 ? (
-            <div className="mt-3 rounded-card border-2 border-miami-red bg-paper p-3">
-              <h4 className="font-bold text-miami-red">Left out on purpose</h4>
-              <ul className="mt-1 list-inside list-disc">
-                {plan.exclude.map((e) => (
-                  <li key={e.name}>
-                    <strong>{e.name}</strong>: {e.reason}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-
-          {plan.suggestions.length > 0 ? (
-            <>
-              <h4 className="mt-4 font-bold">Suggested improvements</h4>
-              <p className="text-dark-tan">
-                Listed in the README too. Your files were not changed; these
-                are yours to make.
-              </p>
-              <ul className="mt-1 list-inside list-disc">
-                {plan.suggestions.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
-            </>
-          ) : null}
-
-          {plan.resumeBullets.length > 0 ? (
-            <>
-              <h4 className="mt-4 font-bold">Resume bullets this work earns</h4>
-              <ul className="mt-1 list-inside list-disc">
-                {plan.resumeBullets.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-            </>
-          ) : null}
-
-          <h4 className="mt-4 font-bold">README preview</h4>
-          <pre className="mt-2 max-h-96 overflow-auto whitespace-pre-wrap rounded-card border border-medium-tan p-3">
-            {plan.readme}
-          </pre>
-        </div>
-      ) : null}
-    </section>
   );
 }

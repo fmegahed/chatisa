@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { recordUsageEvent } from "@/lib/db";
 import { logger } from "@/lib/log";
 import { exchangeCodeForToken } from "@/lib/scout/github-oauth";
-import { decodeOauthState } from "@/lib/scout/github-state";
+import { decodeOauthState, publicOrigin } from "@/lib/scout/github-state";
 
 /**
  * GitHub OAuth callback (v6.3.0). Validates the state cookie (the
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
 
   const url = new URL(req.url);
   const connectedPage = (hash: string, returnPath: string) => {
-    const dest = new URL("/job-scout/github-connected", url.origin);
+    const dest = new URL("/portfolio/github-connected", publicOrigin(req));
     dest.searchParams.set("return", returnPath);
     const res = NextResponse.redirect(`${dest.toString()}${hash}`, 303);
     res.headers.set("cache-control", "no-store");
@@ -37,7 +37,7 @@ export async function GET(req: Request) {
   const stored = decodeOauthState(
     stateCookie ? decodeURIComponent(stateCookie) : undefined,
   );
-  const returnPath = stored?.returnPath ?? "/job-scout";
+  const returnPath = stored?.returnPath ?? "/portfolio";
 
   if (url.searchParams.get("error") === "access_denied") {
     return connectedPage("#gh-error=denied", returnPath);

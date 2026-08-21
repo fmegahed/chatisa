@@ -518,7 +518,8 @@ export type ModuleKey =
   | "sandbox_chat"
   | "ai_comparisons"
   | "ask_anything"
-  | "job_scout";
+  | "job_scout"
+  | "portfolio";
 
 export const DEFAULT_MODELS: Partial<Record<ModuleKey, string>> = {
   coding_companion: "claude-sonnet-5",
@@ -537,6 +538,8 @@ export const DEFAULT_MODELS: Partial<Record<ModuleKey, string>> = {
   // scaffolds); mirrors JobApp. The weekly tagging pipeline pins its own
   // model in lib/scout/tag.ts and does not read this.
   job_scout: "gpt-5.6-terra",
+  // Portfolio Builder: structured content for a published site; mirrors Job Scout.
+  portfolio: "gpt-5.6-terra",
 };
 
 interface PageModelRule {
@@ -588,6 +591,7 @@ const PAGE_MODELS: Record<string, PageModelRule> = {
     requireStructuredOutput: true,
     minContextWindow: 64000,
   },
+  portfolio: { includeAll: true, requireStructuredOutput: true, minContextWindow: 64000 },
   ai_sandbox: { specificModels: ["gpt-5.6-sol"] },
   // The Sandbox side chat offers the same models as the Coding Companion.
   sandbox_chat: { includeAll: true, excludeTags: ["realtime", "speech"] },

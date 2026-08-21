@@ -12,7 +12,9 @@ import type { GithubConnection } from "./github-store";
 
 export interface PushFile {
   path: string;
+  /** UTF-8 text, or base64 when encoding is "base64" (photos, PDFs). */
   contents: string;
+  encoding?: "base64";
 }
 
 export type PushError =
@@ -30,6 +32,8 @@ export type PushResult =
 const MAX_FILES = 60;
 const MAX_FILE_BYTES = 400_000;
 const MAX_TOTAL_BYTES = 2_000_000;
+
+export const PUSH_LIMITS = { files: MAX_FILES, fileBytes: MAX_FILE_BYTES, totalBytes: MAX_TOTAL_BYTES } as const;
 
 const API = "https://api.github.com";
 
@@ -70,6 +74,15 @@ async function gh(
 /** Byte length in UTF-8, which is what GitHub counts. */
 function utf8Bytes(s: string): number {
   return new TextEncoder().encode(s).length;
+}
+
+/** Bytes GitHub will store: decoded length for base64, UTF-8 length otherwise. */
+export function pushFileBytes(file: PushFile): number {
+  if (file.encoding === "base64") {
+    const trimmed = file.contents.replace(/=+$/, "");
+    return Math.floor((trimmed.length * 3) / 4);
+  }
+  return utf8Bytes(file.contents);
 }
 
 /**
@@ -130,7 +143,7 @@ export async function pushToRepo(
   }
   let total = 0;
   for (const f of files) {
-    const bytes = utf8Bytes(f.contents);
+    const bytes = pushFileBytes(f);
     if (bytes > MAX_FILE_BYTES) return { ok: false, error: { kind: "too-large" } };
     total += bytes;
   }
@@ -173,15 +186,21 @@ export async function pushToRepo(
     if (!parentCommit.ok) return { ok: false, error: classify(parentCommit) };
     const baseTree = ((await parentCommit.json()) as { tree: { sha: string } }).tree.sha;
 
-    const treeRes = await gh(conn, "POST", `${repoPath}/git/trees`, {
-      base_tree: baseTree,
-      tree: files.map((f) => ({
-        path: f.path,
-        mode: "100644",
-        type: "blob",
-        content: f.contents,
-      })),
-    });
+    const tree: { path: string; mode: "100644"; type: "blob"; content?: string; sha?: string }[] = [];
+    for (const f of files) {
+      if (f.encoding === "base64") {
+        const blobRes = await gh(conn, "POST", `${repoPath}/git/blobs`, {
+          content: f.contents,
+          encoding: "base64",
+        });
+        if (!blobRes.ok) return { ok: false, error: classify(blobRes) };
+        const sha = ((await blobRes.json()) as { sha: string }).sha;
+        tree.push({ path: f.path, mode: "100644", type: "blob", sha });
+      } else {
+        tree.push({ path: f.path, mode: "100644", type: "blob", content: f.contents });
+      }
+    }
+    const treeRes = await gh(conn, "POST", `${repoPath}/git/trees`, { base_tree: baseTree, tree });
     if (!treeRes.ok) return { ok: false, error: classify(treeRes) };
     const treeSha = ((await treeRes.json()) as { sha: string }).sha;
 
@@ -246,45 +265,4 @@ export function scaffoldFileSet(scaffold: {
   files: PushFile[];
 }): PushFile[] {
   return [{ path: "README.md", contents: scaffold.readme }, ...scaffold.files];
-}
-
-export function polishFileSet(stored: {
-  plan: { readme: string; gitignore: string; extraFiles: PushFile[] };
-  textFiles: PushFile[];
-  binaryPaths: string[];
-}): PushFile[] {
-  const files: PushFile[] = [
-    { path: "README.md", contents: stored.plan.readme },
-    { path: ".gitignore", contents: stored.plan.gitignore },
-    ...stored.plan.extraFiles,
-    ...stored.textFiles,
-  ];
-  if (stored.binaryPaths.length > 0) {
-    files.push({
-      path: "ADD_THESE_FILES.md",
-      contents: [
-        "# Files to add yourself",
-        "",
-        "These files were part of your project but were not kept in the browser, so they were not pushed. Add each one on github.com with the \"Add file\" button, then delete this note:",
-        "",
-        ...stored.binaryPaths.map((p) => `- ${p}`),
-        "",
-      ].join("\n"),
-    });
-  }
-  return files;
-}
-
-export function portfolioFileSet(html: string): PushFile[] {
-  return [
-    { path: "index.html", contents: html },
-    // Pages serves the branch through Jekyll unless told not to; .nojekyll
-    // keeps the deploy a plain file copy.
-    { path: ".nojekyll", contents: "" },
-    {
-      path: "README.md",
-      contents:
-        "# Portfolio\n\nThis site was generated with ChatISA's Job Scout and is published with GitHub Pages. Edit index.html to make it yours.\n",
-    },
-  ];
 }

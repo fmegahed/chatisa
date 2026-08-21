@@ -58,7 +58,6 @@ export default async function JobScoutPage() {
             models={options}
             defaultModelId={defaultModelId}
             githubEnabled={githubOauthConfigured()}
-            studentName={session.user.name ?? ""}
           />
         </div>
       )}
