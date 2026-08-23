@@ -160,6 +160,100 @@ const json = (status: number, body: unknown, headers?: Record<string, string>) =
 const CONN = { v: 1 as const, token: "t", login: "student", connectedAt: "" };
 const FILES = [{ path: "README.md", contents: "# Hi" }];
 
+describe("pushToRepo hardening (2026-08-23)", () => {
+  const happy = {
+    "GET /repos/student/demo": () => json(404, {}),
+    "POST /user/repos": () => json(201, { default_branch: "main" }),
+    "GET /repos/student/demo/git/ref/heads/main": () => json(200, { object: { sha: "parent" } }),
+    "GET /repos/student/demo/git/commits/parent": () => json(200, { tree: { sha: "base" } }),
+    "POST /repos/student/demo/git/trees": () => json(201, { sha: "tree1" }),
+    "POST /repos/student/demo/git/commits": () => json(201, { sha: "commit1" }),
+    "PATCH /repos/student/demo/git/refs/heads/main": () => json(200, {}),
+  };
+  const binaries = [
+    { path: "a.png", contents: "AAAA", encoding: "base64" as const },
+    { path: "b.png", contents: "BBBB", encoding: "base64" as const },
+    { path: "README.md", contents: "# Hi" },
+  ];
+
+  it("retries one blob upload that fails with a 5xx or a network error, then succeeds", async () => {
+    // First blob: 502 then ok. Second blob: network throw then ok.
+    let blobCalls = 0;
+    const calls = fakeGithub({
+      ...happy,
+      "POST /repos/student/demo/git/blobs": () => {
+        blobCalls++;
+        if (blobCalls === 1) return json(502, {});
+        if (blobCalls === 3) throw new TypeError("Failed to fetch");
+        return json(201, { sha: `blob${blobCalls}` });
+      },
+    });
+    const result = await pushToRepo(CONN, "demo", binaries, { message: "m", expectedRepoUrl: null, retryDelayMs: 0 });
+    expect(result).toMatchObject({ ok: true });
+    // Two blobs, each of which needed one retry: 502 then ok, throw then ok.
+    expect(blobCalls).toBe(4);
+    expect(calls.filter((c) => c.path.endsWith("/git/blobs"))).toHaveLength(4);
+  });
+
+  it("does not retry a 4xx", async () => {
+    let blobCalls = 0;
+    fakeGithub({
+      ...happy,
+      "POST /repos/student/demo/git/blobs": () => {
+        blobCalls++;
+        return json(422, {});
+      },
+    });
+    const result = await pushToRepo(CONN, "demo", binaries, { message: "m", expectedRepoUrl: null, retryDelayMs: 0 });
+    expect(result).toEqual({ ok: false, error: { kind: "github", status: 422 } });
+    expect(blobCalls).toBe(1);
+  });
+
+  it("reads GitHub's secondary rate limit as a rate limit with its retry-after", async () => {
+    fakeGithub({
+      ...happy,
+      "POST /repos/student/demo/git/blobs": () =>
+        new Response(JSON.stringify({ message: "You have exceeded a secondary rate limit. Please wait a few minutes before you try again." }), {
+          status: 403, headers: { "retry-after": "60" },
+        }),
+    });
+    const result = await pushToRepo(CONN, "demo", binaries, { message: "m", expectedRepoUrl: null, retryDelayMs: 0 });
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.error.kind).toBe("rate-limit");
+    if (result.error.kind !== "rate-limit") return;
+    expect(result.error.resetAt).not.toBeNull();
+    expect(new Date(result.error.resetAt as string).getTime()).toBeGreaterThan(Date.now() + 30_000);
+  });
+
+  it("reports progress per uploaded file and then the commit", async () => {
+    fakeGithub({ ...happy, "POST /repos/student/demo/git/blobs": () => json(201, { sha: "b" }) });
+    const seen: string[] = [];
+    const result = await pushToRepo(CONN, "demo", binaries, {
+      message: "m", expectedRepoUrl: null,
+      onProgress: (p) => seen.push(p.stage === "upload" ? `${p.stage} ${p.done}/${p.total} ${p.path}` : p.stage),
+    });
+    expect(result.ok).toBe(true);
+    expect(seen).toEqual(["prepare", "upload 1/2 a.png", "upload 2/2 b.png", "commit"]);
+  });
+
+  it("stops at the next request when aborted and says so", async () => {
+    const controller = new AbortController();
+    let blobCalls = 0;
+    fakeGithub({
+      ...happy,
+      "POST /repos/student/demo/git/blobs": () => {
+        blobCalls++;
+        controller.abort();
+        return json(201, { sha: "b" });
+      },
+    });
+    const result = await pushToRepo(CONN, "demo", binaries, { message: "m", expectedRepoUrl: null, signal: controller.signal });
+    expect(result).toEqual({ ok: false, error: { kind: "cancelled" } });
+    expect(blobCalls).toBe(1);
+  });
+});
+
 describe("pushToRepo", () => {
   it("creates a missing repo, waits for its ref, and commits in sequence", async () => {
     const calls = fakeGithub({
@@ -268,7 +362,7 @@ describe("pushToRepo", () => {
     const result = await pushToRepo(
       CONN,
       "demo",
-      [{ path: "big.csv", contents: "x".repeat(500_000) }],
+      Array.from({ length: 61 }, (_, i) => ({ path: `f${i}.txt`, contents: "x" })),
       { message: "m", expectedRepoUrl: null },
     );
     expect(result).toEqual({ ok: false, error: { kind: "too-large" } });

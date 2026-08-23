@@ -1,10 +1,14 @@
 "use client";
 
 import type { SiteRecord } from "@/lib/portfolio/store";
+import type { Wip } from "@/lib/portfolio/wip";
 
 /** The front door: pick which kind of site to build, or reopen one you made. */
 export function ModeStep(props: {
   sites: SiteRecord[];
+  wip: Wip | null;
+  onResume: () => void;
+  onDiscard: () => void;
   onPick: (mode: "career" | "showcase") => void;
   onOpen: (site: SiteRecord) => void;
   onRemove: (site: SiteRecord) => void;
@@ -21,6 +25,30 @@ export function ModeStep(props: {
   );
   return (
     <div>
+      {props.wip ? (
+        <section
+          aria-label="Unfinished site"
+          className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-card border-2 border-miami-red bg-paper p-4"
+        >
+          <p>
+            <strong>You have an unfinished {props.wip.mode === "career" ? "portfolio" : "showcase"}</strong> saved
+            in this browser{" "}
+            {new Date(props.wip.savedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={props.onResume}
+              className="rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:opacity-90"
+            >
+              Continue
+            </button>
+            <button type="button" onClick={props.onDiscard} className="rounded-card px-3 py-2 underline">
+              Discard
+            </button>
+          </div>
+        </section>
+      ) : null}
       <div className="grid gap-4 md:grid-cols-2">
         {card(
           "career",

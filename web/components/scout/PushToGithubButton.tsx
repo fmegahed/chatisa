@@ -26,6 +26,8 @@ function errorCopy(error: PushError): string {
       return "Could not reach GitHub. Check your connection and try again.";
     case "name-taken":
       return "That repository name is already taken on your account.";
+    case "cancelled":
+      return "The push was cancelled. Nothing changed on GitHub.";
     default:
       return "GitHub refused the push. Try again in a minute.";
   }

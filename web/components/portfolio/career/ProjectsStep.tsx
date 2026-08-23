@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { guessRole, MAX_PROJECT_FILES, slugify, careerFileSet } from "@/lib/portfolio/files";
 import { prepareFile, pushable } from "@/lib/portfolio/intake";
+import { UploadLimits } from "@/components/portfolio/UploadLimits";
 import { normalizeUrl } from "@/lib/portfolio/links";
 import { loadProjects } from "@/lib/scout/profile-store";
 import { usePublishedWork } from "@/lib/portfolio/published";
@@ -37,7 +38,8 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
   const uniqueSlug = (base: string) => {
     let s = slugify(base);
     let n = 2;
-    while (draft.projects.some((p) => p.slug === s)) s = `${slugify(base)}-${n++}`;
+    // The suffix must keep the slug inside the 60-character bound the route checks.
+    while (draft.projects.some((p) => p.slug === s)) s = `${slugify(base).slice(0, 56)}-${n++}`;
     return s;
   };
 
@@ -116,6 +118,7 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
         the next publish. A file that was already published stays in the repository and its
         history until you delete it on GitHub.
       </p>
+      <UploadLimits perProject={MAX_PROJECT_FILES} />
       {error ? (
         <p
           ref={errorRef}

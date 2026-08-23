@@ -620,7 +620,7 @@ function mockObjectFor(options: LanguageModelV4CallOptions): string {
       ],
       deliverables: [
         ...paths.map((path) => ({
-          label: path.split("/").pop() ?? path,
+          label: (path.split("/").pop() ?? path).slice(0, 80),
           path,
         })),
         { label: "Ghost", path: "report/ghost.pdf" },

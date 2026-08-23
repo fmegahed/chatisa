@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import type { ModelOption } from "@/lib/config/models";
 import {
   CAREER_STEPS, SHOWCASE_STEPS, initialDraft,
@@ -10,6 +10,7 @@ import {
   careerSite, getDraft, loadSites, migrateJobScoutPortfolio, newSiteId, removeSite,
   type SiteRecord,
 } from "@/lib/portfolio/store";
+import { clearWip, loadWip, saveWip, type Wip } from "@/lib/portfolio/wip";
 import { ModeStep } from "./ModeStep";
 import { ResumeStep } from "./career/ResumeStep";
 import { ClassesStep } from "./career/ClassesStep";
@@ -54,7 +55,27 @@ export function PortfolioBuilder(props: {
     initialDraft(name, newSiteId()),
   );
   const [sites, setSites] = useState<SiteRecord[]>([]);
+  const [wip, setWip] = useState<Wip | null>(null);
+  const [saveFailed, setSaveFailed] = useState(false);
+  // Autosave waits for the stored draft to be read: a fresh draft that
+  // ?mode= pushed straight to step one must not overwrite the saved one.
+  const [hydrated, setHydrated] = useState(false);
   const patch = (p: Partial<Draft>) => dispatch({ type: "patch", patch: p });
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Autosave (2026-08-23): the draft goes to IndexedDB shortly after each
+  // change, so a reload or a closed tab no longer costs the student their
+  // uploads. The mode step is skipped because there is nothing to keep yet.
+  useEffect(() => {
+    if (!hydrated || draft.step === "mode") return;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      void saveWip(draft).then((ok) => setSaveFailed(!ok));
+    }, 600);
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, [draft, hydrated]);
 
   useEffect(() => {
     // Async IIFE with setState only after an await (the house pattern; the
@@ -64,7 +85,12 @@ export function PortfolioBuilder(props: {
       // site list: otherwise the migrated site shows with nothing to open.
       await migrateJobScoutPortfolio();
       setSites(loadSites());
-      if (props.initialMode) {
+      const stored = await loadWip();
+      setWip(stored);
+      setHydrated(true);
+      // A saved draft outranks the ?mode= shortcut: the student sees the
+      // front door with the offer to continue rather than a blank step one.
+      if (props.initialMode && !stored) {
         patch({
           mode: props.initialMode,
           step: props.initialMode === "career" ? "resume" : "course",
@@ -110,6 +136,17 @@ export function PortfolioBuilder(props: {
     return (
       <ModeStep
         sites={sites}
+        wip={wip}
+        onResume={() => {
+          if (!wip) return;
+          const rest: Draft & { savedAt?: string } = { ...wip };
+          delete rest.savedAt;
+          dispatch({ type: "reset", draft: rest });
+        }}
+        onDiscard={() => {
+          setWip(null);
+          void clearWip();
+        }}
         onPick={(mode) =>
           patch({ mode, step: mode === "career" ? "resume" : "course", ...pickMode(mode) })
         }
@@ -119,7 +156,8 @@ export function PortfolioBuilder(props: {
     );
   }
   const common = { draft, patch, nav };
-  switch (draft.step) {
+  const step = (() => {
+    switch (draft.step) {
     case "resume": return <ResumeStep {...common} />;
     case "classes": return <ClassesStep {...common} />;
     case "projects": return <ProjectsStep {...common} />;
@@ -137,10 +175,34 @@ export function PortfolioBuilder(props: {
           defaultModelId={props.defaultModelId}
           githubEnabled={props.githubEnabled}
           onPublished={() => setSites(loadSites())}
-          onStartOver={() =>
-            dispatch({ type: "reset", draft: initialDraft(props.studentName, newSiteId()) })
-          }
+          onStartOver={() => {
+            void clearWip();
+            setWip(null);
+            dispatch({ type: "reset", draft: initialDraft(props.studentName, newSiteId()) });
+          }}
         />
       );
-  }
+    }
+  })();
+  return (
+    <>
+      <SaveWarning failed={saveFailed} />
+      {step}
+    </>
+  );
+}
+
+/**
+ * Shown above every input step when the autosave cannot write (private
+ * browsing, a full disk, a 100 MB site on a tight quota). The student can
+ * still generate and publish; they just should not reload.
+ */
+function SaveWarning(props: { failed: boolean }) {
+  if (!props.failed) return null;
+  return (
+    <p role="status" className="mb-4 rounded-card border border-miami-red bg-paper p-3">
+      This browser cannot save your progress (it may be in private mode or out of storage). You can keep going,
+      but do not reload the page before you publish.
+    </p>
+  );
 }

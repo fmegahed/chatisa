@@ -4,6 +4,29 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.4.1 - August 23, 2026
+
+**Portfolio Builder: generation no longer fails on ordinary uploads, the
+publish limits are raised, and the module is hardened.** Full notes:
+`docs/releases/v6.4.1.md`. "The request was malformed" came from the
+generate route rejecting any file whose text ran past 30,000 characters (most
+real .Rmd and .R files), plus unbounded names, semesters, and teammate names.
+The route now clips those to its limits instead of refusing the request. The
+push caps rise from 400 KB per file and 2 MB per site to 25 MB per file and
+100 MB per site (60 files); text files above 400 KB and notebooks above 5 MB
+are published as-is but not read for the page text.
+
+Hardening in the same pass: the wizard autosaves to IndexedDB and offers an
+unfinished site back on the next visit (a reload no longer loses uploads);
+the upload steps state the limits up front; base64 is encoded natively to
+keep large files from crashing a small browser; the GitHub push shows
+per-file progress, can be cancelled, retries a dropped upload once, and
+reads GitHub's secondary rate limit as "wait, then retry"; the generate
+route bounds its request body and the browser trims file text before
+sending; a test proves an uploaded file cannot close its own prompt fence.
+
+---
+
 ## v6.4.0 - August 21, 2026
 
 **Portfolio Builder: publish a portfolio site or a project showcase to GitHub

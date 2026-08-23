@@ -23,15 +23,36 @@ export type PushError =
   | { kind: "rate-limit"; resetAt: string | null }
   | { kind: "too-large" }
   | { kind: "network" }
+  | { kind: "cancelled" }
   | { kind: "github"; status: number };
+
+export type PushProgress =
+  | { stage: "prepare" }
+  | { stage: "upload"; done: number; total: number; path: string }
+  | { stage: "commit" };
+
+export interface PushOptions {
+  message: string;
+  expectedRepoUrl: string | null;
+  /** Called as each binary file lands and when the commit starts. */
+  onProgress?: (p: PushProgress) => void;
+  /** Aborting stops before the next request; the repository is left as it was. */
+  signal?: AbortSignal;
+  /** Pause before the single retry of a failed request (tests set 0). */
+  retryDelayMs?: number;
+}
 
 export type PushResult =
   | { ok: true; repoUrl: string; defaultBranch: string }
   | { ok: false; error: PushError };
 
 const MAX_FILES = 60;
-const MAX_FILE_BYTES = 400_000;
-const MAX_TOTAL_BYTES = 2_000_000;
+// Raised 2026-08-23 from 400 KB / 2 MB: a 1.5 MB deck and a 15 MB notebook are
+// ordinary student deliverables. Binaries go through the blobs API (100 MB each
+// on GitHub's side); these caps keep one site inside what a browser tab can
+// hold as base64 and what Pages serves comfortably.
+const MAX_FILE_BYTES = 25 * 1024 * 1024;
+const MAX_TOTAL_BYTES = 100 * 1024 * 1024;
 
 export const PUSH_LIMITS = { files: MAX_FILES, fileBytes: MAX_FILE_BYTES, totalBytes: MAX_TOTAL_BYTES } as const;
 
@@ -46,29 +67,76 @@ function headers(conn: GithubConnection): Record<string, string> {
   };
 }
 
-function classify(res: Response): PushError {
+/**
+ * GitHub has two rate limits. The primary one answers 403 with
+ * x-ratelimit-remaining: 0 and a reset epoch; the secondary (abuse) limit,
+ * which a burst of blob uploads can trip, answers 403 or 429 with a
+ * retry-after in seconds and "secondary rate limit" in the body. Both are
+ * "wait, then try again", so both become rate-limit for the UI.
+ */
+async function classify(res: Response): Promise<PushError> {
   if (res.status === 401) return { kind: "auth" };
-  if (res.status === 403 && res.headers.get("x-ratelimit-remaining") === "0") {
-    const reset = res.headers.get("x-ratelimit-reset");
-    return {
-      kind: "rate-limit",
-      resetAt: reset ? new Date(Number(reset) * 1000).toISOString() : null,
-    };
+  if (res.status === 403 || res.status === 429) {
+    const retryAfter = res.headers.get("retry-after");
+    if (res.headers.get("x-ratelimit-remaining") === "0") {
+      const reset = res.headers.get("x-ratelimit-reset");
+      return { kind: "rate-limit", resetAt: reset ? new Date(Number(reset) * 1000).toISOString() : null };
+    }
+    let secondary = res.status === 429 || retryAfter !== null;
+    if (!secondary) {
+      try {
+        secondary = /secondary rate limit|abuse/i.test(await res.clone().text());
+      } catch {
+        secondary = false;
+      }
+    }
+    if (secondary) {
+      const parsed = retryAfter ? Number(retryAfter) : NaN;
+      const seconds = Number.isFinite(parsed) && parsed > 0 ? parsed : 60;
+      return { kind: "rate-limit", resetAt: new Date(Date.now() + seconds * 1000).toISOString() };
+    }
   }
   return { kind: "github", status: res.status };
 }
 
+class CancelledError extends Error {}
+
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+function isAbort(err: unknown): boolean {
+  return err instanceof CancelledError || (err instanceof DOMException && err.name === "AbortError");
+}
+
+/**
+ * One request, retried once on a network failure or a 5xx: a 25 MB blob
+ * upload that drops mid-way should not cost the student the whole publish.
+ * 4xx answers are GitHub's verdict and are never retried. An aborted signal
+ * stops before the request (or the retry) goes out.
+ */
 async function gh(
   conn: GithubConnection,
   method: string,
   path: string,
   body?: unknown,
+  ctrl: { signal?: AbortSignal; retryDelayMs?: number } = {},
 ): Promise<Response> {
-  return fetch(`${API}${path}`, {
-    method,
-    headers: headers(conn),
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  const once = () => {
+    if (ctrl.signal?.aborted) throw new CancelledError();
+    return fetch(`${API}${path}`, {
+      method,
+      headers: headers(conn),
+      body: body === undefined ? undefined : JSON.stringify(body),
+      signal: ctrl.signal,
+    });
+  };
+  try {
+    const res = await once();
+    if (res.status < 500) return res;
+  } catch (err) {
+    if (isAbort(err)) throw err;
+  }
+  await sleep(ctrl.retryDelayMs ?? 1500);
+  return once();
 }
 
 /** Byte length in UTF-8, which is what GitHub counts. */
@@ -103,7 +171,7 @@ async function createRepo(
     has_wiki: false,
   });
   if (created.status === 422) return { ok: false, error: { kind: "name-taken", suggestion: null } };
-  if (!created.ok) return { ok: false, error: classify(created) };
+  if (!created.ok) return { ok: false, error: await classify(created) };
   const defaultBranch =
     ((await created.json()) as { default_branch?: string }).default_branch ?? "main";
 
@@ -136,8 +204,10 @@ export async function pushToRepo(
   conn: GithubConnection,
   repoName: string,
   files: PushFile[],
-  opts: { message: string; expectedRepoUrl: string | null },
+  opts: PushOptions,
 ): Promise<PushResult> {
+  const ctrl = { signal: opts.signal, retryDelayMs: opts.retryDelayMs };
+  const progress = opts.onProgress ?? (() => {});
   if (files.length === 0 || files.length > MAX_FILES) {
     return { ok: false, error: { kind: "too-large" } };
   }
@@ -150,8 +220,9 @@ export async function pushToRepo(
   if (total > MAX_TOTAL_BYTES) return { ok: false, error: { kind: "too-large" } };
 
   try {
+    progress({ stage: "prepare" });
     const repoPath = `/repos/${conn.login}/${repoName}`;
-    const existing = await gh(conn, "GET", repoPath);
+    const existing = await gh(conn, "GET", repoPath, undefined, ctrl);
 
     let defaultBranch: string;
     if (existing.status === 404) {
@@ -175,54 +246,60 @@ export async function pushToRepo(
       }
       defaultBranch = repo.default_branch;
     } else {
-      return { ok: false, error: classify(existing) };
+      return { ok: false, error: await classify(existing) };
     }
 
-    const refRes = await gh(conn, "GET", `${repoPath}/git/ref/heads/${defaultBranch}`);
-    if (!refRes.ok) return { ok: false, error: classify(refRes) };
+    const refRes = await gh(conn, "GET", `${repoPath}/git/ref/heads/${defaultBranch}`, undefined, ctrl);
+    if (!refRes.ok) return { ok: false, error: await classify(refRes) };
     const parentSha = ((await refRes.json()) as { object: { sha: string } }).object.sha;
 
-    const parentCommit = await gh(conn, "GET", `${repoPath}/git/commits/${parentSha}`);
-    if (!parentCommit.ok) return { ok: false, error: classify(parentCommit) };
+    const parentCommit = await gh(conn, "GET", `${repoPath}/git/commits/${parentSha}`, undefined, ctrl);
+    if (!parentCommit.ok) return { ok: false, error: await classify(parentCommit) };
     const baseTree = ((await parentCommit.json()) as { tree: { sha: string } }).tree.sha;
 
     const tree: { path: string; mode: "100644"; type: "blob"; content?: string; sha?: string }[] = [];
+    const uploads = files.filter((f) => f.encoding === "base64").length;
+    let done = 0;
     for (const f of files) {
       if (f.encoding === "base64") {
         const blobRes = await gh(conn, "POST", `${repoPath}/git/blobs`, {
           content: f.contents,
           encoding: "base64",
-        });
-        if (!blobRes.ok) return { ok: false, error: classify(blobRes) };
+        }, ctrl);
+        if (!blobRes.ok) return { ok: false, error: await classify(blobRes) };
         const sha = ((await blobRes.json()) as { sha: string }).sha;
         tree.push({ path: f.path, mode: "100644", type: "blob", sha });
+        done++;
+        progress({ stage: "upload", done, total: uploads, path: f.path });
       } else {
         tree.push({ path: f.path, mode: "100644", type: "blob", content: f.contents });
       }
     }
-    const treeRes = await gh(conn, "POST", `${repoPath}/git/trees`, { base_tree: baseTree, tree });
-    if (!treeRes.ok) return { ok: false, error: classify(treeRes) };
+    progress({ stage: "commit" });
+    const treeRes = await gh(conn, "POST", `${repoPath}/git/trees`, { base_tree: baseTree, tree }, ctrl);
+    if (!treeRes.ok) return { ok: false, error: await classify(treeRes) };
     const treeSha = ((await treeRes.json()) as { sha: string }).sha;
 
     const commitRes = await gh(conn, "POST", `${repoPath}/git/commits`, {
       message: opts.message,
       tree: treeSha,
       parents: [parentSha],
-    });
-    if (!commitRes.ok) return { ok: false, error: classify(commitRes) };
+    }, ctrl);
+    if (!commitRes.ok) return { ok: false, error: await classify(commitRes) };
     const commitSha = ((await commitRes.json()) as { sha: string }).sha;
 
     const patchRes = await gh(conn, "PATCH", `${repoPath}/git/refs/heads/${defaultBranch}`, {
       sha: commitSha,
-    });
-    if (!patchRes.ok) return { ok: false, error: classify(patchRes) };
+    }, ctrl);
+    if (!patchRes.ok) return { ok: false, error: await classify(patchRes) };
 
     return {
       ok: true,
       repoUrl: `https://github.com/${conn.login}/${repoName}`,
       defaultBranch,
     };
-  } catch {
+  } catch (err) {
+    if (isAbort(err)) return { ok: false, error: { kind: "cancelled" } };
     return { ok: false, error: { kind: "network" } };
   }
 }

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { PUSH_LIMITS } from "@/lib/scout/github";
 import {
   careerFileSet, dedupePaths, guessRole, measure, rolePath, safeFileName, showcaseFileSet,
   showcaseRepoName, slugify,
@@ -26,14 +27,14 @@ describe("roles and names", () => {
 
 describe("measure", () => {
   it("flags files over the per-file cap and totals", () => {
-    const big = "x".repeat(400_001);
+    const big = "x".repeat(PUSH_LIMITS.fileBytes + 1);
     const m = measure([
       { path: "a.txt", contents: "abc" },
       { path: "b.txt", contents: big },
     ]);
     expect(m.ok).toBe(false);
-    expect(m.over).toEqual([{ path: "b.txt", bytes: 400_001 }]);
-    expect(m.totalBytes).toBe(400_004);
+    expect(m.over).toEqual([{ path: "b.txt", bytes: PUSH_LIMITS.fileBytes + 1 }]);
+    expect(m.totalBytes).toBe(PUSH_LIMITS.fileBytes + 4);
     expect(m.count).toBe(2);
   });
 });

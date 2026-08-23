@@ -3,9 +3,8 @@
 import { measure } from "@/lib/portfolio/files";
 import { PUSH_LIMITS, type PushFile } from "@/lib/scout/github";
 
-const mb = (n: number) => `${(n / 1_000_000).toFixed(2)} MB`;
 /** Derived, so the copy cannot drift from the limit the push enforces. */
-const kb = (n: number) => `${Math.round(n / 1_000)} KB`;
+const mb = (n: number) => `${(n / (1024 * 1024)).toFixed(2)} MB`;
 
 /** What the repository will weigh, said before the push rather than after. */
 export function SizeMeter(props: { files: PushFile[] }) {
@@ -21,7 +20,7 @@ export function SizeMeter(props: { files: PushFile[] }) {
       </p>
       {m.over.length > 0 ? (
         <p className="mt-1 font-bold text-miami-red">
-          Too large to publish ({kb(PUSH_LIMITS.fileBytes)} limit per file):{" "}
+          Too large to publish ({mb(PUSH_LIMITS.fileBytes)} limit per file):{" "}
           {m.over.map((o) => o.path).join(", ")}
         </p>
       ) : null}

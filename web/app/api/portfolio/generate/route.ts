@@ -13,6 +13,7 @@ import { readResumePdf } from "@/lib/jobs/read-resume";
 import { getCourse } from "@/lib/scout/courses";
 import { resolveSkillId, SKILLS } from "@/lib/scout/taxonomy";
 import { careerContentSchema, showcaseContentSchema, SLUG } from "@/lib/portfolio/content";
+import { MAX_CHARS_PER_FILE, MAX_PAYLOAD_CHARS } from "@/lib/portfolio/files";
 
 /**
  * Portfolio Builder generation (2026-08-20). Both modes come through here.
@@ -22,37 +23,47 @@ import { careerContentSchema, showcaseContentSchema, SLUG } from "@/lib/portfoli
  * projects the student did not submit.
  */
 
-const MAX_CHARS_PER_FILE = 30_000;
 const MAX_TOTAL_CHARS = 150_000;
 const ROLE = z.enum(["data", "code", "notebook", "report", "slides", "figure", "other"]);
 
-const textFile = z.object({ kind: z.literal("text"), name: z.string().min(1).max(120), content: z.string().max(MAX_CHARS_PER_FILE) });
-const binaryFile = z.object({ kind: z.literal("binary"), name: z.string().min(1).max(120), sizeBytes: z.number().int().min(0) });
+/**
+ * Lengths are clipped, not rejected. The browser reads files up to 400 KB of
+ * text (notebooks up to 5 MB before stripping), far past what one file may
+ * contribute to the prompt, and it never bounds a file name, a semester, or
+ * a teammate's name. Failing the whole request over any of those surfaced
+ * as "the request was malformed" for a perfectly ordinary .Rmd upload; the
+ * prompt budget below already takes the first MAX_CHARS_PER_FILE characters,
+ * so clipping here loses nothing the model would have seen.
+ */
+const clipped = (max: number) => z.string().transform((s) => s.slice(0, max));
+const fileName = z.string().min(1).transform((s) => s.slice(0, 120));
+const textFile = z.object({ kind: z.literal("text"), name: fileName, content: clipped(MAX_CHARS_PER_FILE) });
+const binaryFile = z.object({ kind: z.literal("binary"), name: fileName, sizeBytes: z.number().int().min(0) });
 
 const careerPayload = z.object({
   student: z.object({
-    name: z.string().min(1).max(80),
-    links: z.array(z.object({ label: z.string().min(1).max(40), url: z.url() })).max(4),
+    name: z.string().min(1).transform((s) => s.slice(0, 80)),
+    links: z.array(z.object({ label: z.string().min(1).transform((s) => s.slice(0, 40)), url: z.url() })).max(4),
   }),
-  courses: z.array(z.string().max(20)).max(30),
+  courses: z.array(clipped(20)).max(30),
   projects: z.array(z.object({
     slug: z.string().regex(SLUG),
-    title: z.string().max(80),
+    title: clipped(80),
     externalUrl: z.url().nullable(),
     files: z.array(z.discriminatedUnion("kind", [textFile, binaryFile])).max(10),
   })).max(5),
 });
 
 const showcasePayload = z.object({
-  course: z.string().min(1).max(80),
-  semester: z.string().max(40),
-  team: z.array(z.string().min(1).max(60)).max(8),
-  prompts: z.object({ problem: z.string().max(1000), hardest: z.string().max(1000), next: z.string().max(1000) }),
+  course: z.string().min(1).transform((s) => s.slice(0, 80)),
+  semester: clipped(40),
+  team: z.array(z.string().min(1).transform((s) => s.slice(0, 60))).max(8),
+  prompts: z.object({ problem: clipped(1000), hardest: clipped(1000), next: clipped(1000) }),
   files: z.array(z.discriminatedUnion("kind", [
     textFile.extend({ role: ROLE }),
     binaryFile.extend({ role: ROLE }),
   ])).min(1).max(40),
-  publishedPaths: z.array(z.string().max(200)).max(60),
+  publishedPaths: z.array(clipped(200)).max(60),
 });
 
 /**
@@ -148,8 +159,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "That model is not configured on this server." }, { status: 400 });
   }
   const mode = String(form.get("mode") ?? "");
+  const payloadText = String(form.get("payload") ?? "");
+  if (payloadText.length > MAX_PAYLOAD_CHARS) {
+    // The browser trims each file to MAX_CHARS_PER_FILE before sending, so a
+    // payload this large is not a student's doing; say so rather than letting
+    // a proxy's body limit answer with a blank error.
+    return NextResponse.json({ error: "The request is larger than this server accepts. Remove some files and try again." }, { status: 413 });
+  }
   let raw: unknown;
-  try { raw = JSON.parse(String(form.get("payload") ?? "")); } catch { raw = null; }
+  try { raw = JSON.parse(payloadText); } catch { raw = null; }
 
   const nonce = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
   const model = process.env.CHATISA_MOCK_LLM === "1" ? getMockModel() : getLanguageModel(modelId);
@@ -157,7 +175,7 @@ export async function POST(req: Request) {
 
   if (mode === "career") {
     const parsed = careerPayload.safeParse(sanitiseCareerLinks(raw));
-    if (!parsed.success) return NextResponse.json({ error: "The request was malformed. Reload and try again." }, { status: 400 });
+    if (!parsed.success) return NextResponse.json({ error: "Something in the form did not come through. Go back a step, check your entries, and try again." }, { status: 400 });
     const p = parsed.data;
 
     let resumeText = "";
@@ -216,7 +234,7 @@ export async function POST(req: Request) {
 
   if (mode === "showcase") {
     const parsed = showcasePayload.safeParse(raw);
-    if (!parsed.success) return NextResponse.json({ error: "The request was malformed. Reload and try again." }, { status: 400 });
+    if (!parsed.success) return NextResponse.json({ error: "Something in the form did not come through. Go back a step, check your entries, and try again." }, { status: 400 });
     const p = parsed.data;
     let budget = MAX_TOTAL_CHARS;
     const fileBlocks = p.files.map((f) => {

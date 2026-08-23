@@ -187,6 +187,33 @@ test.describe("Portfolio Builder", () => {
     await expect(page.getByLabel("Your level for SQL", { exact: true })).toBeVisible();
   });
 
+  test("a reload mid-wizard offers the saved draft back, files included", async ({ page }) => {
+    // The old error copy said "reload and try again", and a reload used to
+    // wipe every upload. Now the draft autosaves and is offered on return.
+    await page.goto("/portfolio?mode=project");
+    await page.getByTitle("Principles of Business Analytics").click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    await page.getByLabel("Add project files").setInputFiles([
+      { name: "analysis.ipynb", mimeType: "application/json", buffer: Buffer.from(NOTEBOOK) },
+    ]);
+    await expect(page.getByText("analysis.ipynb").first()).toBeVisible();
+    // The limits are stated up front, from the same constants the code enforces.
+    await expect(page.getByText(/Up to 25 MB per file and 100 MB for the whole site/)).toBeVisible();
+    await page.waitForTimeout(1_000); // past the autosave debounce
+    await page.reload();
+    await expect(page.getByText("You have an unfinished showcase")).toBeVisible();
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByRole("heading", { name: "Project files" })).toBeVisible();
+    await expect(page.getByText("analysis.ipynb").first()).toBeVisible();
+    // Discarding from the front door clears it.
+    await page.goto("/portfolio");
+    await page.getByRole("button", { name: "Discard" }).click();
+    await expect(page.getByText("You have an unfinished showcase")).toHaveCount(0);
+    await page.reload();
+    await expect(page.getByRole("heading", { name: "Portfolio Builder" })).toBeVisible();
+    await expect(page.getByText("You have an unfinished showcase")).toHaveCount(0);
+  });
+
   test("meets WCAG A and AA on the mode step and the review step", async ({ page }) => {
     await page.goto("/portfolio");
     await expect(page.getByRole("heading", { name: "Portfolio Builder" })).toBeVisible();

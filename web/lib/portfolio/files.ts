@@ -11,6 +11,14 @@ export const CAREER_REPO = "portfolio";
 export const PHOTO_PATH = "assets/photo.jpg";
 export const RESUME_PATH = "resume.pdf";
 export const MAX_PROJECT_FILES = 10;
+/**
+ * Characters of one file's text the model reads (the rest is published but
+ * not read). Shared by the browser, which trims before sending, and the
+ * route, which clips again, so the two can never disagree.
+ */
+export const MAX_CHARS_PER_FILE = 30_000;
+/** Upper bound on the JSON the generate route will parse, with headroom. */
+export const MAX_PAYLOAD_CHARS = 4_000_000;
 export const MAX_SHOWCASE_FILES = 40;
 
 export interface PreparedFile {

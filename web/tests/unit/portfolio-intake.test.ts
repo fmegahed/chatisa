@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { prepareFile, pushable, toRoutePayloadFile } from "@/lib/portfolio/intake";
+import { PUSH_LIMITS } from "@/lib/scout/github";
 
 describe("prepareFile", () => {
   it("reads code as text and publishes it", async () => {
@@ -25,25 +26,28 @@ describe("prepareFile", () => {
     expect(p.text).toContain("print(1)");
     expect(p.base64).not.toBeNull();
   });
-  it("keeps an oversize notebook's text for the model but never pushes it", async () => {
-    // A notebook over the 400 KB push cap still yields stripped cell text for
-    // the prompt, but its bytes are not held, so it must not be published as
-    // stripped text under a .ipynb name.
-    const marker = "oversize notebook cell";
+  it("keeps a mid-size notebook's text for the model and its bytes for the push", async () => {
+    // A 400 KB+ notebook used to lose its bytes (old 400 KB push cap). Now the
+    // stripped cells feed the prompt and the original notebook is pushed.
+    const marker = "mid-size notebook cell";
     const cell = (source: string) => JSON.stringify({
       cells: [{ cell_type: "markdown", source: [source] }],
       metadata: {}, nbformat: 4, nbformat_minor: 5,
     });
     const raw = cell(marker + "x".repeat(400_001 - cell(marker).length));
-    expect(raw.length).toBe(400_001);
     const p = await prepareFile(new File([raw], "Big Notebook.ipynb"), "notebook");
     expect(p.text).toContain(marker);
-    expect(p.base64).toBe("");
-    expect(p.publish).toBe(false);
-    expect(pushable(p)).toBe(false);
+    expect(p.base64).not.toBe("");
+    expect(pushable(p)).toBe(true);
+  });
+  it("holds a large text file as bytes only, never as prompt text", async () => {
+    const p = await prepareFile(new File(["x".repeat(400_001)], "big.csv"), "data");
+    expect(p.text).toBeNull();
+    expect(pushable(p)).toBe(true);
+    expect(toRoutePayloadFile(p).kind).toBe("binary");
   });
   it("marks oversize binaries as not pushable", async () => {
-    const big = new File([new Uint8Array(400_001)], "huge.bin");
+    const big = new File([new Uint8Array(PUSH_LIMITS.fileBytes + 1)], "huge.bin");
     const p = await prepareFile(big, "other");
     expect(p.publish).toBe(false);
     expect(pushable(p)).toBe(false);

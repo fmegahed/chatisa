@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GithubConnect } from "@/components/scout/GithubConnect";
 import { useGithubConnection } from "@/lib/scout/use-scout-store";
-import { enablePages, pushToRepo, type PushError } from "@/lib/scout/github";
+import { enablePages, pushToRepo, type PushError, type PushProgress } from "@/lib/scout/github";
 import { SLUG } from "@/lib/portfolio/content";
 import { fileToBase64 } from "@/lib/portfolio/intake";
 import { buildPublishPlan } from "@/lib/portfolio/publish-plan";
 import { putDraft, upsertSite, type SiteRecord } from "@/lib/portfolio/store";
+import { clearWip } from "@/lib/portfolio/wip";
 import { upsertPublished } from "@/lib/portfolio/published";
 import { measure, showcaseRepoName } from "@/lib/portfolio/files";
 import { resolveSkillId } from "@/lib/scout/taxonomy";
@@ -23,7 +24,11 @@ import type { CareerContent } from "@/lib/portfolio/content";
 function copy(error: PushError): string {
   switch (error.kind) {
     case "auth": return "GitHub no longer accepts this connection. Connect GitHub again and retry.";
-    case "rate-limit": return "GitHub is rate limiting your account. Try again in a few minutes.";
+    case "rate-limit":
+      return error.resetAt
+        ? `GitHub is rate limiting your account. Try again after ${new Date(error.resetAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}.`
+        : "GitHub is rate limiting your account. Try again in a few minutes.";
+    case "cancelled": return "Publishing was cancelled. Nothing changed on GitHub.";
     case "name-taken": return `A repository with that name already exists on your account and was not created by ChatISA.${error.suggestion ? ` Try the name ${error.suggestion}.` : " Pick another name."}`;
     case "too-large": return "The site is too large to publish from the browser. Untick some files and try again.";
     case "network": return "Could not reach GitHub. Check your connection and try again.";
@@ -64,13 +69,20 @@ export function Publish(props: {
           )),
   );
   const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<PushProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // A publish in flight is abandoned (not left running blind) if the student
+  // navigates away; Cancel does the same on purpose.
+  const abortRef = useRef<AbortController | null>(null);
+  useEffect(() => () => abortRef.current?.abort(), []);
   const [note, setNote] = useState<{ text: string; link: string | null } | null>(null);
   const nameOk = SLUG.test(repoName);
 
   async function publish() {
     if (!connection || !props.draft.content) return;
-    setBusy(true); setError(null); setNote(null);
+    setBusy(true); setError(null); setNote(null); setProgress(null);
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
       const resumeBase64 =
         props.draft.resumeLink && props.draft.resume ? await fileToBase64(props.draft.resume) : null;
@@ -90,6 +102,8 @@ export function Publish(props: {
           ? "Update site from ChatISA Portfolio Builder"
           : "Publish site from ChatISA Portfolio Builder",
         expectedRepoUrl: props.site?.repoUrl ?? null,
+        onProgress: setProgress,
+        signal: controller.signal,
       });
       if (!pushed.ok) {
         // A free name from GitHub is one click away from working: put it in
@@ -118,6 +132,9 @@ export function Publish(props: {
         generatedAt: props.site?.generatedAt ?? publishedAt, publishedAt,
       };
       upsertSite(record);
+      // The published draft lives under the site now; the in-progress copy would
+      // only nag on the next visit.
+      void clearWip();
       upsertPublished({
         id: record.id, kind: record.kind, title,
         summary: props.draft.content.kind === "career"
@@ -164,9 +181,18 @@ export function Publish(props: {
     } catch {
       setError("Something went wrong while publishing. Try again in a minute.");
     } finally {
+      abortRef.current = null;
       setBusy(false);
+      setProgress(null);
     }
   }
+
+  const progressText = (p: PushProgress | null): string => {
+    if (!p) return "Publishing...";
+    if (p.stage === "upload") return `Uploading file ${p.done} of ${p.total}...`;
+    if (p.stage === "commit") return "Saving the commit...";
+    return "Preparing the repository...";
+  };
 
   if (!props.githubEnabled) {
     return <p className="mt-3 rounded-card bg-light-tan p-3">Publishing to GitHub is not configured on this server.</p>;
@@ -216,10 +242,20 @@ export function Publish(props: {
             onClick={() => void publish()}
             className="rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:bg-medium-gray"
           >
-            {busy ? "Publishing..." : props.site?.publishedAt ? "Publish the update" : "Publish to GitHub Pages"}
+            {busy ? progressText(progress) : props.site?.publishedAt ? "Publish the update" : "Publish to GitHub Pages"}
+          </button>
+        ) : null}
+        {busy ? (
+          <button type="button" onClick={() => abortRef.current?.abort()} className="rounded-card px-3 py-2 underline">
+            Cancel
           </button>
         ) : null}
       </div>
+      {busy ? (
+        <p role="status" aria-live="polite" className="mt-2 text-dark-tan">
+          {progressText(progress)} Keep this tab open.
+        </p>
+      ) : null}
       {props.site?.pagesUrl && !note ? (
         <p className="mt-2">
           Published at{" "}

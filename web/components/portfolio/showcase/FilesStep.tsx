@@ -6,6 +6,7 @@ import {
   type FileRole,
 } from "@/lib/portfolio/files";
 import { prepareFile, pushable } from "@/lib/portfolio/intake";
+import { UploadLimits } from "@/components/portfolio/UploadLimits";
 import type { StepProps } from "@/lib/portfolio/draft";
 import { SizeMeter } from "../SizeMeter";
 import { StepNav } from "../StepNav";
@@ -68,6 +69,7 @@ export function FilesStep({ draft, patch, nav }: StepProps) {
         the next publish. A file that was already published stays in the repository and its
         history until you delete it on GitHub.
       </p>
+      <UploadLimits />
       {error ? (
         <p
           ref={errorRef}
