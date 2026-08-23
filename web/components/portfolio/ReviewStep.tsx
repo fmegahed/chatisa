@@ -95,7 +95,14 @@ export function ReviewStep({ draft, patch, nav, githubEnabled, onPublished, onSt
       </section>
       <section className="rounded-card border border-medium-tan bg-paper p-5 lg:sticky lg:top-4 lg:self-start">
         <h2 className="text-2xl">Preview</h2>
-        <div className="mt-3"><Preview html={html} /></div>
+        {/* The published page loads the photo from assets/photo.jpg, which
+            exists only after the push; the preview shows the browser's copy
+            in its place so the student does not see a broken image. */}
+        <div className="mt-3">
+          <Preview
+            html={draft.photo ? html.replaceAll('src="assets/photo.jpg"', `src="data:image/jpeg;base64,${draft.photo.base64}"`) : html}
+          />
+        </div>
         <h3 className="mt-4 font-bold">Publish</h3>
         <Publish
           draft={{ ...draft, html }}

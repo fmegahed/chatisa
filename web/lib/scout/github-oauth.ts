@@ -41,7 +41,8 @@ export async function exchangeCodeForToken(
   code: string,
 ): Promise<GithubExchange> {
   if (process.env.CHATISA_MOCK_GITHUB === "1") {
-    return { token: "gh-mock-token", login: "mockstudent" };
+    // The login is overridable so a demo capture can show a believable name.
+    return { token: "gh-mock-token", login: process.env.CHATISA_MOCK_GITHUB_LOGIN || "mockstudent" };
   }
 
   const env = serverEnv();

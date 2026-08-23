@@ -4,6 +4,14 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.4.2 - August 23, 2026
+
+**Portfolio Builder: the preview shows the student's photo instead of a
+broken image, and the mock GitHub login name is overridable for demos.**
+Full notes: `docs/releases/v6.4.2.md`.
+
+---
+
 ## v6.4.1 - August 23, 2026
 
 **Portfolio Builder: generation no longer fails on ordinary uploads, the
