@@ -62,6 +62,24 @@ export function ReviewStep({ draft, patch, nav, githubEnabled, onPublished, onSt
         });
   }, [draft.content, draft.name, draft.links, draft.photo, draft.resumeLink, draft.course, draft.semester, draft.team, figures, publishedPaths, folders, site]);
 
+  // The published page loads the photo from assets/photo.jpg and figures
+  // from figures/<name>, files that exist only after the push. The preview
+  // substitutes the bytes the browser already holds so the student never
+  // sees a broken image next to their own name or finding.
+  const previewHtml = useMemo(() => {
+    let out = html;
+    if (draft.photo) out = out.replaceAll('src="assets/photo.jpg"', `src="data:image/jpeg;base64,${draft.photo.base64}"`);
+    const kept = draft.files.filter((f) => f.publish && pushable(f));
+    const paths = dedupePaths(kept.map((f) => rolePath(f.role, f.name)));
+    kept.forEach((f, i) => {
+      if (f.role !== "figure" || !f.base64) return;
+      const ext = f.name.toLowerCase().split(".").pop() ?? "";
+      const mime = ext === "svg" ? "image/svg+xml" : ext === "jpg" ? "image/jpeg" : `image/${ext}`;
+      out = out.replaceAll(`src="${paths[i]}"`, `src="data:${mime};base64,${f.base64}"`);
+    });
+    return out;
+  }, [html, draft.photo, draft.files]);
+
   if (!draft.content) return null;
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -95,14 +113,7 @@ export function ReviewStep({ draft, patch, nav, githubEnabled, onPublished, onSt
       </section>
       <section className="rounded-card border border-medium-tan bg-paper p-5 lg:sticky lg:top-4 lg:self-start">
         <h2 className="text-2xl">Preview</h2>
-        {/* The published page loads the photo from assets/photo.jpg, which
-            exists only after the push; the preview shows the browser's copy
-            in its place so the student does not see a broken image. */}
-        <div className="mt-3">
-          <Preview
-            html={draft.photo ? html.replaceAll('src="assets/photo.jpg"', `src="data:image/jpeg;base64,${draft.photo.base64}"`) : html}
-          />
-        </div>
+        <div className="mt-3"><Preview html={previewHtml} /></div>
         <h3 className="mt-4 font-bold">Publish</h3>
         <Publish
           draft={{ ...draft, html }}

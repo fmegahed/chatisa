@@ -4,6 +4,14 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.4.3 - August 23, 2026
+
+**Portfolio Builder: the showcase preview shows uploaded figures, and the
+file meter explains the three files every site carries.** Full notes:
+`docs/releases/v6.4.3.md`.
+
+---
+
 ## v6.4.2 - August 23, 2026
 
 **Portfolio Builder: the preview shows the student's photo instead of a

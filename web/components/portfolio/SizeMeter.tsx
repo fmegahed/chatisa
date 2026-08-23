@@ -6,15 +6,25 @@ import { PUSH_LIMITS, type PushFile } from "@/lib/scout/github";
 /** Derived, so the copy cannot drift from the limit the push enforces. */
 const mb = (n: number) => `${(n / (1024 * 1024)).toFixed(2)} MB`;
 
+/**
+ * Files ChatISA adds to every site (the page itself, a README, settings).
+ * They count toward the push limit, so the meter counts them, but says so:
+ * "3 of 60 files" before the first upload confused students (2026-08-23).
+ */
+const SITE_FILES = new Set(["index.html", "README.md", ".nojekyll", ".gitignore"]);
+
 /** What the repository will weigh, said before the push rather than after. */
 export function SizeMeter(props: { files: PushFile[] }) {
   const m = measure(props.files);
+  const siteFiles = props.files.filter((f) => SITE_FILES.has(f.path)).length;
+  const yours = m.count - siteFiles;
   return (
     <div
       role="status"
       className={`mt-3 rounded-card border p-3 ${m.ok ? "border-medium-tan bg-light-tan" : "border-miami-red bg-paper"}`}
     >
       <p>
+        <strong>{yours}</strong> of your files, plus {siteFiles} the site needs (its page, a README, settings):{" "}
         <strong>{m.count}</strong> of {PUSH_LIMITS.files} files, <strong>{mb(m.totalBytes)}</strong> of{" "}
         {mb(PUSH_LIMITS.totalBytes)}
       </p>
