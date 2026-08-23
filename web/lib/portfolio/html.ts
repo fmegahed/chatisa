@@ -143,11 +143,12 @@ export function renderCareer(
     return `<article><h3>${escapeHtml(p.title)}</h3>${para(p.blurb)}${chips(p.skills)}${refs.length ? `<p class="meta">${refs.join(" · ")}</p>` : ""}</article>`;
   }).join("");
   // The catalog supplies the title; the model supplies only the code and
-  // the reason, so a line reads "ISA 444 Business Forecasting: why".
+  // the reason, so a line reads "ISA 444 - Business Forecasting: why" with
+  // code and title in bold (professor's call, 2026-08-23).
   const courses = content.courses.length
     ? `<ul>${content.courses.map((c) => {
         const title = getCourse(c.code)?.title;
-        return `<li><strong>${escapeHtml(c.code)}</strong>${title ? ` ${escapeHtml(title)}` : ""}: ${escapeHtml(c.why)}</li>`;
+        return `<li><strong>${escapeHtml(c.code)}${title ? ` - ${escapeHtml(title)}` : ""}</strong>: ${escapeHtml(c.why)}</li>`;
       }).join("")}</ul>` : "";
   const experience = content.experience.map((e) =>
     `<article><h3>${escapeHtml(e.role)}, ${escapeHtml(e.org)}</h3><p class="meta">${escapeHtml(e.dates)}</p><ul>${e.bullets.map((b) => `<li>${escapeHtml(b)}</li>`).join("")}</ul></article>`).join("");

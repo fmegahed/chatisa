@@ -4,6 +4,13 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.4.5 - August 23, 2026
+
+**Portfolio Builder: coursework lines show "ISA 444 - Business
+Forecasting" in bold.** Full notes: `docs/releases/v6.4.5.md`.
+
+---
+
 ## v6.4.4 - August 23, 2026
 
 **Portfolio Builder: coursework lines show the course title; course codes

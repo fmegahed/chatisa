@@ -131,7 +131,7 @@ describe("renderShowcase", () => {
       { ...career, courses: [{ code: "ISA 444", why: "Forecasting." }, { code: "XYZ 100", why: "Unknown." }] },
       { name: "Ada", links: [], hasPhoto: false, resumeLink: false, login: "ada", folders: [], repoName: "portfolio" },
     );
-    expect(html).toContain("<strong>ISA 444</strong> Business Forecasting: Forecasting.");
+    expect(html).toContain("<strong>ISA 444 - Business Forecasting</strong>: Forecasting.");
     expect(html).toContain("<strong>XYZ 100</strong>: Unknown.");
   });
 });
