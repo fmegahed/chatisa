@@ -566,10 +566,17 @@ function mockObjectFor(options: LanguageModelV4CallOptions): string {
           externalUrl: null,
         },
       ],
-      courses: (codes.length > 0 ? codes.slice(0, 8) : ["ISA 401"]).map((code) => ({
-        code,
-        why: "It built the database and analysis skills these projects rely on.",
-      })),
+      // Real models sometimes stuff the title into code ("ISA 444: Business")
+      // or cite a course the student never listed; the first code here does
+      // the former and the last entry the latter, so the route's normalizer
+      // is exercised.
+      courses: [
+        ...(codes.length > 0 ? codes.slice(0, 7) : ["ISA 401"]).map((code, i) => ({
+          code: i === 0 ? `${code}: Business` : code,
+          why: "It built the database and analysis skills these projects rely on.",
+        })),
+        { code: "ISA 999", why: "A course the student never listed; the route must drop it." },
+      ],
       experience: [
         {
           org: "Farmer School of Business",

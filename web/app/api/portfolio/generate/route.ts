@@ -119,7 +119,7 @@ const CAREER_INSTRUCTIONS = `You write the content for a student's one-page port
 Ground every claim in the resume, the courses, and the project files provided; never invent employers, dates, metrics, or skills. Use bracketed placeholders like [X%] for numbers the material does not state. Write in the first person, plainly, without buzzwords. Do not use em dashes.
 
 projects: one entry per submitted project, using its exact slug. Title it well, describe what it does and what it shows in two to four sentences, and list the skills the files actually demonstrate.
-courses: pick up to 8 courses that best support the story and say in one sentence why each matters.
+courses: pick up to 8 courses that best support the story and say in one sentence why each matters. Put ONLY the course code in code (for example "ISA 444"), never the title; the page adds the title itself.
 experience and education: only from the resume. Leave them empty if the resume has none.
 skillGroups: three to five groups (for example Tools, Methods, Domains).
 
@@ -214,11 +214,24 @@ export async function POST(req: Request) {
       // The model may only describe projects the student submitted, and the
       // link on one is the student's, never the model's invention.
       const submitted = new Map(p.projects.map((x) => [x.slug, x] as const));
+      // Models sometimes stuff the title into code ("ISA 444: Business"),
+      // which the renderer then cannot match to the catalog. Keep the code
+      // itself, and only for courses the student actually listed.
+      const listed = new Set(p.courses.map((c) => c.toUpperCase()));
+      const normalizeCode = (code: string): string | null => {
+        const m = /[A-Z]{2,4}\s?\d{3}/i.exec(code);
+        if (!m) return null;
+        const canon = m[0].toUpperCase().replace(/\s+/, " ").replace(/([A-Z]+)(\d)/, "$1 $2");
+        return listed.has(canon) ? canon : null;
+      };
       const content = {
         ...object,
         projects: object.projects
           .filter((x) => submitted.has(x.slug))
           .map((x) => ({ ...x, externalUrl: submitted.get(x.slug)?.externalUrl ?? null })),
+        courses: object.courses
+          .map((c) => ({ ...c, code: normalizeCode(c.code) }))
+          .filter((c): c is typeof c & { code: string } => c.code !== null),
       };
       recordUsageEvent({
         userEmail: email, module: "portfolio", eventType: "portfolio_generated", modelId,

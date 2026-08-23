@@ -12,6 +12,7 @@
  */
 
 import { SAFE_PATH, type CareerContent, type ShowcaseContent } from "./content";
+import { getCourse } from "@/lib/scout/courses";
 
 export function escapeHtml(value: string): string {
   return value
@@ -141,8 +142,13 @@ export function renderCareer(
     ];
     return `<article><h3>${escapeHtml(p.title)}</h3>${para(p.blurb)}${chips(p.skills)}${refs.length ? `<p class="meta">${refs.join(" · ")}</p>` : ""}</article>`;
   }).join("");
+  // The catalog supplies the title; the model supplies only the code and
+  // the reason, so a line reads "ISA 444 Business Forecasting: why".
   const courses = content.courses.length
-    ? `<ul>${content.courses.map((c) => `<li><strong>${escapeHtml(c.code)}</strong>: ${escapeHtml(c.why)}</li>`).join("")}</ul>` : "";
+    ? `<ul>${content.courses.map((c) => {
+        const title = getCourse(c.code)?.title;
+        return `<li><strong>${escapeHtml(c.code)}</strong>${title ? ` ${escapeHtml(title)}` : ""}: ${escapeHtml(c.why)}</li>`;
+      }).join("")}</ul>` : "";
   const experience = content.experience.map((e) =>
     `<article><h3>${escapeHtml(e.role)}, ${escapeHtml(e.org)}</h3><p class="meta">${escapeHtml(e.dates)}</p><ul>${e.bullets.map((b) => `<li>${escapeHtml(b)}</li>`).join("")}</ul></article>`).join("");
   const education = content.education.map((e) =>

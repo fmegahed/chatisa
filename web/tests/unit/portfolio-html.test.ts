@@ -125,4 +125,13 @@ describe("renderShowcase", () => {
     const html = renderShowcase(unsafeFigure, { course: "ISA 401", semester: "Spring 2026", team: [], repoUrl: null, figures: ["figures/../x.png"], deliverablePaths: [] });
     expect(html).not.toContain("<img");
   });
+
+  it("prints the catalog title next to a course code", () => {
+    const html = renderCareer(
+      { ...career, courses: [{ code: "ISA 444", why: "Forecasting." }, { code: "XYZ 100", why: "Unknown." }] },
+      { name: "Ada", links: [], hasPhoto: false, resumeLink: false, login: "ada", folders: [], repoName: "portfolio" },
+    );
+    expect(html).toContain("<strong>ISA 444</strong> Business Forecasting: Forecasting.");
+    expect(html).toContain("<strong>XYZ 100</strong>: Unknown.");
+  });
 });

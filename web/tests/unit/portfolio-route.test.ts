@@ -134,6 +134,18 @@ describe("POST /api/portfolio/generate", () => {
     expect(body.content.projects[0].externalUrl).toBe("https://github.com/ada/churn");
   });
 
+  it("keeps course codes bare and only for courses the student listed", async () => {
+    // The mock returns "ISA 401: Business" for the first course and an
+    // unlisted ISA 999; the page must get "ISA 401" and nothing invented.
+    const res = await route.POST(request("career", {
+      student: { name: "Ada", links: [] }, courses: ["ISA 401", "ISA 444"],
+      projects: [{ slug: "churn", title: "Churn", externalUrl: null, files: [] }],
+    }));
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { content: { courses: { code: string }[] } };
+    expect(body.content.courses.map((c) => c.code)).toEqual(["ISA 401", "ISA 444"]);
+  });
+
   it("400s on a malformed payload", async () => {
     const res = await route.POST(request("career", { student: 5 }));
     expect(res.status).toBe(400);

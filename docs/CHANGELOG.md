@@ -4,6 +4,14 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.4.4 - August 23, 2026
+
+**Portfolio Builder: coursework lines show the course title; course codes
+are normalized against what the student listed.** Full notes:
+`docs/releases/v6.4.4.md`.
+
+---
+
 ## v6.4.3 - August 23, 2026
 
 **Portfolio Builder: the showcase preview shows uploaded figures, and the
