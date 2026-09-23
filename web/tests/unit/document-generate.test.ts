@@ -34,7 +34,7 @@ describe("tailored resume generation", () => {
 
   it("produces a resume and checks every bullet against the student's own", async () => {
     const result = await generateTailoredResume({
-      modelId: "gpt-5.6-terra",
+      modelId: "gpt-6-sol",
       template: 1,
       studentName: "Kaitlin Jones",
       contact: CONTACT,
@@ -55,7 +55,7 @@ describe("tailored resume generation", () => {
     // ever stops being flagged, the guard rail has failed silently, which is
     // the failure that matters most in this feature.
     const result = await generateTailoredResume({
-      modelId: "gpt-5.6-terra",
+      modelId: "gpt-6-sol",
       template: 1,
       studentName: "Kaitlin Jones",
       contact: CONTACT,
@@ -80,7 +80,7 @@ describe("tailored resume generation", () => {
 
   it("keeps bullets that only reword the student's own lines", async () => {
     const result = await generateTailoredResume({
-      modelId: "gpt-5.6-terra",
+      modelId: "gpt-6-sol",
       template: 1,
       studentName: "Kaitlin Jones",
       contact: CONTACT,
@@ -103,7 +103,7 @@ describe("cover letter generation", () => {
 
   it("produces the header, salutation and closing the standard requires", async () => {
     const result = await generateCoverLetter({
-      modelId: "gpt-5.6-terra",
+      modelId: "gpt-6-sol",
       studentName: "Kaitlin Jones",
       contact: CONTACT,
       resumeText: RESUME,
@@ -128,7 +128,7 @@ describe("cover letter generation", () => {
     // so there is nothing in them to ground against a resume. Checking them
     // would produce noise that trains students to ignore the warnings.
     const result = await generateCoverLetter({
-      modelId: "gpt-5.6-terra",
+      modelId: "gpt-6-sol",
       studentName: "Kaitlin Jones",
       contact: CONTACT,
       resumeText: RESUME,

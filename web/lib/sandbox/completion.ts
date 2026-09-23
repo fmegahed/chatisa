@@ -15,7 +15,6 @@ export const COMPLETION_DEFAULT_MODEL = "openai/gpt-oss-120b:cerebras";
 export const COMPLETION_MODELS = [
   "openai/gpt-oss-20b:groq",
   "openai/gpt-oss-120b:cerebras",
-  "google/gemma-4-31B-it:cerebras",
   "meta-models/Muse-Glimmer-30B:together",
   "moonshotai/Kimi-K3:baseten",
 ];

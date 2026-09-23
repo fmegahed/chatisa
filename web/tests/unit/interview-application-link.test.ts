@@ -38,7 +38,7 @@ describe("createInterview applicationId link (JobApp -> Interview handoff)", () 
 
     const base = {
       userEmail: "student@miamioh.edu",
-      modelId: "gpt-5.6-terra",
+      modelId: "gpt-6-sol",
       interviewType: "mixed",
       jobTitle: "Data Analyst",
       roleBrief: null,

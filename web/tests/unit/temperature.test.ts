@@ -22,14 +22,14 @@ const ROOT = resolve(__dirname, "..", "..");
  */
 describe("temperatureFor", () => {
   it("omits the parameter for models that reject it", () => {
-    expect(temperatureFor("claude-opus-5", 0.7)).toBeUndefined();
+    expect(temperatureFor("claude-opus-5-5", 0.7)).toBeUndefined();
     expect(temperatureFor("claude-sonnet-5", 0)).toBeUndefined();
   });
 
   it("passes it through for models that accept it", () => {
-    expect(temperatureFor("gpt-5.6-sol", 0.7)).toBe(0.7);
-    expect(temperatureFor("gpt-5.6-luna", 0)).toBe(0);
-    expect(temperatureFor("gemini-3.7-flash", 0.25)).toBe(0.25);
+    expect(temperatureFor("gpt-6-sol", 0.7)).toBe(0.7);
+    expect(temperatureFor("gpt-6-luna", 0)).toBe(0);
+    expect(temperatureFor("gemini-3.8-flash", 0.25)).toBe(0.25);
   });
 
   it("treats an unknown model id as accepting it", () => {
@@ -41,8 +41,8 @@ describe("temperatureFor", () => {
   it("keeps the published temperature range, which is a different fact", () => {
     // The range describes what the model's sampling would do; the flag describes
     // whether we are allowed to ask. Zeroing the range would corrupt the catalog.
-    expect(MODELS["claude-opus-5"].temperatureRange).toEqual([0.0, 2.0]);
-    expect(MODELS["claude-opus-5"].supportsTemperature).toBe(false);
+    expect(MODELS["claude-opus-5-5"].temperatureRange).toEqual([0.0, 2.0]);
+    expect(MODELS["claude-opus-5-5"].supportsTemperature).toBe(false);
   });
 });
 

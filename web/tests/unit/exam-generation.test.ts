@@ -351,7 +351,7 @@ describe("generateExam end to end (mock model)", () => {
 
   it("produces grounded questions and reports coverage", async () => {
     const result = await generateExam({
-      modelId: "gpt-5.6-terra",
+      modelId: "gpt-6-sol",
       questionType: "short_answer",
       count: 5,
       pages,
@@ -376,7 +376,7 @@ describe("generateExam end to end (mock model)", () => {
     // answer gave away most of the rest. Repositioning happens after
     // generation, so this asserts the exam a student actually receives.
     const result = await generateExam({
-      modelId: "gpt-5.6-terra",
+      modelId: "gpt-6-sol",
       questionType: "multiple_choice",
       count: 8,
       pages,
@@ -402,7 +402,7 @@ describe("generateExam end to end (mock model)", () => {
 
   it("fails honestly when the pages hold nothing usable", async () => {
     const result = await generateExam({
-      modelId: "gpt-5.6-terra",
+      modelId: "gpt-6-sol",
       questionType: "short_answer",
       count: 5,
       pages: [{ pageNumber: 1, text: "", charCount: 0 }],

@@ -365,7 +365,7 @@ test.describe("interview API guards", () => {
     expect(list.status()).toBe(401);
 
     const start = await request.post("/api/interview", {
-      data: { modelId: "gpt-5.6-terra", interviewType: "mixed", jobTitle: "Analyst", questionCount: 3 },
+      data: { modelId: "gpt-6-sol", interviewType: "mixed", jobTitle: "Analyst", questionCount: 3 },
     });
     expect(start.status()).toBe(401);
 

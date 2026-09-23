@@ -114,7 +114,16 @@ test.describe("resuming an exam", () => {
     await expect(
       page.getByRole("heading", { name: "Pick up where you left off" }),
     ).toBeVisible({ timeout: 30_000 });
-    await page.getByRole("button", { name: "Discard" }).first().click();
+    // Discard every offered exam, not just the first. The account is keyed on
+    // the test id, so it persists across runs in tests/e2e/.data, and a run
+    // interrupted after generation (an OOM-killed run on 2026-08-21 did this)
+    // leaves an extra unfinished exam that would keep the offer on screen.
+    const discard = page.getByRole("button", { name: "Discard" });
+    await expect(discard.first()).toBeVisible();
+    for (let n = await discard.count(); n > 0; n = await discard.count()) {
+      await discard.first().click();
+      await expect(discard).toHaveCount(n - 1);
+    }
 
     // The resume offer is gone, and stays gone on reload.
     await expect(

@@ -26,8 +26,8 @@ describe("describeProviderAvailability", () => {
 
   it("hides the OpenAI models when OPENAI_API_KEY is absent", () => {
     const result = describeProviderAvailability(["OPENAI_API_KEY"]);
-    expect(result.hiddenModels).toContain("gpt-5.6-sol");
-    expect(result.hiddenModels).toContain("gpt-5.6-luna");
+    expect(result.hiddenModels).toContain("gpt-6-sol");
+    expect(result.hiddenModels).toContain("gpt-6-luna");
     // OpenAI's open-weight models served through the HuggingFace router are a
     // different provider and a different credential.
     expect(result.hiddenModels).not.toContain("openai/gpt-oss-20b:groq");

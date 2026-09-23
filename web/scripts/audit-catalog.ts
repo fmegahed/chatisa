@@ -82,49 +82,34 @@ async function main() {
     ),
   );
 
-  const cohere = await getJson(
-    "https://api.cohere.com/v1/models?page_size=100&endpoint=chat",
-    { authorization: `Bearer ${process.env.COHERE_API_KEY}` },
-  );
-  const cohereLimits = new Map<string, string>();
-  served.set(
-    "cohere",
-    new Set(
-      (cohere.models ?? []).map(
-        (m: { name: string; context_length?: number }) => {
-          cohereLimits.set(m.name, `ctx ${m.context_length}`);
-          return m.name;
-        },
-      ),
-    ),
-  );
-
-  const groq = await getJson("https://api.groq.com/openai/v1/models", {
-    authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-  });
-  const groqLimits = new Map<string, string>();
-  served.set(
-    "meta (via Groq)",
-    new Set(
-      groq.data.map(
-        (m: { id: string; context_window?: number; max_completion_tokens?: number }) => {
-          groqLimits.set(
-            m.id,
-            `ctx ${m.context_window}, out ${m.max_completion_tokens}`,
-          );
-          return m.id;
-        },
-      ),
-    ),
-  );
-
-  const hf = await getJson("https://router.huggingface.co/v1/models", {
-    authorization: `Bearer ${process.env.HF_TOKEN}`,
-  });
-  served.set(
-    "huggingface_inference",
-    new Set(hf.data.map((m: { id: string }) => m.id)),
-  );
+  // HuggingFace ids carry a `:provider` route suffix, and the route is what
+  // dies: in v6.5.0 five pinned routes had stopped serving while the weights
+  // stayed listed. So each HF entry is checked against its own per-model
+  // endpoint (the bulk listing also omits some served models), and only a live
+  // pinned route counts as served.
+  const hfRoutes = new Map<string, string[]>();
+  for (const [id, cfg] of Object.entries(MODELS)) {
+    if (cfg.provider !== "huggingface_inference") continue;
+    const [repo, route] = id.split(":");
+    const res = await fetch(`https://router.huggingface.co/v1/models/${repo}`, {
+      headers: { authorization: `Bearer ${process.env.HF_TOKEN}` },
+    });
+    if (!res.ok) {
+      hfRoutes.set(id, []);
+      continue;
+    }
+    const body = (await res.json()) as {
+      data?: { providers?: Array<{ provider: string; status?: string }> };
+    };
+    const live = (body.data?.providers ?? [])
+      .filter((p) => p.status === "live")
+      .map((p) => p.provider);
+    hfRoutes.set(id, live);
+    if (live.includes(route)) {
+      if (!served.has("huggingface_inference")) served.set("huggingface_inference", new Set());
+      served.get("huggingface_inference")!.add(id);
+    }
+  }
 
   console.log("CATALOG AUDIT: is each id we ship actually served today?\n");
   let dead = 0;
@@ -132,12 +117,16 @@ async function main() {
     const set = served.get(cfg.provider);
     const ok = set?.has(id);
     if (!ok) dead++;
-    const limits =
-      googleLimits.get(id) ?? cohereLimits.get(id) ?? groqLimits.get(id) ?? "";
+    const limits = googleLimits.get(id) ?? "";
     console.log(
       `${ok ? "  served " : "  DEAD   "} ${id.padEnd(48)} ${cfg.provider}${limits ? "  [" + limits + "]" : ""}`,
     );
-    if (!ok && set) {
+    if (!ok && cfg.provider === "huggingface_inference") {
+      const live = hfRoutes.get(id) ?? [];
+      console.log(
+        `            live routes instead: ${live.length ? live.join(", ") : "none (weights not served)"}`,
+      );
+    } else if (!ok && set) {
       // Near-miss suggestions catch the case where only a suffix changed.
       const stem = id.split("/").pop()!.slice(0, 18).toLowerCase();
       const near = [...set].filter((s) => s.toLowerCase().includes(stem));
@@ -150,12 +139,6 @@ async function main() {
   for (const [id, l] of googleLimits) {
     if (/^gemini-3(\.\d)?-(pro|flash)/.test(id)) console.log(`  ${id.padEnd(40)} ${l}`);
   }
-  console.log("\nCOHERE limits:");
-  for (const [id, l] of cohereLimits) {
-    if (/^command-a/.test(id)) console.log(`  ${id.padEnd(40)} ${l}`);
-  }
-  console.log("\nGROQ limits:");
-  for (const [id, l] of groqLimits) console.log(`  ${id.padEnd(40)} ${l}`);
 }
 
 main().catch((err) => {

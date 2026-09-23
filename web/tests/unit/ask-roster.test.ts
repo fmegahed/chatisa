@@ -10,10 +10,9 @@ import { getModule } from "@/lib/modules";
 // Anthropic + OpenAI only (2026-07-24): both providers accept the same native
 // file parts, so chats with attachments stay model-switchable.
 const ROSTER = [
-  "gpt-5.6-sol",
-  "gpt-5.6-terra",
-  "gpt-5.6-luna",
-  "claude-opus-5",
+  "gpt-6-sol",
+  "gpt-6-luna",
+  "claude-opus-5-5",
   "claude-sonnet-5",
 ];
 

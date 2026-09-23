@@ -4,6 +4,15 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.5.0 - September 23, 2026
+
+**Model catalog refresh: GPT-6 Sol and Luna, Claude Opus 5.5, Gemini 3.8
+Flash, GLM-5.3, DeepSeek V4.1 Flash and V4 Pro 0813; GPT-5.6 Terra and
+Gemma 4 31B retired; five dead open-weight routes repaired; AI SDK
+upgraded for Opus 5.5.** Full notes: `docs/releases/v6.5.0.md`.
+
+---
+
 ## v6.4.5 - August 23, 2026
 
 **Portfolio Builder: coursework lines show "ISA 444 - Business

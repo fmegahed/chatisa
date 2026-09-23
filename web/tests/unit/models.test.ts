@@ -285,13 +285,13 @@ describe("calculateCost arithmetic, unchanged from legacy config.py", () => {
   });
 
   it("computes cost for a current model", () => {
-    // gpt-5.6-terra: $2.00 per million in, $12.00 per million out (2026-08-20).
-    const result = calculateCost("gpt-5.6-terra", 10_000, 2_000);
+    // gpt-6-sol: $2.00 per million in, $10.00 per million out (2026-09-22).
+    const result = calculateCost("gpt-6-sol", 10_000, 2_000);
     expect(result).not.toHaveProperty("error");
     if ("error" in result) throw new Error("unreachable");
     expect(result.inputCost).toBeCloseTo(0.02, 6);
-    expect(result.outputCost).toBeCloseTo(0.024, 6);
-    expect(result.totalCost).toBeCloseTo(0.044, 6);
+    expect(result.outputCost).toBeCloseTo(0.02, 6);
+    expect(result.totalCost).toBeCloseTo(0.04, 6);
     expect(result.currency).toBe("USD");
   });
 

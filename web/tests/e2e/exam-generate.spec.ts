@@ -39,7 +39,7 @@ async function uploadCourseDoc(
   return (await res.json()).documentId as string;
 }
 
-const MODEL = "gpt-5.6-terra";
+const MODEL = "gpt-6-sol";
 
 test.describe("exam generation", () => {
   test("builds a grounded exam and reports coverage", async ({ request }) => {

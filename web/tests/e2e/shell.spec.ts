@@ -53,12 +53,14 @@ test.describe("app shell", () => {
     // the asymmetry. A configured-but-refused credential returns 503 instead;
     // that path is covered in tests/unit/speech-probe.test.ts.
     expect(body.checks.deep.speech).toMatch(/^(ok|not-configured)/);
-    expect(Object.keys(body.checks.deep).sort()).toEqual([
-      "brandAssets",
-      "dbRoundtrip",
-      "pdfWorker",
-      "speech",
-    ]);
+    // Job Scout feed freshness joined in v6.1.0 and is informational only; the
+    // e2e database has no harvest. The exact-key list below had drifted from
+    // the endpoint since then, which is the failure the comment above warns
+    // about, so the required keys are now checked as a subset.
+    expect(typeof body.checks.deep.scout).toBe("string");
+    expect(Object.keys(body.checks.deep)).toEqual(
+      expect.arrayContaining(["brandAssets", "dbRoundtrip", "pdfWorker", "speech", "scout"]),
+    );
   });
 
   test("old module URLs redirect to the renamed slugs", async ({ page }) => {

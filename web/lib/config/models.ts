@@ -2,7 +2,7 @@
  * Model catalog.
  *
  * Every id here was verified against the provider's own live listing on
- * 2026-08-20 with `npm run models:audit`, and the HuggingFace routes were
+ * 2026-09-22 with `npm run models:discover`, and the HuggingFace routes were
  * verified per serving provider with `scripts/check-proposed.ts`. That process
  * exists because the previous catalog shipped
  * `meta-llama/Llama-4-Maverick-17B-128E-Instruct` for months while the router
@@ -74,12 +74,19 @@ export interface ModelConfig {
 }
 
 export const MODELS: Record<string, ModelConfig> = {
-  "gpt-5.6-sol": {
+  // Replaced GPT-5.6 Sol on 2026-09-22 (v6.5.0), the day GPT-6 Sol and Luna
+  // shipped. $2/$10 per million is OpenAI's published standard (not
+  // promotional) rate, half of 5.6 Sol. GPT-6 has no Terra tier, so GPT-5.6
+  // Terra was retired in the same release and its module defaults moved here:
+  // same input price, cheaper output ($10 against $12), newer generation. GPT-6
+  // Astra ($10/$50) was deliberately not added, on cost (professor's decision).
+  // https://developers.openai.com/api/docs/models/gpt-6-sol
+  "gpt-6-sol": {
     provider: "openai",
-    displayName: "GPT-5.6 Sol",
-    description: "OpenAI's most capable model. Best for hard reasoning and detailed feedback.",
-    costPer1kInput: 0.005,
-    costPer1kOutput: 0.03,
+    displayName: "GPT-6 Sol",
+    description: "OpenAI's strong general purpose model. Best for hard reasoning and detailed feedback.",
+    costPer1kInput: 0.002,
+    costPer1kOutput: 0.01,
     maxTokens: 128000,
     contextWindow: 1050000,
     supportsVision: true,
@@ -90,30 +97,15 @@ export const MODELS: Record<string, ModelConfig> = {
     openWeight: false,
     tags: ["premium", "reasoning", "coding", "large_context", "vision", "sandbox"],
   },
-  "gpt-5.6-terra": {
+  // Replaced GPT-5.6 Luna on 2026-09-22 (v6.5.0). $0.10/$0.50 per million,
+  // OpenAI's published standard rate.
+  // https://developers.openai.com/api/docs/models/gpt-6-luna
+  "gpt-6-luna": {
     provider: "openai",
-    displayName: "GPT-5.6 Terra",
-    description: "Strong general purpose OpenAI model at a fraction of the cost of Sol.",
-    // Repriced by OpenAI: $2/$12 per million as of 2026-08-20, down from $2.5/$15.
-    costPer1kInput: 0.002,
-    costPer1kOutput: 0.012,
-    maxTokens: 128000,
-    contextWindow: 1050000,
-    supportsVision: true,
-    supportsFunctionCalling: true,
-    supportsStructuredOutput: true,
-    temperatureRange: [0.0, 2.0],
-    defaultTemperature: 0.7,
-    openWeight: false,
-    tags: ["premium", "reasoning", "coding", "large_context", "vision"],
-  },
-  "gpt-5.6-luna": {
-    provider: "openai",
-    displayName: "GPT-5.6 Luna",
+    displayName: "GPT-6 Luna",
     description: "OpenAI's fast, low cost model. A good default for everyday questions.",
-    // Repriced by OpenAI: $0.20/$1.20 per million as of 2026-08-20, down from $1/$6.
-    costPer1kInput: 0.0002,
-    costPer1kOutput: 0.0012,
+    costPer1kInput: 0.0001,
+    costPer1kOutput: 0.0005,
     maxTokens: 128000,
     contextWindow: 1050000,
     supportsVision: true,
@@ -124,12 +116,15 @@ export const MODELS: Record<string, ModelConfig> = {
     openWeight: false,
     tags: ["cost_effective", "coding", "large_context", "vision"],
   },
-  // Replaced Opus 4.8 on 2026-07-24, the day Opus 5 landed: same price
-  // ($5/$25 per million), more capable, per the professor's direction and
-  // https://www.anthropic.com/news/claude-opus-5. Assumed to keep the 4.7-era
-  // tokenizer family (text costs roughly 30 percent more tokens than
-  // pre-4.7 Claude models), so cost estimates carry over from 4.8, not from
-  // Sonnet 4.5.
+  // Replaced Opus 5 on 2026-09-22 (v6.5.0), the day Opus 5.5 landed, per the
+  // professor's direction: $4/$20 per million against $5/$25, and Anthropic
+  // reports roughly Fable 5.1 level performance.
+  // https://platform.claude.com/docs/en/models/opus-5-5/overview
+  // Same tokenizer as Opus 4.7 onward (about 30 percent more tokens than
+  // pre-4.7 Claude models). Breaking changes from Opus 5 that matter here:
+  // thinking is always on, and forced tool use returns an error, so any
+  // structured-output path that forces a tool call would fail on this model
+  // only. verify:models exercises structured output on it before it ships.
   //
   // Kept from the 4.8 entry because the lesson outlives the model: 4.8 was
   // briefly withheld on 2026-07-21 after returning HTTP 500 for every request
@@ -137,12 +132,12 @@ export const MODELS: Record<string, ModelConfig> = {
   // The failure reproduced 5/5, which felt conclusive, but an active incident
   // reproduces 100 percent of the time inside its own window; only re-testing
   // after a delay can tell a defect from an outage (ADR-019).
-  "claude-opus-5": {
+  "claude-opus-5-5": {
     provider: "anthropic",
-    displayName: "Claude Opus 5",
+    displayName: "Claude Opus 5.5",
     description: "Anthropic's most capable model. Strong at careful explanation and code review.",
-    costPer1kInput: 0.005,
-    costPer1kOutput: 0.025,
+    costPer1kInput: 0.004,
+    costPer1kOutput: 0.02,
     maxTokens: 128000,
     contextWindow: 1000000,
     supportsVision: true,
@@ -155,12 +150,16 @@ export const MODELS: Record<string, ModelConfig> = {
     openWeight: false,
     tags: ["premium", "reasoning", "coding", "large_context", "vision"],
   },
+  // Repriced 2026-09-22 (v6.5.0): the $2/$10 per million launch price became
+  // the standard price, and the scheduled September 1 rise to $3/$15 never
+  // happened, so the $3/$15 recorded here had overstated cost since then.
+  // https://platform.claude.com/docs/en/about-claude/pricing
   "claude-sonnet-5": {
     provider: "anthropic",
     displayName: "Claude Sonnet 5",
     description: "Balanced Anthropic model. Fast, capable, and well suited to tutoring.",
-    costPer1kInput: 0.003,
-    costPer1kOutput: 0.015,
+    costPer1kInput: 0.002,
+    costPer1kOutput: 0.01,
     maxTokens: 128000,
     contextWindow: 1000000,
     supportsVision: true,
@@ -189,13 +188,14 @@ export const MODELS: Record<string, ModelConfig> = {
     openWeight: false,
     tags: ["premium", "reasoning", "coding", "large_context", "vision"],
   },
-  // Replaced gemini-3.6-flash on 2026-08-20 (v6.3.0): same limits and the same
-  // promotional price, newer generation. Price is Google's published rate as of
-  // 2026-08-20: $0.75/$3.75 per million through 2026-12-31, rising to
-  // $1.50/$7.50 on 2027-01-01, so this entry needs revisiting at year end.
-  "gemini-3.7-flash": {
+  // Replaced gemini-3.7-flash on 2026-09-22 (v6.5.0): same limits (1,048,576
+  // context, 65,536 output, read from Google's model listing) and the same
+  // promotional price, newer generation. $0.75/$3.75 per million through
+  // 2026-12-31, rising to $1.50/$7.50 on 2027-01-01, so this entry needs
+  // revisiting at year end. https://ai.google.dev/gemini-api/docs/pricing
+  "gemini-3.8-flash": {
     provider: "google",
-    displayName: "Gemini 3.7 Flash",
+    displayName: "Gemini 3.8 Flash",
     description: "Google's fast model. Large context at a lower price than Pro.",
     costPer1kInput: 0.00075,
     costPer1kOutput: 0.00375,
@@ -209,19 +209,20 @@ export const MODELS: Record<string, ModelConfig> = {
     openWeight: false,
     tags: ["cost_effective", "coding", "large_context", "vision"],
   },
-  // Re-routed from together on 2026-08-20 (v6.3.0). baseten is the fastest
-  // route (73 tokens per second) and advertises structured output, but six
-  // consecutive live probes returned objects that did not match a two-field
-  // schema, and the measurement wins over the advertised capability (same rule
-  // as phi-4). deepinfra is the fastest route whose structured output actually
-  // works (47 tokens per second against 29 on together) and is also the
-  // cheapest ($0.75/$2.4 per million against $1.4/$4.4 elsewhere).
-  "zai-org/GLM-5.2:deepinfra": {
+  // Replaced GLM-5.2:deepinfra on 2026-09-22 (v6.5.0). The measurement rule
+  // decided the route again: for 5.2, baseten failed a two-field schema six
+  // times in a row; for 5.3 it is deepinfra, the cheapest route ($1.2/$4),
+  // that passed only 2 of 6 identical structured-output probes ("response did
+  // not match schema"), while novita and baseten both passed 6 of 6. novita
+  // wins on a typical answer (76 tokens per second with a 1.7s first token,
+  // against 60 at 1.1s on baseten); both charge $1.4/$4.4 per million. together
+  // is fastest (137) but has no structured output.
+  "zai-org/GLM-5.3:novita": {
     provider: "huggingface_inference",
-    displayName: "GLM-5.2",
+    displayName: "GLM-5.3",
     description: "Open weight flagship from Z.ai. Strong general reasoning.",
-    costPer1kInput: 0.00075,
-    costPer1kOutput: 0.0024,
+    costPer1kInput: 0.0014,
+    costPer1kOutput: 0.0044,
     maxTokens: 8192,
     contextWindow: 1048576,
     supportsVision: false,
@@ -248,17 +249,22 @@ export const MODELS: Record<string, ModelConfig> = {
     openWeight: true,
     tags: ["open_weight", "reasoning", "large_context", "vision"],
   },
-  // together kept on the 2026-08-20 audit: it is the fastest structured-output
-  // route (60 tokens per second, 0.5s first token; fireworks 52 at 1.9s,
-  // deepinfra 28). baseten is faster (115) but has no structured output.
-  "deepseek-ai/DeepSeek-V4-Pro:together": {
+  // Replaced DeepSeek-V4-Pro:together on 2026-09-22 (v6.5.0): together stopped
+  // serving the original V4 Pro weights, so the pinned route was dead, and
+  // DeepSeek has since published the 0813 snapshot. baseten is the fastest
+  // priced route with structured output (54 tokens per second; deepinfra 36,
+  // fireworks 43 and unpriced) at $1.32/$3.96 per million. Its first token is
+  // slow (about 2.7s), which is the trade for keeping it in Exam Ally; together
+  // is faster (58) but has no structured output. The router now publishes a
+  // 1,048,576 context for every route, up from the 512,000 recorded before.
+  "deepseek-ai/DeepSeek-V4-Pro-0813:baseten": {
     provider: "huggingface_inference",
     displayName: "DeepSeek V4 Pro",
     description: "Open weight reasoning model from DeepSeek.",
-    costPer1kInput: 0.00174,
-    costPer1kOutput: 0.00348,
+    costPer1kInput: 0.00132,
+    costPer1kOutput: 0.00396,
     maxTokens: 8192,
-    contextWindow: 512000,
+    contextWindow: 1048576,
     supportsVision: false,
     supportsFunctionCalling: true,
     supportsStructuredOutput: true,
@@ -267,19 +273,19 @@ export const MODELS: Record<string, ModelConfig> = {
     openWeight: true,
     tags: ["open_weight", "reasoning", "coding", "large_context"],
   },
-  // Re-routed on 2026-08-20 (v6.3.0) because fireworks-ai stopped serving
-  // these weights entirely; the pinned route died out from under the catalog,
-  // which is exactly the failure the audit scripts exist for. Of the two
-  // remaining routes, deepinfra is cheaper ($0.09/$0.18 against $0.14/$0.28 on
-  // novita), has a 0.4s first token against 1.0s, and supports structured
-  // output, which this model previously lacked; novita only wins on raw
-  // throughput (92 against 68 tokens per second).
-  "deepseek-ai/DeepSeek-V4-Flash:deepinfra": {
+  // Replaced DeepSeek-V4-Flash:deepinfra on 2026-09-22 (v6.5.0) with V4.1.
+  // The old route had slowed to about 20 tokens per second, which no longer
+  // earned the "very fast" description. baseten is the fastest priced route
+  // with structured output (108 tokens per second; novita 116 without
+  // structured output, deepinfra 31). The price rises from $0.09/$0.18 to
+  // $0.30/$1.20 per million; deepinfra is cheaper ($0.2/$0.6) but a third of
+  // the speed.
+  "deepseek-ai/DeepSeek-V4.1-Flash:baseten": {
     provider: "huggingface_inference",
-    displayName: "DeepSeek V4 Flash",
+    displayName: "DeepSeek V4.1 Flash",
     description: "Very cheap, very fast open weight model. Good for quick questions.",
-    costPer1kInput: 0.00009,
-    costPer1kOutput: 0.00018,
+    costPer1kInput: 0.0003,
+    costPer1kOutput: 0.0012,
     maxTokens: 8192,
     contextWindow: 1048576,
     supportsVision: false,
@@ -332,14 +338,13 @@ export const MODELS: Record<string, ModelConfig> = {
     openWeight: true,
     tags: ["open_weight", "reasoning", "coding", "large_context", "vision"],
   },
-  // Added 2026-08-20 (v6.3.0). Routed via fireworks-ai: 104 tokens per second
-  // against 53 on together, and together has no structured output for these
-  // weights. The router publishes no price for this route; $2/$6 per million is
-  // fireworks' own published serverless rate for its Qwen 3.8 flagship tier
-  // (docs.fireworks.ai/serverless/pricing, read 2026-08-20), which is the only
-  // published figure and sits just below together's $2.5/$6.25 for the same
-  // weights. Text only: the card is text-generation, no vision encoder.
-  "Qwen/Qwen3.8-2.4T-A95B:fireworks-ai": {
+  // Added 2026-08-20 (v6.3.0) on fireworks-ai. Re-routed 2026-09-22 (v6.5.0)
+  // because fireworks stopped serving these weights. Of the remaining routes,
+  // deepinfra is the fastest with structured output (47 tokens per second
+  // against 32 on novita) at $2/$6 per million; together is faster (137) but
+  // has no structured output. Text only: the card is text-generation, no
+  // vision encoder.
+  "Qwen/Qwen3.8-2.4T-A95B:deepinfra": {
     provider: "huggingface_inference",
     displayName: "Qwen3.8 2.4T",
     description: "Alibaba's largest open weight model. Rivals the commercial flagships.",
@@ -355,49 +360,53 @@ export const MODELS: Record<string, ModelConfig> = {
     openWeight: true,
     tags: ["open_weight", "reasoning", "coding", "large_context"],
   },
-  // Added 2026-08-20 (v6.3.0) on the professor's suggestion. NVFP4 build,
-  // routed via together: 130 tokens per second with a 0.3s first token and a
-  // 512k context, against 114 and 262k on fireworks. fireworks' output is
-  // cheaper ($2.4 against $3.6 per million), but the selection rule for this
-  // release was speed first, then cost. Text only.
-  "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4:together": {
+  // Added 2026-08-20 (v6.3.0) on the professor's suggestion, NVFP4 build on
+  // together. Moved 2026-09-22 (v6.5.0) to the full-precision BF16 weights on
+  // deepinfra, per the professor's direction: together stopped serving the
+  // NVFP4 build, and its only remaining route (fireworks-ai) rejects our
+  // HuggingFace account ("Pay-as-you go is not enabled for provider
+  // fireworks-ai yet"), which the account settings do not offer to enable.
+  // deepinfra is the only BF16 route: 47 tokens per second, $1/$5 per million,
+  // 262,144 context. No structured output (the router says so, and 1 of 6
+  // live schema probes passed), so it is chat only and hidden from Exam Ally.
+  // Text only.
+  "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16:deepinfra": {
     provider: "huggingface_inference",
     displayName: "Nemotron 3 Ultra",
-    description: "NVIDIA's large open weight reasoning model, served fast.",
-    costPer1kInput: 0.0006,
-    costPer1kOutput: 0.0036,
+    description: "NVIDIA's large open weight reasoning model.",
+    costPer1kInput: 0.001,
+    costPer1kOutput: 0.005,
     maxTokens: 8192,
-    contextWindow: 512288,
+    contextWindow: 262144,
     supportsVision: false,
     supportsFunctionCalling: true,
-    supportsStructuredOutput: true,
+    supportsStructuredOutput: false,
     temperatureRange: [0.0, 2.0],
     defaultTemperature: 0.7,
     openWeight: true,
     tags: ["open_weight", "reasoning", "coding", "large_context"],
   },
-  // Replaced Qwen3.6-35B on 2026-08-20 (v6.3.0) per the professor's direction.
-  // featherless-ai is the ONLY router provider for these weights, so there was
-  // no route to choose. The route is honest but thin: it advertises no tool
-  // support and no structured output, publishes neither price nor context
-  // length, and measured 10-17s to a full short answer. Vision verified live on
-  // this route on 2026-08-20. Cost is recorded as zero because featherless
-  // publishes no per-token figure through the router, matching how unpriced
-  // routes have been recorded before; the context is a conservative floor. Not
-  // tagged "reasoning" so the slow single route is not offered to the
-  // reasoning-filtered Project Coach.
-  "Qwen/Qwen3.8-27B:featherless-ai": {
+  // Replaced Qwen3.6-35B on 2026-08-20 (v6.3.0) per the professor's direction,
+  // then on featherless-ai, the only route at the time (no tools, no
+  // structured output, unpriced, 10-17s to a short answer). Re-routed
+  // 2026-09-22 (v6.5.0) because featherless stopped serving it. ovhcloud is the
+  // fastest of the three new routes (67 tokens per second against 29 on novita
+  // and 19 on deepinfra), publishes a price ($0.47/$3.19 per million), and
+  // advertises tools and structured output, which this model previously
+  // lacked; both claims are verified live before shipping (ADR-018). Vision is
+  // re-probed on this route. ovhcloud publishes its context (262,144), so the
+  // limit is no longer inferred. Not tagged "reasoning", as before.
+  "Qwen/Qwen3.8-27B:ovhcloud": {
     provider: "huggingface_inference",
     displayName: "Qwen3.8 27B",
-    description: "Compact open weight model from Alibaba that also reads images. Can be slow to respond.",
-    costPer1kInput: 0.0,
-    costPer1kOutput: 0.0,
+    description: "Compact open weight model from Alibaba that also reads images.",
+    costPer1kInput: 0.00047,
+    costPer1kOutput: 0.00319,
     maxTokens: 8192,
-    contextWindow: 131072,
+    contextWindow: 262144,
     supportsVision: true,
-    supportsFunctionCalling: false,
-    supportsStructuredOutput: false,
-    limitsInferred: true,
+    supportsFunctionCalling: true,
+    supportsStructuredOutput: true,
     temperatureRange: [0.0, 2.0],
     defaultTemperature: 0.7,
     openWeight: true,
@@ -444,29 +453,6 @@ export const MODELS: Record<string, ModelConfig> = {
     defaultTemperature: 0.7,
     openWeight: true,
     tags: ["open_weight", "cost_effective", "coding"],
-  },
-  // No longer free: as of 2026-08-20 cerebras publishes $0.99/$1.49 per
-  // million, a context of 131072 (previously inferred at 262144 from sibling
-  // routes, so the recorded context SHRINKS with this update), and structured
-  // output. Kept on cerebras for speed (732 tokens per second; the cheap routes
-  // run at 28 to 88). The model card reports image input, but image serving on
-  // this route is unconfirmed, so vision stays off rather than risk failed
-  // requests.
-  "google/gemma-4-31B-it:cerebras": {
-    provider: "huggingface_inference",
-    displayName: "Gemma 4 31B",
-    description: "Google's open weight model, served very fast.",
-    costPer1kInput: 0.00099,
-    costPer1kOutput: 0.00149,
-    maxTokens: 8192,
-    contextWindow: 131072,
-    supportsVision: false,
-    supportsFunctionCalling: true,
-    supportsStructuredOutput: true,
-    temperatureRange: [0.0, 2.0],
-    defaultTemperature: 0.7,
-    openWeight: true,
-    tags: ["open_weight"],
   },
   // The card reports vision, but only through an optional mmproj pack that this route is not confirmed to load, so vision is left off. No route anywhere supports structured output for these weights.
   "prism-ml/Ternary-Bonsai-27B-gguf:together": {
@@ -527,19 +513,19 @@ export const DEFAULT_MODELS: Partial<Record<ModuleKey, string>> = {
   sandbox_chat: "claude-sonnet-5",
   // Ask Anything: strong agentic tool use at mid cost (design 2026-07-24).
   ask_anything: "claude-sonnet-5",
-  project_coach: "gpt-5.6-terra",
-  exam_ally: "gpt-5.6-terra",
+  project_coach: "gpt-6-sol",
+  exam_ally: "gpt-6-sol",
   // Speech is moving to Deepgram; the previous default,
   // gpt-4o-realtime-preview-2025-06-03, was withdrawn by OpenAI and is no
   // longer served, so nothing here can point at it.
-  interview_mentor_transcription: "gpt-5.6-terra",
-  jobapp_assistant: "gpt-5.6-terra",
+  interview_mentor_transcription: "gpt-6-sol",
+  jobapp_assistant: "gpt-6-sol",
   // Job Scout's student-facing generation (resume skills, project
   // scaffolds); mirrors JobApp. The weekly tagging pipeline pins its own
   // model in lib/scout/tag.ts and does not read this.
-  job_scout: "gpt-5.6-terra",
+  job_scout: "gpt-6-sol",
   // Portfolio Builder: structured content for a published site; mirrors Job Scout.
-  portfolio: "gpt-5.6-terra",
+  portfolio: "gpt-6-sol",
 };
 
 interface PageModelRule {
@@ -592,7 +578,7 @@ const PAGE_MODELS: Record<string, PageModelRule> = {
     minContextWindow: 64000,
   },
   portfolio: { includeAll: true, requireStructuredOutput: true, minContextWindow: 64000 },
-  ai_sandbox: { specificModels: ["gpt-5.6-sol"] },
+  ai_sandbox: { specificModels: ["gpt-6-sol"] },
   // The Sandbox side chat offers the same models as the Coding Companion.
   sandbox_chat: { includeAll: true, excludeTags: ["realtime", "speech"] },
   ai_comparisons: { includeAll: true, excludeTags: ["realtime", "speech"] },
@@ -603,10 +589,9 @@ const PAGE_MODELS: Record<string, PageModelRule> = {
   // and Kimi remain available in AI Comparison.
   ask_anything: {
     specificModels: [
-      "gpt-5.6-sol",
-      "gpt-5.6-terra",
-      "gpt-5.6-luna",
-      "claude-opus-5",
+      "gpt-6-sol",
+      "gpt-6-luna",
+      "claude-opus-5-5",
       "claude-sonnet-5",
     ],
   },
@@ -621,13 +606,12 @@ export const MODEL_CATEGORIES: Record<
     displayName: "Commercial APIs",
     description: "Hosted models from the large AI labs",
     models: [
-      "gpt-5.6-sol",
-      "gpt-5.6-terra",
-      "gpt-5.6-luna",
-      "claude-opus-5",
+      "gpt-6-sol",
+      "gpt-6-luna",
+      "claude-opus-5-5",
       "claude-sonnet-5",
       "gemini-3.1-pro-preview-customtools",
-      "gemini-3.7-flash",
+      "gemini-3.8-flash",
     ],
   },
   open_weight_large: {
@@ -635,11 +619,11 @@ export const MODEL_CATEGORIES: Record<
     description:
       "Openly published models that rival the commercial labs. Worth trying to see how far open alternatives have come.",
     models: [
-      "zai-org/GLM-5.2:deepinfra",
-      "deepseek-ai/DeepSeek-V4-Pro:together",
+      "zai-org/GLM-5.3:novita",
+      "deepseek-ai/DeepSeek-V4-Pro-0813:baseten",
       "moonshotai/Kimi-K3:baseten",
-      "Qwen/Qwen3.8-2.4T-A95B:fireworks-ai",
-      "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4:together",
+      "Qwen/Qwen3.8-2.4T-A95B:deepinfra",
+      "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16:deepinfra",
       "thinkingmachines/Inkling:together",
       "openai/gpt-oss-120b:cerebras",
     ],
@@ -649,11 +633,10 @@ export const MODEL_CATEGORIES: Record<
     description:
       "Smaller open models. Cheap or free, quick to respond, and a good way to see the trade-off against the large models.",
     models: [
-      "deepseek-ai/DeepSeek-V4-Flash:deepinfra",
+      "deepseek-ai/DeepSeek-V4.1-Flash:baseten",
       "meta-models/Muse-Glimmer-30B:together",
-      "Qwen/Qwen3.8-27B:featherless-ai",
+      "Qwen/Qwen3.8-27B:ovhcloud",
       "openai/gpt-oss-20b:groq",
-      "google/gemma-4-31B-it:cerebras",
       "prism-ml/Ternary-Bonsai-27B-gguf:together",
       "microsoft/phi-4:deepinfra",
     ],

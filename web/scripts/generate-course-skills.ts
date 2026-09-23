@@ -43,9 +43,9 @@ const MODELS = [
       ),
   },
   {
-    name: "gpt-5.6-terra",
+    name: "gpt-6-sol",
     model: () =>
-      createOpenAI({ apiKey: process.env.OPENAI_API_KEY })("gpt-5.6-terra"),
+      createOpenAI({ apiKey: process.env.OPENAI_API_KEY })("gpt-6-sol"),
   },
 ];
 

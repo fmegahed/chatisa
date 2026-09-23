@@ -9,12 +9,13 @@ import type { RawPosting } from "./sources/types";
 
 /**
  * Per-posting skill tagging for the weekly harvest.
- * Model: gemini-3.7-flash (v6.3.0 catalog refresh 2026-08-20; previously
- * gemini-3.6-flash per the user decision of 2026-07-28, revising the earlier
- * frontier-everywhere choice — the quality delta on skill-listing does not
- * justify a weekly frontier bill. 3.7 Flash keeps the same price and limits).
+ * Model: gemini-3.8-flash (v6.5.0 catalog refresh 2026-09-22; before that
+ * 3.7 Flash from v6.3.0, and gemini-3.6-flash per the user decision of
+ * 2026-07-28, revising the earlier frontier-everywhere choice — the quality
+ * delta on skill-listing does not justify a weekly frontier bill. Each Flash
+ * step has kept the same price and limits).
  */
-export const TAG_MODEL_ID = "gemini-3.7-flash";
+export const TAG_MODEL_ID = "gemini-3.8-flash";
 
 /** Cap per design §4.3; CHATISA_SCOUT_MAX_RUN_USD overrides. */
 export function maxRunUsd(): number {
