@@ -52,7 +52,7 @@ Lives beside the existing GitHub code so the token invariant holds.
   paginated to 100), forks and archived repositories removed. Each entry:
   full name, description, main language, pushed date, default branch.
 - `readRepo(conn, fullName, opts)`: builds a `RepoSummary`, capped at
-  60,000 characters in total:
+  150,000 characters in total (professor, 2026-09-24):
   - basics: name, description, topics, default branch, fork / template /
     archived flags;
   - languages: `GET /repos/{o}/{r}/languages` (bytes per language);
@@ -67,7 +67,7 @@ Lives beside the existing GitHub code so the token invariant holds.
     `package.json`;
   - up to 6 analysis or code files by extension (`.py .R .Rmd .qmd .ipynb
     .sql .js .ts .jl`), largest first, skipping vendored and generated
-    paths (`node_modules/`, `dist/`, `.venv/`, `renv/library/`), 15,000
+    paths (`node_modules/`, `dist/`, `.venv/`, `renv/library/`), 45,000
     characters each; `.ipynb` reduced to its code and markdown cells,
     outputs removed.
 - Download size (professor, 2026-09-24):
@@ -76,7 +76,7 @@ Lives beside the existing GitHub code so the token invariant holds.
     anyway", which re-reads that repository including the chosen file, up
     to GitHub's 100 MB limit for the contents API
     (https://docs.github.com/en/rest/repos/contents);
-  - the model still sees at most 15,000 characters of each file's code, so
+  - the model still sees at most 45,000 characters of each file's code, so
     this mainly helps notebooks whose size is embedded plots.
 - File reads use the contents API with the raw media type. All requests
   carry the student's token; each student spends their own GitHub quota
@@ -214,21 +214,23 @@ The import panel above is an inline disclosure, not a modal:
 
 ## Limits and cost
 
-- **Per request:** 5 repositories and about 60,000 characters of summary
+- **Per request:** 5 repositories and at most 150,000 characters of summary
   per repository, enforced in the browser and clipped again on the server.
 - **Rate limit:** a per-student limit on the new route, env-overridable
   like the other scout limits (`CHATISA_SCOUT_REPO_LIMIT_PER_MINUTE`);
   raised in the e2e config.
 - **Cost:** one model call per repository. Measured with the app's price
-  table for about 15,000 input and 1,500 output tokens per repository:
-  - GPT-6 Luna: $0.002;
-  - DeepSeek V4.1 Flash: $0.006;
-  - Gemini 3.8 Flash: $0.017;
-  - GPT-6 Sol (Job Scout's default): $0.045;
-  - Claude Sonnet 5: $0.045;
-  - Claude Opus 5.5: $0.09.
+  table for a full-size summary (about 37,500 input tokens at four
+  characters a token) and 1,500 output tokens per repository:
+  - GPT-6 Luna: $0.004;
+  - DeepSeek V4.1 Flash: $0.013;
+  - Gemini 3.8 Flash: $0.034;
+  - GPT-6 Sol (Job Scout's default): $0.09;
+  - Claude Sonnet 5: $0.09;
+  - Claude Opus 5.5: $0.18.
 
-  Five repositories with the default model: about $0.22. The student
+  Most repositories are smaller than the cap and cost less. Five
+  full-size repositories with the default model: about $0.45. The student
   chooses the model, as for resumes.
 
 ## Privacy and security
