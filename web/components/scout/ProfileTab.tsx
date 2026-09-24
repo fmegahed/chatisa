@@ -23,6 +23,7 @@ import type { FeedPosting } from "@/lib/scout/feed-types";
 import { FilePick } from "./FilePick";
 import { SkillsPanel } from "./SkillsPanel";
 import { CourseChecklist } from "./CourseChecklist";
+import { GithubSkills } from "./GithubSkills";
 import { useSyncExternalStore } from "react";
 
 /**
@@ -402,6 +403,12 @@ export function ProfileTab(props: {
           </div>
         ) : null}
       </section>
+
+      <GithubSkills
+        models={props.models}
+        extras={draftExtras}
+        onExtras={(next) => commit(draftPlan, next)}
+      />
 
       {isFirstRun ? (
         <div className="mt-8">

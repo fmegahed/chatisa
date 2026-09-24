@@ -99,6 +99,9 @@ async function classify(res: Response): Promise<PushError> {
   return { kind: "github", status: res.status };
 }
 
+/** The same verdict for read-only callers (github-read.ts, v6.8.0). */
+export const classifyGithubResponse = classify;
+
 class CancelledError extends Error {}
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));

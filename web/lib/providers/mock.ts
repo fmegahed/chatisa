@@ -503,6 +503,22 @@ function mockObjectFor(options: LanguageModelV4CallOptions): string {
     });
   }
 
+  // Job Scout: skills from a GitHub repository (v6.8.0). Deliberately
+  // over-claims so the route's guards are exercised: the guards, not the
+  // model, decide the levels.
+  if (keys.length === 1 && keys[0] === "skills" && /<repo_readme nonce=/.test(promptText(options))) {
+    return JSON.stringify({
+      skills: [
+        { skillId: "machine_learning", level: "anchor", evidence: "trained a churn classifier in src/model.py" },
+        { skillId: "data_wrangling", level: "anchor", evidence: "explained the cleaning in README.md" },
+        { skillId: "regression", level: "anchor", evidence: "built features in src/features.py" },
+        { skillId: "tableau", level: "applied", evidence: "dashboards" },
+        { skillId: "quantum_basket_weaving", level: "anchor", evidence: "src/model.py" },
+        { skillId: "python", level: "applied", evidence: "wrote the pipeline in src/model.py" },
+      ],
+    });
+  }
+
   // Job Scout: resume/free-text skill extraction { skills } with levels.
   // Checked AFTER the tailored-resume branch, which also asks for "skills".
   if (keys.length === 1 && keys[0] === "skills") {

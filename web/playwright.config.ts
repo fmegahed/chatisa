@@ -71,6 +71,7 @@ export default defineConfig({
       // is covered by its own unit tests.
       CHATISA_UPLOAD_LIMIT_PER_MINUTE: "200",
       CHATISA_SCOUT_PROJECT_LIMIT_PER_MINUTE: "200",
+      CHATISA_SCOUT_REPO_LIMIT_PER_MINUTE: "100",
       // Portfolio Builder generates a site per wizard run, and both browser
       // projects run the wizard specs against one shared account.
       CHATISA_PORTFOLIO_LIMIT_PER_MINUTE: "200",

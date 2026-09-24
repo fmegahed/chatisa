@@ -17,8 +17,45 @@ export interface ProfileExtra {
   skillId: string;
   level: CourseSkillLevel;
   /** Where the student confirmed it from, for honest display. */
-  source: "resume" | "freeform" | "manual";
+  source: "resume" | "freeform" | "manual" | "github";
   evidence?: string;
+  /** The repository ("owner/name") a GitHub skill came from (v6.8.0). */
+  repo?: string;
+  /** The student chose a level above the suggestion (v6.8.0). */
+  setByStudent?: boolean;
+}
+
+const DEPTH: Record<CourseSkillLevel, number> = { exposure: 0, applied: 1, anchor: 2 };
+
+/**
+ * A repository's confirmed skills replace that repository's earlier ones
+ * (re-analysis never duplicates); other extras are kept as they are.
+ */
+export function mergeRepoExtras(
+  extras: ProfileExtra[],
+  repo: string,
+  confirmed: { skillId: string; level: CourseSkillLevel; suggested: CourseSkillLevel; evidence: string }[],
+): ProfileExtra[] {
+  const kept = extras.filter((e) => !(e.source === "github" && e.repo === repo));
+  return [
+    ...kept,
+    ...confirmed.map((c) => ({
+      skillId: c.skillId,
+      level: c.level,
+      source: "github" as const,
+      repo,
+      evidence: c.evidence,
+      ...(DEPTH[c.level] > DEPTH[c.suggested] ? { setByStudent: true } : {}),
+    })),
+  ];
+}
+
+/** How the skills panel names where an extra came from. */
+export function extraSourceLabel(e: ProfileExtra): string {
+  if (e.source === "github") return `from ${e.repo ?? "GitHub"}${e.setByStudent ? ", set by you" : ""}`;
+  if (e.source === "resume") return "your resume";
+  if (e.source === "freeform") return "your experience";
+  return "added by you";
 }
 
 /**

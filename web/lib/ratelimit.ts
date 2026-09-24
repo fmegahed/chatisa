@@ -105,6 +105,12 @@ export const SCOUT_PROJECT_RATE_LIMIT = {
   windowMs: 60_000,
 };
 
+/** GitHub skill suggestions (v6.8.0): up to 5 repositories per request. */
+export const SCOUT_REPO_RATE_LIMIT = {
+  limit: Number(process.env.CHATISA_SCOUT_REPO_LIMIT_PER_MINUTE ?? 6),
+  windowMs: 60_000,
+};
+
 /**
  * Portfolio Builder generation (career sites and project showcases share one
  * bucket: both are one "write my page" model call over uploaded material).

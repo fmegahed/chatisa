@@ -4,6 +4,16 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.8.0 - September 24, 2026
+
+**Job Scout suggests skills from a student's own public GitHub
+repositories: up to five at a time, fixed rules against overselling, the
+student confirms each skill at any level, and nothing about the
+repositories is stored on our server.** Full notes:
+`docs/releases/v6.8.0.md`.
+
+---
+
 ## v6.7.1 - September 24, 2026
 
 **Catalog refresh Action: the collector retries a dropped connection from

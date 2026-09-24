@@ -10,6 +10,7 @@ import type {
   ProjectRecord,
   SkillOverride,
 } from "@/lib/scout/profile-store";
+import { extraSourceLabel } from "@/lib/scout/profile-store";
 import { demandRanking, type FeedPosting } from "@/lib/scout/feed-types";
 
 /**
@@ -78,13 +79,7 @@ export function SkillsPanel(props: {
       ).map((l) => l.course);
       for (const e of props.draftExtras) {
         if (e.skillId !== skillId) continue;
-        out.push(
-          e.source === "resume"
-            ? "your resume"
-            : e.source === "freeform"
-              ? "your experience"
-              : "added by you",
-        );
+        out.push(extraSourceLabel(e));
       }
       for (const p of props.projects) {
         if (p.repoUrl && p.skillIds.includes(skillId)) out.push(p.repoName);
