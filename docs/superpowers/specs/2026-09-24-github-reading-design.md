@@ -277,7 +277,7 @@ reaches GitHub):
 ### Live check before each release
 
 One real, read-only run against one of the professor's public
-repositories, with his OK.
+repositories, with the professor's OK.
 
 ## Out of scope
 
