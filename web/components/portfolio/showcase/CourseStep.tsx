@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { StepProps } from "@/lib/portfolio/draft";
-import { originOf, type ProjectOrigin } from "@/lib/portfolio/origin";
+import { guestOriginPatch, originOf, type ProjectOrigin } from "@/lib/portfolio/origin";
 import { CoursePicker } from "../CoursePicker";
 import { StepNav } from "../StepNav";
 
@@ -38,10 +38,11 @@ export function CourseStep({ draft, patch, nav, isGuest }: StepProps & { isGuest
   const [teamText, setTeamText] = useState(draft.team.join(", "));
   const origin = originOf(draft.origin);
   const remembered = useRef<Partial<Record<ProjectOrigin, string>>>({ [origin]: draft.course });
-  // A guest landing here with the Miami default moves to "another school";
-  // a Miami course means nothing to someone who never took one.
+  // A guest landing here with the Miami default moves to "another school",
+  // keeping any course an older autosave already held (guestOriginPatch).
   useEffect(() => {
-    if (isGuest && origin === "miami") patch({ origin: "other", course: "" });
+    const fix = isGuest ? guestOriginPatch(origin, draft.course) : null;
+    if (fix) patch(fix);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isGuest, origin]);
 

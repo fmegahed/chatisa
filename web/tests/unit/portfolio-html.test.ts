@@ -158,6 +158,16 @@ describe("outside courses (v6.6.0)", () => {
     expect(html.indexOf("ISA 444")).toBeLessThan(html.indexOf("Econometrics"));
   });
 
+  it("skips a Miami course whose code was blanked in the editor, and prints one with no reason as just its label", () => {
+    const html = renderCareer(
+      { ...career, courses: [{ code: "  ", why: "Orphan reason." }, { code: "ISA 444", why: "" }] },
+      student,
+    );
+    expect(html).not.toContain("<strong></strong>");
+    expect(html).not.toContain("Orphan reason.");
+    expect(html).toContain("<li><strong>ISA 444 - Business Forecasting</strong></li>");
+  });
+
   it("prints a course with no reason yet as just its label, and skips a blank name", () => {
     const html = renderCareer(
       { ...career, otherCourses: [{ name: "Data Mining", why: "" }, { name: "  ", why: "Orphan." }] },

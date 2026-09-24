@@ -4,6 +4,14 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.6.1 - September 23, 2026
+
+**Portfolio Builder: no empty course labels on published pages, typed
+course text fenced in the prompt, and guests keep a course chosen before
+v6.6.0.** Full notes: `docs/releases/v6.6.1.md`.
+
+---
+
 ## v6.6.0 - September 23, 2026
 
 **Portfolio Builder for guests and for work from anywhere: guests type

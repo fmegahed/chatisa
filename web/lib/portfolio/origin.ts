@@ -61,6 +61,19 @@ export function originPromptLine(origin: ProjectOrigin, course: string): string 
 }
 
 /**
+ * Guests never see the Miami option, so a guest whose draft says "miami"
+ * (the default, or an autosave from before v6.6.0) moves to "another
+ * school". Any course already chosen is kept as that school's course text
+ * rather than discarded: it is the guest's own choice.
+ */
+export function guestOriginPatch(
+  origin: ProjectOrigin,
+  course: string,
+): { origin: ProjectOrigin; course: string } | null {
+  return origin === "miami" ? { origin: "other", course } : null;
+}
+
+/**
  * Guest-pass identities are guest-<n>@guest.chatisa. The constant lives in
  * lib/auth/guest.ts (GUEST_EMAIL_DOMAIN), which imports node:crypto and so
  * cannot reach browser code; a unit test keeps the two in step.

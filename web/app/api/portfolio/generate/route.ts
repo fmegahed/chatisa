@@ -255,8 +255,10 @@ export async function POST(req: Request) {
     const prompt = [
       `Student: ${p.student.name}`,
       ...(courseLines.length ? [`Courses taken:\n${courseLines.join("\n")}`] : []),
+      // Typed by the student, so fenced like every other student text: a
+      // course name is data and cannot close the fence (v6.6.1).
       ...(p.otherCourses.length
-        ? [`Other courses (outside Miami):\n${p.otherCourses.map((c) => `- ${otherLabel(c)}`).join("\n")}`]
+        ? [`Other courses (outside Miami):\n${fence("courses", p.otherCourses.map((c) => `- ${otherLabel(c)}`).join("\n"), nonce)}`]
         : []),
       resumeText ? fence("resume", resumeText.slice(0, 20_000), nonce) : "No resume text.",
       `Projects:\n${projectBlocks.join("\n\n") || "none"}`,
@@ -315,7 +317,11 @@ export async function POST(req: Request) {
     });
     const figures = p.publishedPaths.filter((x) => x.startsWith("figures/"));
     const prompt = [
-      `${originPromptLine(p.origin, p.course)}${p.semester ? `, ${p.semester}` : ""}`,
+      // A course from another school is typed text, so it is fenced (v6.6.1);
+      // Miami codes come from the catalog picker and the rest are fixed lines.
+      p.origin === "other"
+        ? fence("course", `${originPromptLine(p.origin, p.course)}${p.semester ? `, ${p.semester}` : ""}`, nonce)
+        : `${originPromptLine(p.origin, p.course)}${p.semester ? `, ${p.semester}` : ""}`,
       p.team.length ? `Team: ${p.team.join(", ")}` : "Solo project.",
       `Published paths (the only paths you may reference):\n${p.publishedPaths.join("\n") || "(none)"}`,
       `Published figures:\n${figures.join("\n") || "(none)"}`,

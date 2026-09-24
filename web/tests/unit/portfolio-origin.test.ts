@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  ORIGINS, isGuestEmail, originLabel, originOf, originPromptLine, originReadmeLine,
+  ORIGINS, guestOriginPatch, isGuestEmail, originLabel, originOf, originPromptLine, originReadmeLine,
 } from "@/lib/portfolio/origin";
 import { GUEST_EMAIL_DOMAIN } from "@/lib/auth/guest";
 
@@ -38,6 +38,19 @@ describe("project origin", () => {
     expect(originPromptLine("other", "STAT 4520, Ohio State")).toBe("Course (another school): STAT 4520, Ohio State");
     expect(originPromptLine("self", "")).toBe("A self-study project.");
     expect(originPromptLine("personal", "")).toBe("A personal project.");
+  });
+});
+
+describe("guestOriginPatch (v6.6.1)", () => {
+  it("moves a guest off the Miami option without losing a course they already chose", () => {
+    // A guest's autosave from before v6.6.0 has no origin (so Miami) and may
+    // hold a course picked back then; it becomes their "another school" text.
+    expect(guestOriginPatch("miami", "ISA 444")).toEqual({ origin: "other", course: "ISA 444" });
+    expect(guestOriginPatch("miami", "")).toEqual({ origin: "other", course: "" });
+  });
+
+  it("leaves every other origin alone", () => {
+    for (const o of ["other", "self", "personal"] as const) expect(guestOriginPatch(o, "x")).toBeNull();
   });
 });
 

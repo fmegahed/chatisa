@@ -150,9 +150,11 @@ export function renderCareer(
   // list, labelled with the student's own text; the route already pinned
   // that label to what the student typed.
   const courseItems = [
-    ...content.courses.map((c) => {
+    // Blank codes (cleared in the editor) are skipped, like blank outside
+    // courses below, so the page never shows an empty bold label.
+    ...content.courses.filter((c) => c.code.trim()).map((c) => {
       const title = getCourse(c.code)?.title;
-      return `<li><strong>${escapeHtml(c.code)}${title ? ` - ${escapeHtml(title)}` : ""}</strong>: ${escapeHtml(c.why)}</li>`;
+      return `<li><strong>${escapeHtml(c.code)}${title ? ` - ${escapeHtml(title)}` : ""}</strong>${c.why.trim() ? `: ${escapeHtml(c.why)}` : ""}</li>`;
     }),
     // A row the student blanked in the editor is skipped, and one restored
     // before its reason is written shows as just the label.
