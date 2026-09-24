@@ -23,6 +23,7 @@
 - Nothing about a student's GitHub stored server-side; usage event is content-free.
 - Copy: no em dashes; plain words; errors never tell students to reload.
 - Accessibility: native controls, visible labels, live regions for progress, `role="alert"` errors focused, axe A/AA at 1280 and 320 px, no sideways page scroll.
+- Model (professor, 2026-09-24): GPT-6 Luna is the default for repository skills IF the Task 7 eval agrees; otherwise Gemini 3.8 Flash (the job tagger's model). The student can still pick another model in the block's own chooser.
 - Release: one commit on main `v6.8.0: ...`, annotated tag, `docs/releases/v6.8.0.md`, CHANGELOG entry, bundle via `node scripts/make-deploy-bundle.mjs` (after `rm -rf .next/dev/types`).
 
 ## Review Focus
@@ -903,37 +904,30 @@ describe("POST /api/scout/repo-skills", () => {
 Run: `cd web && npx vitest run tests/unit/scout-repo-skills-route.test.ts`
 Expected: FAIL, route module not found.
 
-- [ ] **Step 5: Implement the route**
+- [ ] **Step 5: Implement the shared model call** `web/lib/scout/repo-skills.ts`, used by the route and by the Task 7 eval so both run the identical prompt and guards:
 
 ```ts
-import { NextResponse } from "next/server";
-import { z } from "zod";
-import { generateObject } from "ai";
-import { auth } from "@/lib/auth";
-import { getPageModels } from "@/lib/config/models";
-import { getLanguageModel, isModelAvailable } from "@/lib/providers";
-import { getMockModel } from "@/lib/providers/mock";
-import { SKILL_IDS } from "@/lib/scout/taxonomy";
-import { checkRateLimit, SCOUT_REPO_RATE_LIMIT } from "@/lib/ratelimit";
-import { recordUsageEvent } from "@/lib/db";
-import { logger } from "@/lib/log";
-import { clipSummary, SUMMARY_LIMITS, type RepoSummary } from "@/lib/scout/github-summary";
-import { guardRepoSkills } from "@/lib/scout/repo-guards";
-
 /**
- * Skills from a student's own public GitHub repositories (v6.8.0). The
- * browser reads GitHub with the student's token and sends size-capped
- * summaries; nothing about the repositories is stored or logged here. The
- * model proposes, the fixed guards decide the suggested level, and the
- * student confirms each skill at any level.
+ * One repository's skill suggestions (v6.8.0): the model proposes, the
+ * fixed guards decide the suggested level. Shared by the route and the
+ * model eval (scripts/scout/repo-skills-eval.ts) so both measure the same
+ * thing.
  */
 
-// Loose on the wire; clipSummary enforces every cap (clip, never reject).
-const bodySchema = z.object({
-  modelId: z.string(),
-  repos: z.array(z.record(z.string(), z.unknown())).min(1),
-});
+import { z } from "zod";
+import { generateObject, type LanguageModel } from "ai";
+import { SKILL_IDS } from "./taxonomy";
+import type { RepoSummary } from "./github-summary";
+import { guardRepoSkills, type RepoSuggestion } from "./repo-guards";
 
+/**
+ * The default model for repository skills. Set by the Task 7 eval: GPT-6
+ * Luna if it holds up against GPT-6 Sol, otherwise Gemini 3.8 Flash.
+ */
+export const REPO_SKILLS_DEFAULT_MODEL = "gpt-6-luna";
+
+// skillId is a plain string on the wire (Gemini rejects a large enum);
+// resolveSkillId in the guards enforces the vocabulary.
 const proposalSchema = z.object({
   skills: z.array(z.object({
     skillId: z.string().min(1).max(60),
@@ -953,7 +947,7 @@ function fence(label: string, body: string, nonce: string): string {
   return `<${label} nonce="${nonce}">\n${cleaned}\n</${label} nonce="${nonce}">`;
 }
 
-function promptFor(s: RepoSummary, nonce: string): string {
+export function promptFor(s: RepoSummary, nonce: string): string {
   const langs = Object.entries(s.languages).map(([k, v]) => `${k} ${v}`).join(", ") || "(none)";
   return [
     `Repository: ${s.fullName}`,
@@ -966,6 +960,58 @@ function promptFor(s: RepoSummary, nonce: string): string {
     ...s.codeFiles.map((f) => fence("repo_file", `path: ${f.path}\n${f.text}`, nonce)),
   ].join("\n\n");
 }
+
+export async function suggestRepoSkills(model: LanguageModel, summary: RepoSummary): Promise<{
+  suggestions: RepoSuggestion[];
+  substantial: boolean;
+  codeRead: boolean;
+  usage: { inputTokens: number | null; outputTokens: number | null };
+}> {
+  const nonce = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  const { object, usage } = await generateObject({
+    model,
+    schema: proposalSchema,
+    instructions: `${INSTRUCTIONS}\n\nVocabulary ids:\n${SKILL_IDS.join(", ")}`,
+    prompt: promptFor(summary, nonce),
+    maxOutputTokens: 2_000,
+  });
+  return {
+    ...guardRepoSkills(summary, object.skills),
+    usage: { inputTokens: usage?.inputTokens ?? null, outputTokens: usage?.outputTokens ?? null },
+  };
+}
+```
+
+(The escaped backslashes above are how the plan file stores `\n` and the `<\/` fence escape; write them as the single-backslash forms the resume route uses.)
+
+- [ ] **Step 5b: Implement the route** `web/app/api/scout/repo-skills/route.ts`:
+
+```ts
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { auth } from "@/lib/auth";
+import { getPageModels } from "@/lib/config/models";
+import { getLanguageModel, isModelAvailable } from "@/lib/providers";
+import { getMockModel } from "@/lib/providers/mock";
+import { checkRateLimit, SCOUT_REPO_RATE_LIMIT } from "@/lib/ratelimit";
+import { recordUsageEvent } from "@/lib/db";
+import { logger } from "@/lib/log";
+import { clipSummary, SUMMARY_LIMITS, type RepoSummary } from "@/lib/scout/github-summary";
+import { suggestRepoSkills } from "@/lib/scout/repo-skills";
+
+/**
+ * Skills from a student's own public GitHub repositories (v6.8.0). The
+ * browser reads GitHub with the student's token and sends size-capped
+ * summaries; nothing about the repositories is stored or logged here. The
+ * model proposes, the fixed guards decide the suggested level, and the
+ * student confirms each skill at any level.
+ */
+
+// Loose on the wire; clipSummary enforces every cap (clip, never reject).
+const bodySchema = z.object({
+  modelId: z.string(),
+  repos: z.array(z.record(z.string(), z.unknown())).min(1),
+});
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -991,22 +1037,19 @@ export async function POST(req: Request) {
   const repos = body.repos.slice(0, SUMMARY_LIMITS.reposPerRequest).map((r) => clipSummary(r as unknown as RepoSummary));
 
   const results = await Promise.all(repos.map(async (summary) => {
-    const nonce = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
     const started = Date.now();
     try {
-      const { object, usage } = await generateObject({
-        model, schema: proposalSchema,
-        instructions: `${INSTRUCTIONS}\n\nVocabulary ids:\n${SKILL_IDS.join(", ")}`,
-        prompt: promptFor(summary, nonce),
-        maxOutputTokens: 2_000,
-      });
+      const out = await suggestRepoSkills(model, summary);
       recordUsageEvent({
         userEmail: email, module: "job_scout", eventType: "repo_skills", modelId: body.modelId,
-        inputTokens: usage?.inputTokens ?? null, outputTokens: usage?.outputTokens ?? null,
+        inputTokens: out.usage.inputTokens, outputTokens: out.usage.outputTokens,
         latencyMs: Date.now() - started, promptChars: null, outcome: "ok",
       });
-      const guarded = guardRepoSkills(summary, object.skills);
-      return { fullName: summary.fullName, ok: true as const, ...guarded, authorship: summary.authorship };
+      return {
+        fullName: summary.fullName, ok: true as const,
+        suggestions: out.suggestions, substantial: out.substantial, codeRead: out.codeRead,
+        authorship: summary.authorship,
+      };
     } catch (err) {
       logger.error({ err: String(err) }, "scout repo skills failed");
       return { fullName: summary.fullName, ok: false as const, error: "Skill suggestions did not complete for this repository. Try again." };
@@ -1026,7 +1069,7 @@ Expected: PASS. Then run `npx vitest run tests/unit` and confirm only the known 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add web/app/api/scout/repo-skills web/lib/ratelimit.ts web/lib/providers/mock.ts web/playwright.config.ts web/tests/unit/scout-repo-skills-route.test.ts
+git add web/app/api/scout/repo-skills web/lib/scout/repo-skills.ts web/lib/ratelimit.ts web/lib/providers/mock.ts web/playwright.config.ts web/tests/unit/scout-repo-skills-route.test.ts
 git commit -m "feat(scout): route that suggests skills from repository summaries"
 ```
 
@@ -1167,7 +1210,7 @@ git commit -m "feat(scout): store GitHub skills per repository, label them hones
 
 **Interfaces:**
 - Consumes: `useGithubConnection()` (`lib/scout/use-scout-store.ts`), `GithubConnect` (`components/scout/GithubConnect.tsx`, prop `returnPath`), `listOwnRepos`/`readRepo`/`ReadError` (Task 2), `RepoSuggestion` (Task 3), the route (Task 4), `mergeRepoExtras` (Task 5), `ModelChooser` value from ProfileTab.
-- Produces: `GithubSkills(props: { modelId: string; extras: ProfileExtra[]; onExtras: (next: ProfileExtra[]) => void })`.
+- Produces: `GithubSkills(props: { models: ModelOption[]; extras: ProfileExtra[]; onExtras: (next: ProfileExtra[]) => void })`, with its own `ModelChooser` defaulting to `REPO_SKILLS_DEFAULT_MODEL` when offered (else the first option).
 
 - [ ] **Step 1: Extend the fake GitHub API** so e2e reads work. In `fakeGithubApi`, before the final `return reply(500, …)`, add read routes for a login `mockstudent` with three repositories: `churn-model` (substantial, Python), `class-notes` (only 3 commits by the student), and `gone` (listed, but its detail answers 404). Add an option `fakeGithubApi(page, { expireAfterList?: boolean })`: when set, every `/repos/...` read answers 401, so the UI's reconnect path can be tested.
 
@@ -1324,6 +1367,9 @@ import { mergeRepoExtras, type ProfileExtra } from "@/lib/scout/profile-store";
 import type { CourseSkillLevel } from "@/lib/scout/course-skills";
 import { getSkill } from "@/lib/scout/taxonomy";
 import { GithubConnect } from "./GithubConnect";
+import { ModelChooser } from "@/components/ModelChooser";
+import type { ModelOption } from "@/lib/config/models";
+import { REPO_SKILLS_DEFAULT_MODEL } from "@/lib/scout/repo-skills";
 
 /**
  * "Your GitHub (optional)" in My Profile (v6.8.0): suggest skills from up
@@ -1368,8 +1414,11 @@ function ruleText(o: { substantial: boolean; codeRead: boolean; authorship: { st
   return `You wrote ${share}% of the commits here, so its skills are suggested as applied. Commits made under another email do not count toward you.`;
 }
 
-export function GithubSkills(props: { modelId: string; extras: ProfileExtra[]; onExtras: (next: ProfileExtra[]) => void }) {
+export function GithubSkills(props: { models: ModelOption[]; extras: ProfileExtra[]; onExtras: (next: ProfileExtra[]) => void }) {
   const { connection } = useGithubConnection();
+  const [modelId, setModelId] = useState(() =>
+    props.models.some((m) => m.id === REPO_SKILLS_DEFAULT_MODEL) ? REPO_SKILLS_DEFAULT_MODEL : props.models[0]?.id ?? "",
+  );
   const [repos, setRepos] = useState<RepoListing[] | null>(null);
   const [listError, setListError] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -1431,7 +1480,7 @@ export function GithubSkills(props: { modelId: string; extras: ProfileExtra[]; o
         const res = await fetch("/api/scout/repo-skills", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ modelId: props.modelId, repos: summaries }),
+          body: JSON.stringify({ modelId, repos: summaries }),
         });
         const body = await res.json();
         if (!res.ok) throw new Error(body.error ?? "failed");
@@ -1521,6 +1570,12 @@ export function GithubSkills(props: { modelId: string; extras: ProfileExtra[]; o
               {selected.length >= MAX_REPOS ? <p className="mt-2 text-dark-tan">Five is the most per round. Untick one to choose another.</p> : null}
             </fieldset>
           ) : null}
+          <div className="mt-3 max-w-xl">
+            <ModelChooser
+              options={props.models} value={modelId} onChange={setModelId} disabled={busy}
+              help="Used to suggest skills from your repositories."
+            />
+          </div>
           <button
             type="button" disabled={busy || selected.length === 0} onClick={() => void suggest()}
             className="mt-3 rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:bg-medium-gray"
@@ -1627,7 +1682,7 @@ Then in `ProfileTab.tsx`, directly after the closing `</section>` of the resume 
 
 ```tsx
       <GithubSkills
-        modelId={modelId}
+        models={props.models}
         extras={draftExtras}
         onExtras={(next) => commit(draftPlan, next)}
       />
@@ -1648,7 +1703,90 @@ git add web/components/scout/GithubSkills.tsx web/components/scout/ProfileTab.ts
 git commit -m "feat(scout): Your GitHub block suggests skills from chosen repositories"
 ```
 
-### Task 7: Review, live check, release v6.8.0
+### Task 7: Model eval, GPT-6 Luna against GPT-6 Sol
+
+**Files:**
+- Create: `web/scripts/scout/repo-skills-eval.ts`
+- Create: `docs/development/<date>-repo-skills-eval.md` (the script's output)
+- Modify (only if the eval says so): `web/lib/scout/repo-skills.ts` (`REPO_SKILLS_DEFAULT_MODEL`)
+
+**Interfaces:**
+- Consumes: `readRepo` (Task 2), `suggestRepoSkills` (Task 4), `getLanguageModel` and `calculateCost` from the app.
+
+- [ ] **Step 1: The repositories** (named by the professor, 2026-09-24; all public, owned, not forks; read-only): `fmegahed/chatsqc`, `fmegahed/llm_expository`, `fmegahed/conformal_clip`, `fmegahed/llm_consistency`, `fmegahed/shoulder_fatigue_modeling`, `fmegahed/tavr_paper`, `fmegahed/vaccines_spatial_and_optimization`, `fmegahed/covid19-deaths`. Record the list in the report.
+
+- [ ] **Step 2: Write the eval script.** Locally it authenticates with the professor's GitHub CLI token (`gh auth token`, read in the script's process only, never written anywhere), reads each repository with `readRepo`, and runs `suggestRepoSkills` once with `gpt-6-luna` and once with `gpt-6-sol` on the same summary.
+
+```ts
+/**
+ * Luna vs Sol on real repositories (v6.8.0 model decision). Local only:
+ *   npx tsx --conditions=react-server scripts/scout/repo-skills-eval.ts owner/repo [owner/repo ...]
+ * Reads with the local `gh auth token`; writes a markdown report to stdout.
+ */
+import { execSync } from "node:child_process";
+import { config as loadEnv } from "dotenv";
+import { readRepo } from "../../lib/scout/github-read";
+import { suggestRepoSkills } from "../../lib/scout/repo-skills";
+import { getLanguageModel } from "../../lib/providers";
+import { calculateCost } from "../../lib/config/models";
+import { getSkill } from "../../lib/scout/taxonomy";
+
+loadEnv({ path: ".env.local", quiet: true });
+const MODELS = ["gpt-6-luna", "gpt-6-sol"] as const;
+
+async function main() {
+  const repos = process.argv.slice(2);
+  const token = execSync("gh auth token", { encoding: "utf8" }).trim();
+  const login = execSync("gh api user --jq .login", { encoding: "utf8" }).trim();
+  const conn = { v: 1 as const, token, login, connectedAt: "" };
+  const lines: string[] = ["| Repository | Model | Anchors | Applied | Exposure | Failed | Cost |", "|---|---|---|---|---|---|---|"];
+  const sets: Record<string, Record<string, Set<string>>> = {};
+  let fails: Record<string, number> = { "gpt-6-luna": 0, "gpt-6-sol": 0 };
+  for (const fullName of repos) {
+    const read = await readRepo(conn, { fullName, description: null, language: null, pushedAt: "", defaultBranch: "main", htmlUrl: "" });
+    if (!read.ok) { lines.push(`| ${fullName} | (not readable: ${read.error.kind}) | | | | | |`); continue; }
+    sets[fullName] = {};
+    for (const id of MODELS) {
+      try {
+        const out = await suggestRepoSkills(getLanguageModel(id), read.summary);
+        const by = (l: string) => out.suggestions.filter((s) => s.suggested === l).map((s) => getSkill(s.skillId)?.label ?? s.skillId).join(", ");
+        const cost = calculateCost(id, out.usage.inputTokens ?? 0, out.usage.outputTokens ?? 0) as { totalCost?: number };
+        sets[fullName][id] = new Set(out.suggestions.filter((s) => s.suggested !== "exposure").map((s) => s.skillId));
+        lines.push(`| ${fullName} | ${id} | ${by("anchor")} | ${by("applied")} | ${by("exposure")} | | $${(cost.totalCost ?? 0).toFixed(4)} |`);
+      } catch (err) {
+        fails[id]++;
+        lines.push(`| ${fullName} | ${id} | | | | ${String(err).slice(0, 80)} | |`);
+      }
+    }
+  }
+  // Recall: of the skills Sol suggests at applied or anchor, how many Luna also suggests there.
+  let hit = 0, total = 0;
+  for (const s of Object.values(sets)) {
+    if (!s["gpt-6-sol"] || !s["gpt-6-luna"]) continue;
+    for (const id of s["gpt-6-sol"]) { total++; if (s["gpt-6-luna"].has(id)) hit++; }
+  }
+  console.log(`# Repository skills: GPT-6 Luna vs GPT-6 Sol\n\nRepositories: ${repos.length}. Failures: Luna ${fails["gpt-6-luna"]}, Sol ${fails["gpt-6-sol"]}. Luna covers ${hit} of Sol's ${total} applied-or-anchor skills (${total ? Math.round((100 * hit) / total) : 0}%).\n\n${lines.join("\n")}`);
+}
+main().catch((e) => { console.error(e); process.exit(1); });
+```
+
+(As in Task 4, write `\n` as a real newline escape `\n` in the TypeScript source.)
+
+- [ ] **Step 3: Run it and write the report.**
+
+Run: `cd web && npx tsx --conditions=react-server scripts/scout/repo-skills-eval.ts <repos...> > ../docs/development/<date>-repo-skills-eval.md`
+Expected: a table per repository and model, plus the summary line. Cost for the 8 repositories: under $1 in total.
+
+- [ ] **Step 4: Decide, by the rule agreed in advance.** Luna stays the default when (a) Luna fails at most 1 of the 8 repositories, and (b) Luna covers at least 75% of Sol's applied-or-anchor skills, and (c) reading both columns finds no Luna skill that is plainly wrong for its repository. Otherwise set `REPO_SKILLS_DEFAULT_MODEL = "gemini-3.8-flash"`, rerun the eval with Gemini in place of Luna, and record both results. Write the decision and the numbers at the top of the report; the professor spot-checks it at the release gate.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add web/scripts/scout/repo-skills-eval.ts web/lib/scout/repo-skills.ts docs/development/*-repo-skills-eval.md
+git commit -m "eval(scout): repository skills, Luna against Sol"
+```
+
+### Task 8: Review, live check, release v6.8.0
 
 **Files:**
 - Create: `docs/releases/v6.8.0.md`
@@ -1656,6 +1794,6 @@ git commit -m "feat(scout): Your GitHub block suggests skills from chosen reposi
 
 - [ ] **Step 1: Whole-branch review.** Run the review package and dispatch a fresh reviewer on the most capable model with this plan's Review Focus. Fix Critical and Important findings test-first; ledger minors.
 - [ ] **Step 2: Full suites.** `npx vitest run tests/unit` (health/speech-probe flakes rerun alone), then e2e in foreground chunks per the test-gotchas memory (desktop and mobile-320).
-- [ ] **Step 3: Live read-only check.** Ask the professor for one of their public repositories and permission, then run the flow against real GitHub from the dev server with a real model. Record the model, cost, and the suggestions in the release notes' test section. No writes happen; confirm in the network panel that no request goes to a ChatISA route with a token.
+- [ ] **Step 3: Live read-only check.** Using `fmegahed/chatsqc` (approved for Task 7), run the flow against real GitHub from the dev server with the chosen default model. Record the model, cost, and the suggestions in the release notes' test section. No writes happen; confirm in the network panel that no request goes to a ChatISA route with a token.
 - [ ] **Step 4: Browser check.** Open My Profile at 1280 and 320 px with the fake API; screenshot the block before and after suggestions; read the screenshots.
 - [ ] **Step 5: Release.** Bump to 6.8.0 (`npm version 6.8.0 --no-git-tag-version` in `web/`), write `docs/releases/v6.8.0.md` (overview, what students get, guards, privacy, cost table from the spec, operator notes: no server configuration changes, test and gate results), add the CHANGELOG entry, `rm -rf .next/dev/types && node scripts/make-deploy-bundle.mjs`, verify the footer version, squash onto main as `v6.8.0: skills from a student's own GitHub repositories in Job Scout`, annotated tag, `git push --follow-tags origin main`.

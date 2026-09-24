@@ -41,6 +41,12 @@ outside class.
    invariant stands: the token never leaves the browser, and the token key
    is read only in `lib/scout/github*.ts`.
 
+7. **Model:** GPT-6 Luna is the default for repository skills if an eval
+   against GPT-6 Sol on 8 of the professor's public repositories agrees
+   (Luna fails at most 1, covers at least 75% of Sol's applied-or-anchor
+   skills, and nothing it suggests is plainly wrong); otherwise Gemini 3.8
+   Flash, the job tagger's model. Students can still pick another model.
+
 ## Architecture
 
 ### Shared repository reader (`lib/scout/github-read.ts`, browser)
