@@ -93,7 +93,7 @@ describe("importCandidates", () => {
     expect(GITHUB_CONTENTS_MAX_BYTES).toBe(100_000_000);
   });
 
-  it("notes files too large to publish, which can still be read for the page", () => {
+  it("notes files too large to publish; only their size reaches the page", () => {
     const raw = importCandidates(tree, 10).find((x) => x.path === "data/raw.csv");
     expect(raw).toMatchObject({ selectable: true });
     expect(raw?.note).toMatch(/too large to publish/);
@@ -181,7 +181,7 @@ export function importCandidates(tree: { path: string; size: number }[], room: n
       const note = !selectable
         ? `${mb(f.size)}: over 100 MB, which GitHub cannot send`
         : f.size > PUSH_LIMITS.fileBytes
-          ? `${mb(f.size)}: too large to publish, still read for the page`
+          ? `${mb(f.size)}: too large to publish; only its size is used for the page`
           : null;
       return { path: f.path, size: f.size, role, selectable, preselected: false, note };
     });
