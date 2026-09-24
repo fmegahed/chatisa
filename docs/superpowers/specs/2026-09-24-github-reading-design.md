@@ -70,6 +70,14 @@ Lives beside the existing GitHub code so the token invariant holds.
     paths (`node_modules/`, `dist/`, `.venv/`, `renv/library/`), 15,000
     characters each; `.ipynb` reduced to its code and markdown cells,
     outputs removed.
+- Download size (professor, 2026-09-24):
+  - files up to 6 MB are read automatically;
+  - larger code files are skipped and listed per repository with "Read it
+    anyway", which re-reads that repository including the chosen file, up
+    to GitHub's 100 MB limit for the contents API
+    (https://docs.github.com/en/rest/repos/contents);
+  - the model still sees at most 15,000 characters of each file's code, so
+    this mainly helps notebooks whose size is embedded plots.
 - File reads use the contents API with the raw media type. All requests
   carry the student's token; each student spends their own GitHub quota
   (5,000 requests an hour when authenticated).
