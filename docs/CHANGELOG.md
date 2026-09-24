@@ -4,6 +4,14 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.7.1 - September 24, 2026
+
+**Catalog refresh Action: the collector retries a dropped connection from
+the Bulletin's server instead of stopping the run. No server bundle
+change.** Full notes: `docs/releases/v6.7.1.md`.
+
+---
+
 ## v6.7.0 - September 24, 2026
 
 **Job Scout and the Portfolio Builder cover the whole FSB: a major-first

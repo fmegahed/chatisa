@@ -20,16 +20,35 @@ const PAUSE_MS = 250;
 interface ProgramConfig { key: string; name: string; kind: "core" | "major" | "comajor" | "minor"; url: string }
 export interface CatalogProgram extends ProgramConfig { groups: ProgramGroup[] }
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-async function get(url: string): Promise<string> {
-  for (let attempt = 1; ; attempt++) {
-    const res = await fetch(url, { headers: { "user-agent": "ChatISA catalog refresh (Miami University FSB)" } });
-    if (res.ok) return res.text();
-    if (attempt >= 3) throw new Error(`${url}: HTTP ${res.status}`);
-    await sleep(1000 * attempt);
+const ATTEMPTS = 4;
+
+/**
+ * A page's text, retried with backoff. A dropped connection or a body that
+ * breaks off mid-read is retried like an HTTP error: the first Action run
+ * (2026-09-24) died on "other side closed" from the Bulletin's server.
+ */
+export async function fetchText(
+  url: string,
+  fetchImpl: typeof fetch = fetch,
+  wait: (ms: number) => Promise<void> = sleep,
+): Promise<string> {
+  let last = "";
+  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+    try {
+      const res = await fetchImpl(url, { headers: { "user-agent": "ChatISA catalog refresh (Miami University FSB)" } });
+      if (res.ok) return await res.text();
+      last = `HTTP ${res.status}`;
+    } catch (err) {
+      last = err instanceof Error ? err.message : String(err);
+    }
+    if (attempt < ATTEMPTS) await wait(2000 * attempt);
   }
+  throw new Error(`${url}: ${last} (after ${ATTEMPTS} attempts)`);
 }
+
+const get = (url: string) => fetchText(url);
 
 function readJson<T>(name: string, fallback: T): T {
   const file = path.join(DIR, name);
