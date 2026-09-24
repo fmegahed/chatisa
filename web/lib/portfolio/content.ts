@@ -12,6 +12,12 @@ export const SLUG = /^[a-z0-9][a-z0-9-]{2,59}$/;
 /** Repo-relative path without traversal; spaces are already hyphenated. */
 export const SAFE_PATH = /^[\w.-]+(\/[\w.-]+)*$/;
 
+/**
+ * A course from another school: the student's label ("name, school", each
+ * part at most 80 characters) and one sentence why.
+ */
+const otherCourseSchema = z.object({ name: z.string().min(1).max(170), why: z.string().min(1).max(240) });
+
 export const careerContentSchema = z.object({
   v: z.literal(2),
   siteTitle: z.string().min(1).max(80),
@@ -32,6 +38,13 @@ export const careerContentSchema = z.object({
     )
     .max(5),
   courses: z.array(z.object({ code: z.string().min(1).max(20), why: z.string().min(1).max(240) })).max(8),
+  /**
+   * Courses from other schools (v6.6.0), typed by guests. Optional so every
+   * site stored before the field existed still parses; the generate route
+   * uses careerGenerationSchema, where it is required, because strict
+   * structured output handles optional fields poorly.
+   */
+  otherCourses: z.array(otherCourseSchema).max(5).optional(),
   experience: z
     .array(
       z.object({
@@ -47,6 +60,15 @@ export const careerContentSchema = z.object({
     .max(3),
 });
 export type CareerContent = z.infer<typeof careerContentSchema>;
+
+/**
+ * What the model must return: the same shape with otherCourses required and
+ * uncapped. A model that adds a sixth or invented course must not fail the
+ * whole page; the route filters to the student's courses and keeps five.
+ */
+export const careerGenerationSchema = careerContentSchema.extend({
+  otherCourses: z.array(otherCourseSchema),
+});
 
 export const showcaseContentSchema = z.object({
   v: z.literal(1),
@@ -78,7 +100,7 @@ export type SiteContent =
 export function emptyCareer(): CareerContent {
   return {
     v: 2, siteTitle: "", headline: "", about: "", skillGroups: [], projects: [],
-    courses: [], experience: [], education: [],
+    courses: [], otherCourses: [], experience: [], education: [],
   };
 }
 

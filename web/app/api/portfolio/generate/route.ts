@@ -12,7 +12,8 @@ import { logger } from "@/lib/log";
 import { readResumePdf } from "@/lib/jobs/read-resume";
 import { getCourse } from "@/lib/scout/courses";
 import { resolveSkillId, SKILLS } from "@/lib/scout/taxonomy";
-import { careerContentSchema, showcaseContentSchema, SLUG } from "@/lib/portfolio/content";
+import { careerGenerationSchema, showcaseContentSchema, SLUG } from "@/lib/portfolio/content";
+import { originOf, originPromptLine } from "@/lib/portfolio/origin";
 import { MAX_CHARS_PER_FILE, MAX_PAYLOAD_CHARS } from "@/lib/portfolio/files";
 
 /**
@@ -46,6 +47,20 @@ const careerPayload = z.object({
     links: z.array(z.object({ label: z.string().min(1).transform((s) => s.slice(0, 40)), url: z.url() })).max(4),
   }),
   courses: z.array(clipped(20)).max(30),
+  /**
+   * Courses from other schools, typed by guests (v6.6.0). Clipped and cut to
+   * five rather than rejected; blank rows are dropped. Absent in payloads
+   * from a browser that predates the field.
+   */
+  otherCourses: z
+    .array(z.object({ name: z.string(), school: z.string().default("") }))
+    .default([])
+    .transform((rows) =>
+      rows
+        .map((r) => ({ name: r.name.trim().slice(0, 80), school: r.school.trim().slice(0, 80) }))
+        .filter((r) => r.name.length > 0)
+        .slice(0, 5),
+    ),
   projects: z.array(z.object({
     slug: z.string().regex(SLUG),
     title: clipped(80),
@@ -55,7 +70,11 @@ const careerPayload = z.object({
 });
 
 const showcasePayload = z.object({
-  course: z.string().min(1).transform((s) => s.slice(0, 80)),
+  // Absent (older browsers) or unknown means a Miami course, as before.
+  // (zod 4: .optional() must precede the transform, or a missing key fails.)
+  origin: z.unknown().optional().transform(originOf),
+  // Empty for self-study and personal projects.
+  course: clipped(80),
   semester: clipped(40),
   team: z.array(z.string().min(1).transform((s) => s.slice(0, 60))).max(8),
   prompts: z.object({ problem: clipped(1000), hardest: clipped(1000), next: clipped(1000) }),
@@ -107,6 +126,36 @@ function sanitiseCareerLinks(raw: unknown): unknown {
   return out;
 }
 
+/**
+ * The model may only describe outside courses the student typed, and the
+ * page shows the student's own wording (v6.6.0), the same rule the Miami
+ * course filter applies: a reworded or invented course never reaches a page
+ * published under the student's name. A returned name matches when it equals
+ * the typed course name, or the name and school together, ignoring case and
+ * spacing. Each course appears once, in the order the model chose.
+ */
+function keepSubmittedOtherCourses(
+  returned: { name: string; why: string }[],
+  submitted: { name: string; school: string }[],
+): { name: string; why: string }[] {
+  const key = (s: string) => s.toLowerCase().replace(/\s+/g, " ").replace(/\s*,\s*/g, ", ").trim();
+  const byKey = new Map<string, string>();
+  for (const c of submitted) {
+    const label = c.school ? `${c.name}, ${c.school}` : c.name;
+    // The first spelling a student typed wins over a later duplicate.
+    for (const k of [key(c.name), key(label)]) if (!byKey.has(k)) byKey.set(k, label);
+  }
+  const seen = new Set<string>();
+  const kept: { name: string; why: string }[] = [];
+  for (const c of returned) {
+    const label = byKey.get(key(c.name));
+    if (!label || seen.has(key(label))) continue;
+    seen.add(key(label));
+    kept.push({ name: label, why: c.why });
+  }
+  return kept.slice(0, 5);
+}
+
 function fence(label: string, body: string, nonce: string): string {
   const cleaned = body.replaceAll(`</${label}`, `<\\/${label}`);
   return `<${label} nonce="${nonce}">\n${cleaned}\n</${label} nonce="${nonce}">`;
@@ -120,6 +169,7 @@ Ground every claim in the resume, the courses, and the project files provided; n
 
 projects: one entry per submitted project, using its exact slug. Title it well, describe what it does and what it shows in two to four sentences, and list the skills the files actually demonstrate.
 courses: pick up to 8 courses that best support the story and say in one sentence why each matters. Put ONLY the course code in code (for example "ISA 444"), never the title; the page adds the title itself.
+otherCourses: for each listed outside course that supports the story, one sentence on why it matters. Copy the course name exactly as given. Leave it empty if none were listed.
 experience and education: only from the resume. Leave them empty if the resume has none.
 skillGroups: three to five groups (for example Tools, Methods, Domains).
 
@@ -199,16 +249,22 @@ export async function POST(req: Request) {
       return `Project slug: ${proj.slug}\nTitle hint: ${proj.title || "(none)"}\nExternal link: ${proj.externalUrl ?? "(none)"}\n${files.join("\n")}`;
     });
     const courseLines = p.courses.map((c) => `${c}: ${getCourse(c)?.title ?? ""}`.trim());
+    const otherLabel = (c: { name: string; school: string }) => (c.school ? `${c.name}, ${c.school}` : c.name);
+    // No course block at all when there are none (v6.6.0): a guest who skips
+    // courses must not get a page that mentions having none.
     const prompt = [
       `Student: ${p.student.name}`,
-      `Courses taken:\n${courseLines.join("\n") || "none listed"}`,
+      ...(courseLines.length ? [`Courses taken:\n${courseLines.join("\n")}`] : []),
+      ...(p.otherCourses.length
+        ? [`Other courses (outside Miami):\n${p.otherCourses.map((c) => `- ${otherLabel(c)}`).join("\n")}`]
+        : []),
       resumeText ? fence("resume", resumeText.slice(0, 20_000), nonce) : "No resume text.",
       `Projects:\n${projectBlocks.join("\n\n") || "none"}`,
     ].join("\n\n");
 
     try {
       const { object, usage } = await generateObject({
-        model, schema: careerContentSchema, instructions: CAREER_INSTRUCTIONS, prompt,
+        model, schema: careerGenerationSchema, instructions: CAREER_INSTRUCTIONS, prompt,
         temperature: temperatureFor(modelId, 0.6), maxOutputTokens: outputTokenBudget(modelId, 5_000),
       });
       // The model may only describe projects the student submitted, and the
@@ -232,6 +288,7 @@ export async function POST(req: Request) {
         courses: object.courses
           .map((c) => ({ ...c, code: normalizeCode(c.code) }))
           .filter((c): c is typeof c & { code: string } => c.code !== null),
+        otherCourses: keepSubmittedOtherCourses(object.otherCourses, p.otherCourses),
       };
       recordUsageEvent({
         userEmail: email, module: "portfolio", eventType: "portfolio_generated", modelId,
@@ -258,7 +315,7 @@ export async function POST(req: Request) {
     });
     const figures = p.publishedPaths.filter((x) => x.startsWith("figures/"));
     const prompt = [
-      `Course: ${p.course}${p.semester ? `, ${p.semester}` : ""}`,
+      `${originPromptLine(p.origin, p.course)}${p.semester ? `, ${p.semester}` : ""}`,
       p.team.length ? `Team: ${p.team.join(", ")}` : "Solo project.",
       `Published paths (the only paths you may reference):\n${p.publishedPaths.join("\n") || "(none)"}`,
       `Published figures:\n${figures.join("\n") || "(none)"}`,

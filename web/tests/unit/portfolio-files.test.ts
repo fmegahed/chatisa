@@ -21,7 +21,11 @@ describe("roles and names", () => {
     expect(safeFileName("../Final Project.ipynb")).toBe("Final-Project.ipynb");
     expect(rolePath("notebook", "Final Project.ipynb")).toBe("code/Final-Project.ipynb");
     expect(rolePath("figure", "roc.png")).toBe("figures/roc.png");
-    expect(showcaseRepoName("ISA 401", "Churn Model")).toBe("isa-401-churn-model");
+    expect(showcaseRepoName("miami", "ISA 401", "Churn Model")).toBe("isa-401-churn-model");
+    // Only a Miami course prefixes the name (v6.6.0); typed course text never reaches it.
+    for (const origin of ["other", "self", "personal"] as const) {
+      expect(showcaseRepoName(origin, "STAT 4520, Ohio State", "Churn Model")).toBe("churn-model");
+    }
   });
 });
 

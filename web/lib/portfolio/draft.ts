@@ -7,6 +7,7 @@
 
 import type { PreparedFile } from "./files";
 import type { SiteContent } from "./content";
+import type { ProjectOrigin } from "./origin";
 
 export type Step =
   | "mode" | "resume" | "classes" | "projects" | "details"
@@ -22,6 +23,12 @@ export interface CareerProject {
   files: PreparedFile[];
 }
 
+/** A course from another school as the guest typed it. */
+export interface OtherCourse {
+  name: string;
+  school: string;
+}
+
 export interface Draft {
   siteId: string;
   mode: "career" | "showcase" | null;
@@ -30,11 +37,19 @@ export interface Draft {
   resume: File | null;
   resumeLink: boolean;
   courses: string[];
+  /**
+   * Courses from other schools, typed by guests (v6.6.0). Optional because
+   * autosaves and stored sites from before v6.6.0 lack it: read as [].
+   */
+  otherCourses?: OtherCourse[];
   projects: CareerProject[];
   photo: { base64: string; bytes: number } | null;
   name: string;
   links: { label: string; url: string }[];
   // showcase
+  /** Absent before v6.6.0, which means a Miami course: read via originOf. */
+  origin?: ProjectOrigin;
+  /** A Miami course code, or the typed "course, school" for origin "other". */
   course: string;
   semester: string;
   team: string[];
@@ -54,9 +69,9 @@ export type Action =
 export function initialDraft(name: string, siteId: string): Draft {
   return {
     siteId, mode: null, step: "mode",
-    resume: null, resumeLink: false, courses: [], projects: [],
+    resume: null, resumeLink: false, courses: [], otherCourses: [], projects: [],
     photo: null, name, links: [],
-    course: "", semester: "", team: [], files: [],
+    origin: "miami", course: "", semester: "", team: [], files: [],
     prompts: { problem: "", hardest: "", next: "" },
     content: null, readme: null, skillIds: [], html: "",
   };

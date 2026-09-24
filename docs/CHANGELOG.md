@@ -4,6 +4,15 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.6.0 - September 23, 2026
+
+**Portfolio Builder for guests and for work from anywhere: guests type
+their own courses or skip them, and every showcase says where the project
+came from (a Miami course, another school, self-study, or a personal
+project).** Full notes: `docs/releases/v6.6.0.md`.
+
+---
+
 ## v6.5.0 - September 23, 2026
 
 **Model catalog refresh: GPT-6 Sol and Luna, Claude Opus 5.5, Gemini 3.8

@@ -11,6 +11,7 @@ import {
   type SiteRecord,
 } from "@/lib/portfolio/store";
 import { clearWip, loadWip, saveWip, type Wip } from "@/lib/portfolio/wip";
+import { originOf } from "@/lib/portfolio/origin";
 import { ModeStep } from "./ModeStep";
 import { ResumeStep } from "./career/ResumeStep";
 import { ClassesStep } from "./career/ClassesStep";
@@ -49,6 +50,8 @@ export function PortfolioBuilder(props: {
   defaultModelId: string;
   githubEnabled: boolean;
   studentName: string;
+  /** Guest-pass visitors (v6.6.0): typed courses, no Miami course options. */
+  isGuest?: boolean;
   initialMode: "career" | "showcase" | null;
 }) {
   const [draft, dispatch] = useReducer(reducer, props.studentName, (name) =>
@@ -120,7 +123,8 @@ export function PortfolioBuilder(props: {
       readme: stored.readme ?? null, skillIds: stored.skillIds ?? [],
       photo: stored.photoBase64 ? { base64: stored.photoBase64, bytes: 0 } : null,
       name: stored.student?.name ?? props.studentName, links: stored.student?.links ?? [],
-      courses: stored.student?.courses ?? [], course: stored.showcaseMeta?.course ?? "",
+      courses: stored.student?.courses ?? [], otherCourses: stored.student?.otherCourses ?? [],
+      origin: originOf(stored.showcaseMeta?.origin), course: stored.showcaseMeta?.course ?? "",
       semester: stored.showcaseMeta?.semester ?? "", team: stored.showcaseMeta?.team ?? [],
       files: stored.files.filter((f) => f.projectSlug === null),
       projects: Array.from(
@@ -159,11 +163,11 @@ export function PortfolioBuilder(props: {
   const step = (() => {
     switch (draft.step) {
     case "resume": return <ResumeStep {...common} />;
-    case "classes": return <ClassesStep {...common} />;
+    case "classes": return <ClassesStep {...common} isGuest={!!props.isGuest} />;
     case "projects": return <ProjectsStep {...common} />;
     case "details":
       return <DetailsStep {...common} models={props.models} defaultModelId={props.defaultModelId} />;
-    case "course": return <CourseStep {...common} />;
+    case "course": return <CourseStep {...common} isGuest={!!props.isGuest} />;
     case "files": return <FilesStep {...common} />;
     case "story":
       return <StoryStep {...common} models={props.models} defaultModelId={props.defaultModelId} />;

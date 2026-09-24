@@ -247,3 +247,86 @@ describe("POST /api/portfolio/generate", () => {
     expect(prompt).not.toMatch(/[^\\]<\/file nonce=\\"abc\\">/);
   });
 });
+
+describe("courses from other schools (v6.6.0)", () => {
+  type Career = { content: { courses: { code: string }[]; otherCourses: { name: string; why: string }[] } };
+  const base = { student: { name: "Ada", links: [] }, projects: [] as unknown[] };
+
+  it("keeps only courses the student typed, labelled with the student's own text, once each", async () => {
+    // The mock echoes the first course without its school and in lower case,
+    // the second verbatim, and adds one invented course.
+    const res = await route.POST(request("career", {
+      ...base, courses: [],
+      otherCourses: [
+        { name: "Applied Regression", school: "Ohio State" },
+        { name: "Data Mining", school: "" },
+        { name: "applied  regression", school: "ohio state" },
+        { name: "   ", school: "Nowhere" },
+      ],
+    }));
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as Career;
+    expect(body.content.otherCourses.map((c) => c.name)).toEqual(["Applied Regression, Ohio State", "Data Mining"]);
+    expect(body.content.courses).toEqual([]);
+  });
+
+  it("says nothing about coursework when there is none, and returns no courses", async () => {
+    const before = seenPrompts.length;
+    const res = await route.POST(request("career", { ...base, courses: [], otherCourses: [] }));
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as Career;
+    expect(body.content.courses).toEqual([]);
+    expect(body.content.otherCourses).toEqual([]);
+    const prompt = seenPrompts.slice(before).join("\n");
+    expect(prompt).not.toContain("Courses taken");
+    expect(prompt).not.toContain("Other courses");
+    expect(prompt).not.toContain("none listed");
+  });
+
+  it("clips a long course and keeps the first five rows instead of rejecting", async () => {
+    const res = await route.POST(request("career", {
+      ...base, courses: [],
+      otherCourses: Array.from({ length: 7 }, (_, i) => ({ name: `Course ${i} ${"x".repeat(300)}`, school: "S".repeat(300) })),
+    }));
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as Career;
+    expect(body.content.otherCourses.length).toBeLessThanOrEqual(5);
+    for (const c of body.content.otherCourses) expect(c.name.length).toBeLessThanOrEqual(80 + 2 + 80);
+  });
+
+  it("still accepts a payload from a browser that predates the field", async () => {
+    const res = await route.POST(request("career", { ...base, courses: ["ISA 401"] }));
+    expect(res.status).toBe(200);
+    expect(((await res.json()) as Career).content.otherCourses).toEqual([]);
+  });
+});
+
+describe("showcase origin (v6.6.0)", () => {
+  const payload = (extra: Record<string, unknown>) => ({
+    course: "", semester: "", team: [], prompts: { problem: "", hardest: "", next: "" },
+    files: [{ kind: "text", name: "model.R", role: "code", content: "lm(y~x)" }],
+    publishedPaths: ["code/model.R"],
+    ...extra,
+  });
+  const firstLine = async (extra: Record<string, unknown>) => {
+    const before = seenPrompts.length;
+    const res = await route.POST(request("showcase", payload(extra)));
+    expect(res.status).toBe(200);
+    return seenPrompts.slice(before).join("\n");
+  };
+
+  it("tells the model where the project came from", async () => {
+    expect(await firstLine({ origin: "miami", course: "ISA 444" })).toContain("Course: ISA 444");
+    expect(await firstLine({ origin: "other", course: "STAT 4520, Ohio State" })).toContain("Course (another school): STAT 4520, Ohio State");
+    expect(await firstLine({ origin: "self" })).toContain("A self-study project.");
+    expect(await firstLine({ origin: "personal" })).toContain("A personal project.");
+  });
+
+  it("treats a payload without an origin as a Miami course", async () => {
+    expect(await firstLine({ course: "ISA 401" })).toContain("Course: ISA 401");
+  });
+
+  it("accepts an unknown origin as Miami rather than failing", async () => {
+    expect(await firstLine({ origin: "martian", course: "ISA 401" })).toContain("Course: ISA 401");
+  });
+});

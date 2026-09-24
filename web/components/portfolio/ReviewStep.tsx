@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ModelOption } from "@/lib/config/models";
 import { renderCareer, renderShowcase } from "@/lib/portfolio/html";
+import { originOf } from "@/lib/portfolio/origin";
 import { CAREER_REPO, dedupePaths, rolePath } from "@/lib/portfolio/files";
 import { pushable } from "@/lib/portfolio/intake";
 import { loadSites, type SiteRecord } from "@/lib/portfolio/store";
@@ -57,10 +58,10 @@ export function ReviewStep({ draft, patch, nav, githubEnabled, onPublished, onSt
           repoName: site?.repoName ?? CAREER_REPO,
         })
       : renderShowcase(draft.content.content, {
-          course: draft.course, semester: draft.semester, team: draft.team,
+          origin: originOf(draft.origin), course: draft.course, semester: draft.semester, team: draft.team,
           repoUrl: site?.repoUrl ?? null, figures, deliverablePaths: publishedPaths.all,
         });
-  }, [draft.content, draft.name, draft.links, draft.photo, draft.resumeLink, draft.course, draft.semester, draft.team, figures, publishedPaths, folders, site]);
+  }, [draft.content, draft.name, draft.links, draft.photo, draft.resumeLink, draft.origin, draft.course, draft.semester, draft.team, figures, publishedPaths, folders, site]);
 
   // The published page loads the photo from assets/photo.jpg and figures
   // from figures/<name>, files that exist only after the push. The preview
@@ -86,7 +87,14 @@ export function ReviewStep({ draft, patch, nav, githubEnabled, onPublished, onSt
       <section className="rounded-card border border-medium-tan bg-paper p-5">
         <h2 className="text-2xl">Edit the page</h2>
         <p className="mt-1 text-dark-tan">Everything here is yours to change. The preview updates as you type.</p>
-        <ContentEditor value={draft.content} onChange={(content) => patch({ content })} figures={figures} />
+        <ContentEditor
+          value={draft.content}
+          onChange={(content) => patch({ content })}
+          figures={figures}
+          typedOtherCourses={(draft.otherCourses ?? [])
+            .filter((c) => c.name.trim())
+            .map((c) => (c.school.trim() ? `${c.name.trim()}, ${c.school.trim()}` : c.name.trim()))}
+        />
         {draft.content.kind === "showcase" ? (
           <label className="mt-4 block font-bold">
             README.md

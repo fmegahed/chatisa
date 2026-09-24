@@ -6,6 +6,7 @@ import { buildModelOptions, getPageModels } from "@/lib/config/models";
 import { filterAvailableModels } from "@/lib/providers";
 import { recordUsageEvent } from "@/lib/db";
 import { githubOauthConfigured } from "@/lib/scout/github-oauth";
+import { isGuestEmail } from "@/lib/portfolio/origin";
 
 export const metadata: Metadata = { title: "Portfolio Builder" };
 
@@ -43,6 +44,7 @@ export default async function PortfolioPage(props: { searchParams: Promise<{ mod
             defaultModelId={defaultModelId}
             githubEnabled={githubOauthConfigured()}
             studentName={session.user.name ?? ""}
+            isGuest={isGuestEmail(session.user.email)}
             initialMode={mode === "career" ? "career" : mode === "project" || mode === "showcase" ? "showcase" : null}
           />
         </div>

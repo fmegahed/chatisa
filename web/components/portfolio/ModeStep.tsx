@@ -58,7 +58,7 @@ export function ModeStep(props: {
         {card(
           "showcase",
           "Project showcase",
-          "One finished course project, organized into a clean repository with a landing page that tells its story. Make as many as you like.",
+          "One finished project, from a course, self-study, or a hobby, organized into a clean repository with a landing page that tells its story. Make as many as you like.",
         )}
       </div>
       {props.sites.length > 0 ? (

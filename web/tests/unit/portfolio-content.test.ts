@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   careerContentSchema,
+  careerGenerationSchema,
   migrateCareerV1,
   showcaseContentSchema,
 } from "@/lib/portfolio/content";
@@ -68,5 +69,27 @@ describe("showcase content schema", () => {
       skills: ["R"], nextSteps: "n",
     });
     expect(ok.success).toBe(true);
+  });
+});
+
+describe("outside courses in career content (v6.6.0)", () => {
+  const doc = {
+    v: 2, siteTitle: "A", headline: "h", about: "a", skillGroups: [], projects: [],
+    courses: [], experience: [], education: [],
+  };
+
+  it("still parses stored content written before the field existed", () => {
+    expect(careerContentSchema.safeParse(doc).success).toBe(true);
+  });
+
+  it("stores up to five outside courses and rejects a sixth", () => {
+    const five = Array.from({ length: 5 }, (_, i) => ({ name: `Course ${i}`, why: "w" }));
+    expect(careerContentSchema.safeParse({ ...doc, otherCourses: five }).success).toBe(true);
+    expect(careerContentSchema.safeParse({ ...doc, otherCourses: [...five, { name: "x", why: "w" }] }).success).toBe(false);
+  });
+
+  it("requires the field in what the model must return", () => {
+    expect(careerGenerationSchema.safeParse(doc).success).toBe(false);
+    expect(careerGenerationSchema.safeParse({ ...doc, otherCourses: [] }).success).toBe(true);
   });
 });

@@ -97,6 +97,8 @@ export function DetailsStep({
       const payload = {
         student: { name: draft.name.trim(), links },
         courses: draft.courses,
+        // Blank rows are the route's to drop; sending them costs nothing.
+        otherCourses: draft.otherCourses ?? [],
         projects: projects.map((p, i) => ({
           ...p,
           files: draft.projects[i].files.map(toRoutePayloadFile),

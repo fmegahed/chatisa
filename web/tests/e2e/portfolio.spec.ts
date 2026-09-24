@@ -214,6 +214,84 @@ test.describe("Portfolio Builder", () => {
     await expect(page.getByText("You have an unfinished showcase")).toHaveCount(0);
   });
 
+  test("a Miami showcase names its repository after the course, with the course title in the header", async ({ page }) => {
+    await fakeGithubApi(page);
+    await showcaseToReview(page);
+    const frame = page.frameLocator('iframe[title="Site preview"]');
+    await expect(frame.getByText("ISA 225 - Principles of Business Analytics")).toBeVisible();
+    await connectGithub(page);
+    await expect(page.getByLabel("Repository name")).toHaveValue(/^isa-225-/);
+  });
+
+  for (const [choice, label] of [
+    ["Self-study", "Self-study project"],
+    ["A hobby or personal project", "Personal project"],
+  ] as const) {
+    test(`a showcase marked "${label}" needs no course and names the repository after the title`, async ({ page }) => {
+      await fakeGithubApi(page);
+      await page.goto("/portfolio?mode=project");
+      await expect(page.getByRole("radio", { name: "A Miami course" })).toBeChecked();
+      await page.getByRole("radio", { name: choice }).check();
+      // No course to pick for this origin: the picker is gone and Next is open.
+      await expect(page.getByLabel("Find a course")).toHaveCount(0);
+      await page.getByRole("button", { name: "Next", exact: true }).click();
+      await page.getByLabel("Add project files").setInputFiles([
+        { name: "analysis.ipynb", mimeType: "application/json", buffer: Buffer.from(NOTEBOOK) },
+      ]);
+      await page.getByRole("button", { name: "Next", exact: true }).click();
+      await page.getByRole("button", { name: "Generate the page" }).click();
+      await expect(page.getByRole("heading", { name: "Edit the page" })).toBeVisible({ timeout: 30_000 });
+      const frame = page.frameLocator('iframe[title="Site preview"]');
+      await expect(frame.getByText(label, { exact: true })).toBeVisible();
+      await connectGithub(page);
+      const repo = page.getByLabel("Repository name");
+      await expect(repo).not.toHaveValue(/^isa-/);
+      await expect(repo).not.toHaveValue("");
+    });
+  }
+
+  test("the origin step switches between a Miami course and a typed course without leaking text", async ({ page }) => {
+    await page.goto("/portfolio?mode=project");
+    const next = page.getByRole("button", { name: "Next", exact: true });
+    await expect(next).toBeDisabled();
+    await page.getByRole("radio", { name: "A course at another school" }).check();
+    await expect(next).toBeDisabled();
+    await page.getByLabel("Course and school").fill("STAT 4520, Ohio State");
+    await expect(next).toBeEnabled();
+    // Back to Miami: the typed text must not count as a Miami course.
+    await page.getByRole("radio", { name: "A Miami course" }).check();
+    await expect(next).toBeDisabled();
+    const scan = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze();
+    expect(scan.violations).toEqual([]);
+  });
+
+  test("the origin step is a heading screen readers can jump to", async ({ page }) => {
+    await page.goto("/portfolio?mode=project");
+    await expect(page.getByRole("heading", { level: 2, name: "Where did this project come from?" })).toBeVisible();
+  });
+
+  test("arrowing through the origins keeps what was already chosen for each", async ({ page }) => {
+    // Review fix: arrow keys move a radio group's selection, and each move
+    // used to wipe the picked course, so a keyboard user browsing the
+    // options lost their pick.
+    await page.goto("/portfolio?mode=project");
+    const next = page.getByRole("button", { name: "Next", exact: true });
+    await page.getByTitle("Principles of Business Analytics").click();
+    await expect(next).toBeEnabled();
+    await page.getByRole("radio", { name: "A Miami course" }).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(page.getByRole("radio", { name: "A course at another school" })).toBeChecked();
+    await page.getByLabel("Course and school").fill("STAT 4520, Ohio State");
+    await page.getByRole("radio", { name: "A course at another school" }).focus();
+    await page.keyboard.press("ArrowUp");
+    await expect(page.getByRole("radio", { name: "A Miami course" })).toBeChecked();
+    await expect(page.getByTitle("Principles of Business Analytics")).toHaveAttribute("aria-pressed", "true");
+    await expect(next).toBeEnabled();
+    await page.getByRole("radio", { name: "A Miami course" }).focus();
+    await page.keyboard.press("ArrowDown");
+    await expect(page.getByLabel("Course and school")).toHaveValue("STAT 4520, Ohio State");
+  });
+
   test("meets WCAG A and AA on the mode step and the review step", async ({ page }) => {
     await page.goto("/portfolio");
     await expect(page.getByRole("heading", { name: "Portfolio Builder" })).toBeVisible();

@@ -11,6 +11,7 @@ import { putDraft, upsertSite, type SiteRecord } from "@/lib/portfolio/store";
 import { clearWip } from "@/lib/portfolio/wip";
 import { upsertPublished } from "@/lib/portfolio/published";
 import { measure, showcaseRepoName } from "@/lib/portfolio/files";
+import { originOf } from "@/lib/portfolio/origin";
 import { resolveSkillId } from "@/lib/scout/taxonomy";
 import type { Draft } from "@/lib/portfolio/draft";
 import type { CareerContent } from "@/lib/portfolio/content";
@@ -64,6 +65,7 @@ export function Publish(props: {
       (isCareer
         ? "portfolio"
         : showcaseRepoName(
+            originOf(props.draft.origin),
             props.draft.course,
             props.draft.content?.kind === "showcase" ? props.draft.content.content.title : "project",
           )),
@@ -146,11 +148,11 @@ export function Publish(props: {
       void putDraft(record.id, {
         v: 1, content: props.draft.content, html: plan.html,
         student: isCareer
-          ? { name: props.draft.name, links: props.draft.links, courses: props.draft.courses }
+          ? { name: props.draft.name, links: props.draft.links, courses: props.draft.courses, otherCourses: props.draft.otherCourses ?? [] }
           : null,
         showcaseMeta: isCareer
           ? null
-          : { course: props.draft.course, semester: props.draft.semester, team: props.draft.team },
+          : { origin: originOf(props.draft.origin), course: props.draft.course, semester: props.draft.semester, team: props.draft.team },
         files: [
           ...props.draft.files.map((f) => ({ ...f, projectSlug: null })),
           ...props.draft.projects.flatMap((p) => p.files.map((f) => ({ ...f, projectSlug: p.slug }))),

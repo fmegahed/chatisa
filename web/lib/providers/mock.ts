@@ -577,6 +577,17 @@ function mockObjectFor(options: LanguageModelV4CallOptions): string {
         })),
         { code: "ISA 999", why: "A course the student never listed; the route must drop it." },
       ],
+      // Outside courses (v6.6.0): the first is echoed without its school and
+      // in lower case, the way models reword, the rest verbatim, plus one
+      // invented course, so the route's matching and filter are exercised.
+      otherCourses: [
+        ...[...(/Other courses \(outside Miami\):\n([\s\S]*?)(?:\n\n|$)/.exec(prompt)?.[1] ?? "").matchAll(/^- (.+)$/gm)]
+          .map((m, i) => ({
+            name: i === 0 ? m[1].split(",")[0].toLowerCase() : m[1],
+            why: "It gave me the methods the projects on this page use.",
+          })),
+        { name: "Underwater Basket Weaving", why: "Invented; the route must drop it." },
+      ],
       experience: [
         {
           org: "Farmer School of Business",

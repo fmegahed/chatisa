@@ -135,3 +135,77 @@ describe("renderShowcase", () => {
     expect(html).toContain("<strong>XYZ 100</strong>: Unknown.");
   });
 });
+
+describe("outside courses (v6.6.0)", () => {
+  const student = { name: "Ada", links: [], hasPhoto: false, resumeLink: false, login: "ada", folders: [], repoName: "portfolio" };
+
+  it("lists courses from other schools with the student's own label, escaped", () => {
+    const html = renderCareer(
+      { ...career, otherCourses: [{ name: "Stats <b>& Data</b>, Ohio State", why: "Regression 'basics'." }] },
+      student,
+    );
+    expect(html).toContain("<h2>Coursework</h2>");
+    expect(html).toContain("<strong>Stats &lt;b&gt;&amp; Data&lt;/b&gt;, Ohio State</strong>: Regression &#39;basics&#39;.");
+    expect(html).not.toContain("<b>&");
+  });
+
+  it("puts Miami courses first, then outside courses, in one Coursework section", () => {
+    const html = renderCareer(
+      { ...career, courses: [{ code: "ISA 444", why: "A." }], otherCourses: [{ name: "Econometrics", why: "B." }] },
+      student,
+    );
+    expect(html.match(/<h2>Coursework<\/h2>/g)).toHaveLength(1);
+    expect(html.indexOf("ISA 444")).toBeLessThan(html.indexOf("Econometrics"));
+  });
+
+  it("prints a course with no reason yet as just its label, and skips a blank name", () => {
+    const html = renderCareer(
+      { ...career, otherCourses: [{ name: "Data Mining", why: "" }, { name: "  ", why: "Orphan." }] },
+      student,
+    );
+    expect(html).toContain("<li><strong>Data Mining</strong></li>");
+    expect(html).not.toContain("Orphan.");
+    expect(html).not.toContain("<strong></strong>");
+  });
+
+  it("has no Coursework section at all when there are no courses of either kind", () => {
+    expect(renderCareer({ ...career, courses: [], otherCourses: [] }, student)).not.toContain("Coursework");
+    expect(renderCareer({ ...career, courses: [] }, student)).not.toContain("Coursework");
+  });
+});
+
+describe("showcase header by origin (v6.6.0)", () => {
+  const content = {
+    v: 1 as const, title: "Churn", tagline: "t", problem: "p", data: "d", approach: "a",
+    findings: [], deliverables: [], skills: [], nextSteps: "",
+  };
+  const base = { course: "", semester: "", team: [] as string[], repoUrl: null, figures: [], deliverablePaths: [] };
+  const meta = (html: string) => /<p class="meta">(.*?)<\/p><\/header>/.exec(html)?.[1] ?? null;
+
+  it("labels a Miami course with its catalog title, and treats a missing origin as Miami", () => {
+    expect(meta(renderShowcase(content, { ...base, origin: "miami", course: "ISA 444", semester: "Spring 2026" })))
+      .toBe("ISA 444 - Business Forecasting, Spring 2026");
+    expect(meta(renderShowcase(content, { ...base, course: "ISA 444" }))).toBe("ISA 444 - Business Forecasting");
+  });
+
+  it("prints a course from another school exactly as typed, escaped", () => {
+    expect(meta(renderShowcase(content, { ...base, origin: "other", course: "STAT <4520>, Ohio State" })))
+      .toBe("STAT &lt;4520&gt;, Ohio State");
+  });
+
+  it("labels self-study and personal projects, ignoring leftover course text", () => {
+    expect(meta(renderShowcase(content, { ...base, origin: "self", course: "ISA 444" }))).toBe("Self-study project");
+    expect(meta(renderShowcase(content, { ...base, origin: "personal", course: "x", team: ["Bo"] })))
+      .toBe("Personal project · Bo");
+  });
+
+  it("never starts the line with a separator when the label is empty", () => {
+    expect(meta(renderShowcase(content, { ...base, origin: "other", course: "", semester: "Fall 2026", team: ["Bo"] })))
+      .toBe("Fall 2026 · Bo");
+    expect(meta(renderShowcase(content, { ...base, origin: "other", course: "", team: ["Bo"] }))).toBe("Bo");
+  });
+
+  it("drops the meta line entirely when there is nothing to say", () => {
+    expect(renderShowcase(content, { ...base, origin: "other", course: "" })).not.toContain('class="meta"');
+  });
+});

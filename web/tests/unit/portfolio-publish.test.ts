@@ -43,4 +43,44 @@ describe("buildPublishPlan", () => {
     expect(plan.files.find((f) => f.path === "README.md")?.contents).toBe("# Churn");
     expect(buildPublishPlan(draft, "ada", { resumeBase64: null, existingRepoName: "old-name" }).repoName).toBe("old-name");
   });
+
+  describe("showcase origin (v6.6.0)", () => {
+    const showcase = {
+      ...baseDraft, mode: "showcase" as const, course: "ISA 401", readme: null,
+      content: { kind: "showcase" as const, content: { v: 1 as const, title: "Churn Model", tagline: "Who leaves, and why", problem: "p", data: "d", approach: "a", findings: [], deliverables: [], skills: [], nextSteps: "" } },
+    };
+    const readme = (plan: { files: { path: string; contents?: string }[] }) =>
+      plan.files.find((f) => f.path === "README.md")?.contents ?? "";
+
+    it("a draft saved before origins existed publishes exactly as a Miami course did", () => {
+      const plan = buildPublishPlan(showcase, "ada", { resumeBase64: null, existingRepoName: null });
+      expect(plan.repoName).toBe("isa-401-churn-model");
+      expect(readme(plan)).toContain("Built for ISA 401.");
+      expect(plan.html).toContain("ISA 401 - ");
+    });
+
+    it("a course at another school: title-only repo, typed course in header and README", () => {
+      const plan = buildPublishPlan({ ...showcase, origin: "other", course: "STAT 4520, Ohio State" }, "ada", { resumeBase64: null, existingRepoName: null });
+      expect(plan.repoName).toBe("churn-model");
+      expect(plan.html).toContain("STAT 4520, Ohio State");
+      expect(readme(plan)).toContain("Built for STAT 4520, Ohio State.");
+    });
+
+    it("self-study and personal projects ignore course text left from another origin", () => {
+      const self = buildPublishPlan({ ...showcase, origin: "self" }, "ada", { resumeBase64: null, existingRepoName: null });
+      expect(self.repoName).toBe("churn-model");
+      expect(self.html).toContain("Self-study project");
+      expect(self.html).not.toContain("ISA 401");
+      expect(readme(self)).toContain("A self-study project.");
+      expect(readme(self)).not.toContain("ISA 401");
+      const personal = buildPublishPlan({ ...showcase, origin: "personal" }, "ada", { resumeBase64: null, existingRepoName: null });
+      expect(personal.html).toContain("Personal project");
+      expect(readme(personal)).toContain("A personal project.");
+    });
+
+    it("a republish keeps the stored repository name whatever the origin", () => {
+      expect(buildPublishPlan({ ...showcase, origin: "self" }, "ada", { resumeBase64: null, existingRepoName: "isa-401-churn-model" }).repoName)
+        .toBe("isa-401-churn-model");
+    });
+  });
 });

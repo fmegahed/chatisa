@@ -13,6 +13,7 @@ import {
   showcaseRepoName,
 } from "./files";
 import { pushable } from "./intake";
+import { originOf, originReadmeLine } from "./origin";
 
 export function buildPublishPlan(
   draft: Draft,
@@ -42,19 +43,20 @@ export function buildPublishPlan(
     return { repoName, files, html, readme: null };
   }
   const content = draft.content.content;
-  const repoName = extras.existingRepoName ?? showcaseRepoName(draft.course, content.title);
+  const origin = originOf(draft.origin);
+  const repoName = extras.existingRepoName ?? showcaseRepoName(origin, draft.course, content.title);
   const published = draft.files.filter((f) => f.publish && pushable(f));
   // The paths the push will really write (collisions suffixed), so the page
   // never links a deliverable or figure that is not in the repository.
   const deliverablePaths = dedupePaths(published.map((f) => rolePath(f.role, f.name)));
   const figures = deliverablePaths.filter((_, i) => published[i].role === "figure");
   const html = renderShowcase(content, {
-    course: draft.course, semester: draft.semester, team: draft.team,
+    origin, course: draft.course, semester: draft.semester, team: draft.team,
     repoUrl: `https://github.com/${login}/${repoName}`, figures, deliverablePaths,
   });
   const readme = draft.readme && draft.readme.trim().length > 0
     ? draft.readme
-    : `# ${content.title}\n\n${content.tagline}\n\nBuilt for ${draft.course}. Published with ChatISA's Portfolio Builder.\n`;
+    : `# ${content.title}\n\n${content.tagline}\n\n${[originReadmeLine(origin, draft.course), "Published with ChatISA's Portfolio Builder."].filter(Boolean).join(" ")}\n`;
   const files = showcaseFileSet({ html, readme, gitignore: DEFAULT_GITIGNORE, files: published });
   return { repoName, files, html, readme };
 }

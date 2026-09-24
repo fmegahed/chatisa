@@ -1,4 +1,5 @@
 import { PUSH_LIMITS, pushFileBytes, type PushFile } from "@/lib/scout/github";
+import type { ProjectOrigin } from "./origin";
 
 export type FileRole = "data" | "code" | "notebook" | "report" | "slides" | "figure" | "other";
 
@@ -61,8 +62,13 @@ export function rolePath(role: FileRole, name: string): string {
   return `${folder[role]}/${file}`;
 }
 
-export function showcaseRepoName(courseCode: string, title: string): string {
-  return slugify(`${courseCode} ${title}`);
+/**
+ * A Miami course prefixes the name with its code ("isa-444-sales-forecast");
+ * every other origin uses the title alone (v6.6.0), so typed course text
+ * from another school never ends up in a repository name.
+ */
+export function showcaseRepoName(origin: ProjectOrigin, course: string, title: string): string {
+  return slugify(origin === "miami" && course.trim() ? `${course} ${title}` : title);
 }
 
 export function measure(files: PushFile[]): {

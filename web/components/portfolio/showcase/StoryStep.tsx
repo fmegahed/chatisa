@@ -8,6 +8,7 @@ import {
 } from "@/lib/portfolio/files";
 import { pushable, toRoutePayloadFile } from "@/lib/portfolio/intake";
 import { renderShowcase } from "@/lib/portfolio/html";
+import { originOf } from "@/lib/portfolio/origin";
 import { showcaseContentSchema } from "@/lib/portfolio/content";
 import type { StepProps } from "@/lib/portfolio/draft";
 import { StepNav } from "../StepNav";
@@ -48,7 +49,7 @@ export function StoryStep({
         draft.files.filter((f) => f.publish && pushable(f)).map((f) => rolePath(f.role, f.name)),
       );
       const payload = {
-        course: draft.course, semester: draft.semester, team: draft.team, prompts: draft.prompts,
+        origin: originOf(draft.origin), course: draft.course, semester: draft.semester, team: draft.team, prompts: draft.prompts,
         files: draft.files.map((f) => ({ ...toRoutePayloadFile(f), role: f.role })),
         publishedPaths,
       };
@@ -62,7 +63,7 @@ export function StoryStep({
       const content = showcaseContentSchema.parse(body.content);
       const figures = publishedPaths.filter((p) => p.startsWith("figures/"));
       const html = renderShowcase(content, {
-        course: draft.course, semester: draft.semester, team: draft.team,
+        origin: originOf(draft.origin), course: draft.course, semester: draft.semester, team: draft.team,
         repoUrl: null, figures, deliverablePaths: publishedPaths,
       });
       patch({

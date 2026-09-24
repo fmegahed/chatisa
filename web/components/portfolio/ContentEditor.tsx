@@ -77,7 +77,7 @@ function List<T>(props: {
 const csv = (s: string[]) => s.join(", ");
 const uncsv = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
 
-function CareerEditor(props: { value: CareerContent; onChange: (c: CareerContent) => void }) {
+function CareerEditor(props: { value: CareerContent; onChange: (c: CareerContent) => void; typedOtherCourses: string[] }) {
   const c = props.value;
   const set = (p: Partial<CareerContent>) => props.onChange({ ...c, ...p });
   return (
@@ -120,6 +120,25 @@ function CareerEditor(props: { value: CareerContent; onChange: (c: CareerContent
           </>
         )}
       />
+      {/* Courses from other schools (v6.6.0): shown when the page has some or
+          the guest typed some, so a course the model dropped, or the guest
+          removed, can come back. Add restores the next typed course. */}
+      {(c.otherCourses?.length ?? 0) > 0 || props.typedOtherCourses.length > 0 ? (
+        <List
+          title="Other courses" items={c.otherCourses ?? []} max={5}
+          onChange={(otherCourses) => set({ otherCourses })}
+          blank={() => ({
+            name: props.typedOtherCourses.find((t) => !(c.otherCourses ?? []).some((x) => x.name === t)) ?? "",
+            why: "",
+          })}
+          render={(x, s) => (
+            <>
+              <Text label="Course" value={x.name} onChange={(name) => s({ ...x, name })} />
+              <Text label="Why it matters" value={x.why} onChange={(why) => s({ ...x, why })} />
+            </>
+          )}
+        />
+      ) : null}
       <List
         title="Experience" items={c.experience} max={6}
         onChange={(experience) => set({ experience })}
@@ -211,8 +230,10 @@ export function ContentEditor(props: {
   value: SiteContent;
   onChange: (next: SiteContent) => void;
   figures: string[];
+  /** The labels of the courses a guest typed ("name, school"), for restoring. */
+  typedOtherCourses?: string[];
 }) {
   return props.value.kind === "career"
-    ? <CareerEditor value={props.value.content} onChange={(content) => props.onChange({ kind: "career", content })} />
+    ? <CareerEditor value={props.value.content} onChange={(content) => props.onChange({ kind: "career", content })} typedOtherCourses={props.typedOtherCourses ?? []} />
     : <ShowcaseEditor value={props.value.content} onChange={(content) => props.onChange({ kind: "showcase", content })} figures={props.figures} />;
 }

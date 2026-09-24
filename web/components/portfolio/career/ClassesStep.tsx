@@ -5,13 +5,19 @@ import { loadProfile } from "@/lib/scout/profile-store";
 import type { StepProps } from "@/lib/portfolio/draft";
 import { CoursePicker } from "../CoursePicker";
 import { StepNav } from "../StepNav";
+import { GuestCoursesStep } from "./GuestCoursesStep";
 
 /**
  * Step 2 of the career wizard. Job Scout's profile already knows which
  * courses this student has taken, so the picker starts from it rather than
  * asking twice; anything chosen here stays local to the draft.
  */
-export function ClassesStep({ draft, patch, nav }: StepProps) {
+export function ClassesStep(props: StepProps & { isGuest: boolean }) {
+  // Guests have no Miami courses: they type their own, or skip (v6.6.0).
+  return props.isGuest ? <GuestCoursesStep {...props} /> : <MiamiClassesStep {...props} />;
+}
+
+function MiamiClassesStep({ draft, patch, nav }: StepProps) {
   useEffect(() => {
     if (draft.courses.length > 0) return;
     const profile = loadProfile();

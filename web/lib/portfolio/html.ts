@@ -13,6 +13,7 @@
 
 import { SAFE_PATH, type CareerContent, type ShowcaseContent } from "./content";
 import { getCourse } from "@/lib/scout/courses";
+import { originLabel, originOf, type ProjectOrigin } from "./origin";
 
 export function escapeHtml(value: string): string {
   return value
@@ -145,11 +146,21 @@ export function renderCareer(
   // The catalog supplies the title; the model supplies only the code and
   // the reason, so a line reads "ISA 444 - Business Forecasting: why" with
   // code and title in bold (professor's call, 2026-08-23).
-  const courses = content.courses.length
-    ? `<ul>${content.courses.map((c) => {
-        const title = getCourse(c.code)?.title;
-        return `<li><strong>${escapeHtml(c.code)}${title ? ` - ${escapeHtml(title)}` : ""}</strong>: ${escapeHtml(c.why)}</li>`;
-      }).join("")}</ul>` : "";
+  // Courses from other schools (v6.6.0) follow the Miami ones in the same
+  // list, labelled with the student's own text; the route already pinned
+  // that label to what the student typed.
+  const courseItems = [
+    ...content.courses.map((c) => {
+      const title = getCourse(c.code)?.title;
+      return `<li><strong>${escapeHtml(c.code)}${title ? ` - ${escapeHtml(title)}` : ""}</strong>: ${escapeHtml(c.why)}</li>`;
+    }),
+    // A row the student blanked in the editor is skipped, and one restored
+    // before its reason is written shows as just the label.
+    ...(content.otherCourses ?? [])
+      .filter((c) => c.name.trim())
+      .map((c) => `<li><strong>${escapeHtml(c.name)}</strong>${c.why.trim() ? `: ${escapeHtml(c.why)}` : ""}</li>`),
+  ];
+  const courses = courseItems.length ? `<ul>${courseItems.join("")}</ul>` : "";
   const experience = content.experience.map((e) =>
     `<article><h3>${escapeHtml(e.role)}, ${escapeHtml(e.org)}</h3><p class="meta">${escapeHtml(e.dates)}</p><ul>${e.bullets.map((b) => `<li>${escapeHtml(b)}</li>`).join("")}</ul></article>`).join("");
   const education = content.education.map((e) =>
@@ -174,13 +185,24 @@ export function renderShowcase(
    * 404 on the published page.
    */
   meta: {
+    /** Absent on drafts from before v6.6.0, which were all Miami courses. */
+    origin?: ProjectOrigin;
     course: string; semester: string; team: string[]; repoUrl: string | null;
     figures: string[]; deliverablePaths: string[];
   },
 ): string {
   const allowed = new Set(meta.figures);
   const publishable = new Set(meta.deliverablePaths);
-  const head = `<header><h1>${escapeHtml(content.title)}</h1><p class="lede">${escapeHtml(content.tagline)}</p><p class="meta">${escapeHtml(meta.course)}${meta.semester ? `, ${escapeHtml(meta.semester)}` : ""}${meta.team.length ? ` · ${meta.team.map(escapeHtml).join(", ")}` : ""}${meta.repoUrl ? ` · ${link(meta.repoUrl, "Repository")}` : ""}</p></header>`;
+  // Parts are joined only when present, so a missing course never leaves a
+  // leading comma and a page with nothing to say has no meta line at all.
+  const where = [originLabel(originOf(meta.origin), meta.course), meta.semester.trim()]
+    .filter(Boolean).map(escapeHtml).join(", ");
+  const metaParts = [
+    where,
+    meta.team.length ? meta.team.map(escapeHtml).join(", ") : "",
+    meta.repoUrl ? link(meta.repoUrl, "Repository") : "",
+  ].filter(Boolean);
+  const head = `<header><h1>${escapeHtml(content.title)}</h1><p class="lede">${escapeHtml(content.tagline)}</p>${metaParts.length ? `<p class="meta">${metaParts.join(" · ")}</p>` : ""}</header>`;
   const findings = content.findings.map((f) => {
     const fig = f.figure && allowed.has(f.figure) && relativeSafe(f.figure)
       ? `<figure class="figure"><img src="${escapeHtml(f.figure)}" alt="${escapeHtml(f.heading)}"></figure>` : "";
