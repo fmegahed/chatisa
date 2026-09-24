@@ -25,7 +25,7 @@ import { StepNav } from "../StepNav";
 const MAX_LINKS = 4;
 /** The route's caps, mirrored here so a long field is a message, not a 400. */
 const MAX_NAME = 80;
-const MAX_COURSES = 30;
+const MAX_COURSES = 80;
 const MAX_PROJECT_TITLE = 80;
 
 export function DetailsStep({
@@ -97,6 +97,7 @@ export function DetailsStep({
       const payload = {
         student: { name: draft.name.trim(), links },
         courses: draft.courses,
+        inProgress: draft.inProgress ?? [],
         // Blank rows are the route's to drop; sending them costs nothing.
         otherCourses: draft.otherCourses ?? [],
         projects: projects.map((p, i) => ({
@@ -116,6 +117,7 @@ export function DetailsStep({
       const html = renderCareer(content, {
         name: draft.name.trim(), links, hasPhoto: !!draft.photo,
         resumeLink: draft.resumeLink, login: null, repoName: CAREER_REPO,
+        inProgress: draft.inProgress ?? [],
         folders: draft.projects.filter((p) => p.files.some(pushable)).map((p) => p.slug),
       });
       patch({

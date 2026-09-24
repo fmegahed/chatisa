@@ -43,6 +43,11 @@ async function connectGithub(page: Page) {
   ).toBeVisible({ timeout: 15_000 });
 }
 
+/** A course row in the checklist (v6.7.0): a fieldset named by its legend. */
+function courseRow(page: Page, code: string) {
+  return page.getByRole("group", { name: new RegExp(`^${code} `) }).first();
+}
+
 /** Course, one notebook, one figure, generate: the shortest way to review. */
 async function showcaseToReview(page: Page) {
   await page.goto("/portfolio?mode=project");
@@ -83,7 +88,7 @@ test.describe("Portfolio Builder", () => {
       });
     await page.getByRole("button", { name: "Next", exact: true }).click();
 
-    await page.getByTitle("Principles of Business Analytics").click();
+    await courseRow(page, "ISA 225").getByRole("radio", { name: "Done" }).check();
     await page.getByRole("button", { name: "Next", exact: true }).click();
 
     await page.getByRole("button", { name: "Add a project" }).click();
@@ -174,7 +179,7 @@ test.describe("Portfolio Builder", () => {
     // profile's strengths. ISA 225 teaches neither R nor SQL, so both rows
     // can only have come from the site that was just published.
     await page.goto("/job-scout");
-    await page.getByTitle("Principles of Business Analytics").click();
+    await courseRow(page, "ISA 225").getByRole("radio", { name: "Done" }).check();
     await page
       .getByRole("button", { name: "Save profile and see this week's jobs" })
       .click();

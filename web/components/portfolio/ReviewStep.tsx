@@ -55,13 +55,13 @@ export function ReviewStep({ draft, patch, nav, githubEnabled, onPublished, onSt
       ? renderCareer(draft.content.content, {
           name: draft.name, links: draft.links, hasPhoto: !!draft.photo, resumeLink: draft.resumeLink,
           login: site?.repoUrl ? site.repoUrl.split("/")[3] ?? null : null, folders,
-          repoName: site?.repoName ?? CAREER_REPO,
+          repoName: site?.repoName ?? CAREER_REPO, inProgress: draft.inProgress ?? [],
         })
       : renderShowcase(draft.content.content, {
           origin: originOf(draft.origin), course: draft.course, semester: draft.semester, team: draft.team,
           repoUrl: site?.repoUrl ?? null, figures, deliverablePaths: publishedPaths.all,
         });
-  }, [draft.content, draft.name, draft.links, draft.photo, draft.resumeLink, draft.origin, draft.course, draft.semester, draft.team, figures, publishedPaths, folders, site]);
+  }, [draft.content, draft.name, draft.links, draft.photo, draft.resumeLink, draft.inProgress, draft.origin, draft.course, draft.semester, draft.team, figures, publishedPaths, folders, site]);
 
   // The published page loads the photo from assets/photo.jpg and figures
   // from figures/<name>, files that exist only after the push. The preview

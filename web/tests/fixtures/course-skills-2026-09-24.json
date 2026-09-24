@@ -1,0 +1,1134 @@
+[
+  {
+    "course": "ISA 125",
+    "skillId": "statistical_analysis",
+    "level": "exposure",
+    "evidence": "summarized business data and described relationships among variables"
+  },
+  {
+    "course": "ISA 125",
+    "skillId": "statistical_inference",
+    "level": "exposure",
+    "evidence": "conducted one- and two-sample statistical inference"
+  },
+  {
+    "course": "ISA 125",
+    "skillId": "probability",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 125",
+    "skillId": "hypothesis_testing",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 125",
+    "skillId": "data_analysis",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "information_systems",
+    "level": "applied",
+    "evidence": "analyzed how organizations use information systems for data-driven decisions"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "data_analysis",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "business_intelligence",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "it_strategy",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "data_analysis",
+    "level": "applied",
+    "evidence": "analyzed real business data end to end and communicated results"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "regression",
+    "level": "applied",
+    "evidence": "built predictive regression models on business data"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "data_visualization",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "statistical_inference",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "forecasting",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "data_mining",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "classification",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "information_systems",
+    "level": "applied",
+    "evidence": "evaluated the strategic role of IT and data in business transformation"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "it_strategy",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "excel",
+    "level": "applied",
+    "evidence": "solved data-driven business problems with spreadsheets"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "data_visualization",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "digital_transformation",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "generative_ai",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "ethics",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 241",
+    "skillId": "sql",
+    "level": "applied",
+    "evidence": "wrote SQL to collect, manipulate, and manage structured data"
+  },
+  {
+    "course": "ISA 241",
+    "skillId": "database_design",
+    "level": "applied",
+    "evidence": "designed logical and physical database schemas with ER modeling"
+  },
+  {
+    "course": "ISA 241",
+    "skillId": "data_wrangling",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 242",
+    "skillId": "programming_fundamentals",
+    "level": "applied",
+    "evidence": "wrote structured programs to access and process business data"
+  },
+  {
+    "course": "ISA 242",
+    "skillId": "python",
+    "level": "applied",
+    "evidence": "used Python libraries for data retrieval and presentation"
+  },
+  {
+    "course": "ISA 242",
+    "skillId": "data_wrangling",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 250",
+    "skillId": "mathematics",
+    "level": "applied",
+    "evidence": "applied matrix algebra, calculus, and functions to analytics problems"
+  },
+  {
+    "course": "ISA 250",
+    "skillId": "optimization",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 301",
+    "skillId": "networking",
+    "level": "anchor",
+    "evidence": "analyzed network architectures and data communications standards"
+  },
+  {
+    "course": "ISA 301",
+    "skillId": "cybersecurity",
+    "level": "applied",
+    "evidence": "evaluated network and data security threats and protections"
+  },
+  {
+    "course": "ISA 301",
+    "skillId": "cloud_computing",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "enterprise_systems",
+    "level": "anchor",
+    "evidence": "worked with ERP, supply chain, and CRM systems and their implementation trade-offs"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "supply_chain",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "crm",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "business_process",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "it_management",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 305",
+    "skillId": "it_governance",
+    "level": "anchor",
+    "evidence": "formulated IT governance and assurance strategy"
+  },
+  {
+    "course": "ISA 305",
+    "skillId": "risk_management",
+    "level": "anchor",
+    "evidence": "assessed IT risk and selected controls"
+  },
+  {
+    "course": "ISA 305",
+    "skillId": "it_audit",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 305",
+    "skillId": "compliance",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 305",
+    "skillId": "cybersecurity",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 321",
+    "skillId": "optimization",
+    "level": "anchor",
+    "evidence": "built linear, integer, and nonlinear programs for production, supply chain, and finance decisions"
+  },
+  {
+    "course": "ISA 321",
+    "skillId": "operations_research",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 321",
+    "skillId": "network_analysis",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 333",
+    "skillId": "nonparametric_statistics",
+    "level": "anchor",
+    "evidence": "applied chi-square, runs, and association tests when distributions are unknown"
+  },
+  {
+    "course": "ISA 333",
+    "skillId": "hypothesis_testing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 333",
+    "skillId": "statistical_inference",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 335",
+    "skillId": "blockchain",
+    "level": "anchor",
+    "evidence": "analyzed blockchain applications from cryptocurrencies to smart contracts and DeFi"
+  },
+  {
+    "course": "ISA 335",
+    "skillId": "encryption",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 335",
+    "skillId": "cybersecurity",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 336",
+    "skillId": "generative_ai",
+    "level": "anchor",
+    "evidence": "applied large language models to business content creation and process automation"
+  },
+  {
+    "course": "ISA 336",
+    "skillId": "prompt_engineering",
+    "level": "applied",
+    "evidence": "designed prompts and multimodal workflows"
+  },
+  {
+    "course": "ISA 336",
+    "skillId": "llm_applications",
+    "level": "applied",
+    "evidence": "integrated generative AI with external data"
+  },
+  {
+    "course": "ISA 336",
+    "skillId": "ai_ethics",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 345",
+    "skillId": "sql",
+    "level": "anchor",
+    "evidence": "implemented databases and queried them with SQL"
+  },
+  {
+    "course": "ISA 345",
+    "skillId": "database_design",
+    "level": "anchor",
+    "evidence": "designed databases with formal design methodologies"
+  },
+  {
+    "course": "ISA 345",
+    "skillId": "data_warehousing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 345",
+    "skillId": "data_wrangling",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 365",
+    "skillId": "statistical_process_control",
+    "level": "anchor",
+    "evidence": "monitored process data and data streams with control methods"
+  },
+  {
+    "course": "ISA 365",
+    "skillId": "experimental_design",
+    "level": "anchor",
+    "evidence": "designed experiments for business analytics questions"
+  },
+  {
+    "course": "ISA 365",
+    "skillId": "hypothesis_testing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 365",
+    "skillId": "ab_testing",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 381",
+    "skillId": "python",
+    "level": "anchor",
+    "evidence": "developed scalable data-driven applications with custom libraries"
+  },
+  {
+    "course": "ISA 381",
+    "skillId": "object_oriented_programming",
+    "level": "anchor",
+    "evidence": "designed object-oriented programs with functions and lambda expressions"
+  },
+  {
+    "course": "ISA 381",
+    "skillId": "data_wrangling",
+    "level": "applied",
+    "evidence": "processed TXT, CSV, Excel, and database data programmatically"
+  },
+  {
+    "course": "ISA 387",
+    "skillId": "systems_analysis",
+    "level": "anchor",
+    "evidence": "planned and evaluated business software acquisition options"
+  },
+  {
+    "course": "ISA 387",
+    "skillId": "sdlc",
+    "level": "anchor",
+    "evidence": "applied the application life cycle from requirements to delivery"
+  },
+  {
+    "course": "ISA 387",
+    "skillId": "business_process",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 387",
+    "skillId": "agile",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 387",
+    "skillId": "project_management",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "regression",
+    "level": "anchor",
+    "evidence": "built and evaluated explanatory and predictive multiple regression models"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "predictive_modeling",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "hypothesis_testing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "model_evaluation",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "statistical_inference",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "business_intelligence",
+    "level": "anchor",
+    "evidence": "built business intelligence solutions from data gathering to use"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "data_visualization",
+    "level": "anchor",
+    "evidence": "designed visualizations that communicate business insight"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "tableau",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "power_bi",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "dashboard_design",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "data_warehousing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "data_mining",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "etl",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 403",
+    "skillId": "web_development",
+    "level": "anchor",
+    "evidence": "delivered scalable web applications with client and server-side technologies"
+  },
+  {
+    "course": "ISA 403",
+    "skillId": "mobile_development",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 403",
+    "skillId": "javascript",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 403",
+    "skillId": "api_development",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 403",
+    "skillId": "sql",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "cybersecurity",
+    "level": "anchor",
+    "evidence": "analyzed threats, vulnerabilities, and controls with security tools and cases"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "risk_management",
+    "level": "applied",
+    "evidence": "applied risk management frameworks"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "compliance",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "it_governance",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "encryption",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "business_continuity",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "identity_access_management",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "ethics",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 406",
+    "skillId": "project_management",
+    "level": "anchor",
+    "evidence": "managed IT projects with professional techniques and software tools"
+  },
+  {
+    "course": "ISA 406",
+    "skillId": "agile",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 406",
+    "skillId": "risk_management",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 406",
+    "skillId": "it_management",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "big_data",
+    "level": "anchor",
+    "evidence": "developed big data solutions for unstructured and large-scale datasets"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "spark",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "nosql",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "nlp",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "hadoop",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "streaming_analytics",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "security_operations",
+    "level": "anchor",
+    "evidence": "built intrusion-detection and phishing-detection analyses on real security logs"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "python",
+    "level": "applied",
+    "evidence": "programmed security analytics on real datasets"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "machine_learning",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "anomaly_detection",
+    "level": "applied",
+    "evidence": "discovered malicious patterns in security software logs"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "cybersecurity",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "classification",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "data_architecture",
+    "level": "anchor",
+    "evidence": "evaluated enterprise data infrastructure options for decision making"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "data_warehousing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "data_lakes",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "nosql",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "cloud_computing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "aws",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "azure",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "data_governance",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 444",
+    "skillId": "forecasting",
+    "level": "anchor",
+    "evidence": "built and evaluated Box-Jenkins, exponential smoothing, and decomposition forecasts on business time series"
+  },
+  {
+    "course": "ISA 444",
+    "skillId": "regression",
+    "level": "applied",
+    "evidence": "fit time series regressions with autocorrelated errors"
+  },
+  {
+    "course": "ISA 444",
+    "skillId": "predictive_modeling",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 444",
+    "skillId": "r",
+    "level": "applied",
+    "evidence": "implemented forecasting workflows in R"
+  },
+  {
+    "course": "ISA 444",
+    "skillId": "model_evaluation",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "data_mining",
+    "level": "anchor",
+    "evidence": "mined large business datasets with current software"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "classification",
+    "level": "anchor",
+    "evidence": "built tree, logistic regression, and neural net classifiers"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "clustering",
+    "level": "applied",
+    "evidence": "segmented data with cluster and market basket analysis"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "machine_learning",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "model_evaluation",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "regression",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "deep_learning",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "it_strategy",
+    "level": "anchor",
+    "evidence": "researched a company's information systems strategy and presented findings"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "research",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "business_strategy",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "presentation_skills",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "communication",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "consulting",
+    "level": "anchor",
+    "evidence": "delivered analytics consulting to a real business client"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "data_analysis",
+    "level": "applied",
+    "evidence": "solved a client's data-driven problem end to end"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "stakeholder_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "presentation_skills",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "project_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "teamwork",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "data_visualization",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "business_intelligence",
+    "level": "anchor",
+    "evidence": "modeled structured data for business intelligence"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "dashboard_design",
+    "level": "anchor",
+    "evidence": "built interactive dashboards with charts, filters, and KPIs"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "data_wrangling",
+    "level": "applied",
+    "evidence": "retrieved, cleaned, and manipulated data for analysis"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "data_visualization",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "data_warehousing",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "data_storytelling",
+    "level": "anchor",
+    "evidence": "developed a data analytic product from client consultation to presentation"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "technical_writing",
+    "level": "anchor",
+    "evidence": "wrote professional white papers and technical reports"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "presentation_skills",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "data_visualization",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "communication",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "stakeholder_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "r",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "ethics",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 621",
+    "skillId": "digital_transformation",
+    "level": "anchor",
+    "evidence": "evaluated emerging IT and innovation methodologies in the organization"
+  },
+  {
+    "course": "ISA 621",
+    "skillId": "it_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 621",
+    "skillId": "information_systems",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 621",
+    "skillId": "business_process",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 628",
+    "skillId": "information_systems",
+    "level": "anchor",
+    "evidence": "examined how IT reinvents processes and data consumption for decisions"
+  },
+  {
+    "course": "ISA 628",
+    "skillId": "data_analysis",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 628",
+    "skillId": "it_strategy",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 628",
+    "skillId": "digital_transformation",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 629",
+    "skillId": "data_analysis",
+    "level": "anchor",
+    "evidence": "applied data manipulation techniques to discipline-specific business problems"
+  },
+  {
+    "course": "ISA 629",
+    "skillId": "excel",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 629",
+    "skillId": "business_process",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 629",
+    "skillId": "data_visualization",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "machine_learning",
+    "level": "anchor",
+    "evidence": "built supervised and unsupervised models for business applications"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "ensemble_methods",
+    "level": "applied",
+    "evidence": "built and customized ensemble models"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "deep_learning",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "deep_learning_frameworks",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "python",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "model_evaluation",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "ai_ethics",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "big_data",
+    "level": "anchor",
+    "evidence": "integrated data sources into a lake and ran distributed analytics"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "spark",
+    "level": "applied",
+    "evidence": "used in-memory cluster computing for advanced analytics"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "nlp",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "streaming_analytics",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "data_lakes",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "data_governance",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "deep_learning",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "computer_vision",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "network_analysis",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 633",
+    "skillId": "causal_inference",
+    "level": "anchor",
+    "evidence": "modeled causal relationships when experimentation is infeasible"
+  },
+  {
+    "course": "ISA 633",
+    "skillId": "ab_testing",
+    "level": "anchor",
+    "evidence": "designed and analyzed A/B tests and complex business experiments"
+  },
+  {
+    "course": "ISA 633",
+    "skillId": "experimental_design",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 633",
+    "skillId": "hypothesis_testing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 633",
+    "skillId": "regression",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 634",
+    "skillId": "optimization",
+    "level": "anchor",
+    "evidence": "created mathematical programming models under real business constraints"
+  },
+  {
+    "course": "ISA 634",
+    "skillId": "network_analysis",
+    "level": "applied",
+    "evidence": "modeled network systems with graph-theoretic methods"
+  },
+  {
+    "course": "ISA 634",
+    "skillId": "operations_research",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 634",
+    "skillId": "simulation",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 641",
+    "skillId": "data_analysis",
+    "level": "anchor",
+    "evidence": "applied programming concepts to data summarization and discovery"
+  },
+  {
+    "course": "ISA 641",
+    "skillId": "data_visualization",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 641",
+    "skillId": "programming_fundamentals",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 641",
+    "skillId": "r",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 641",
+    "skillId": "python",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 645",
+    "skillId": "marketing_analytics",
+    "level": "anchor",
+    "evidence": "applied the analytics measures leading organizations use for marketing decisions"
+  },
+  {
+    "course": "ISA 645",
+    "skillId": "data_analysis",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 645",
+    "skillId": "business_strategy",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 645",
+    "skillId": "data_visualization",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "consulting",
+    "level": "anchor",
+    "evidence": "solved a semester-long data-driven business problem for multiple audiences"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "data_analysis",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "presentation_skills",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "project_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "stakeholder_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "problem_solving",
+    "level": "applied"
+  }
+]

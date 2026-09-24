@@ -5,6 +5,7 @@ import { SKILLS, getSkill } from "@/lib/scout/taxonomy";
 import { profileStrengths, strengthWord } from "@/lib/scout/matching";
 import { COURSE_SKILLS, type CourseSkillLevel } from "@/lib/scout/course-skills";
 import type {
+  ProfileCourse,
   ProfileExtra,
   ProjectRecord,
   SkillOverride,
@@ -37,6 +38,8 @@ const LEVEL_HELP: Record<CourseSkillLevel, string> = {
 export function SkillsPanel(props: {
   strengths: Map<string, number>;
   draftCourses: Set<string>;
+  /** The same courses with their status: Taking now counts for less. */
+  draftStatusCourses: ProfileCourse[];
   draftExtras: ProfileExtra[];
   overrides: SkillOverride[];
   isFirstRun: boolean;
@@ -55,14 +58,15 @@ export function SkillsPanel(props: {
   const strengths = useMemo(() => {
     if (!props.isFirstRun) return props.strengths;
     return profileStrengths(
-      [...props.draftCourses],
+      [],
       props.draftExtras,
       props.overrides,
+      props.draftStatusCourses,
     );
   }, [
     props.isFirstRun,
     props.strengths,
-    props.draftCourses,
+    props.draftStatusCourses,
     props.draftExtras,
     props.overrides,
   ]);
@@ -149,7 +153,7 @@ export function SkillsPanel(props: {
                               : (e.target.value as SkillOverride["level"]),
                           )
                         }
-                        className="rounded-card border border-medium-tan bg-paper px-1 py-0.5 font-bold"
+                        className="max-w-full rounded-card border border-medium-tan bg-paper px-1 py-0.5 font-bold"
                       >
                         <option value="auto">
                           {override
@@ -190,12 +194,12 @@ export function SkillsPanel(props: {
           in an interview.
         </p>
         <div className="mt-2 flex flex-wrap items-center gap-3">
-          <label>
+          <label className="min-w-0 max-w-full">
             <span className="sr-only">Skill to add</span>
             <select
               value={manualSkill}
               onChange={(e) => setManualSkill(e.target.value)}
-              className="rounded-card border border-medium-tan bg-paper px-2 py-1"
+              className="max-w-full rounded-card border border-medium-tan bg-paper px-2 py-1"
             >
               <option value="">Pick a skill...</option>
               {SKILLS.filter((s) => !strengths.has(s.id)).map((s) => (

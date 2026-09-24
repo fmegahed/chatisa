@@ -1,0 +1,1553 @@
+{
+  "bulletinYear": "2026-27",
+  "programs": [
+    {
+      "key": "business-core",
+      "name": "FSB business core",
+      "kind": "core",
+      "url": "https://bulletin.miamioh.edu/farmer-business/",
+      "groups": [
+        {
+          "title": "Required courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "ACC 221"
+              ]
+            },
+            {
+              "codes": [
+                "ACC 222"
+              ]
+            },
+            {
+              "codes": [
+                "BLS 342"
+              ]
+            },
+            {
+              "codes": [
+                "BUS 101"
+              ]
+            },
+            {
+              "codes": [
+                "BUS 102"
+              ]
+            },
+            {
+              "codes": [
+                "BUS 104"
+              ]
+            },
+            {
+              "codes": [
+                "BUS 284"
+              ]
+            },
+            {
+              "codes": [
+                "CSE 148"
+              ]
+            },
+            {
+              "codes": [
+                "ECO 201"
+              ]
+            },
+            {
+              "codes": [
+                "ECO 202"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 103"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 301",
+                "FIN 311"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 125"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 225"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 235"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 291"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 295"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 291"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required courses",
+          "subtitle": null,
+          "instruction": "Select one of the following:",
+          "items": [
+            {
+              "codes": [
+                "MTH 141"
+              ]
+            },
+            {
+              "codes": [
+                "MTH 151"
+              ]
+            },
+            {
+              "codes": [
+                "MTH 249"
+              ]
+            },
+            {
+              "codes": [
+                "MTH 251"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required courses",
+          "subtitle": "FSB Senior Capstone Experience",
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "ACC 495"
+              ]
+            },
+            {
+              "codes": [
+                "BLS 465"
+              ]
+            },
+            {
+              "codes": [
+                "ECO 409"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 401"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 461"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 455"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 482"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 485"
+              ]
+            },
+            {
+              "codes": [
+                "IMS 440"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 495"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 495"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 453"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 495"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "accountancy",
+      "name": "Accountancy",
+      "kind": "major",
+      "url": "https://bulletin.miamioh.edu/farmer-business/accountancy-bsb/",
+      "groups": [
+        {
+          "title": "Required courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "ACC 256"
+              ]
+            },
+            {
+              "codes": [
+                "ACC 321"
+              ]
+            },
+            {
+              "codes": [
+                "ACC 333"
+              ]
+            },
+            {
+              "codes": [
+                "ACC 343"
+              ]
+            },
+            {
+              "codes": [
+                "ACC 361"
+              ]
+            },
+            {
+              "codes": [
+                "ACC 422"
+              ]
+            },
+            {
+              "codes": [
+                "ACC 453"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "business-analytics",
+      "name": "Business Analytics",
+      "kind": "major",
+      "url": "https://bulletin.miamioh.edu/farmer-business/business-analytics-bsb/",
+      "groups": [
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "ISA 345"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 381"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 391",
+                "ECO 311",
+                "STA 463"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 401"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 414"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 491"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": "Select two of the following - at least one must be an ISA course:",
+          "items": [
+            {
+              "codes": [
+                "ECO 411"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 321"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 336"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 365"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 444"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 496"
+              ]
+            },
+            {
+              "codes": [
+                "STA 402"
+              ]
+            },
+            {
+              "codes": [
+                "STA 404"
+              ]
+            },
+            {
+              "codes": [
+                "STA 432"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "business-economics",
+      "name": "Business Economics",
+      "kind": "major",
+      "url": "https://bulletin.miamioh.edu/farmer-business/business-economics-bsb/",
+      "groups": [
+        {
+          "title": "Required courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "ECO 311"
+              ]
+            },
+            {
+              "codes": [
+                "ECO 315"
+              ]
+            },
+            {
+              "codes": [
+                "ECO 317"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "finance",
+      "name": "Finance",
+      "kind": "major",
+      "url": "https://bulletin.miamioh.edu/farmer-business/finance-bsb/",
+      "groups": [
+        {
+          "title": "Required courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "ACC 321"
+              ]
+            },
+            {
+              "codes": [
+                "ECO 301",
+                "FIN 361"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 381"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 401"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Electives",
+          "subtitle": null,
+          "instruction": "Select 12 semester hours of finance electives from the following:",
+          "items": [
+            {
+              "codes": [
+                "FIN 320"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 331"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 402"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 403"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 404"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 408"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 417"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 431"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 461"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 475"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 481"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "human-capital-management-leadership",
+      "name": "Human Capital Management and Leadership",
+      "kind": "major",
+      "url": "https://bulletin.miamioh.edu/farmer-business/human-capital-management-leadership-bsb/",
+      "groups": [
+        {
+          "title": "Required courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "MGT 303"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 304"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 415"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 474"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 495"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Electives",
+          "subtitle": null,
+          "instruction": "Select three of the following. At least one must be an MGT course.",
+          "items": [
+            {
+              "codes": [
+                "ACC 333"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 401"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 461"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 391"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 402"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 404"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 405"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 406"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 414"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 416"
+              ]
+            },
+            {
+              "codes": [
+                "PSY 376"
+              ]
+            },
+            {
+              "codes": [
+                "SOC 225"
+              ]
+            },
+            {
+              "codes": [
+                "SOC 454"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "information-systems-cybersecurity-management",
+      "name": "Information Systems and Cybersecurity Management",
+      "kind": "major",
+      "url": "https://bulletin.miamioh.edu/farmer-business/information-systems-cybersecurity-management-bsb/",
+      "groups": [
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "ISA 345"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 381"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 301"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 387"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Information Systems Concentration",
+          "subtitle": "Required Courses",
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "ISA 406"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 495"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Information Systems Concentration",
+          "subtitle": "Elective Courses",
+          "instruction": "Select two of the following - one must be an ISA 400 level course:",
+          "items": [
+            {
+              "codes": [
+                "CSE 271"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 303"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 305"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 335"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 336"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 401"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 403"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 405"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 414"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 424"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 481"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Cybersecurity Management Concentration",
+          "subtitle": "Required Courses",
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "ISA 305"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 405"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 419"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Elective Courses",
+          "subtitle": null,
+          "instruction": "Select one of the following:",
+          "items": [
+            {
+              "codes": [
+                "ISA 335"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 336"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 401"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 403"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 406"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 414"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 495"
+              ]
+            },
+            {
+              "codes": [
+                "POL 437"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "marketing",
+      "name": "Marketing",
+      "kind": "major",
+      "url": "https://bulletin.miamioh.edu/farmer-business/marketing-bsb/",
+      "groups": [
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "MKT 315"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 325"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 335"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 345"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": "Select one of the following:",
+          "items": [
+            {
+              "codes": [
+                "IMS 392"
+              ]
+            },
+            {
+              "codes": [
+                "IMS 418"
+              ]
+            },
+            {
+              "codes": [
+                "IMS 419"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": "Select two of the following:",
+          "items": [
+            {
+              "codes": [
+                "ISA 401"
+              ]
+            },
+            {
+              "codes": [
+                "IMS 392"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 395"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 412"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 415"
+              ]
+            },
+            {
+              "codes": [
+                "IMS 418"
+              ]
+            },
+            {
+              "codes": [
+                "IMS 419"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 461"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 475"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 490"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Capstone",
+          "subtitle": null,
+          "instruction": "Select one of the following:",
+          "items": [
+            {
+              "codes": [
+                "IMS 440"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 453"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 495"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "real-estate",
+      "name": "Real Estate",
+      "kind": "major",
+      "url": "https://bulletin.miamioh.edu/farmer-business/real-estate-bsb/",
+      "groups": [
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "BLS 443"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 331"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 431"
+              ]
+            },
+            {
+              "codes": [
+                "GEO 441"
+              ]
+            },
+            {
+              "codes": [
+                "GEO 451"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": "Select nine hours of electives:",
+          "items": [
+            {
+              "codes": [
+                "FIN 381"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 401"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 403"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 408"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 461"
+              ]
+            },
+            {
+              "codes": [
+                "GEO 442"
+              ]
+            },
+            {
+              "codes": [
+                "GEO 454"
+              ]
+            },
+            {
+              "codes": [
+                "GEO 459"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "supply-chain-operations-management",
+      "name": "Supply Chain and Operations Management",
+      "kind": "major",
+      "url": "https://bulletin.miamioh.edu/farmer-business/supply-chain-operations-management-bsb/",
+      "groups": [
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "MGT 431"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 432"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 451"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 453"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 498"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": "Select two of the following:",
+          "items": [
+            {
+              "codes": [
+                "ACC 333"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 303"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 321"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 401"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 418"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 412"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 415"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Capstone course:",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "MGT 495"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "business-leadership",
+      "name": "Business Leadership (co-major)",
+      "kind": "comajor",
+      "url": "https://bulletin.miamioh.edu/farmer-business/business-leadership-comajor/",
+      "groups": [
+        {
+          "title": "Business Foundations",
+          "subtitle": null,
+          "instruction": "Select two of the following:",
+          "items": [
+            {
+              "codes": [
+                "MGT 111",
+                "ESP 201"
+              ]
+            },
+            {
+              "codes": [
+                "ECO 201",
+                "ECO 202"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Business Specializations",
+          "subtitle": null,
+          "instruction": "Select three of the following:",
+          "items": [
+            {
+              "codes": [
+                "ACC 221",
+                "ACC 222"
+              ]
+            },
+            {
+              "codes": [
+                "BLS 342"
+              ]
+            },
+            {
+              "codes": [
+                "FIN 301"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 211",
+                "ISA 235"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 291"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 295"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 211"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Business Leadership",
+          "subtitle": null,
+          "instruction": "Complete the following:",
+          "items": [
+            {
+              "codes": [
+                "MGT 415"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 416"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Business Ethics",
+          "subtitle": null,
+          "instruction": "Select one of the following:",
+          "items": [
+            {
+              "codes": [
+                "BLS 465"
+              ]
+            },
+            {
+              "codes": [
+                "BUS 217"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 331"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 490"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Strategy",
+          "subtitle": null,
+          "instruction": "Select one of the following:",
+          "items": [
+            {
+              "codes": [
+                "ECO 409"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 495"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 395"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Electives",
+          "subtitle": null,
+          "instruction": "Select one of the following:",
+          "items": [
+            {
+              "codes": [
+                "ACC 333"
+              ]
+            },
+            {
+              "codes": [
+                "ACC 468"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 252"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 341"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 351"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 304"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 405"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 414"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "entrepreneurship",
+      "name": "Entrepreneurship (co-major)",
+      "kind": "comajor",
+      "url": "https://bulletin.miamioh.edu/farmer-business/entrepreneurship-comajor/",
+      "groups": [
+        {
+          "title": "Required courses",
+          "subtitle": null,
+          "instruction": "Complete all of the following:",
+          "items": [
+            {
+              "codes": [
+                "ESP 101"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 201"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 251"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 252"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 394"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required courses",
+          "subtitle": null,
+          "instruction": "Select two of the following content courses:",
+          "items": [
+            {
+              "codes": [
+                "ESP 321"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 331"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 341"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 351"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 361"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required courses",
+          "subtitle": null,
+          "instruction": "Select one of the following Capstone Experiences:",
+          "items": [
+            {
+              "codes": [
+                "ESP 401"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 461"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required courses",
+          "subtitle": null,
+          "instruction": "Select six hours from the following (not selected above):",
+          "items": [
+            {
+              "codes": [
+                "ESP 102"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 321"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 331"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 341"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 351"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 361"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 401"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 444"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 477"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 461"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 481"
+              ]
+            },
+            {
+              "codes": [
+                "ESP 490"
+              ]
+            }
+          ],
+          "notes": []
+        }
+      ]
+    },
+    {
+      "key": "ai-for-business",
+      "name": "Artificial Intelligence for Business (minor)",
+      "kind": "minor",
+      "url": "https://bulletin.miamioh.edu/farmer-business/artificial-intelligence-business-minor/",
+      "groups": [
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": null,
+          "items": [
+            {
+              "codes": [
+                "ISA 336"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 381"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 414"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": "Select one of the following:",
+          "items": [
+            {
+              "codes": [
+                "ISA 211"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 235"
+              ]
+            }
+          ],
+          "notes": []
+        },
+        {
+          "title": "Required Courses",
+          "subtitle": null,
+          "instruction": "Select one of the following:",
+          "items": [
+            {
+              "codes": [
+                "ISA 345"
+              ]
+            },
+            {
+              "codes": [
+                "ISA 495"
+              ]
+            },
+            {
+              "codes": [
+                "MGT 490"
+              ]
+            },
+            {
+              "codes": [
+                "MKT 490"
+              ]
+            }
+          ],
+          "notes": [
+            "An AI in context related course from the other FSB majors will be considered"
+          ]
+        }
+      ]
+    }
+  ]
+}

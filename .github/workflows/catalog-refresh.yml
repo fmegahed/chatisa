@@ -1,0 +1,109 @@
+# FSB course catalog refresh (v6.7.0).
+#
+# Three times a year (Feb 1, Jun 1, Sep 1, after each term's syllabi are
+# posted), and on demand from the Actions tab: pull the Miami Bulletin and the
+# public syllabus library, map changed courses to skills with two models, and
+# open a pull request for the professor to review. Nothing reaches students
+# until that PR is merged and a release ships.
+#
+# One-time setup (repository Settings):
+#   - Secrets and variables > Actions: ANTHROPIC_API_KEY and OPENAI_API_KEY.
+#   - Actions > General > Workflow permissions: allow GitHub Actions to
+#     create and approve pull requests.
+#
+# Job Scout's weekly job pull is not here: it runs on the server's own
+# scheduler.
+
+name: Catalog refresh
+
+on:
+  schedule:
+    - cron: "0 12 1 2,6,9 *"
+  workflow_dispatch:
+    inputs:
+      max_usd:
+        description: "Spend cap for the model mapping, in US dollars"
+        required: false
+        default: "10"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: catalog-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Collect the Bulletin and syllabi
+        run: npm run catalog:collect
+
+      # The only step that sees the API keys. Unchanged courses are skipped by
+      # fingerprint, so a quiet term costs nothing.
+      - name: Map changed courses to skills
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CATALOG_MAX_RUN_USD: ${{ inputs.max_usd || '10' }}
+        run: npm run catalog:map
+
+      - name: Write the review report
+        run: npm run catalog:report
+
+      # A failing check does not stop the PR: the reviewer needs to see the
+      # change and the failure together. The result goes at the top of the
+      # PR body.
+      - name: Check catalog integrity
+        id: checks
+        continue-on-error: true
+        run: npx vitest run tests/unit/catalog-*.test.ts tests/unit/scout-taxonomy.test.ts
+
+      - name: Open a pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHECKS: ${{ steps.checks.outcome }}
+        run: |
+          # manifest.json records when the pull ran, so it changes every time;
+          # on its own it is not a change worth a review. Untracked files do
+          # count (git status, unlike git diff, lists them).
+          if [ -z "$(git status --porcelain -- catalog ':!catalog/manifest.json')" ]; then
+            echo "The catalog is unchanged; no pull request."
+            exit 0
+          fi
+          branch="catalog/refresh-$(date -u +%Y-%m-%d)-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add catalog
+          git commit -m "catalog: refresh from the Bulletin and syllabus library ($(date -u +%Y-%m-%d))"
+          git push -u origin "$branch"
+          {
+            if [ "$CHECKS" = "success" ]; then
+              echo "Integrity checks passed."
+            else
+              echo "**Integrity checks failed.** See the workflow run before merging: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            fi
+            echo
+            cat catalog/REPORT.md
+          } > "$RUNNER_TEMP/pr-body.md"
+          gh pr create --base main --head "$branch" \
+            --title "Catalog refresh $(date -u +%Y-%m-%d)" \
+            --body-file "$RUNNER_TEMP/pr-body.md"

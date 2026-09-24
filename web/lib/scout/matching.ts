@@ -45,34 +45,70 @@ const OVERRIDE_WEIGHT: Record<StrengthOverride["level"], number> = {
  * independently with weight level x credits/3, so three Python courses make
  * a strong signal that never exceeds 1. Extras (resume, internship lines)
  * are student-confirmed and weigh like a 3-credit course at their level.
+ *
+ * Anti-overselling guards (v6.7.0, professor's decision 2026-09-24):
+ * - A skill reaches Strong only through an anchor link from a completed
+ *   course, a confirmed anchor-level extra, or the student's own word;
+ *   otherwise it stops at 0.79, the top of Working.
+ * - A skill fed only by exposure links stops at 0.44, Introduced: a stack of
+ *   introductions is not working knowledge.
+ * - A course being taken now counts at half weight, and its anchors do not
+ *   count as anchors until the course is marked done.
+ * The student's own word still beats every cap, in both directions.
  */
+export const CAP_WITHOUT_ANCHOR = 0.79;
+export const CAP_EXPOSURE_ONLY = 0.44;
+const NOW_WEIGHT = 0.5;
+
+export interface CourseWithStatus {
+  code: string;
+  status: "done" | "now";
+}
+
 export function profileStrengths(
+  /** Completed courses by code (the pre-v6.7.0 profile shape). */
   courseCodes: string[],
   extras: ExtraSkill[],
   overrides: StrengthOverride[] = [],
+  /** Courses with a status, from a v2 profile. */
+  statusCourses: CourseWithStatus[] = [],
 ): Map<string, number> {
   const complement = new Map<string, number>();
-  const contribute = (skillId: string, w: number) => {
+  const anchored = new Set<string>();
+  const beyondExposure = new Set<string>();
+  const contribute = (skillId: string, w: number, level: CourseSkillLevel, countsAsAnchor: boolean) => {
     const prev = complement.get(skillId) ?? 1;
     complement.set(skillId, prev * (1 - w));
+    if (level !== "exposure") beyondExposure.add(skillId);
+    if (level === "anchor" && countsAsAnchor) anchored.add(skillId);
   };
 
-  for (const code of courseCodes) {
+  const courses: CourseWithStatus[] = [
+    ...courseCodes.map((code) => ({ code, status: "done" as const })),
+    ...statusCourses,
+  ];
+  for (const { code, status } of courses) {
     const course = getCourse(code);
     if (!course || course.special) continue;
     const creditScale = Math.min(course.credits, 3) / 3;
+    const statusScale = status === "now" ? NOW_WEIGHT : 1;
     for (const link of COURSE_SKILLS) {
       if (link.course !== course.code) continue;
-      contribute(link.skillId, LEVEL_WEIGHT[link.level] * creditScale);
+      contribute(link.skillId, LEVEL_WEIGHT[link.level] * creditScale * statusScale, link.level, status === "done");
     }
   }
   for (const extra of extras) {
     if (!getSkill(extra.skillId)) continue;
-    contribute(extra.skillId, LEVEL_WEIGHT[extra.level]);
+    contribute(extra.skillId, LEVEL_WEIGHT[extra.level], extra.level, true);
   }
 
   const strengths = new Map<string, number>();
-  for (const [skillId, c] of complement) strengths.set(skillId, 1 - c);
+  for (const [skillId, c] of complement) {
+    let s = 1 - c;
+    if (!beyondExposure.has(skillId)) s = Math.min(s, CAP_EXPOSURE_ONLY);
+    else if (!anchored.has(skillId)) s = Math.min(s, CAP_WITHOUT_ANCHOR);
+    strengths.set(skillId, s);
+  }
   // The student's own word beats the computation, in both directions
   // (user feedback, 2026-07-29). An override on a skill nothing else
   // contributes still creates it.

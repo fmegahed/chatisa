@@ -6,6 +6,7 @@ import type { ModelOption } from "@/lib/config/models";
 import { ModelChooser } from "@/components/ModelChooser";
 import { getSkill, SKILLS } from "@/lib/scout/taxonomy";
 import { COURSE_SKILLS } from "@/lib/scout/course-skills";
+import { courseCodes } from "@/lib/scout/profile-store";
 import type {
   ProjectRecord,
   ProjectsState,
@@ -72,13 +73,13 @@ export function ProjectsTab(props: {
     () =>
       COURSE_SKILLS.filter(
         (l) =>
-          props.profile.courses.includes(l.course) &&
+          courseCodes(props.profile).includes(l.course) &&
           selected.includes(l.skillId) &&
           l.evidence,
       )
         .map((l) => l.evidence as string)
         .slice(0, 12),
-    [props.profile.courses, selected],
+    [props.profile, selected],
   );
 
   async function generate() {

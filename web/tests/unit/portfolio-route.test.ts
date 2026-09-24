@@ -278,7 +278,8 @@ describe("courses from other schools (v6.6.0)", () => {
     expect(body.content.courses).toEqual([]);
     expect(body.content.otherCourses).toEqual([]);
     const prompt = seenPrompts.slice(before).join("\n");
-    expect(prompt).not.toContain("Courses taken");
+    expect(prompt).not.toContain("Courses completed");
+    expect(prompt).not.toContain("Courses in progress");
     expect(prompt).not.toContain("Other courses");
     expect(prompt).not.toContain("none listed");
   });
@@ -298,6 +299,26 @@ describe("courses from other schools (v6.6.0)", () => {
     const res = await route.POST(request("career", { ...base, courses: ["ISA 401"] }));
     expect(res.status).toBe(200);
     expect(((await res.json()) as Career).content.otherCourses).toEqual([]);
+  });
+});
+
+describe("courses with status (v6.7.0)", () => {
+  const base = { student: { name: "Ada", links: [] }, projects: [] as unknown[] };
+
+  it("tells the model which courses are still in progress, apart from the finished ones", async () => {
+    const before = seenPrompts.length;
+    const res = await route.POST(request("career", { ...base, courses: ["ISA 225", "ISA 444"], inProgress: ["ISA 444", "ISA 999"] }));
+    expect(res.status).toBe(200);
+    const prompt = seenPrompts.slice(before).join("\n");
+    expect(prompt).toContain("Courses completed:\\nISA 225: Principles of Business Analytics");
+    expect(prompt).toContain("Courses in progress (not finished yet):\\nISA 444: Business Forecasting");
+    expect(prompt).not.toContain("ISA 999");
+  });
+
+  it("accepts a whole major's checklist, not just a handful of courses", async () => {
+    const courses = Array.from({ length: 60 }, (_, i) => `ISA ${100 + i}`);
+    const res = await route.POST(request("career", { ...base, courses }));
+    expect(res.status).toBe(200);
   });
 });
 

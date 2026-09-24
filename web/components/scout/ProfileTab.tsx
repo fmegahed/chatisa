@@ -4,10 +4,9 @@ import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { ModelOption } from "@/lib/config/models";
 import { ModelChooser } from "@/components/ModelChooser";
-import { type CourseDef } from "@/lib/scout/courses";
-import { buildTiers } from "@/lib/scout/course-tiers";
 import { getSkill } from "@/lib/scout/taxonomy";
 import type { CourseSkillLevel } from "@/lib/scout/course-skills";
+import type { ChecklistState } from "@/lib/scout/checklist";
 import type {
   ProfileExtra,
   ProjectRecord,
@@ -23,6 +22,7 @@ import {
 import type { FeedPosting } from "@/lib/scout/feed-types";
 import { FilePick } from "./FilePick";
 import { SkillsPanel } from "./SkillsPanel";
+import { CourseChecklist } from "./CourseChecklist";
 import { useSyncExternalStore } from "react";
 
 /**
@@ -63,6 +63,15 @@ function setResumeCache(r: DeviceResume | null) {
   for (const l of resumeListeners) l();
 }
 
+/** The saved profile from this tab's checklist and skills. */
+function toProfile(
+  plan: ChecklistState,
+  extras: ProfileExtra[],
+  overrides: SkillOverride[],
+): ScoutProfile {
+  return { v: 2, ...plan, extras, overrides };
+}
+
 export function ProfileTab(props: {
   models: ModelOption[];
   defaultModelId: string;
@@ -74,8 +83,14 @@ export function ProfileTab(props: {
   postings: FeedPosting[];
 }) {
   const isFirstRun = props.profile === null;
-  const [draftCourses, setDraftCourses] = useState<Set<string>>(
-    () => new Set(props.profile?.courses ?? []),
+  const [draftPlan, setDraftPlan] = useState<ChecklistState>(() => ({
+    programs: props.profile?.programs ?? [],
+    courses: props.profile?.courses ?? [],
+    removedPrereqs: props.profile?.removedPrereqs ?? [],
+  }));
+  const draftCourses = useMemo(
+    () => new Set(draftPlan.courses.map((c) => c.code)),
+    [draftPlan],
   );
   const [draftExtras, setDraftExtras] = useState<ProfileExtra[]>(
     () => props.profile?.extras ?? [],
@@ -83,7 +98,6 @@ export function ProfileTab(props: {
   const [draftOverrides, setDraftOverrides] = useState<SkillOverride[]>(
     () => props.profile?.overrides ?? [],
   );
-  const [openTiers, setOpenTiers] = useState<Set<string>>(new Set());
   const [modelId, setModelId] = useState(props.defaultModelId);
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [freeText, setFreeText] = useState("");
@@ -100,19 +114,17 @@ export function ProfileTab(props: {
     () => null,
   );
 
-  const tiers = useMemo(() => buildTiers(), []);
-
   /** First run keeps a draft; an existing profile live-saves every change. */
   function commit(
-    courses: Set<string>,
+    plan: ChecklistState,
     extras: ProfileExtra[],
     overrides: SkillOverride[] = draftOverrides,
   ) {
-    setDraftCourses(courses);
+    setDraftPlan(plan);
     setDraftExtras(extras);
     setDraftOverrides(overrides);
     if (!isFirstRun) {
-      props.onSave({ v: 1, courses: [...courses], extras, overrides });
+      props.onSave(toProfile(plan, extras, overrides));
     }
   }
 
@@ -184,7 +196,7 @@ export function ProfileTab(props: {
   }
 
   function acceptSuggestion(s: Suggestion, level: CourseSkillLevel) {
-    commit(draftCourses, [
+    commit(draftPlan, [
       ...draftExtras,
       { skillId: s.skillId, level, source: s.source, evidence: s.evidence },
     ]);
@@ -213,118 +225,49 @@ export function ProfileTab(props: {
         here.
       </p>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* ------------------------------------------------ courses column */}
-        <section aria-labelledby="profile-courses">
+        <section aria-labelledby="profile-courses" className="min-w-0">
           <h2 id="profile-courses" className="text-2xl">
-            Your ISA courses
+            Your courses
           </h2>
           <p className="mt-1 text-dark-tan">
-            Check what you have taken or are taking now. The skills panel
-            updates as you go.
+            Mark what you have taken or are taking now. The skills panel
+            updates as you go. Cross-listed codes count automatically.
           </p>
-          {tiers.map((tier) => {
-            const isOpen =
-              openTiers.has(tier.name) ||
-              (!tier.collapsedByDefault && tier.more.length === 0);
-            const chip = (course: CourseDef) => {
-              const checked = draftCourses.has(course.code);
-              const codes = [course.code, ...course.altCodes].join(" / ");
-              return (
-                <label
-                  key={course.code}
-                  title={course.title}
-                  className={
-                    checked
-                      ? "cursor-pointer rounded-card border-2 border-miami-red bg-paper px-2 py-1 font-bold text-miami-red has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-miami-red has-[:focus-visible]:outline-offset-2"
-                      : "cursor-pointer rounded-card border border-medium-tan bg-paper px-2 py-1 hover:bg-light-tan has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-miami-red has-[:focus-visible]:outline-offset-2"
-                  }
-                >
-                  <input
-                    type="checkbox"
-                    className="sr-only"
-                    checked={checked}
-                    aria-label={`${codes}: ${course.title}`}
-                    onChange={(e) => {
-                      const next = new Set(draftCourses);
-                      if (e.target.checked) next.add(course.code);
-                      else next.delete(course.code);
-                      commit(next, draftExtras);
-                    }}
-                  />
-                  {checked ? "✓ " : ""}
-                  {course.code.replace("ISA ", "")}
-                </label>
-              );
-            };
-            return (
-              <fieldset key={tier.name} className="mt-4">
-                <legend className="font-bold">{tier.name}</legend>
-                {tier.popular.length > 0 ? (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {tier.popular.map(chip)}
-                  </div>
-                ) : null}
-                {tier.more.length > 0 ? (
-                  <>
-                    {isOpen ? (
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {tier.more.map(chip)}
-                      </div>
-                    ) : null}
-                    <button
-                      type="button"
-                      aria-expanded={isOpen}
-                      onClick={() => {
-                        const next = new Set(openTiers);
-                        if (isOpen) next.delete(tier.name);
-                        else next.add(tier.name);
-                        setOpenTiers(next);
-                      }}
-                      className="mt-2 underline"
-                    >
-                      {isOpen
-                        ? "Show fewer"
-                        : tier.popular.length === 0
-                          ? `Show ${tier.more.length} graduate courses`
-                          : `Show ${tier.more.length} more`}
-                    </button>
-                  </>
-                ) : null}
-              </fieldset>
-            );
-          })}
-          <p className="mt-3 text-dark-tan">
-            Numbers are course codes; hover or focus any chip for the full
-            title. Cross-listed codes (STA, ACC, BUS, 500-level) count
-            automatically.
-          </p>
+          <div className="mt-4">
+            <CourseChecklist
+              value={draftPlan}
+              onChange={(plan) => commit(plan, draftExtras)}
+            />
+          </div>
         </section>
 
         {/* ------------------------------------------------- skills column */}
         <SkillsPanel
           strengths={props.strengths}
           draftCourses={draftCourses}
+          draftStatusCourses={draftPlan.courses}
           draftExtras={draftExtras}
           overrides={draftOverrides}
           isFirstRun={isFirstRun}
           projects={props.projects}
           postings={props.postings}
           onAddManual={(skillId, level) =>
-            commit(draftCourses, [
+            commit(draftPlan, [
               ...draftExtras.filter((e) => e.skillId !== skillId),
               { skillId, level, source: "manual" },
             ])
           }
           onRemoveExtra={(skillId) =>
             commit(
-              draftCourses,
+              draftPlan,
               draftExtras.filter((e) => e.skillId !== skillId),
             )
           }
           onSetOverride={(skillId, level) =>
             commit(
-              draftCourses,
+              draftPlan,
               draftExtras,
               level === null
                 ? draftOverrides.filter((o) => o.skillId !== skillId)
@@ -429,7 +372,7 @@ export function ProfileTab(props: {
                 type="button"
                 className="underline"
                 onClick={() => {
-                  commit(draftCourses, [
+                  commit(draftPlan, [
                     ...draftExtras,
                     ...suggestions.map((s) => ({
                       skillId: s.skillId,
@@ -466,12 +409,7 @@ export function ProfileTab(props: {
             type="button"
             disabled={draftCourses.size === 0 && draftExtras.length === 0}
             onClick={() => {
-              props.onSave({
-                v: 1,
-                courses: [...draftCourses],
-                extras: draftExtras,
-                overrides: draftOverrides,
-              });
+              props.onSave(toProfile(draftPlan, draftExtras, draftOverrides));
               props.onSeeJobs();
             }}
             className="rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:bg-medium-gray"

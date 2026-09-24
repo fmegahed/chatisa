@@ -1,0 +1,3780 @@
+[
+  {
+    "course": "ACC 221",
+    "skillId": "financial_accounting",
+    "level": "applied",
+    "evidence": "prepared balance sheets, income statements, and statements of cash flows through the full accounting cycle"
+  },
+  {
+    "course": "ACC 221",
+    "skillId": "financial_analysis",
+    "level": "applied",
+    "evidence": "used financial ratio analysis to interpret company performance from financial statements"
+  },
+  {
+    "course": "ACC 222",
+    "skillId": "managerial_accounting",
+    "level": "applied",
+    "evidence": "classified and analyzed product and service costs, prepared job-order cost reports, and applied activity-based costing for decision making"
+  },
+  {
+    "course": "ACC 222",
+    "skillId": "financial_analysis",
+    "level": "applied",
+    "evidence": "used cost-volume-profit and differential analysis to guide pricing and production decisions"
+  },
+  {
+    "course": "ACC 321",
+    "skillId": "financial_accounting",
+    "level": "anchor",
+    "evidence": "applied GAAP recognition, measurement, and disclosure rules to prepare balance sheets, income statements, and statements of cash flows for receivables, PP&E, liabilities, and equity"
+  },
+  {
+    "course": "ACC 333",
+    "skillId": "managerial_accounting",
+    "level": "anchor",
+    "evidence": "analyzed budgeting, variance analysis, and product costing to support management decision-making"
+  },
+  {
+    "course": "ACC 333",
+    "skillId": "organizational_behavior",
+    "level": "applied",
+    "evidence": "studied performance feedback, reward system design, and organizational culture's role in control systems"
+  },
+  {
+    "course": "ACC 333",
+    "skillId": "risk_management",
+    "level": "exposure",
+    "evidence": "reviewed COSO frameworks and internal controls for managing organizational risk"
+  },
+  {
+    "course": "ACC 343",
+    "skillId": "tax",
+    "level": "anchor",
+    "evidence": "studied determination of taxable income for individuals and corporations across property transactions, deductions, and entity formations"
+  },
+  {
+    "course": "ACC 343",
+    "skillId": "financial_accounting",
+    "level": "exposure",
+    "evidence": "studied deferred income tax accounting"
+  },
+  {
+    "course": "ACC 343",
+    "skillId": "presentation_skills",
+    "level": "exposure",
+    "evidence": "delivered tax memo presentations summarizing research and planning recommendations"
+  },
+  {
+    "course": "ACC 361",
+    "skillId": "information_systems",
+    "level": "anchor",
+    "evidence": "studied AIS as an enterprise-wide information system for business processes and internal controls"
+  },
+  {
+    "course": "ACC 361",
+    "skillId": "business_process",
+    "level": "applied",
+    "evidence": "mapped and documented business processes across the revenue, expenditure, and conversion cycles"
+  },
+  {
+    "course": "ACC 361",
+    "skillId": "database_design",
+    "level": "applied",
+    "evidence": "covered database design for accounting information systems"
+  },
+  {
+    "course": "ACC 361",
+    "skillId": "enterprise_systems",
+    "level": "applied",
+    "evidence": "analyzed an ERP system implementation case to understand enterprise-wide data flow"
+  },
+  {
+    "course": "ACC 361",
+    "skillId": "cybersecurity",
+    "level": "exposure",
+    "evidence": "discussed IT security and controls topics including fraud and cyber risk in AIS"
+  },
+  {
+    "course": "ACC 361",
+    "skillId": "data_analysis",
+    "level": "exposure",
+    "evidence": "worked through the data analytic cycle to analyze accounting data sets"
+  },
+  {
+    "course": "ACC 361",
+    "skillId": "risk_management",
+    "level": "exposure",
+    "evidence": "examined internal control frameworks for managing business process risk"
+  },
+  {
+    "course": "ACC 422",
+    "skillId": "financial_accounting",
+    "level": "anchor",
+    "evidence": "researched FASB Accounting Standards Codification to determine recognition, measurement, and disclosure treatment for bonds, leases, pensions, and revenue transactions"
+  },
+  {
+    "course": "ACC 422",
+    "skillId": "research",
+    "level": "anchor",
+    "evidence": "applied professional accounting research methods and resources through case analyses to resolve complex financial reporting issues"
+  },
+  {
+    "course": "ACC 453",
+    "skillId": "auditing",
+    "level": "anchor",
+    "evidence": "planned and performed a top-down risk-based audit, applying the audit risk model and substantive testing procedures"
+  },
+  {
+    "course": "ACC 453",
+    "skillId": "business_process",
+    "level": "applied",
+    "evidence": "analyzed client business processes to identify control points during audit planning"
+  },
+  {
+    "course": "ACC 453",
+    "skillId": "financial_accounting",
+    "level": "applied",
+    "evidence": "evaluated client financial statements and assertions against standards and regulations"
+  },
+  {
+    "course": "ACC 453",
+    "skillId": "risk_management",
+    "level": "applied",
+    "evidence": "used the audit risk model to assess fraud and other risks"
+  },
+  {
+    "course": "ACC 468",
+    "skillId": "financial_accounting",
+    "level": "anchor",
+    "evidence": "analyzed accounting standards and reporting for fund-based transactions in not-for-profit and governmental entities"
+  },
+  {
+    "course": "ACC 495",
+    "skillId": "data_analysis",
+    "level": "anchor",
+    "evidence": "applied concepts of the scientific method to define research questions and analyze business data throughout the course"
+  },
+  {
+    "course": "ACC 495",
+    "skillId": "hypothesis_testing",
+    "level": "anchor",
+    "evidence": "developed specific hypotheses and used methods and data for hypothesis testing in the client project"
+  },
+  {
+    "course": "ACC 495",
+    "skillId": "research",
+    "level": "anchor",
+    "evidence": "defined research questions, methods, and data as part of a structured inquiry-driven client project"
+  },
+  {
+    "course": "ACC 495",
+    "skillId": "communication",
+    "level": "applied",
+    "evidence": "communicated findings and recommendations to clients and classmates"
+  },
+  {
+    "course": "ACC 495",
+    "skillId": "problem_solving",
+    "level": "applied",
+    "evidence": "solved broad business cases requiring problem definition and evidence-based recommendations"
+  },
+  {
+    "course": "ACC 495",
+    "skillId": "teamwork",
+    "level": "exposure",
+    "evidence": "collaborated with peers and outside individuals on client projects"
+  },
+  {
+    "course": "BLS 342",
+    "skillId": "business_law",
+    "level": "anchor",
+    "evidence": "analyzed cases and legal reasoning covering torts, contracts, agency, and government regulation of business"
+  },
+  {
+    "course": "BLS 342",
+    "skillId": "business_ethics",
+    "level": "exposure",
+    "evidence": "studied ethics in the legal environment of business"
+  },
+  {
+    "course": "BLS 342",
+    "skillId": "compliance",
+    "level": "exposure",
+    "evidence": "studied government regulation and administrative law affecting business compliance"
+  },
+  {
+    "course": "BLS 443",
+    "skillId": "business_law",
+    "level": "anchor",
+    "evidence": "studied legal frameworks governing real estate transactions, title transfer, leasing, and landlord-tenant relationships"
+  },
+  {
+    "course": "BLS 443",
+    "skillId": "real_estate",
+    "level": "applied",
+    "evidence": "studied ownership structures, financing, zoning, and development issues in real estate"
+  },
+  {
+    "course": "BLS 465",
+    "skillId": "business_ethics",
+    "level": "anchor",
+    "evidence": "analyzed the business manager as an ethical decision-maker and the corporation as a moral agent using cross-functional cases"
+  },
+  {
+    "course": "BLS 465",
+    "skillId": "business_law",
+    "level": "anchor",
+    "evidence": "examined legal aspects of business decision-making including product liability and policy drafting"
+  },
+  {
+    "course": "BLS 465",
+    "skillId": "sustainability",
+    "level": "exposure",
+    "evidence": "discussed sustainability and the natural environment as part of corporate social responsibility"
+  },
+  {
+    "course": "BUS 101",
+    "skillId": "business_acumen",
+    "level": "exposure",
+    "evidence": "introduced to foundational concepts across accounting, finance, marketing, management and operations through a business simulation game"
+  },
+  {
+    "course": "BUS 101",
+    "skillId": "business_ethics",
+    "level": "exposure",
+    "evidence": "practiced ethical decision-making in business contexts"
+  },
+  {
+    "course": "BUS 101",
+    "skillId": "teamwork",
+    "level": "exposure",
+    "evidence": "collaborated with peers on the FYIC Consulting Challenge"
+  },
+  {
+    "course": "BUS 101",
+    "skillId": "communication",
+    "level": "exposure",
+    "evidence": "practiced communication skills as part of essential business competencies"
+  },
+  {
+    "course": "BUS 101",
+    "skillId": "consulting",
+    "level": "exposure",
+    "evidence": "participated in the FYIC Consulting Challenge applying business concepts to a client scenario"
+  },
+  {
+    "course": "BUS 102",
+    "skillId": "communication",
+    "level": "exposure",
+    "evidence": "built and delivered an 8-9 minute team consulting pitch to a real client, applying audience, purpose, and credibility strategies"
+  },
+  {
+    "course": "BUS 102",
+    "skillId": "presentation_skills",
+    "level": "exposure",
+    "evidence": "prepared and delivered graded-practice and final client consulting presentations, then defended recommendations in an oral defense workshop"
+  },
+  {
+    "course": "BUS 102",
+    "skillId": "consulting",
+    "level": "exposure",
+    "evidence": "developed an evidence-supported recommendation for a client prompt"
+  },
+  {
+    "course": "BUS 102",
+    "skillId": "research",
+    "level": "exposure",
+    "evidence": "built a research log and evaluated credible business sources to develop client-relevant research questions"
+  },
+  {
+    "course": "BUS 102",
+    "skillId": "teamwork",
+    "level": "exposure",
+    "evidence": "collaborated on a team research story and consulting pitch, navigating a 43-message Teams thread case and team feedback"
+  },
+  {
+    "course": "BUS 104",
+    "skillId": "programming_fundamentals",
+    "level": "exposure",
+    "evidence": "built foundational computational thinking skills through algorithms, loops, conditions, and reusable functions"
+  },
+  {
+    "course": "BUS 104",
+    "skillId": "python",
+    "level": "exposure",
+    "evidence": "wrote Python programs using loops, conditionals, functions, and variables to automate data-driven solutions"
+  },
+  {
+    "course": "BUS 104",
+    "skillId": "sql",
+    "level": "exposure",
+    "evidence": "queried and joined relational database tables, filtering, sorting, grouping, and aggregating data with SQL"
+  },
+  {
+    "course": "BUS 104",
+    "skillId": "data_wrangling",
+    "level": "exposure",
+    "evidence": "filtered, merged, and aggregated datasets to prepare data for analysis"
+  },
+  {
+    "course": "BUS 217",
+    "skillId": "business_ethics",
+    "level": "applied",
+    "evidence": "analyzed ethical behavior and ethical frameworks to evaluate corporate decision-making"
+  },
+  {
+    "course": "BUS 217",
+    "skillId": "sustainability",
+    "level": "applied",
+    "evidence": "examined ESG issues facing businesses through simulations and debates on stewardship of resources"
+  },
+  {
+    "course": "BUS 217",
+    "skillId": "stakeholder_management",
+    "level": "exposure",
+    "evidence": "studied stakeholder theory and corporate social responsibility"
+  },
+  {
+    "course": "BUS 284",
+    "skillId": "communication",
+    "level": "applied",
+    "evidence": "wrote bad-news messages, consulting memos, and intercultural reports to develop advanced business rhetoric"
+  },
+  {
+    "course": "BUS 284",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "delivered virtual presentations on bad news, intercultural communication, and job search trends"
+  },
+  {
+    "course": "BUS 284",
+    "skillId": "teamwork",
+    "level": "applied",
+    "evidence": "collaborated with team on research, writing, and virtual collaboration project"
+  },
+  {
+    "course": "BUS 284",
+    "skillId": "generative_ai",
+    "level": "exposure",
+    "evidence": "explored writing with AI and trends in hybrid work and AI for the job search"
+  },
+  {
+    "course": "CSE 148",
+    "skillId": "excel",
+    "level": "anchor",
+    "evidence": "built pivot tables, nested IF/IFS logic, and formatted workbooks to solve business problems in Excel"
+  },
+  {
+    "course": "CSE 148",
+    "skillId": "data_analysis",
+    "level": "exposure",
+    "evidence": "used spreadsheet functions and pivot tables to analyze business datasets"
+  },
+  {
+    "course": "CSE 148",
+    "skillId": "data_visualization",
+    "level": "exposure",
+    "evidence": "created charts and dashboards to visualize business data"
+  },
+  {
+    "course": "CSE 148",
+    "skillId": "dashboard_design",
+    "level": "exposure",
+    "evidence": "built a dashboard combining multiple data visualization elements"
+  },
+  {
+    "course": "CSE 148",
+    "skillId": "power_bi",
+    "level": "exposure",
+    "evidence": "introduced to Power BI for business data visualization"
+  },
+  {
+    "course": "CSE 148",
+    "skillId": "tableau",
+    "level": "exposure",
+    "evidence": "introduced to Tableau for visualizing business data"
+  },
+  {
+    "course": "CSE 271",
+    "skillId": "object_oriented_programming",
+    "level": "applied",
+    "evidence": "designed and implemented programs using inheritance, polymorphism, interfaces, and abstract classes in Java"
+  },
+  {
+    "course": "CSE 271",
+    "skillId": "programming_fundamentals",
+    "level": "applied",
+    "evidence": "wrote programs using sequence, selection, iteration, arrays, recursion, and exception handling"
+  },
+  {
+    "course": "ECO 201",
+    "skillId": "economics",
+    "level": "applied",
+    "evidence": "analyzed supply and demand, market equilibrium, elasticity, market structures, and welfare effects of price controls and taxes"
+  },
+  {
+    "course": "ECO 202",
+    "skillId": "economics",
+    "level": "applied",
+    "evidence": "analyzed determinants of output, prices, employment, and interest rates using aggregate demand and supply models"
+  },
+  {
+    "course": "ECO 301",
+    "skillId": "economics",
+    "level": "anchor",
+    "evidence": "analyzed the role of money, banks, and the Federal Reserve in a modern monetary economy"
+  },
+  {
+    "course": "ECO 301",
+    "skillId": "financial_analysis",
+    "level": "exposure",
+    "evidence": "examined bank management and the money supply process to understand financial institution decision-making"
+  },
+  {
+    "course": "ECO 301",
+    "skillId": "investments",
+    "level": "exposure",
+    "evidence": "studied stock prices and the efficient market hypothesis"
+  },
+  {
+    "course": "ECO 301",
+    "skillId": "presentation_skills",
+    "level": "exposure",
+    "evidence": "delivered a group project presentation on a monetary policy or banking topic"
+  },
+  {
+    "course": "ECO 311",
+    "skillId": "econometrics",
+    "level": "anchor",
+    "evidence": "applied linear regression techniques to test and evaluate economic models using real data"
+  },
+  {
+    "course": "ECO 311",
+    "skillId": "regression",
+    "level": "anchor",
+    "evidence": "used multiple regression, dummy variables, and heteroskedasticity corrections to build models of economic data"
+  },
+  {
+    "course": "ECO 311",
+    "skillId": "data_analysis",
+    "level": "applied",
+    "evidence": "explored sources of economic data and analyzed them to test economic models"
+  },
+  {
+    "course": "ECO 311",
+    "skillId": "forecasting",
+    "level": "exposure",
+    "evidence": "forecasting is identified as a possible topic alongside time-series data"
+  },
+  {
+    "course": "ECO 311",
+    "skillId": "hypothesis_testing",
+    "level": "exposure",
+    "evidence": "hypothesis testing is identified as a possible course topic"
+  },
+  {
+    "course": "ECO 315",
+    "skillId": "economics",
+    "level": "anchor",
+    "evidence": "analyzed consumer choice, firm behavior, and market structures using rational choice models"
+  },
+  {
+    "course": "ECO 317",
+    "skillId": "economics",
+    "level": "anchor",
+    "evidence": "analyzed national income determination through neoclassical, New Keynesian, and Solow growth models"
+  },
+  {
+    "course": "ECO 317",
+    "skillId": "mathematics",
+    "level": "applied",
+    "evidence": "used mathematical models and math review tools to derive macroeconomic relationships"
+  },
+  {
+    "course": "ECO 409",
+    "skillId": "business_strategy",
+    "level": "anchor",
+    "evidence": "studied competitive advantage, entry & exit, and horizontal/vertical boundaries of the firm using Economics of Strategy"
+  },
+  {
+    "course": "ECO 409",
+    "skillId": "economics",
+    "level": "anchor",
+    "evidence": "applied economic models and concepts to understand causes of problems and consequences of solutions"
+  },
+  {
+    "course": "ECO 409",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "presented the team's analysis for a real-world audience"
+  },
+  {
+    "course": "ECO 409",
+    "skillId": "research",
+    "level": "exposure",
+    "evidence": "evaluated research using primary and secondary sources"
+  },
+  {
+    "course": "ECO 409",
+    "skillId": "teamwork",
+    "level": "exposure",
+    "evidence": "worked in a team to develop and present an economic analysis project"
+  },
+  {
+    "course": "ECO 411",
+    "skillId": "causal_inference",
+    "level": "anchor",
+    "evidence": "studied causal diagrams, potential outcomes, IV, DiD, and synthetic control to identify causal effects in economic data"
+  },
+  {
+    "course": "ECO 411",
+    "skillId": "econometrics",
+    "level": "anchor",
+    "evidence": "applied estimation techniques like clustering, bootstrapping, and IV to evaluate economic models"
+  },
+  {
+    "course": "ECO 411",
+    "skillId": "regression",
+    "level": "applied",
+    "evidence": "used regression and panel-data methods to study economic questions"
+  },
+  {
+    "course": "ECO 411",
+    "skillId": "statistical_inference",
+    "level": "applied",
+    "evidence": "worked with standard errors, clustering, and bootstrapping to conduct valid hypothesis tests"
+  },
+  {
+    "course": "ECO 411",
+    "skillId": "r",
+    "level": "exposure",
+    "evidence": "was introduced to R"
+  },
+  {
+    "course": "ECO 411",
+    "skillId": "simulation",
+    "level": "exposure",
+    "evidence": "introduced simulation methods alongside limited dependent variable models"
+  },
+  {
+    "course": "ESP 101",
+    "skillId": "entrepreneurship",
+    "level": "exposure",
+    "evidence": "explored start-up, social, and corporate entrepreneurship models and met with entrepreneurs to learn tactics for turning possibilities into probabilities"
+  },
+  {
+    "course": "ESP 101",
+    "skillId": "leadership",
+    "level": "exposure",
+    "evidence": "covered creativity and leadership as a topic in the entrepreneurship sprint"
+  },
+  {
+    "course": "ESP 101",
+    "skillId": "teamwork",
+    "level": "exposure",
+    "evidence": "collaborated with peers on a group project during the sprint course"
+  },
+  {
+    "course": "ESP 102",
+    "skillId": "entrepreneurship",
+    "level": "exposure",
+    "evidence": "developed a business idea from scratch and pitched it to real investors over the weekend"
+  },
+  {
+    "course": "ESP 102",
+    "skillId": "presentation_skills",
+    "level": "exposure",
+    "evidence": "built final pitch slides and presented to external judges in preliminary and final rounds"
+  },
+  {
+    "course": "ESP 102",
+    "skillId": "problem_solving",
+    "level": "exposure",
+    "evidence": "engaged in fast-paced creative and critical problem solving to develop a viable idea"
+  },
+  {
+    "course": "ESP 102",
+    "skillId": "teamwork",
+    "level": "exposure",
+    "evidence": "formed a team and worked together in assigned rooms throughout the weekend to build the concept"
+  },
+  {
+    "course": "ESP 103",
+    "skillId": "design_thinking",
+    "level": "exposure",
+    "evidence": "applied human-centered design and ideation techniques through the creative problem solving process"
+  },
+  {
+    "course": "ESP 103",
+    "skillId": "entrepreneurship",
+    "level": "exposure",
+    "evidence": "identified and evaluated new business opportunities through the FlightPath creative business strategy exercise"
+  },
+  {
+    "course": "ESP 103",
+    "skillId": "problem_solving",
+    "level": "exposure",
+    "evidence": "practiced a creative problem-solving process"
+  },
+  {
+    "course": "ESP 201",
+    "skillId": "entrepreneurship",
+    "level": "applied",
+    "evidence": "studied the requirements and life cycle stages of starting and building a new business"
+  },
+  {
+    "course": "ESP 201",
+    "skillId": "market_research",
+    "level": "applied",
+    "evidence": "conducted customer discovery interviews using Mom Test techniques to validate business ideas"
+  },
+  {
+    "course": "ESP 201",
+    "skillId": "design_thinking",
+    "level": "applied",
+    "evidence": "used customer feedback to refine a value proposition"
+  },
+  {
+    "course": "ESP 201",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "prepared and delivered a pitch during pitch week"
+  },
+  {
+    "course": "ESP 251",
+    "skillId": "entrepreneurship",
+    "level": "applied",
+    "evidence": "analyzed challenges entrepreneurs face starting, growing, and building ventures using real-world cases"
+  },
+  {
+    "course": "ESP 251",
+    "skillId": "financial_modeling",
+    "level": "applied",
+    "evidence": "built financing methods and financial models to evaluate venture capital needs"
+  },
+  {
+    "course": "ESP 251",
+    "skillId": "marketing_strategy",
+    "level": "applied",
+    "evidence": "developed market segmentation and marketing funnel strategies for customer acquisition and retention"
+  },
+  {
+    "course": "ESP 251",
+    "skillId": "digital_marketing",
+    "level": "applied",
+    "evidence": "created ads, targeting strategies, and landing pages to drive customer acquisition"
+  },
+  {
+    "course": "ESP 252",
+    "skillId": "design_thinking",
+    "level": "applied",
+    "evidence": "used empathy and ideation stages of design thinking plus a creativity toolkit to develop new venture concepts"
+  },
+  {
+    "course": "ESP 252",
+    "skillId": "leadership",
+    "level": "applied",
+    "evidence": "applied leadership models like Challenge the Process, Inspire Shared Vision, and Encourage the Heart to entrepreneurial team scenarios"
+  },
+  {
+    "course": "ESP 252",
+    "skillId": "entrepreneurship",
+    "level": "applied",
+    "evidence": "explored how creativity and leadership support the growth of entrepreneurial ventures"
+  },
+  {
+    "course": "ESP 321",
+    "skillId": "entrepreneurship",
+    "level": "anchor",
+    "evidence": "audited and benchmarked the startup ecosystem, then created startup recommendations and completed a founder interview"
+  },
+  {
+    "course": "ESP 321",
+    "skillId": "agile",
+    "level": "applied",
+    "evidence": "used agile scrum project management with sprints to complete startup project tasks"
+  },
+  {
+    "course": "ESP 321",
+    "skillId": "digital_marketing",
+    "level": "applied",
+    "evidence": "worked with landing pages and digital marketing strategies"
+  },
+  {
+    "course": "ESP 321",
+    "skillId": "ab_testing",
+    "level": "exposure",
+    "evidence": "learned A/B testing as a digital marketing technique"
+  },
+  {
+    "course": "ESP 321",
+    "skillId": "marketing_analytics",
+    "level": "exposure",
+    "evidence": "learned about Google Analytics for digital marketing"
+  },
+  {
+    "course": "ESP 331",
+    "skillId": "entrepreneurship",
+    "level": "anchor",
+    "evidence": "developed and assessed a social enterprise concept from idea through business model and financing"
+  },
+  {
+    "course": "ESP 331",
+    "skillId": "teamwork",
+    "level": "applied",
+    "evidence": "collaborated with peers in student-led teaching case sessions and group projects"
+  },
+  {
+    "course": "ESP 341",
+    "skillId": "design_thinking",
+    "level": "anchor",
+    "evidence": "applied design thinking and customer discovery tools to develop corporate innovation concepts"
+  },
+  {
+    "course": "ESP 341",
+    "skillId": "entrepreneurship",
+    "level": "anchor",
+    "evidence": "examined how to think and act entrepreneurially inside large corporate and public organizations, drawing on intrapreneur conversations and cases"
+  },
+  {
+    "course": "ESP 341",
+    "skillId": "leadership",
+    "level": "applied",
+    "evidence": "studied authentic leadership and cross-silo leadership approaches for driving innovation across organizational boundaries"
+  },
+  {
+    "course": "ESP 351",
+    "skillId": "design_thinking",
+    "level": "anchor",
+    "evidence": "applied creative thinking techniques and lateral thinking to generate and refine breakthrough business ideas"
+  },
+  {
+    "course": "ESP 351",
+    "skillId": "entrepreneurship",
+    "level": "applied",
+    "evidence": "applied creative thinking to entrepreneurial opportunities and business problems"
+  },
+  {
+    "course": "ESP 351",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "prepared and delivered a press presentation of the creative group project"
+  },
+  {
+    "course": "ESP 351",
+    "skillId": "teamwork",
+    "level": "exposure",
+    "evidence": "worked on a group project and explored creativity in group settings"
+  },
+  {
+    "course": "ESP 361",
+    "skillId": "entrepreneurship",
+    "level": "anchor",
+    "evidence": "examined the external and internal sides of entrepreneurial ventures within the faith-driven ecosystem"
+  },
+  {
+    "course": "ESP 394",
+    "skillId": "problem_solving",
+    "level": "anchor",
+    "evidence": "practiced decision making, critical thinking, and problem solving as an entry level employee"
+  },
+  {
+    "course": "ESP 394",
+    "skillId": "leadership",
+    "level": "applied",
+    "evidence": "developed leadership skills for workplace preparation"
+  },
+  {
+    "course": "ESP 394",
+    "skillId": "design_thinking",
+    "level": "exposure",
+    "evidence": "explored a creative and innovative mindset for entry-level work"
+  },
+  {
+    "course": "ESP 401",
+    "skillId": "entrepreneurship",
+    "level": "anchor",
+    "evidence": "formed a small team to take a new venture from opportunity assessment through a written business plan"
+  },
+  {
+    "course": "ESP 401",
+    "skillId": "design_thinking",
+    "level": "applied",
+    "evidence": "explored value propositions, journey maps, and prototype or MVP concepts"
+  },
+  {
+    "course": "ESP 401",
+    "skillId": "financial_modeling",
+    "level": "applied",
+    "evidence": "built a pro-forma income statement and estimated capital requirements/runway for the venture"
+  },
+  {
+    "course": "ESP 401",
+    "skillId": "market_research",
+    "level": "applied",
+    "evidence": "used customer discovery, market segmentation, and user personas to assess an opportunity"
+  },
+  {
+    "course": "ESP 401",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "pitched the new venture concept to investors during pitch week"
+  },
+  {
+    "course": "ESP 401",
+    "skillId": "teamwork",
+    "level": "applied",
+    "evidence": "worked in small teams to develop and present the business model"
+  },
+  {
+    "course": "ESP 444",
+    "skillId": "entrepreneurship",
+    "level": "anchor",
+    "evidence": "evaluated startups and high growth companies as prospective investment targets"
+  },
+  {
+    "course": "ESP 444",
+    "skillId": "negotiation",
+    "level": "anchor",
+    "evidence": "developed and negotiated investment terms as part of an institutional investor simulation"
+  },
+  {
+    "course": "ESP 444",
+    "skillId": "investments",
+    "level": "exposure",
+    "evidence": "explored angel, venture capital, and private equity as sources of outside capital"
+  },
+  {
+    "course": "ESP 461",
+    "skillId": "consulting",
+    "level": "anchor",
+    "evidence": "consulted with real entrepreneurial organizations to solve business challenges as part of a student team"
+  },
+  {
+    "course": "ESP 461",
+    "skillId": "problem_solving",
+    "level": "anchor",
+    "evidence": "tested analytical skills by solving complex, real-world entrepreneurial business problems"
+  },
+  {
+    "course": "ESP 461",
+    "skillId": "entrepreneurship",
+    "level": "applied",
+    "evidence": "applied entrepreneurial tools to a client’s business challenges"
+  },
+  {
+    "course": "ESP 461",
+    "skillId": "project_management",
+    "level": "applied",
+    "evidence": "managed the consulting project from client understanding through execution and delivery"
+  },
+  {
+    "course": "ESP 461",
+    "skillId": "stakeholder_management",
+    "level": "applied",
+    "evidence": "managed the client relationship throughout the consulting engagement"
+  },
+  {
+    "course": "ESP 461",
+    "skillId": "teamwork",
+    "level": "applied",
+    "evidence": "built and worked within a consulting team to deliver client project"
+  },
+  {
+    "course": "ESP 461",
+    "skillId": "research",
+    "level": "exposure",
+    "evidence": "conducted research to understand the client and their entrepreneurial challenges"
+  },
+  {
+    "course": "ESP 481",
+    "skillId": "design_thinking",
+    "level": "anchor",
+    "evidence": "built a working prototype for a new product through iterative innovation and design"
+  },
+  {
+    "course": "ESP 481",
+    "skillId": "entrepreneurship",
+    "level": "anchor",
+    "evidence": "developed a comprehensive new product plan reflecting an entrepreneurial mindset"
+  },
+  {
+    "course": "ESP 481",
+    "skillId": "business_strategy",
+    "level": "exposure",
+    "evidence": "examined product development as an element of successful business strategy"
+  },
+  {
+    "course": "FIN 301",
+    "skillId": "corporate_finance",
+    "level": "anchor",
+    "evidence": "studied financial management topics including cost of capital, capital structure, and dividend policy"
+  },
+  {
+    "course": "FIN 301",
+    "skillId": "financial_analysis",
+    "level": "anchor",
+    "evidence": "worked with financial statements to analyze company performance and cash flow"
+  },
+  {
+    "course": "FIN 301",
+    "skillId": "financial_modeling",
+    "level": "anchor",
+    "evidence": "built valuation models using time value of money, DCF, bond and stock valuation techniques"
+  },
+  {
+    "course": "FIN 301",
+    "skillId": "financial_accounting",
+    "level": "exposure",
+    "evidence": "reviewed financial statements, taxes, and cash flow reporting"
+  },
+  {
+    "course": "FIN 301",
+    "skillId": "investments",
+    "level": "exposure",
+    "evidence": "studied risk and return, capital markets, and stock and bond valuation"
+  },
+  {
+    "course": "FIN 311",
+    "skillId": "corporate_finance",
+    "level": "anchor",
+    "evidence": "studied the role of the financial manager and core corporate finance decisions across the semester"
+  },
+  {
+    "course": "FIN 311",
+    "skillId": "financial_modeling",
+    "level": "applied",
+    "evidence": "built cash flow and valuation calculations for capital budgeting and cost of capital decisions"
+  },
+  {
+    "course": "FIN 311",
+    "skillId": "investments",
+    "level": "applied",
+    "evidence": "worked through stock and bond valuation problems and risk-return concepts in capital markets"
+  },
+  {
+    "course": "FIN 311",
+    "skillId": "financial_analysis",
+    "level": "exposure",
+    "evidence": "was introduced to financial statement analysis"
+  },
+  {
+    "course": "FIN 320",
+    "skillId": "investments",
+    "level": "anchor",
+    "evidence": "conducted equity analysis and evaluated stock positions using appropriate valuation methodology"
+  },
+  {
+    "course": "FIN 320",
+    "skillId": "presentation_skills",
+    "level": "anchor",
+    "evidence": "developed and delivered an effective presentation on the merits of a stock position to industry executives"
+  },
+  {
+    "course": "FIN 320",
+    "skillId": "financial_analysis",
+    "level": "applied",
+    "evidence": "analyzed company fundamentals and financial statements to support an investment thesis"
+  },
+  {
+    "course": "FIN 331",
+    "skillId": "real_estate",
+    "level": "anchor",
+    "evidence": "studied property types, legal foundations, and applied finance principles to real estate financing and investing"
+  },
+  {
+    "course": "FIN 331",
+    "skillId": "financial_modeling",
+    "level": "applied",
+    "evidence": "used Argus Lab software to model and evaluate real estate investment and valuation scenarios"
+  },
+  {
+    "course": "FIN 331",
+    "skillId": "investments",
+    "level": "applied",
+    "evidence": "worked through investment process and analysis for commercial property acquisitions"
+  },
+  {
+    "course": "FIN 331",
+    "skillId": "business_law",
+    "level": "exposure",
+    "evidence": "reviewed legal foundations of conveying real property interests and lease contracts"
+  },
+  {
+    "course": "FIN 361",
+    "skillId": "economics",
+    "level": "anchor",
+    "evidence": "analyzed interest rates, monetary policy, and the macroeconomic environment shaping financial institutions"
+  },
+  {
+    "course": "FIN 361",
+    "skillId": "risk_management",
+    "level": "exposure",
+    "evidence": "studied the risks taken by banks, insurers, and other financial institutions"
+  },
+  {
+    "course": "FIN 381",
+    "skillId": "corporate_finance",
+    "level": "anchor",
+    "evidence": "studied capital budgeting, capital structure, and dividend policy decisions of the corporation"
+  },
+  {
+    "course": "FIN 381",
+    "skillId": "financial_analysis",
+    "level": "anchor",
+    "evidence": "performed ratio, trend, and financial statement analysis including working capital and cash conversion cycle for case companies"
+  },
+  {
+    "course": "FIN 381",
+    "skillId": "financial_modeling",
+    "level": "anchor",
+    "evidence": "built and forecasted pro forma financial statements in Excel using the Clarkson Lumber case"
+  },
+  {
+    "course": "FIN 381",
+    "skillId": "excel",
+    "level": "applied",
+    "evidence": "built financial statements and completed NPV/IRR analyses using Excel"
+  },
+  {
+    "course": "FIN 401",
+    "skillId": "investments",
+    "level": "anchor",
+    "evidence": "analyzed security valuation, portfolio management, and asset allocation strategies for individual investors"
+  },
+  {
+    "course": "FIN 401",
+    "skillId": "financial_analysis",
+    "level": "applied",
+    "evidence": "applied bond pricing, equity valuation, and CAPM to assess security value and returns"
+  },
+  {
+    "course": "FIN 401",
+    "skillId": "risk_management",
+    "level": "applied",
+    "evidence": "examined investment risk, risk premiums, and futures for managing risk"
+  },
+  {
+    "course": "FIN 402",
+    "skillId": "investments",
+    "level": "anchor",
+    "evidence": "managed bond portfolios and applied fixed-income strategies to meet risk and return objectives"
+  },
+  {
+    "course": "FIN 402",
+    "skillId": "financial_analysis",
+    "level": "applied",
+    "evidence": "examined bond yields and the interest rate environment"
+  },
+  {
+    "course": "FIN 402",
+    "skillId": "mathematics",
+    "level": "applied",
+    "evidence": "worked through the mathematics of bond yields and duration calculations"
+  },
+  {
+    "course": "FIN 402",
+    "skillId": "risk_management",
+    "level": "applied",
+    "evidence": "assessed investment risks and diversification techniques within bond portfolio construction"
+  },
+  {
+    "course": "FIN 403",
+    "skillId": "investments",
+    "level": "anchor",
+    "evidence": "studied portfolio theory, asset pricing models, and factor investing while building asset allocation strategies"
+  },
+  {
+    "course": "FIN 403",
+    "skillId": "financial_analysis",
+    "level": "applied",
+    "evidence": "evaluated mutual fund selection cases and smart beta ETFs using performance metrics"
+  },
+  {
+    "course": "FIN 403",
+    "skillId": "risk_management",
+    "level": "applied",
+    "evidence": "examined diversification and portfolio risk management"
+  },
+  {
+    "course": "FIN 404",
+    "skillId": "risk_management",
+    "level": "anchor",
+    "evidence": "analyzed how derivatives are used in the management of financial risk and counter-party risk"
+  },
+  {
+    "course": "FIN 404",
+    "skillId": "financial_modeling",
+    "level": "applied",
+    "evidence": "developed theoretical pricing models for forward and futures contracts using arbitrage and law of one price"
+  },
+  {
+    "course": "FIN 408",
+    "skillId": "risk_management",
+    "level": "anchor",
+    "evidence": "analyzed credit risk, interest rate risk, liquidity risk, and operational risk faced by financial institutions"
+  },
+  {
+    "course": "FIN 408",
+    "skillId": "financial_analysis",
+    "level": "applied",
+    "evidence": "examined bank financial statements, profitability, and capital"
+  },
+  {
+    "course": "FIN 408",
+    "skillId": "compliance",
+    "level": "exposure",
+    "evidence": "studied bank regulation"
+  },
+  {
+    "course": "FIN 417",
+    "skillId": "corporate_finance",
+    "level": "anchor",
+    "evidence": "applied financial decision-making frameworks to multinational firm operations including capital budgeting and financing"
+  },
+  {
+    "course": "FIN 417",
+    "skillId": "international_business",
+    "level": "anchor",
+    "evidence": "studied the macro and market environments in which multinational firms operate in a multi-currency world"
+  },
+  {
+    "course": "FIN 417",
+    "skillId": "risk_management",
+    "level": "applied",
+    "evidence": "evaluated transaction, translation, and economic exposure to currency risk and hedging strategies"
+  },
+  {
+    "course": "FIN 417",
+    "skillId": "economics",
+    "level": "exposure",
+    "evidence": "covered balance of payments, exchange rate determination, and macroeconomic factors affecting multinational firms"
+  },
+  {
+    "course": "FIN 431",
+    "skillId": "financial_modeling",
+    "level": "anchor",
+    "evidence": "built property level pro-forma models and CRE financial models to project cash flows and returns"
+  },
+  {
+    "course": "FIN 431",
+    "skillId": "investments",
+    "level": "anchor",
+    "evidence": "evaluated debt and equity investment structures, cap rates, and return volatility for commercial real estate"
+  },
+  {
+    "course": "FIN 431",
+    "skillId": "real_estate",
+    "level": "anchor",
+    "evidence": "analyzed commercial property investment through market analysis, valuation, and case presentations"
+  },
+  {
+    "course": "FIN 431",
+    "skillId": "financial_analysis",
+    "level": "applied",
+    "evidence": "assessed leverage, taxes, and capitalization rates to determine property valuation"
+  },
+  {
+    "course": "FIN 431",
+    "skillId": "negotiation",
+    "level": "exposure",
+    "evidence": "practiced negotiation strategies in real estate deal-making sessions"
+  },
+  {
+    "course": "FIN 455",
+    "skillId": "financial_planning",
+    "level": "anchor",
+    "evidence": "developed a comprehensive personal financial plan integrating budgeting, saving, and long-term goals"
+  },
+  {
+    "course": "FIN 455",
+    "skillId": "investments",
+    "level": "applied",
+    "evidence": "incorporated investment planning into a personal financial plan"
+  },
+  {
+    "course": "FIN 455",
+    "skillId": "risk_management",
+    "level": "applied",
+    "evidence": "assessed insurance needs and risk management strategies for the client's financial situation"
+  },
+  {
+    "course": "FIN 455",
+    "skillId": "tax",
+    "level": "applied",
+    "evidence": "incorporated tax planning into a personal financial plan"
+  },
+  {
+    "course": "FIN 461",
+    "skillId": "corporate_finance",
+    "level": "anchor",
+    "evidence": "estimated free cash flows and capital costs to assess buyouts and restructuring decisions"
+  },
+  {
+    "course": "FIN 461",
+    "skillId": "financial_analysis",
+    "level": "anchor",
+    "evidence": "analyzed accretion/dilution, debt capacity, and deal structures to evaluate mergers and buyouts"
+  },
+  {
+    "course": "FIN 461",
+    "skillId": "financial_modeling",
+    "level": "anchor",
+    "evidence": "built DCF, comparable companies, and precedent transactions valuations to price M&A deals"
+  },
+  {
+    "course": "FIN 475",
+    "skillId": "corporate_finance",
+    "level": "anchor",
+    "evidence": "analyzed cases on working capital management, capital budgeting, and capital structure decisions"
+  },
+  {
+    "course": "FIN 475",
+    "skillId": "financial_modeling",
+    "level": "anchor",
+    "evidence": "built applied financial models to evaluate capital issuance, leasing, and M&A decisions"
+  },
+  {
+    "course": "FIN 475",
+    "skillId": "financial_analysis",
+    "level": "applied",
+    "evidence": "assessed company financial performance and growth strategies through case-based analysis"
+  },
+  {
+    "course": "FIN 481",
+    "skillId": "financial_modeling",
+    "level": "anchor",
+    "evidence": "built discounted dividend, free cash flow, and comparable-company valuation models to support stock pitches"
+  },
+  {
+    "course": "FIN 481",
+    "skillId": "investments",
+    "level": "anchor",
+    "evidence": "managed a real-dollar portfolio and reviewed the investment policy statement and portfolio management process"
+  },
+  {
+    "course": "FIN 481",
+    "skillId": "financial_analysis",
+    "level": "applied",
+    "evidence": "analyzed companies, industries, and portfolio holdings to assess stock ideas"
+  },
+  {
+    "course": "FIN 481",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "delivered in-house and SMIF stock pitch presentations and portfolio holdings summaries"
+  },
+  {
+    "course": "FIN 481",
+    "skillId": "economics",
+    "level": "exposure",
+    "evidence": "completed macro review sessions to inform portfolio and sector decisions"
+  },
+  {
+    "course": "FIN 482",
+    "skillId": "financial_analysis",
+    "level": "anchor",
+    "evidence": "performed sector/industry analysis and technical analysis to inform stock pitches and portfolio rebalancing"
+  },
+  {
+    "course": "FIN 482",
+    "skillId": "investments",
+    "level": "anchor",
+    "evidence": "actively managed a portion of the university endowment, revised the investment policy statement, and made active portfolio decisions"
+  },
+  {
+    "course": "FIN 482",
+    "skillId": "financial_modeling",
+    "level": "applied",
+    "evidence": "studied valuation methods to support equity analysis and stock pitches"
+  },
+  {
+    "course": "FIN 482",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "presented sector holdings summaries and pitched stock ideas in a competitive stock pitch event"
+  },
+  {
+    "course": "FIN 482",
+    "skillId": "risk_management",
+    "level": "applied",
+    "evidence": "evaluated portfolio risk and performance as part of ongoing fund oversight"
+  },
+  {
+    "course": "FIN 482",
+    "skillId": "compliance",
+    "level": "exposure",
+    "evidence": "handled administrative and compliance duties for the student-managed fund"
+  },
+  {
+    "course": "FIN 482",
+    "skillId": "economics",
+    "level": "exposure",
+    "evidence": "provided a macroeconomic outlook to inform portfolio positioning"
+  },
+  {
+    "course": "FIN 485",
+    "skillId": "stakeholder_management",
+    "level": "anchor",
+    "evidence": "presented and defended recommendations keeping in mind the interests of customers, stockholders, creditors, employees, and suppliers"
+  },
+  {
+    "course": "FIN 485",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "delivered team presentations and a poster to defend the final business report"
+  },
+  {
+    "course": "FIN 485",
+    "skillId": "teamwork",
+    "level": "applied",
+    "evidence": "formed cross-background teams under a team contract to analyze and present case solutions"
+  },
+  {
+    "course": "FIN 485",
+    "skillId": "risk_management",
+    "level": "exposure",
+    "evidence": "covered risk management as a capstone project topic"
+  },
+  {
+    "course": "GEO 441",
+    "skillId": "data_analysis",
+    "level": "anchor",
+    "evidence": "performed vector and raster spatial analysis—buffer, overlay, terrain and census data analysis—to solve applied geographic problems"
+  },
+  {
+    "course": "GEO 441",
+    "skillId": "data_visualization",
+    "level": "anchor",
+    "evidence": "produced cartographic maps and applied scale, generalization, and design principles to display spatial data"
+  },
+  {
+    "course": "IMS 392",
+    "skillId": "digital_marketing",
+    "level": "anchor",
+    "evidence": "created and distributed blogs, videos, and social media posts to promote brand awareness"
+  },
+  {
+    "course": "IMS 392",
+    "skillId": "brand_management",
+    "level": "applied",
+    "evidence": "developed brand-focused content for websites and social channels"
+  },
+  {
+    "course": "IMS 392",
+    "skillId": "communication",
+    "level": "applied",
+    "evidence": "created pitches, presented client feedback, and wrote copy across multiple platforms"
+  },
+  {
+    "course": "IMS 392",
+    "skillId": "marketing_strategy",
+    "level": "applied",
+    "evidence": "built content strategy tied to customer journey maps and business plans"
+  },
+  {
+    "course": "IMS 392",
+    "skillId": "consumer_behavior",
+    "level": "exposure",
+    "evidence": "mapped the customer journey to understand consumer engagement with content"
+  },
+  {
+    "course": "IMS 392",
+    "skillId": "web_development",
+    "level": "exposure",
+    "evidence": "built a website to host content marketing materials"
+  },
+  {
+    "course": "IMS 418",
+    "skillId": "digital_marketing",
+    "level": "anchor",
+    "evidence": "developed social media strategy including audits, objectives, platform selection, and measurement for campaigns"
+  },
+  {
+    "course": "IMS 418",
+    "skillId": "marketing_strategy",
+    "level": "anchor",
+    "evidence": "built foundational social media strategy tied to marketing objectives and brand campaigns"
+  },
+  {
+    "course": "IMS 419",
+    "skillId": "digital_marketing",
+    "level": "anchor",
+    "evidence": "built a digital marketing campaign covering SEO, paid search, email, and social media strategies"
+  },
+  {
+    "course": "IMS 419",
+    "skillId": "marketing_analytics",
+    "level": "applied",
+    "evidence": "studied web analytics and conversion fundamentals alongside digital campaign strategy"
+  },
+  {
+    "course": "IMS 419",
+    "skillId": "marketing_strategy",
+    "level": "applied",
+    "evidence": "developed digital strategy plans integrating SEO, SEM, and mobile marketing"
+  },
+  {
+    "course": "IMS 419",
+    "skillId": "brand_management",
+    "level": "exposure",
+    "evidence": "covered online reputation management in a digital branding course"
+  },
+  {
+    "course": "IMS 440",
+    "skillId": "project_management",
+    "level": "anchor",
+    "evidence": "led project planning and management for a real-world client new media production"
+  },
+  {
+    "course": "IMS 440",
+    "skillId": "teamwork",
+    "level": "anchor",
+    "evidence": "worked within an interdisciplinary team to develop synergy toward a shared client goal"
+  },
+  {
+    "course": "IMS 440",
+    "skillId": "stakeholder_management",
+    "level": "applied",
+    "evidence": "collaborated directly with a business/industry client to define and produce an interactive solution"
+  },
+  {
+    "course": "ISA 125",
+    "skillId": "statistical_analysis",
+    "level": "exposure",
+    "evidence": "summarized business data and described relationships among variables"
+  },
+  {
+    "course": "ISA 125",
+    "skillId": "statistical_inference",
+    "level": "exposure",
+    "evidence": "conducted one- and two-sample statistical inference"
+  },
+  {
+    "course": "ISA 125",
+    "skillId": "probability",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 125",
+    "skillId": "hypothesis_testing",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 125",
+    "skillId": "data_analysis",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 125",
+    "skillId": "regression",
+    "level": "exposure",
+    "evidence": "studied correlation and linear regression"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "information_systems",
+    "level": "applied",
+    "evidence": "analyzed how organizations use information systems for data-driven decisions"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "data_analysis",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "business_intelligence",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "it_strategy",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "business_process",
+    "level": "applied",
+    "evidence": "completed a BPMN practicum modeling and analyzing business processes using systems thinking"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "project_management",
+    "level": "applied",
+    "evidence": "worked through a project management exercise (AirISA) applying planning concepts"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "data_governance",
+    "level": "exposure",
+    "evidence": "covered ethics and data governance"
+  },
+  {
+    "course": "ISA 211",
+    "skillId": "enterprise_systems",
+    "level": "exposure",
+    "evidence": "learned how enterprise systems integrate organizational operations"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "data_analysis",
+    "level": "applied",
+    "evidence": "analyzed real business data end to end and communicated results"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "regression",
+    "level": "applied",
+    "evidence": "built predictive regression models on business data"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "data_visualization",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "statistical_inference",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "forecasting",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "data_mining",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "classification",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "hypothesis_testing",
+    "level": "applied",
+    "evidence": "studied one-sample, two-population, and chi-square tests"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "predictive_modeling",
+    "level": "exposure",
+    "evidence": "developed predictive models using regression and decision trees on real business data"
+  },
+  {
+    "course": "ISA 225",
+    "skillId": "probability",
+    "level": "exposure",
+    "evidence": "covered probability trees and Bayes rule"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "information_systems",
+    "level": "applied",
+    "evidence": "evaluated the strategic role of IT and data in business transformation"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "it_strategy",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "excel",
+    "level": "applied",
+    "evidence": "solved data-driven business problems with spreadsheets"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "data_visualization",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "digital_transformation",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "generative_ai",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "ethics",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "business_process",
+    "level": "applied",
+    "evidence": "completed the Business Process Management Practicum and BPMN skill extension exercises"
+  },
+  {
+    "course": "ISA 235",
+    "skillId": "power_bi",
+    "level": "exposure",
+    "evidence": "completed a Power BI activity"
+  },
+  {
+    "course": "ISA 241",
+    "skillId": "sql",
+    "level": "applied",
+    "evidence": "wrote SQL to collect, manipulate, and manage structured data"
+  },
+  {
+    "course": "ISA 241",
+    "skillId": "database_design",
+    "level": "applied",
+    "evidence": "designed logical and physical database schemas with ER modeling"
+  },
+  {
+    "course": "ISA 241",
+    "skillId": "data_wrangling",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 242",
+    "skillId": "programming_fundamentals",
+    "level": "applied",
+    "evidence": "wrote structured programs to access and process business data"
+  },
+  {
+    "course": "ISA 242",
+    "skillId": "python",
+    "level": "applied",
+    "evidence": "used Python libraries for data retrieval and presentation"
+  },
+  {
+    "course": "ISA 242",
+    "skillId": "data_wrangling",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 250",
+    "skillId": "mathematics",
+    "level": "applied",
+    "evidence": "applied matrix algebra, calculus, and functions to analytics problems"
+  },
+  {
+    "course": "ISA 250",
+    "skillId": "optimization",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 301",
+    "skillId": "networking",
+    "level": "anchor",
+    "evidence": "analyzed network architectures and data communications standards"
+  },
+  {
+    "course": "ISA 301",
+    "skillId": "cybersecurity",
+    "level": "applied",
+    "evidence": "evaluated network and data security threats and protections"
+  },
+  {
+    "course": "ISA 301",
+    "skillId": "cloud_computing",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 301",
+    "skillId": "encryption",
+    "level": "exposure",
+    "evidence": "studied encryption fundamentals and virtual private networks"
+  },
+  {
+    "course": "ISA 301",
+    "skillId": "security_operations",
+    "level": "exposure",
+    "evidence": "was introduced to intrusion-detection systems and network attacks"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "enterprise_systems",
+    "level": "anchor",
+    "evidence": "worked with ERP, supply chain, and CRM systems and their implementation trade-offs"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "supply_chain",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "crm",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "business_process",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "it_management",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 303",
+    "skillId": "financial_accounting",
+    "level": "exposure",
+    "evidence": "studied how financial accounting transactions integrate within the ERP system"
+  },
+  {
+    "course": "ISA 305",
+    "skillId": "it_governance",
+    "level": "anchor",
+    "evidence": "formulated IT governance and assurance strategy"
+  },
+  {
+    "course": "ISA 305",
+    "skillId": "risk_management",
+    "level": "anchor",
+    "evidence": "assessed IT risk and selected controls"
+  },
+  {
+    "course": "ISA 305",
+    "skillId": "it_audit",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 305",
+    "skillId": "compliance",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 305",
+    "skillId": "cybersecurity",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 321",
+    "skillId": "optimization",
+    "level": "anchor",
+    "evidence": "built linear, integer, and nonlinear programs for production, supply chain, and finance decisions"
+  },
+  {
+    "course": "ISA 321",
+    "skillId": "operations_research",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 321",
+    "skillId": "network_analysis",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 333",
+    "skillId": "nonparametric_statistics",
+    "level": "anchor",
+    "evidence": "applied chi-square, runs, and association tests when distributions are unknown"
+  },
+  {
+    "course": "ISA 333",
+    "skillId": "hypothesis_testing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 333",
+    "skillId": "statistical_inference",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 335",
+    "skillId": "blockchain",
+    "level": "anchor",
+    "evidence": "analyzed blockchain applications from cryptocurrencies to smart contracts and DeFi"
+  },
+  {
+    "course": "ISA 335",
+    "skillId": "encryption",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 335",
+    "skillId": "cybersecurity",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 336",
+    "skillId": "generative_ai",
+    "level": "anchor",
+    "evidence": "applied large language models to business content creation and process automation"
+  },
+  {
+    "course": "ISA 336",
+    "skillId": "prompt_engineering",
+    "level": "applied",
+    "evidence": "designed prompts and multimodal workflows"
+  },
+  {
+    "course": "ISA 336",
+    "skillId": "llm_applications",
+    "level": "applied",
+    "evidence": "integrated generative AI with external data"
+  },
+  {
+    "course": "ISA 336",
+    "skillId": "ai_ethics",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 345",
+    "skillId": "sql",
+    "level": "anchor",
+    "evidence": "implemented databases and queried them with SQL"
+  },
+  {
+    "course": "ISA 345",
+    "skillId": "database_design",
+    "level": "anchor",
+    "evidence": "designed databases with formal design methodologies"
+  },
+  {
+    "course": "ISA 345",
+    "skillId": "data_warehousing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 345",
+    "skillId": "data_wrangling",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 365",
+    "skillId": "statistical_process_control",
+    "level": "anchor",
+    "evidence": "monitored process data and data streams with control methods"
+  },
+  {
+    "course": "ISA 365",
+    "skillId": "experimental_design",
+    "level": "anchor",
+    "evidence": "designed experiments for business analytics questions"
+  },
+  {
+    "course": "ISA 365",
+    "skillId": "hypothesis_testing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 365",
+    "skillId": "ab_testing",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 365",
+    "skillId": "r",
+    "level": "applied",
+    "evidence": "reviewed basic statistics and ran experiment analyses using R throughout the course"
+  },
+  {
+    "course": "ISA 365",
+    "skillId": "regression",
+    "level": "applied",
+    "evidence": "analyzed experimental designs using regression models in R"
+  },
+  {
+    "course": "ISA 381",
+    "skillId": "python",
+    "level": "anchor",
+    "evidence": "developed scalable data-driven applications with custom libraries"
+  },
+  {
+    "course": "ISA 381",
+    "skillId": "object_oriented_programming",
+    "level": "anchor",
+    "evidence": "designed object-oriented programs with functions and lambda expressions"
+  },
+  {
+    "course": "ISA 381",
+    "skillId": "data_wrangling",
+    "level": "applied",
+    "evidence": "processed TXT, CSV, Excel, and database data programmatically"
+  },
+  {
+    "course": "ISA 381",
+    "skillId": "programming_fundamentals",
+    "level": "anchor",
+    "evidence": "built programs using decision structures, repetition structures, lists, tuples, and dictionaries to solve business problems"
+  },
+  {
+    "course": "ISA 387",
+    "skillId": "systems_analysis",
+    "level": "anchor",
+    "evidence": "planned and evaluated business software acquisition options"
+  },
+  {
+    "course": "ISA 387",
+    "skillId": "sdlc",
+    "level": "anchor",
+    "evidence": "applied the application life cycle from requirements to delivery"
+  },
+  {
+    "course": "ISA 387",
+    "skillId": "business_process",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 387",
+    "skillId": "agile",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 387",
+    "skillId": "project_management",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "regression",
+    "level": "anchor",
+    "evidence": "built and evaluated explanatory and predictive multiple regression models"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "predictive_modeling",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "hypothesis_testing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "model_evaluation",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "statistical_inference",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 391",
+    "skillId": "r",
+    "level": "exposure",
+    "evidence": "introduced to R and R Markdown"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "business_intelligence",
+    "level": "anchor",
+    "evidence": "built business intelligence solutions from data gathering to use"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "data_visualization",
+    "level": "anchor",
+    "evidence": "designed visualizations that communicate business insight"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "tableau",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "power_bi",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "dashboard_design",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "data_warehousing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "data_mining",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "etl",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "data_wrangling",
+    "level": "anchor",
+    "evidence": "cleaned and transformed structured and unstructured data using dplyr and tidy data principles"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "r",
+    "level": "applied",
+    "evidence": "used R throughout the course for data wrangling, visualization, and modeling exercises"
+  },
+  {
+    "course": "ISA 401",
+    "skillId": "clustering",
+    "level": "exposure",
+    "evidence": "applied clustering techniques to segment data as part of visualization exercises"
+  },
+  {
+    "course": "ISA 403",
+    "skillId": "web_development",
+    "level": "anchor",
+    "evidence": "delivered scalable web applications with client and server-side technologies"
+  },
+  {
+    "course": "ISA 403",
+    "skillId": "mobile_development",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 403",
+    "skillId": "javascript",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 403",
+    "skillId": "api_development",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 403",
+    "skillId": "sql",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "cybersecurity",
+    "level": "anchor",
+    "evidence": "analyzed threats, vulnerabilities, and controls with security tools and cases"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "risk_management",
+    "level": "applied",
+    "evidence": "applied risk management frameworks"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "compliance",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "it_governance",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "encryption",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "business_continuity",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "identity_access_management",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "ethics",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "data_privacy",
+    "level": "exposure",
+    "evidence": "discussed privacy issues alongside security threats and controls"
+  },
+  {
+    "course": "ISA 405",
+    "skillId": "vulnerability_management",
+    "level": "exposure",
+    "evidence": "explored vulnerabilities and cybersecurity tools used to identify and address them"
+  },
+  {
+    "course": "ISA 406",
+    "skillId": "project_management",
+    "level": "anchor",
+    "evidence": "managed IT projects with professional techniques and software tools"
+  },
+  {
+    "course": "ISA 406",
+    "skillId": "agile",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 406",
+    "skillId": "risk_management",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 406",
+    "skillId": "it_management",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "big_data",
+    "level": "anchor",
+    "evidence": "developed big data solutions for unstructured and large-scale datasets"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "spark",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "nosql",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "nlp",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "hadoop",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "streaming_analytics",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "data_analysis",
+    "level": "applied",
+    "evidence": "analyzed unstructured and large-scale datasets to extract business insights"
+  },
+  {
+    "course": "ISA 414",
+    "skillId": "cloud_computing",
+    "level": "exposure",
+    "evidence": "covered cloud computing and storage"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "security_operations",
+    "level": "anchor",
+    "evidence": "built intrusion-detection and phishing-detection analyses on real security logs"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "python",
+    "level": "applied",
+    "evidence": "programmed security analytics on real datasets"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "machine_learning",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "anomaly_detection",
+    "level": "applied",
+    "evidence": "discovered malicious patterns in security software logs"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "cybersecurity",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "classification",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "data_analysis",
+    "level": "applied",
+    "evidence": "analyzed real-world security datasets to uncover attack patterns"
+  },
+  {
+    "course": "ISA 419",
+    "skillId": "data_mining",
+    "level": "applied",
+    "evidence": "discovered malicious patterns from large volumes of security log data"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "data_architecture",
+    "level": "anchor",
+    "evidence": "evaluated enterprise data infrastructure options for decision making"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "data_warehousing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "data_lakes",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "nosql",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "cloud_computing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "aws",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "azure",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 424",
+    "skillId": "data_governance",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 444",
+    "skillId": "forecasting",
+    "level": "anchor",
+    "evidence": "built and evaluated Box-Jenkins, exponential smoothing, and decomposition forecasts on business time series"
+  },
+  {
+    "course": "ISA 444",
+    "skillId": "regression",
+    "level": "applied",
+    "evidence": "fit time series regressions with autocorrelated errors"
+  },
+  {
+    "course": "ISA 444",
+    "skillId": "predictive_modeling",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 444",
+    "skillId": "r",
+    "level": "applied",
+    "evidence": "implemented forecasting workflows in R"
+  },
+  {
+    "course": "ISA 444",
+    "skillId": "model_evaluation",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "data_mining",
+    "level": "anchor",
+    "evidence": "mined large business datasets with current software"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "classification",
+    "level": "anchor",
+    "evidence": "built tree, logistic regression, and neural net classifiers"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "clustering",
+    "level": "applied",
+    "evidence": "segmented data with cluster and market basket analysis"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "machine_learning",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "model_evaluation",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "regression",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "deep_learning",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "data_wrangling",
+    "level": "exposure",
+    "evidence": "performed data exploration and preparation before modeling"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "ensemble_methods",
+    "level": "exposure",
+    "evidence": "The syllabus includes random forests and boosted trees."
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "predictive_modeling",
+    "level": "exposure",
+    "evidence": "implemented predictive models such as neural nets and trees for business applications"
+  },
+  {
+    "course": "ISA 491",
+    "skillId": "r",
+    "level": "exposure",
+    "evidence": "The syllabus includes an introduction to R and R Markdown."
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "it_strategy",
+    "level": "anchor",
+    "evidence": "researched a company's information systems strategy and presented findings"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "research",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "business_strategy",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "presentation_skills",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "communication",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "digital_transformation",
+    "level": "applied",
+    "evidence": "examined organizational digital transformation through readings and case discussions"
+  },
+  {
+    "course": "ISA 495",
+    "skillId": "ai_ethics",
+    "level": "exposure",
+    "evidence": "read and discussed ethical AI and user resistance to a healthcare AI project"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "consulting",
+    "level": "anchor",
+    "evidence": "delivered analytics consulting to a real business client"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "data_analysis",
+    "level": "applied",
+    "evidence": "solved a client's data-driven problem end to end"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "stakeholder_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "presentation_skills",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "project_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "teamwork",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "data_visualization",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 496",
+    "skillId": "data_mining",
+    "level": "applied",
+    "evidence": "utilized data mining skills gained from previous analytics courses to work through client problems"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "business_intelligence",
+    "level": "anchor",
+    "evidence": "modeled structured data for business intelligence"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "dashboard_design",
+    "level": "anchor",
+    "evidence": "built interactive dashboards with charts, filters, and KPIs"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "data_wrangling",
+    "level": "applied",
+    "evidence": "retrieved, cleaned, and manipulated data for analysis"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "data_visualization",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "data_warehousing",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 612",
+    "skillId": "data_analysis",
+    "level": "applied",
+    "evidence": "modeled structured data to analyze and assess business performance"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "data_storytelling",
+    "level": "anchor",
+    "evidence": "developed a data analytic product from client consultation to presentation"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "technical_writing",
+    "level": "anchor",
+    "evidence": "wrote professional white papers and technical reports"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "presentation_skills",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "data_visualization",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "communication",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "stakeholder_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "r",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 616",
+    "skillId": "ethics",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 621",
+    "skillId": "digital_transformation",
+    "level": "anchor",
+    "evidence": "evaluated emerging IT and innovation methodologies in the organization"
+  },
+  {
+    "course": "ISA 621",
+    "skillId": "it_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 621",
+    "skillId": "information_systems",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 621",
+    "skillId": "business_process",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 621",
+    "skillId": "it_strategy",
+    "level": "anchor",
+    "evidence": "analyzed the role IT plays in shaping and enabling business processes across the organization"
+  },
+  {
+    "course": "ISA 628",
+    "skillId": "information_systems",
+    "level": "anchor",
+    "evidence": "examined how IT reinvents processes and data consumption for decisions"
+  },
+  {
+    "course": "ISA 628",
+    "skillId": "data_analysis",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 628",
+    "skillId": "it_strategy",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 628",
+    "skillId": "digital_transformation",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 628",
+    "skillId": "business_intelligence",
+    "level": "exposure",
+    "evidence": "surveyed technologies for leveraging and consuming data to improve organizational decision making"
+  },
+  {
+    "course": "ISA 628",
+    "skillId": "business_process",
+    "level": "exposure",
+    "evidence": "explored the role of IT in business processes"
+  },
+  {
+    "course": "ISA 629",
+    "skillId": "data_analysis",
+    "level": "anchor",
+    "evidence": "applied data manipulation techniques to discipline-specific business problems"
+  },
+  {
+    "course": "ISA 629",
+    "skillId": "excel",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 629",
+    "skillId": "business_process",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 629",
+    "skillId": "data_visualization",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "machine_learning",
+    "level": "anchor",
+    "evidence": "built supervised and unsupervised models for business applications"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "ensemble_methods",
+    "level": "applied",
+    "evidence": "built and customized ensemble models"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "deep_learning",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "deep_learning_frameworks",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "python",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "model_evaluation",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 630",
+    "skillId": "ai_ethics",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "big_data",
+    "level": "anchor",
+    "evidence": "integrated data sources into a lake and ran distributed analytics"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "spark",
+    "level": "applied",
+    "evidence": "used in-memory cluster computing for advanced analytics"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "nlp",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "streaming_analytics",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "data_lakes",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "data_governance",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "deep_learning",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "computer_vision",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "network_analysis",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "machine_learning",
+    "level": "applied",
+    "evidence": "examined distributed machine learning enabled by in-memory cluster computing"
+  },
+  {
+    "course": "ISA 632",
+    "skillId": "nosql",
+    "level": "applied",
+    "evidence": "worked with non-relational storage solutions for big data"
+  },
+  {
+    "course": "ISA 633",
+    "skillId": "causal_inference",
+    "level": "anchor",
+    "evidence": "modeled causal relationships when experimentation is infeasible"
+  },
+  {
+    "course": "ISA 633",
+    "skillId": "ab_testing",
+    "level": "anchor",
+    "evidence": "designed and analyzed A/B tests and complex business experiments"
+  },
+  {
+    "course": "ISA 633",
+    "skillId": "experimental_design",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 633",
+    "skillId": "hypothesis_testing",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 633",
+    "skillId": "regression",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 634",
+    "skillId": "optimization",
+    "level": "anchor",
+    "evidence": "created mathematical programming models under real business constraints"
+  },
+  {
+    "course": "ISA 634",
+    "skillId": "network_analysis",
+    "level": "applied",
+    "evidence": "modeled network systems with graph-theoretic methods"
+  },
+  {
+    "course": "ISA 634",
+    "skillId": "operations_research",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 634",
+    "skillId": "simulation",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 641",
+    "skillId": "data_analysis",
+    "level": "anchor",
+    "evidence": "applied programming concepts to data summarization and discovery"
+  },
+  {
+    "course": "ISA 641",
+    "skillId": "data_visualization",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 641",
+    "skillId": "programming_fundamentals",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 641",
+    "skillId": "r",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 641",
+    "skillId": "python",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 645",
+    "skillId": "marketing_analytics",
+    "level": "anchor",
+    "evidence": "applied the analytics measures leading organizations use for marketing decisions"
+  },
+  {
+    "course": "ISA 645",
+    "skillId": "data_analysis",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 645",
+    "skillId": "business_strategy",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 645",
+    "skillId": "data_visualization",
+    "level": "exposure"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "consulting",
+    "level": "anchor",
+    "evidence": "solved a semester-long data-driven business problem for multiple audiences"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "data_analysis",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "presentation_skills",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "project_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "stakeholder_management",
+    "level": "applied"
+  },
+  {
+    "course": "ISA 650",
+    "skillId": "problem_solving",
+    "level": "applied"
+  },
+  {
+    "course": "MGT 111",
+    "skillId": "business_acumen",
+    "level": "exposure",
+    "evidence": "surveyed the fundamentals of business and its environment across accounting, marketing, management, and finance"
+  },
+  {
+    "course": "MGT 111",
+    "skillId": "business_ethics",
+    "level": "exposure",
+    "evidence": "Topics include business ethics and social responsibility."
+  },
+  {
+    "course": "MGT 111",
+    "skillId": "digital_marketing",
+    "level": "exposure",
+    "evidence": "discussed digital marketing and social media strategies"
+  },
+  {
+    "course": "MGT 111",
+    "skillId": "economics",
+    "level": "exposure",
+    "evidence": "reviewed the dynamics of business and economics"
+  },
+  {
+    "course": "MGT 111",
+    "skillId": "entrepreneurship",
+    "level": "exposure",
+    "evidence": "Topics include small business, entrepreneurship, and franchising."
+  },
+  {
+    "course": "MGT 111",
+    "skillId": "financial_accounting",
+    "level": "exposure",
+    "evidence": "introduced to accounting and financial statements"
+  },
+  {
+    "course": "MGT 111",
+    "skillId": "human_capital_management",
+    "level": "exposure",
+    "evidence": "studied managing human resources and motivating the workforce"
+  },
+  {
+    "course": "MGT 111",
+    "skillId": "international_business",
+    "level": "exposure",
+    "evidence": "examined business in a borderless world"
+  },
+  {
+    "course": "MGT 111",
+    "skillId": "organizational_behavior",
+    "level": "exposure",
+    "evidence": "explored organization, teamwork, and communication topics"
+  },
+  {
+    "course": "MGT 111",
+    "skillId": "supply_chain",
+    "level": "exposure",
+    "evidence": "covered supply chain procurement, operations, and logistics"
+  },
+  {
+    "course": "MGT 291",
+    "skillId": "human_capital_management",
+    "level": "applied",
+    "evidence": "learned practices for attracting, developing, and retaining a competitive workforce"
+  },
+  {
+    "course": "MGT 291",
+    "skillId": "organizational_behavior",
+    "level": "applied",
+    "evidence": "studied theories of individual differences, job performance, and job satisfaction to understand workplace behavior"
+  },
+  {
+    "course": "MGT 291",
+    "skillId": "leadership",
+    "level": "applied",
+    "evidence": "studied leadership strategy, power, and influence"
+  },
+  {
+    "course": "MGT 291",
+    "skillId": "negotiation",
+    "level": "exposure",
+    "evidence": "introduced to managing conflict and negotiations"
+  },
+  {
+    "course": "MGT 291",
+    "skillId": "teamwork",
+    "level": "exposure",
+    "evidence": "studied groups and teams in organizations"
+  },
+  {
+    "course": "MGT 295",
+    "skillId": "operations_management",
+    "level": "applied",
+    "evidence": "examined creation of goods and services including process design, inventory management, and manufacturing planning & control"
+  },
+  {
+    "course": "MGT 295",
+    "skillId": "supply_chain",
+    "level": "applied",
+    "evidence": "analyzed strategic and tactical relationships between firms in an effective supply chain through cases on logistics, purchasing, and network design"
+  },
+  {
+    "course": "MGT 295",
+    "skillId": "forecasting",
+    "level": "applied",
+    "evidence": "used forecasting in operations and integrated business planning"
+  },
+  {
+    "course": "MGT 295",
+    "skillId": "process_improvement",
+    "level": "applied",
+    "evidence": "applied lean operations and quality management concepts to improve process design"
+  },
+  {
+    "course": "MGT 295",
+    "skillId": "simulation",
+    "level": "exposure",
+    "evidence": "worked with computer-based simulation approaches to explore supply chain problems"
+  },
+  {
+    "course": "MGT 295",
+    "skillId": "sustainability",
+    "level": "exposure",
+    "evidence": "discussed supply chain sustainability and risk management issues"
+  },
+  {
+    "course": "MGT 303",
+    "skillId": "human_capital_management",
+    "level": "anchor",
+    "evidence": "designed, implemented, and evaluated recruitment, selection, training, and performance enrichment practices for a client organization"
+  },
+  {
+    "course": "MGT 303",
+    "skillId": "consulting",
+    "level": "applied",
+    "evidence": "worked in HR consulting teams to design and evaluate HR practices for a 'client' organization"
+  },
+  {
+    "course": "MGT 303",
+    "skillId": "teamwork",
+    "level": "applied",
+    "evidence": "collaborated within HR consulting teams throughout the semester on client projects"
+  },
+  {
+    "course": "MGT 303",
+    "skillId": "business_law",
+    "level": "exposure",
+    "evidence": "covered employment law and employee rights as part of HR practice"
+  },
+  {
+    "course": "MGT 303",
+    "skillId": "organizational_behavior",
+    "level": "exposure",
+    "evidence": "studied job design, emotional intelligence, and performance enrichment"
+  },
+  {
+    "course": "MGT 304",
+    "skillId": "international_business",
+    "level": "anchor",
+    "evidence": "examined globalization, expatriate management, and management across cultures for global operations"
+  },
+  {
+    "course": "MGT 304",
+    "skillId": "organizational_behavior",
+    "level": "anchor",
+    "evidence": "studied cross-cultural leadership, motivation, and decision-making theories to understand behavior in multicultural organizations"
+  },
+  {
+    "course": "MGT 304",
+    "skillId": "communication",
+    "level": "applied",
+    "evidence": "practiced cross-cultural communication strategies for multicultural workplace settings"
+  },
+  {
+    "course": "MGT 402",
+    "skillId": "business_law",
+    "level": "anchor",
+    "evidence": "read and discussed judicial decisions to analyze legal questions governing the employment relationship"
+  },
+  {
+    "course": "MGT 402",
+    "skillId": "compliance",
+    "level": "applied",
+    "evidence": "learned rights and responsibilities of employers and employees under governing regulations"
+  },
+  {
+    "course": "MGT 402",
+    "skillId": "human_capital_management",
+    "level": "applied",
+    "evidence": "identified applications of employment law for the practice of human resource management"
+  },
+  {
+    "course": "MGT 404",
+    "skillId": "human_capital_management",
+    "level": "anchor",
+    "evidence": "designed job evaluation and pay structures to attract, retain, and motivate employees"
+  },
+  {
+    "course": "MGT 404",
+    "skillId": "international_business",
+    "level": "exposure",
+    "evidence": "studied international pay systems for global workforces"
+  },
+  {
+    "course": "MGT 405",
+    "skillId": "negotiation",
+    "level": "anchor",
+    "evidence": "practiced negotiation techniques through simulated bargaining exercises"
+  },
+  {
+    "course": "MGT 405",
+    "skillId": "organizational_behavior",
+    "level": "applied",
+    "evidence": "examined employee involvement and workplace dispute resolution"
+  },
+  {
+    "course": "MGT 406",
+    "skillId": "human_capital_management",
+    "level": "anchor",
+    "evidence": "designed comprehensive talent acquisition and development programs covering staffing strategy, recruitment, and selection tools"
+  },
+  {
+    "course": "MGT 406",
+    "skillId": "communication",
+    "level": "applied",
+    "evidence": "conducted behavior-based interviews and presented project findings to the class"
+  },
+  {
+    "course": "MGT 406",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "delivered group project presentations worth 175 points on staffing strategy recommendations"
+  },
+  {
+    "course": "MGT 414",
+    "skillId": "organizational_behavior",
+    "level": "anchor",
+    "evidence": "studied how motivation concepts relate to work behavior and organizational contexts"
+  },
+  {
+    "course": "MGT 415",
+    "skillId": "leadership",
+    "level": "anchor",
+    "evidence": "developed personal guidelines for exercising leadership after studying theory, research, and case applications"
+  },
+  {
+    "course": "MGT 415",
+    "skillId": "organizational_behavior",
+    "level": "exposure",
+    "evidence": "examined power, dependence, and decision-making among leaders and followers in organizations"
+  },
+  {
+    "course": "MGT 416",
+    "skillId": "leadership",
+    "level": "anchor",
+    "evidence": "analyzed leading organizational change and development through in-depth readings and a major project"
+  },
+  {
+    "course": "MGT 416",
+    "skillId": "organizational_behavior",
+    "level": "anchor",
+    "evidence": "studied organizational theory, culture, and group dynamics as core behavioral topics"
+  },
+  {
+    "course": "MGT 418",
+    "skillId": "supply_chain",
+    "level": "anchor",
+    "evidence": "analyzed sustainable logistics, purchasing/supplier management, and total cost of ownership across the supply chain"
+  },
+  {
+    "course": "MGT 418",
+    "skillId": "sustainability",
+    "level": "anchor",
+    "evidence": "learned circular economy, GHG Scopes, Science Based Targets and sustainable design principles for business"
+  },
+  {
+    "course": "MGT 418",
+    "skillId": "risk_management",
+    "level": "exposure",
+    "evidence": "studied sustainability risks across the supply chain"
+  },
+  {
+    "course": "MGT 418",
+    "skillId": "simulation",
+    "level": "exposure",
+    "evidence": "participated in Enroads climate simulation and humanitarian logistics simulation exercises"
+  },
+  {
+    "course": "MGT 431",
+    "skillId": "operations_management",
+    "level": "anchor",
+    "evidence": "analyzed cost and performance measurement across logistics activities to balance customer service with total distribution cost"
+  },
+  {
+    "course": "MGT 431",
+    "skillId": "supply_chain",
+    "level": "anchor",
+    "evidence": "developed a framework for understanding movement-storage activities—transportation, warehousing, inventory, order-processing—to provide products where and when customers need them"
+  },
+  {
+    "course": "MGT 431",
+    "skillId": "international_business",
+    "level": "exposure",
+    "evidence": "Studied global trade in logistics and completed a global trade assessment."
+  },
+  {
+    "course": "MGT 431",
+    "skillId": "sustainability",
+    "level": "exposure",
+    "evidence": "studied circular supply chains and sustainability in logistics through videos and case discussion"
+  },
+  {
+    "course": "MGT 432",
+    "skillId": "supply_chain",
+    "level": "anchor",
+    "evidence": "analyzed outsourcing decisions, sourcing strategies, and supplier selection for the corporate sourcing function"
+  },
+  {
+    "course": "MGT 432",
+    "skillId": "negotiation",
+    "level": "applied",
+    "evidence": "negotiations are an emphasized part of the sourcing function"
+  },
+  {
+    "course": "MGT 432",
+    "skillId": "managerial_accounting",
+    "level": "exposure",
+    "evidence": "performed strategic cost analysis to evaluate sourcing decisions"
+  },
+  {
+    "course": "MGT 451",
+    "skillId": "operations_management",
+    "level": "anchor",
+    "evidence": "analyzed production planning systems and operations tradeoffs across capacity, scheduling, and materials planning"
+  },
+  {
+    "course": "MGT 451",
+    "skillId": "supply_chain",
+    "level": "anchor",
+    "evidence": "worked through material requirements planning, distribution requirements planning, and master scheduling for a production/service supply chain"
+  },
+  {
+    "course": "MGT 451",
+    "skillId": "process_improvement",
+    "level": "applied",
+    "evidence": "identified bottlenecks and operating focus to improve throughput using Little's Law and flow principles"
+  },
+  {
+    "course": "MGT 453",
+    "skillId": "process_improvement",
+    "level": "anchor",
+    "evidence": "earned Lean Six Sigma Yellow Belt while applying DMAIC tools to improve quality processes"
+  },
+  {
+    "course": "MGT 453",
+    "skillId": "operations_management",
+    "level": "applied",
+    "evidence": "analyzed techniques to improve productivity of organizational resources such as cellular manufacturing and preventive maintenance"
+  },
+  {
+    "course": "MGT 474",
+    "skillId": "consulting",
+    "level": "anchor",
+    "evidence": "worked on a client project culminating in client presentations and project analyses presentations"
+  },
+  {
+    "course": "MGT 474",
+    "skillId": "human_capital_management",
+    "level": "anchor",
+    "evidence": "learned to measure human capital and quantify its effect on organizational performance, including costing employee health and wellness and soft skill measurement"
+  },
+  {
+    "course": "MGT 474",
+    "skillId": "data_analysis",
+    "level": "applied",
+    "evidence": "used HR analytics simulation and human capital quantification methods to analyze workforce data"
+  },
+  {
+    "course": "MGT 474",
+    "skillId": "data_visualization",
+    "level": "applied",
+    "evidence": "created visualizations to present human capital metrics and ROI findings"
+  },
+  {
+    "course": "MGT 474",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "delivered client and project analyses presentations summarizing human capital ROI findings"
+  },
+  {
+    "course": "MGT 474",
+    "skillId": "project_management",
+    "level": "applied",
+    "evidence": "applied project management tools and techniques to manage the semester-long consulting project"
+  },
+  {
+    "course": "MGT 474",
+    "skillId": "research",
+    "level": "exposure",
+    "evidence": "conducted human capital research design as part of the project work"
+  },
+  {
+    "course": "MGT 495",
+    "skillId": "strategic_management",
+    "level": "anchor",
+    "evidence": "analyzed corporate and business-level strategies through case studies covering external and internal analysis"
+  },
+  {
+    "course": "MGT 495",
+    "skillId": "business_acumen",
+    "level": "applied",
+    "evidence": "integrated concepts from marketing, finance, accounting, operations, and economics to solve cross-functional business problems"
+  },
+  {
+    "course": "MGT 495",
+    "skillId": "business_strategy",
+    "level": "applied",
+    "evidence": "examined basic, corporate, and international strategies"
+  },
+  {
+    "course": "MGT 495",
+    "skillId": "business_ethics",
+    "level": "exposure",
+    "evidence": "covered ethics in strategic decision-making"
+  },
+  {
+    "course": "MGT 495",
+    "skillId": "international_business",
+    "level": "exposure",
+    "evidence": "examined international strategy topics as part of course coverage"
+  },
+  {
+    "course": "MGT 498",
+    "skillId": "supply_chain",
+    "level": "anchor",
+    "evidence": "analyzed supply chain activities, integration, and performance through case studies and simulations"
+  },
+  {
+    "course": "MGT 498",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "presented case studies and final client project findings multiple times throughout the term"
+  },
+  {
+    "course": "MGT 498",
+    "skillId": "simulation",
+    "level": "exposure",
+    "evidence": "participated in multi-round supply chain simulation games"
+  },
+  {
+    "course": "MKT 211",
+    "skillId": "consumer_behavior",
+    "level": "applied",
+    "evidence": "analyzed consumer buying behavior and completed buyer persona and selling styles assessments"
+  },
+  {
+    "course": "MKT 211",
+    "skillId": "sales",
+    "level": "applied",
+    "evidence": "completed personal selling interview and practiced LAARC & SPIN role plays to master the selling process"
+  },
+  {
+    "course": "MKT 211",
+    "skillId": "communication",
+    "level": "applied",
+    "evidence": "practiced elevator pitch role plays and communication skills activities to build customer relationships"
+  },
+  {
+    "course": "MKT 211",
+    "skillId": "crm",
+    "level": "exposure",
+    "evidence": "studied CRM systems and their role in customer relationships"
+  },
+  {
+    "course": "MKT 211",
+    "skillId": "marketing_strategy",
+    "level": "exposure",
+    "evidence": "covered customer-driven strategic marketing and planning, implementing, and evaluating marketing case activities"
+  },
+  {
+    "course": "MKT 291",
+    "skillId": "market_research",
+    "level": "applied",
+    "evidence": "used library databases and market research methods to inform marketing decisions"
+  },
+  {
+    "course": "MKT 291",
+    "skillId": "marketing_strategy",
+    "level": "applied",
+    "evidence": "developed strategic marketing decisions covering segmentation, targeting, and positioning"
+  },
+  {
+    "course": "MKT 291",
+    "skillId": "consumer_behavior",
+    "level": "applied",
+    "evidence": "studied customer needs and the buyer behavior process to inform marketing decisions"
+  },
+  {
+    "course": "MKT 291",
+    "skillId": "digital_marketing",
+    "level": "applied",
+    "evidence": "studied digital marketing, SEO, and social media marketing as promotional tools"
+  },
+  {
+    "course": "MKT 291",
+    "skillId": "brand_management",
+    "level": "exposure",
+    "evidence": "covered product, brand, and services management"
+  },
+  {
+    "course": "MKT 291",
+    "skillId": "international_business",
+    "level": "exposure",
+    "evidence": "explored international marketing strategy in domestic and global markets"
+  },
+  {
+    "course": "MKT 291",
+    "skillId": "presentation_skills",
+    "level": "exposure",
+    "evidence": "participated in a presentation workshop and delivered team presentations"
+  },
+  {
+    "course": "MKT 315",
+    "skillId": "negotiation",
+    "level": "anchor",
+    "evidence": "conducted sales negotiation role plays to practice handling objections and reaching agreement"
+  },
+  {
+    "course": "MKT 315",
+    "skillId": "sales",
+    "level": "anchor",
+    "evidence": "practiced prospecting, needs identification, and closing through sales role plays and presentations"
+  },
+  {
+    "course": "MKT 315",
+    "skillId": "business_ethics",
+    "level": "exposure",
+    "evidence": "discussed sales ethics and relationship strategy in professional selling"
+  },
+  {
+    "course": "MKT 315",
+    "skillId": "consumer_behavior",
+    "level": "exposure",
+    "evidence": "studied buyer behavior to understand B2B purchasing decisions"
+  },
+  {
+    "course": "MKT 315",
+    "skillId": "crm",
+    "level": "exposure",
+    "evidence": "studied CRM, prospect development, and account management"
+  },
+  {
+    "course": "MKT 325",
+    "skillId": "consumer_behavior",
+    "level": "anchor",
+    "evidence": "studied attitudes, motivation, perception, learning, and decision-making to explain consumer behavior"
+  },
+  {
+    "course": "MKT 325",
+    "skillId": "market_research",
+    "level": "anchor",
+    "evidence": "applied qualitative and quantitative consumer research methods to generate actionable insights"
+  },
+  {
+    "course": "MKT 325",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "delivered multiple presentations pitching consumer insights and recommendations"
+  },
+  {
+    "course": "MKT 325",
+    "skillId": "teamwork",
+    "level": "exposure",
+    "evidence": "collaborated on a team project culminating in an ideation pitch meeting"
+  },
+  {
+    "course": "MKT 335",
+    "skillId": "market_research",
+    "level": "anchor",
+    "evidence": "analyzed research design, survey methods, and secondary data to answer marketing questions"
+  },
+  {
+    "course": "MKT 335",
+    "skillId": "marketing_analytics",
+    "level": "anchor",
+    "evidence": "applied conjoint, MaxDiff, and segmentation techniques to derive actionable marketing conclusions"
+  },
+  {
+    "course": "MKT 335",
+    "skillId": "clustering",
+    "level": "applied",
+    "evidence": "segmented shoppers using clustering"
+  },
+  {
+    "course": "MKT 335",
+    "skillId": "experimental_design",
+    "level": "applied",
+    "evidence": "designed A/B tests and experiments to evaluate marketing interventions"
+  },
+  {
+    "course": "MKT 335",
+    "skillId": "regression",
+    "level": "applied",
+    "evidence": "ran regression analyses to identify key drivers for the drivers project"
+  },
+  {
+    "course": "MKT 335",
+    "skillId": "statistical_analysis",
+    "level": "applied",
+    "evidence": "used basic statistics and correlation analysis to interpret consumer data"
+  },
+  {
+    "course": "MKT 345",
+    "skillId": "brand_management",
+    "level": "anchor",
+    "evidence": "built brand pyramids and positioning statements while working through brand architecture and SWOT frameworks"
+  },
+  {
+    "course": "MKT 345",
+    "skillId": "digital_marketing",
+    "level": "applied",
+    "evidence": "examined paid search, social media, and digital platforms as part of integrated branding"
+  },
+  {
+    "course": "MKT 345",
+    "skillId": "marketing_strategy",
+    "level": "applied",
+    "evidence": "developed strategic market plans and business models to support brand decisions"
+  },
+  {
+    "course": "MKT 345",
+    "skillId": "consumer_behavior",
+    "level": "exposure",
+    "evidence": "studied consumer insights and brand personality"
+  },
+  {
+    "course": "MKT 395",
+    "skillId": "business_strategy",
+    "level": "anchor",
+    "evidence": "used strategic decision-making frameworks and competitive strategy analysis to develop long-range plans"
+  },
+  {
+    "course": "MKT 395",
+    "skillId": "marketing_strategy",
+    "level": "anchor",
+    "evidence": "applied the Playing to Win strategy choice cascade to solve complex marketing challenges in case studies"
+  },
+  {
+    "course": "MKT 395",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "delivered student case presentations communicating strategic decisions and rationale to stakeholders"
+  },
+  {
+    "course": "MKT 395",
+    "skillId": "generative_ai",
+    "level": "exposure",
+    "evidence": "explored utilizing Gen AI in strategy development sessions"
+  },
+  {
+    "course": "MKT 412",
+    "skillId": "marketing_strategy",
+    "level": "anchor",
+    "evidence": "developed a marketing plan incorporating sustainable pricing, product, and branding strategies"
+  },
+  {
+    "course": "MKT 412",
+    "skillId": "sustainability",
+    "level": "anchor",
+    "evidence": "analyzed triple bottom line performance across financial, social, and environmental dimensions of marketing"
+  },
+  {
+    "course": "MKT 412",
+    "skillId": "consumer_behavior",
+    "level": "applied",
+    "evidence": "examined consumer decision making processes and factors influencing sustainable consumption"
+  },
+  {
+    "course": "MKT 412",
+    "skillId": "brand_management",
+    "level": "exposure",
+    "evidence": "studied sustainable branding approaches used by firms"
+  },
+  {
+    "course": "MKT 412",
+    "skillId": "business_ethics",
+    "level": "exposure",
+    "evidence": "covered corporate social responsibility and ethics"
+  },
+  {
+    "course": "MKT 415",
+    "skillId": "marketing_strategy",
+    "level": "anchor",
+    "evidence": "analyzed how businesses market products and services to other organizations, shaping marketing mix strategy for B2B contexts"
+  },
+  {
+    "course": "MKT 415",
+    "skillId": "supply_chain",
+    "level": "exposure",
+    "evidence": "Supply chain management is included in the course overview."
+  },
+  {
+    "course": "MKT 453",
+    "skillId": "brand_management",
+    "level": "anchor",
+    "evidence": "created comprehensive branding campaigns including positioning and visual identity for real client brands"
+  },
+  {
+    "course": "MKT 453",
+    "skillId": "marketing_strategy",
+    "level": "anchor",
+    "evidence": "developed strategic brand positioning and promotional programs for major clients like P&G and Nestlé"
+  },
+  {
+    "course": "MKT 453",
+    "skillId": "market_research",
+    "level": "applied",
+    "evidence": "used primary research and market analysis to inform campaign decisions"
+  },
+  {
+    "course": "MKT 453",
+    "skillId": "presentation_skills",
+    "level": "applied",
+    "evidence": "delivered formal client presentations of final brand campaign recommendations"
+  },
+  {
+    "course": "MKT 453",
+    "skillId": "teamwork",
+    "level": "applied",
+    "evidence": "worked in multidisciplinary teams competing to deliver the most effective campaign"
+  },
+  {
+    "course": "MKT 453",
+    "skillId": "digital_marketing",
+    "level": "exposure",
+    "evidence": "developed social media strategies as part of the promotional campaign deliverables"
+  },
+  {
+    "course": "MKT 461",
+    "skillId": "marketing_strategy",
+    "level": "anchor",
+    "evidence": "developed a retail market strategy covering channels, positioning, and financial strategy for a retailer"
+  },
+  {
+    "course": "MKT 461",
+    "skillId": "business_ethics",
+    "level": "exposure",
+    "evidence": "discussed ethics issues in retail management practices"
+  },
+  {
+    "course": "MKT 475",
+    "skillId": "sales",
+    "level": "anchor",
+    "evidence": "learned the fundamentals of selling and the anatomy of a sales professional in healthcare contexts"
+  },
+  {
+    "course": "MKT 475",
+    "skillId": "stakeholder_management",
+    "level": "applied",
+    "evidence": "covered interactions with multiple stakeholders in large healthcare systems"
+  },
+  {
+    "course": "MKT 475",
+    "skillId": "compliance",
+    "level": "exposure",
+    "evidence": "studied the regulatory and legal environments salespeople must operate within in healthcare systems"
+  },
+  {
+    "course": "MKT 495",
+    "skillId": "market_research",
+    "level": "anchor",
+    "evidence": "conducted market analysis and generated insights to inform client strategy presentation"
+  },
+  {
+    "course": "MKT 495",
+    "skillId": "marketing_strategy",
+    "level": "anchor",
+    "evidence": "integrated marketing planning and strategy concepts to build a launch plan for a real client"
+  },
+  {
+    "course": "MKT 495",
+    "skillId": "presentation_skills",
+    "level": "anchor",
+    "evidence": "delivered initial and final presentations and pitches to the client with debrief sessions"
+  },
+  {
+    "course": "MKT 495",
+    "skillId": "consulting",
+    "level": "applied",
+    "evidence": "served as a client-facing consultant governed by an NDA on proprietary data"
+  },
+  {
+    "course": "MKT 495",
+    "skillId": "teamwork",
+    "level": "applied",
+    "evidence": "worked in teams through preparation, team building, and tactical execution phases"
+  },
+  {
+    "course": "MTH 141",
+    "skillId": "mathematics",
+    "level": "exposure",
+    "evidence": "worked through limits, derivatives, optimization, and integration techniques applied to business problems"
+  },
+  {
+    "course": "MTH 141",
+    "skillId": "optimization",
+    "level": "exposure",
+    "evidence": "used derivatives and multivariable optimization to find extreme values and solve business optimization problems"
+  },
+  {
+    "course": "MTH 151",
+    "skillId": "mathematics",
+    "level": "exposure",
+    "evidence": "worked through limits, derivatives, and integrals of polynomial, trigonometric, exponential, and logarithmic functions"
+  },
+  {
+    "course": "MTH 249",
+    "skillId": "mathematics",
+    "level": "applied",
+    "evidence": "worked through techniques of integration, infinite series, and parametric/polar calculus problem sets"
+  },
+  {
+    "course": "MTH 251",
+    "skillId": "mathematics",
+    "level": "applied",
+    "evidence": "worked through techniques of integration, infinite series, and parametric/polar calculus problem sets across weekly exams"
+  },
+  {
+    "course": "MTH 251",
+    "skillId": "probability",
+    "level": "exposure",
+    "evidence": "introduced probability applications alongside sequences in a course unit"
+  },
+  {
+    "course": "POL 437",
+    "skillId": "business_law",
+    "level": "anchor",
+    "evidence": "examined the legal restrictions and limitations placed on internet service providers and online businesses"
+  },
+  {
+    "course": "POL 437",
+    "skillId": "compliance",
+    "level": "exposure",
+    "evidence": "studied legal restrictions e-commerce providers must comply with"
+  },
+  {
+    "course": "POL 437",
+    "skillId": "data_privacy",
+    "level": "exposure",
+    "evidence": "explored information privacy issues in cyberspace"
+  },
+  {
+    "course": "SOC 225",
+    "skillId": "organizational_behavior",
+    "level": "applied",
+    "evidence": "analyzed how occupations, professions, and organizational structures shape workplace rewards and jurisdiction"
+  },
+  {
+    "course": "SOC 225",
+    "skillId": "human_capital_management",
+    "level": "applied",
+    "evidence": "examined hiring, performance evaluation, scheduling, and career mobility in the employment relationship"
+  },
+  {
+    "course": "SOC 454",
+    "skillId": "organizational_behavior",
+    "level": "anchor",
+    "evidence": "analyzed how organizational structures, culture, and change processes shape behavior within complex organizations"
+  },
+  {
+    "course": "SOC 454",
+    "skillId": "research",
+    "level": "exposure",
+    "evidence": "reviewed sociological research methods used to study organizations"
+  },
+  {
+    "course": "STA 402",
+    "skillId": "programming_fundamentals",
+    "level": "anchor",
+    "evidence": "practiced core programming constructs and objects while coding statistical procedures in SAS and R"
+  },
+  {
+    "course": "STA 402",
+    "skillId": "sas",
+    "level": "anchor",
+    "evidence": "wrote SAS DATA-step programs and built SAS macros for data processing tasks"
+  },
+  {
+    "course": "STA 402",
+    "skillId": "data_wrangling",
+    "level": "applied",
+    "evidence": "applied SAS data-management procedures to manipulate and organize datasets"
+  },
+  {
+    "course": "STA 402",
+    "skillId": "simulation",
+    "level": "applied",
+    "evidence": "used Monte Carlo methods and random number generation in SAS"
+  },
+  {
+    "course": "STA 402",
+    "skillId": "data_visualization",
+    "level": "exposure",
+    "evidence": "generated tables and graphs in SAS to summarize analysis results"
+  },
+  {
+    "course": "STA 402",
+    "skillId": "r",
+    "level": "exposure",
+    "evidence": "studied programming objects and constructs in R"
+  },
+  {
+    "course": "STA 404",
+    "skillId": "data_storytelling",
+    "level": "anchor",
+    "evidence": "integrated narratives with data displays and presented visual stories to critique audiences"
+  },
+  {
+    "course": "STA 404",
+    "skillId": "data_visualization",
+    "level": "anchor",
+    "evidence": "designed and critiqued data displays using design principles, statistical characteristics, and narrative quality"
+  },
+  {
+    "course": "STA 404",
+    "skillId": "dashboard_design",
+    "level": "applied",
+    "evidence": "built interactive R Shiny interfaces with tabs and conditional panels"
+  },
+  {
+    "course": "STA 404",
+    "skillId": "data_wrangling",
+    "level": "applied",
+    "evidence": "manipulated wide and long format data, joined datasets, and used tidyr and stringr for data cleaning"
+  },
+  {
+    "course": "STA 404",
+    "skillId": "r",
+    "level": "applied",
+    "evidence": "used R and ggplot themes throughout to produce data displays and build Shiny apps"
+  },
+  {
+    "course": "STA 432",
+    "skillId": "statistical_analysis",
+    "level": "anchor",
+    "evidence": "applied simple random, systematic, stratified, and cluster sampling designs to business research problems"
+  },
+  {
+    "course": "STA 463",
+    "skillId": "regression",
+    "level": "anchor",
+    "evidence": "built and interpreted simple and multiple linear regression models using least squares theory"
+  },
+  {
+    "course": "STA 463",
+    "skillId": "statistical_inference",
+    "level": "anchor",
+    "evidence": "performed inference and prediction procedures, general linear hypothesis tests, and partial F tests on regression models"
+  },
+  {
+    "course": "STA 463",
+    "skillId": "hypothesis_testing",
+    "level": "applied",
+    "evidence": "applied general linear hypothesis and partial F tests to compare nested regression models"
+  },
+  {
+    "course": "STA 463",
+    "skillId": "model_evaluation",
+    "level": "exposure",
+    "evidence": "evaluated model adequacy and compared several competing regression models"
+  }
+]

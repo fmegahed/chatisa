@@ -1,42 +1,45 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { COURSES } from "@/lib/scout/courses";
-import { buildTiers } from "@/lib/scout/course-tiers";
+import { useState, useSyncExternalStore } from "react";
+import { COURSES, POPULAR_CODES, getCourse, matchesCourse, type CourseDef } from "@/lib/scout/courses";
+import { courseCodes, loadProfile } from "@/lib/scout/profile-store";
 
 /**
- * The course chips, popular first by tier, with a search box for everything
- * else. `single` turns the picker into a one-of choice for the showcase step.
+ * The showcase's one Miami course (v6.7.0): the student's own courses from
+ * Job Scout first, then a search across every FSB course, including
+ * previous titles. Without a Job Scout profile it offers the ISA courses
+ * students take most.
  */
-export function CoursePicker(props: {
-  selected: string[];
-  onChange: (codes: string[]) => void;
-  single?: boolean;
-}) {
+
+const MAX_RESULTS = 12;
+const noSubscribe = () => () => {};
+/** A primitive snapshot, so React sees the same value until the profile changes. */
+const profileCodes = () => {
+  const profile = loadProfile();
+  return profile ? courseCodes(profile).join("|") : "";
+};
+
+export function CoursePicker(props: { selected: string; onChange: (code: string) => void }) {
   const [query, setQuery] = useState("");
-  const [openTiers, setOpenTiers] = useState<Set<string>>(new Set());
-  const tiers = useMemo(() => buildTiers(), []);
-  const q = query.trim().toLowerCase();
-  const matches = q
-    ? COURSES.filter((c) => c.code.toLowerCase().includes(q) || c.title.toLowerCase().includes(q))
-    : null;
-  const toggle = (code: string) => {
-    if (props.single) return props.onChange(props.selected[0] === code ? [] : [code]);
-    props.onChange(
-      props.selected.includes(code)
-        ? props.selected.filter((c) => c !== code)
-        : [...props.selected, code],
-    );
-  };
-  const chip = (course: { code: string; title: string }) => {
-    const on = props.selected.includes(course.code);
+  const mine = useSyncExternalStore(noSubscribe, profileCodes, () => "");
+  const own = mine
+    ? mine.split("|").flatMap((c) => (getCourse(c) ? [getCourse(c)!] : []))
+    : [];
+  const suggested = own.length
+    ? own
+    : Object.values(POPULAR_CODES).flat().flatMap((c) => (getCourse(c) ? [getCourse(c)!] : []));
+  const q = query.trim();
+  const matches = q.length >= 2 ? COURSES.filter((c) => matchesCourse(c, q)) : [];
+
+  const chip = (course: CourseDef) => {
+    const on = props.selected === course.code;
     return (
       <button
         key={course.code}
         type="button"
         aria-pressed={on}
         title={course.title}
-        onClick={() => toggle(course.code)}
+        onClick={() => props.onChange(on ? "" : course.code)}
         className={
           on
             ? "rounded-card bg-miami-red px-3 py-1 font-bold text-paper"
@@ -44,12 +47,21 @@ export function CoursePicker(props: {
         }
       >
         {course.code}
+        <span className="sr-only"> {course.title}</span>
       </button>
     );
   };
+
   return (
     <div>
-      <label className="block font-bold" htmlFor="course-search">Find a course</label>
+      <fieldset className="min-w-0">
+        <legend className="font-bold">{own.length ? "Your courses" : "Courses students often showcase"}</legend>
+        {own.length ? null : (
+          <p className="text-dark-tan">Mark your courses in Job Scout and they appear here first.</p>
+        )}
+        <div className="mt-2 flex flex-wrap gap-2">{suggested.map(chip)}</div>
+      </fieldset>
+      <label className="mt-4 block font-bold" htmlFor="course-search">Find a course</label>
       <input
         id="course-search"
         type="search"
@@ -58,50 +70,23 @@ export function CoursePicker(props: {
         placeholder="Code or title, for example 401 or forecasting"
         className="mt-1 w-full rounded-card border border-medium-tan p-2"
       />
-      {matches ? (
-        <div className="mt-3 flex flex-wrap gap-2">{matches.map(chip)}</div>
-      ) : (
-        tiers.map((tier) => {
-          // Popular chips are always visible; the long tail sits behind a
-          // toggle, the way Job Scout's profile shows the same tiers.
-          const isOpen =
-            openTiers.has(tier.name) || (!tier.collapsedByDefault && tier.more.length === 0);
-          return (
-            <fieldset key={tier.name} className="mt-4">
-              <legend className="font-bold">{tier.name}</legend>
-              {tier.popular.length > 0 ? (
-                <div className="mt-2 flex flex-wrap gap-2">{tier.popular.map(chip)}</div>
-              ) : null}
-              {tier.more.length > 0 ? (
-                <>
-                  {isOpen ? (
-                    <div className="mt-2 flex flex-wrap gap-2">{tier.more.map(chip)}</div>
-                  ) : null}
-                  <button
-                    type="button"
-                    aria-expanded={isOpen}
-                    onClick={() => {
-                      const next = new Set(openTiers);
-                      if (isOpen) next.delete(tier.name);
-                      else next.add(tier.name);
-                      setOpenTiers(next);
-                    }}
-                    className="mt-2 underline"
-                  >
-                    {isOpen
-                      ? "Show fewer"
-                      : tier.popular.length === 0
-                        ? `Show ${tier.more.length} graduate courses`
-                        : `Show ${tier.more.length} more`}
-                  </button>
-                </>
-              ) : null}
-            </fieldset>
-          );
-        })
-      )}
-      {props.selected.length > 0 ? (
-        <p className="mt-3 text-dark-tan">Selected: {props.selected.join(", ")}</p>
+      {q.length >= 2 ? (
+        <>
+          <p role="status" className="mt-2 text-dark-tan">
+            {matches.length === 0
+              ? "No FSB course matches that."
+              : matches.length > MAX_RESULTS
+                ? `Showing ${MAX_RESULTS} of ${matches.length}. Keep typing to narrow it down.`
+                : `${matches.length} ${matches.length === 1 ? "course matches" : "courses match"}.`}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">{matches.slice(0, MAX_RESULTS).map(chip)}</div>
+        </>
+      ) : null}
+      {props.selected ? (
+        <p className="mt-3 text-dark-tan">
+          Selected: {props.selected}
+          {getCourse(props.selected) ? ` ${getCourse(props.selected)!.title}` : ""}
+        </p>
       ) : null}
     </div>
   );

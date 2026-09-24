@@ -51,6 +51,23 @@ describe("renderCareer", () => {
     expect(html).toContain("Education");
   });
 
+  it("marks a course the student is taking now as in progress (v6.7.0)", () => {
+    const withCourses = {
+      ...career,
+      courses: [
+        { code: "ISA 444", why: "Forecasting." },
+        { code: "ISA 225", why: "Regression." },
+      ],
+    };
+    const html = renderCareer(withCourses, {
+      name: "Ada", links: [], hasPhoto: false, resumeLink: false, login: null, folders: [], repoName: "portfolio",
+      inProgress: ["ISA 444"],
+    });
+    expect(html).toContain("<strong>ISA 444 - Business Forecasting (in progress)</strong>");
+    expect(html).not.toContain("Regression (in progress)");
+    expect(html).not.toContain("ISA 225 - Principles of Business Analytics (in progress)");
+  });
+
   it("renames a repository the student had to pick, in the Files links", () => {
     // The account already owned "portfolio", so the publish went elsewhere
     // and every Files link has to follow it.

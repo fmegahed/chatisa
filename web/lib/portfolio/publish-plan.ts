@@ -31,7 +31,7 @@ export function buildPublishPlan(
     const repoName = extras.existingRepoName ?? CAREER_REPO;
     const html = renderCareer(content, {
       name: draft.name.trim(), links, hasPhoto: !!draft.photo,
-      resumeLink: draft.resumeLink, login, repoName,
+      resumeLink: draft.resumeLink, login, repoName, inProgress: draft.inProgress ?? [],
       folders: projects.filter((p) => p.files.length > 0).map((p) => p.slug),
     });
     const files = careerFileSet({

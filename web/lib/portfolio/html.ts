@@ -123,6 +123,8 @@ export function renderCareer(
     login: string | null;
     folders: string[];
     repoName: string;
+    /** Courses marked Taking now (v6.7.0); absent on pages from before it. */
+    inProgress?: string[];
   },
 ): string {
   const photo = student.hasPhoto ? `<img src="${PHOTO_PATH}" alt="Photo of ${escapeHtml(student.name)}">` : "";
@@ -154,7 +156,8 @@ export function renderCareer(
     // courses below, so the page never shows an empty bold label.
     ...content.courses.filter((c) => c.code.trim()).map((c) => {
       const title = getCourse(c.code)?.title;
-      return `<li><strong>${escapeHtml(c.code)}${title ? ` - ${escapeHtml(title)}` : ""}</strong>${c.why.trim() ? `: ${escapeHtml(c.why)}` : ""}</li>`;
+      const progress = student.inProgress?.includes(c.code) ? " (in progress)" : "";
+      return `<li><strong>${escapeHtml(c.code)}${title ? ` - ${escapeHtml(title)}` : ""}${progress}</strong>${c.why.trim() ? `: ${escapeHtml(c.why)}` : ""}</li>`;
     }),
     // A row the student blanked in the editor is skipped, and one restored
     // before its reason is written shows as just the label.

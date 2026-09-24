@@ -1,0 +1,2388 @@
+[
+  {
+    "code": "ACC 221",
+    "altCodes": [],
+    "title": "Introduction to Financial Accounting",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ACC 222",
+    "altCodes": [],
+    "title": "Introduction to Managerial Accounting",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ACC 256",
+    "altCodes": [],
+    "title": "Accountancy Career Exploration and Planning",
+    "previousTitles": [],
+    "credits": 1,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ACC 321",
+    "altCodes": [],
+    "title": "Intermediate Financial Accounting",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ACC 221"
+      ],
+      [
+        "ACC 222"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ACC 333",
+    "altCodes": [],
+    "title": "Managerial Accounting",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ACC 221"
+      ],
+      [
+        "ACC 222"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ACC 343",
+    "altCodes": [],
+    "title": "Federal Income Tax Accounting",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ACC 221"
+      ],
+      [
+        "ACC 222"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ACC 361",
+    "altCodes": [],
+    "title": "Accounting Information Systems",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ACC 221"
+      ],
+      [
+        "ACC 222"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ACC 422",
+    "altCodes": [
+      "ACC 522"
+    ],
+    "title": "Financial Accounting Research",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ACC 321"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ACC 453",
+    "altCodes": [
+      "ACC 553"
+    ],
+    "title": "Financial Statement Auditing",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ACC 321"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ACC 468",
+    "altCodes": [
+      "ACC 568"
+    ],
+    "title": "Accounting for Not-for-Profit and Governmental Organizations",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ACC 221",
+        "ACC 211"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ACC 495",
+    "altCodes": [
+      "ACC 595"
+    ],
+    "title": "Accounting Analysis",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ACC 221"
+      ],
+      [
+        "ECO 201"
+      ],
+      [
+        "MGT 291"
+      ],
+      [
+        "MKT 291"
+      ],
+      [
+        "FIN 301"
+      ],
+      [
+        "ISA 235"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "BLS 342",
+    "altCodes": [],
+    "title": "Legal Environment of Business",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "BLS 443",
+    "altCodes": [],
+    "title": "Real Estate Law",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "BLS 465",
+    "altCodes": [],
+    "title": "Ethics, Law, & Business",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "BUS 101",
+    "altCodes": [],
+    "title": "Foundations of Business",
+    "previousTitles": [],
+    "credits": 2,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "BUS 102",
+    "altCodes": [],
+    "title": "Foundations of Business Communication",
+    "previousTitles": [],
+    "credits": 2,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "BUS 104",
+    "altCodes": [],
+    "title": "Introduction to Computational Thinking for Business",
+    "previousTitles": [],
+    "credits": 2,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "BUS 217",
+    "altCodes": [],
+    "title": "Sustainable Business Solutions",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "BUS 284",
+    "altCodes": [],
+    "title": "Professional Communication for Business",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ENG 109",
+        "ENG 111"
+      ],
+      [
+        "BUS 101"
+      ],
+      [
+        "BUS 102",
+        "BUS 104"
+      ],
+      [
+        "ESP 103"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "CSE 148",
+    "altCodes": [],
+    "title": "Business Computing",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "CSE 271",
+    "altCodes": [],
+    "title": "Object-Oriented Programming",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "CSE 174",
+        "CIT 163"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ECO 201",
+    "altCodes": [],
+    "title": "Principles of Microeconomics",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ECO 202",
+    "altCodes": [],
+    "title": "Principles of Macroeconomics",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ECO 301",
+    "altCodes": [],
+    "title": "Money and Banking",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ECO 201"
+      ],
+      [
+        "ECO 202"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ECO 311",
+    "altCodes": [],
+    "title": "Examining Economic Data and Models",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ECO 201"
+      ],
+      [
+        "ECO 202"
+      ],
+      [
+        "ISA 125",
+        "STA 125",
+        "STA 261",
+        "STA 301",
+        "STA 368"
+      ],
+      [
+        "MTH 151",
+        "MTH 141"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ECO 315",
+    "altCodes": [],
+    "title": "Intermediate Microeconomic Theory",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ECO 201"
+      ],
+      [
+        "MTH 151"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ECO 317",
+    "altCodes": [],
+    "title": "Intermediate Macroeconomic Theory",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ECO 201"
+      ],
+      [
+        "MTH 141"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ECO 409",
+    "altCodes": [],
+    "title": "Applied Economic Analysis",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ECO 201"
+      ],
+      [
+        "ECO 202"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ECO 411",
+    "altCodes": [
+      "ECO 511"
+    ],
+    "title": "Advanced Empirical Methods",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ECO 311"
+      ],
+      [
+        "ECO 315"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 101",
+    "altCodes": [],
+    "title": "Entrepreneurship Foundations",
+    "previousTitles": [],
+    "credits": 1,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 102",
+    "altCodes": [],
+    "title": "Entrepreneurial Immersion: From Idea to Opportunity",
+    "previousTitles": [],
+    "credits": 1,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 103",
+    "altCodes": [],
+    "title": "Creativity, Innovation and Entrepreneurial Thinking",
+    "previousTitles": [],
+    "credits": 2,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 201",
+    "altCodes": [],
+    "title": "Introduction to Entrepreneurship and Business Models",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 251",
+    "altCodes": [],
+    "title": "Entrepreneurial Value Creation and Capture",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 252",
+    "altCodes": [],
+    "title": "Entrepreneurial Mindset: Creativity and Organization",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 321",
+    "altCodes": [],
+    "title": "Startup Entrepreneurship",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ESP 201"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ESP 331",
+    "altCodes": [],
+    "title": "Social Entrepreneurship",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 341",
+    "altCodes": [],
+    "title": "Corporate Entrepreneurship",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 351",
+    "altCodes": [],
+    "title": "Creativity in Entrepreneurship",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 361",
+    "altCodes": [],
+    "title": "Leading the Integration of Faith and Entrepreneurship (L.I.F.E.)",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 394",
+    "altCodes": [],
+    "title": "Applied Entrepreneurship: Workforce Preparation",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ESP 101"
+      ],
+      [
+        "ESP 201"
+      ],
+      [
+        "ESP 251"
+      ],
+      [
+        "ESP 252"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 401",
+    "altCodes": [],
+    "title": "Entrepreneurship: New Ventures",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 444",
+    "altCodes": [
+      "ESP 544"
+    ],
+    "title": "Entrepreneurship: Venture Capital Immersion",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 461",
+    "altCodes": [],
+    "title": "Entrepreneurial Consulting",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 481",
+    "altCodes": [],
+    "title": "Technology, Products & Ventures",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ESP 490",
+    "altCodes": [],
+    "title": "Special Topics in Entrepreneurship",
+    "previousTitles": [],
+    "credits": 1,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false,
+    "special": "freeform"
+  },
+  {
+    "code": "FIN 301",
+    "altCodes": [],
+    "title": "Introduction to Business Finance",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ACC 221"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 311",
+    "altCodes": [],
+    "title": "Fundamentals of Finance",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 320",
+    "altCodes": [],
+    "title": "Applied Equity Analysis",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 301"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 331",
+    "altCodes": [],
+    "title": "Real Estate Principles",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 311",
+        "FIN 301"
+      ],
+      [
+        "FIN 309",
+        "FIN 301"
+      ],
+      [
+        "FIN 303"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "FIN 361",
+    "altCodes": [],
+    "title": "Financial Markets and Institutions",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ECO 202"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 381",
+    "altCodes": [],
+    "title": "Intermediate Financial Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 311",
+        "FIN 301"
+      ],
+      [
+        "FIN 309"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "FIN 401",
+    "altCodes": [
+      "FIN 501"
+    ],
+    "title": "Principles of Investments and Security Markets",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 301"
+      ],
+      [
+        "FIN 303"
+      ],
+      [
+        "ISA 225",
+        "STA 261",
+        "STA 301",
+        "STA 368"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 402",
+    "altCodes": [],
+    "title": "Fixed-Income Portfolio Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 401"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 403",
+    "altCodes": [],
+    "title": "Portfolio Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 401"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 404",
+    "altCodes": [],
+    "title": "Forward, Futures and Derivatives",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 401"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 408",
+    "altCodes": [
+      "FIN 508"
+    ],
+    "title": "Commercial Bank Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 417",
+    "altCodes": [],
+    "title": "International Business Finance",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 311",
+        "FIN 301"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 431",
+    "altCodes": [],
+    "title": "Real Estate Investments and Finance",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 331"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 455",
+    "altCodes": [],
+    "title": "Comprehensive Financial Planning Capstone",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 251"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 461",
+    "altCodes": [
+      "FIN 561"
+    ],
+    "title": "Financial Analysis of Mergers, Buyouts, and Restructuring",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 381"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 475",
+    "altCodes": [],
+    "title": "Corporate Finance: Cases and Application",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 381"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 481",
+    "altCodes": [],
+    "title": "Student Managed Investment Fund",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 401"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 482",
+    "altCodes": [],
+    "title": "Student Managed Investment Fund II",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 403",
+        "FIN 481"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "FIN 485",
+    "altCodes": [],
+    "title": "Integrative Financial Application",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 381"
+      ],
+      [
+        "FIN 401"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "GEO 441",
+    "altCodes": [
+      "GEO 541"
+    ],
+    "title": "Introduction to Geographic Information Systems",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "GEO 442",
+    "altCodes": [
+      "GEO 542"
+    ],
+    "title": "Advanced Geographic Information Systems",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "GEO 441"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "GEO 451",
+    "altCodes": [
+      "GEO 551"
+    ],
+    "title": "Urban and Regional Planning",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "GEO 201"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "GEO 454",
+    "altCodes": [
+      "GEO 554"
+    ],
+    "title": "Urban Geography",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "GEO 459",
+    "altCodes": [
+      "GEO 559"
+    ],
+    "title": "Advanced Urban and Regional Planning",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "GEO 451"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "IMS 392",
+    "altCodes": [
+      "MKT 392"
+    ],
+    "title": "Content Marketing",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "IMS 418",
+    "altCodes": [
+      "IMS 518",
+      "MKT 418"
+    ],
+    "title": "Social Media Marketing and Online Community Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "IMS 419",
+    "altCodes": [
+      "IMS 519"
+    ],
+    "title": "Digital Branding",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MKT 291"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "IMS 440",
+    "altCodes": [
+      "IMS 540"
+    ],
+    "title": "Emerging Technology Practicum",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "IMS 355",
+        "IMS 421"
+      ],
+      [
+        "IMS 422",
+        "IMS 351",
+        "CSE 252"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 125",
+    "altCodes": [
+      "STA 125"
+    ],
+    "title": "Introduction to Business Statistics",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MTH 102",
+        "MTH 121",
+        "MTH 125"
+      ],
+      [
+        "MTH 122"
+      ],
+      [
+        "MTH 141",
+        "MTH 151"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ISA 211",
+    "altCodes": [],
+    "title": "Information Technology and Data Driven Decision Making in Business",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 225",
+    "altCodes": [],
+    "title": "Principles of Business Analytics",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MTH 141",
+        "MTH 151"
+      ],
+      [
+        "STA 125"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 235",
+    "altCodes": [],
+    "title": "Information Technology and the Intelligent Enterprise",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "CSE 148"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 241",
+    "altCodes": [],
+    "title": "Database for Analytics",
+    "previousTitles": [],
+    "credits": 1.5,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 242",
+    "altCodes": [],
+    "title": "Programming for Analytics",
+    "previousTitles": [],
+    "credits": 1.5,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 250",
+    "altCodes": [],
+    "title": "Basic Math for Analytics",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MTH 102",
+        "MTH 121"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ISA 301",
+    "altCodes": [],
+    "title": "Business Data Communications and Security",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 235"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 303",
+    "altCodes": [],
+    "title": "Enterprise Systems",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 235"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 305",
+    "altCodes": [
+      "ACC 305"
+    ],
+    "title": "Information Technology Governance, Risk Management, Security and Audit",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 235"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ISA 321",
+    "altCodes": [],
+    "title": "Optimization in Business Analytics",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 225"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 333",
+    "altCodes": [],
+    "title": "Nonparametric Statistics",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 335",
+    "altCodes": [],
+    "title": "Blockchain and Business Applications",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 336",
+    "altCodes": [],
+    "title": "Generative AI in Business",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 340",
+    "altCodes": [],
+    "title": "Internship",
+    "previousTitles": [],
+    "credits": 0,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false,
+    "special": "freeform"
+  },
+  {
+    "code": "ISA 345",
+    "altCodes": [],
+    "title": "Database Systems and Data Warehousing",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 235",
+        "ISA 211"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 365",
+    "altCodes": [
+      "STA 365"
+    ],
+    "title": "Statistical Monitoring and Design of Experiments",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 225",
+        "STA 301",
+        "STA 363"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 381",
+    "altCodes": [],
+    "title": "Concepts in Business Programming",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 387",
+    "altCodes": [],
+    "title": "Designing Business Systems",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 391",
+    "altCodes": [],
+    "title": "Applied Regression Analysis in Business",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 225"
+      ],
+      [
+        "SLM 275"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ISA 401",
+    "altCodes": [
+      "ISA 501"
+    ],
+    "title": "Business Intelligence and Data Visualization",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 245",
+        "ISA 345",
+        "CSE 385"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 403",
+    "altCodes": [],
+    "title": "Building Web and Mobile Business Applications",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 281"
+      ],
+      [
+        "ISA 245",
+        "CSE 385"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ISA 405",
+    "altCodes": [],
+    "title": "Information Security",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 301"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ISA 406",
+    "altCodes": [],
+    "title": "IT Project Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 387",
+        "CSE 201"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 414",
+    "altCodes": [
+      "ISA 514"
+    ],
+    "title": "Managing Big Data",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 281",
+        "ISA 381",
+        "ISA 401",
+        "ISA 491",
+        "STA 402",
+        "STA 404"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ISA 419",
+    "altCodes": [],
+    "title": "Data Driven Security",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "BUS 104"
+      ],
+      [
+        "ISA 225"
+      ],
+      [
+        "ISA 235"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 424",
+    "altCodes": [],
+    "title": "Data Infrastructure for the Enterprise",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 245"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 444",
+    "altCodes": [
+      "ISA 544"
+    ],
+    "title": "Business Forecasting",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ECO 311",
+        "ISA 291",
+        "ISA 391",
+        "STA 463"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 480",
+    "altCodes": [],
+    "title": "Topics in Business Analytics",
+    "previousTitles": [],
+    "credits": 1,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false,
+    "special": "freeform"
+  },
+  {
+    "code": "ISA 481",
+    "altCodes": [],
+    "title": "Topics in Information Systems",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false,
+    "special": "freeform"
+  },
+  {
+    "code": "ISA 491",
+    "altCodes": [
+      "ISA 591"
+    ],
+    "title": "Introduction to Data Mining in Business",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ECO 311",
+        "ISA 291",
+        "ISA 391",
+        "STA 463"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 495",
+    "altCodes": [],
+    "title": "Managing the Intelligent Enterprise",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "ISA 496",
+    "altCodes": [],
+    "title": "Business Analytics Practicum",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 401",
+        "ISA 491"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 612",
+    "altCodes": [],
+    "title": "Advanced Business Intelligence",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "STA 250"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 616",
+    "altCodes": [],
+    "title": "Communicating with Data",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 621",
+    "altCodes": [],
+    "title": "Enabling Technology Topics I",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 628",
+    "altCodes": [],
+    "title": "Information Technology and Analytic's Role in the Enterprise",
+    "previousTitles": [],
+    "credits": 1.5,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 629",
+    "altCodes": [],
+    "title": "Leveraging IT and Data Across the Business",
+    "previousTitles": [],
+    "credits": 1.5,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 630",
+    "altCodes": [],
+    "title": "Machine Learning Applications in Business",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 591"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 632",
+    "altCodes": [],
+    "title": "Big Data Analytics and Modern AI",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 514"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 633",
+    "altCodes": [],
+    "title": "Experimental Design and Causal Methods",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 634",
+    "altCodes": [],
+    "title": "Systems Modeling and Optimization",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 641",
+    "altCodes": [],
+    "title": "Data Discovery Through Business Analytics for Managers",
+    "previousTitles": [],
+    "credits": 2,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 645",
+    "altCodes": [
+      "BUS 645"
+    ],
+    "title": "Business Analytics for the Executive",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "ISA 650",
+    "altCodes": [],
+    "title": "Business Analytics Practicum",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MGT 111",
+    "altCodes": [],
+    "title": "Introduction to Business",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 291",
+    "altCodes": [],
+    "title": "Introduction to Management & Leadership",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MGT 295",
+    "altCodes": [],
+    "title": "Introduction to Operations and Supply Chain Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 125"
+      ],
+      [
+        "STA 261"
+      ],
+      [
+        "STA 301"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MGT 303",
+    "altCodes": [],
+    "title": "Human Resource Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 304",
+    "altCodes": [],
+    "title": "Diversity and Cross-Cultural Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 291",
+        "MGT 211"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 402",
+    "altCodes": [],
+    "title": "Employment Law",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 404",
+    "altCodes": [],
+    "title": "Compensation Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 303"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MGT 405",
+    "altCodes": [
+      "MGT 505"
+    ],
+    "title": "Negotiations and Conflict Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 303"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MGT 406",
+    "altCodes": [],
+    "title": "Talent Acquisition and Development",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 291",
+        "MGT 211"
+      ],
+      [
+        "MGT 303"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 414",
+    "altCodes": [],
+    "title": "Employee Engagement and Motivation",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 291",
+        "MGT 211"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 415",
+    "altCodes": [],
+    "title": "Leadership and Learning",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 291",
+        "MGT 211"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 416",
+    "altCodes": [],
+    "title": "Leading Organizational Change",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 291",
+        "MGT 211"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 418",
+    "altCodes": [
+      "MGT 518"
+    ],
+    "title": "Sustainability and ESG in Business",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 295"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 431",
+    "altCodes": [],
+    "title": "Logistics Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 295"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 432",
+    "altCodes": [],
+    "title": "Global Strategic Sourcing",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 295"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 451",
+    "altCodes": [
+      "MGT 551"
+    ],
+    "title": "Operations Planning and Scheduling",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 295"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MGT 453",
+    "altCodes": [
+      "MGT 553"
+    ],
+    "title": "Quality Management Systems",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 295"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MGT 474",
+    "altCodes": [],
+    "title": "Human Capital Consulting",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 291"
+      ],
+      [
+        "MGT 303"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MGT 490",
+    "altCodes": [
+      "MGT 590"
+    ],
+    "title": "Contemporary Issues",
+    "previousTitles": [],
+    "credits": 1,
+    "prereq": [],
+    "prereqUncertain": true,
+    "retired": false,
+    "special": "freeform"
+  },
+  {
+    "code": "MGT 495",
+    "altCodes": [],
+    "title": "Executive Decision Making and Strategy",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "FIN 301"
+      ],
+      [
+        "MGT 291"
+      ],
+      [
+        "MGT 295"
+      ],
+      [
+        "MKT 291"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MGT 498",
+    "altCodes": [],
+    "title": "Supply Chain Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MGT 432"
+      ],
+      [
+        "MGT 431"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 211",
+    "altCodes": [],
+    "title": "Business Concepts in Customer Engagement",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 291",
+    "altCodes": [],
+    "title": "Principles of Marketing",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 315",
+    "altCodes": [],
+    "title": "Professional Selling",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MKT 291"
+      ],
+      [
+        "MKT 211"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MKT 325",
+    "altCodes": [],
+    "title": "Developing Customer Insights",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MKT 291"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 335",
+    "altCodes": [],
+    "title": "Analytical Research and Reasoning for Marketers",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MKT 291"
+      ],
+      [
+        "ISA 125",
+        "STA 125",
+        "STA 261",
+        "STA 301"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 345",
+    "altCodes": [],
+    "title": "Building and Managing Strong Brands",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MKT 291"
+      ],
+      [
+        "MKT 325"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 395",
+    "altCodes": [],
+    "title": "Strategic Thinking and Decision-Making in Marketing",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MKT 291"
+      ],
+      [
+        "MKT 325"
+      ],
+      [
+        "MKT 335"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 412",
+    "altCodes": [],
+    "title": "Sustainable Marketing Management",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MKT 291"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 415",
+    "altCodes": [],
+    "title": "Marketing to Organizations",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MKT 291"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 453",
+    "altCodes": [
+      "ART 453"
+    ],
+    "title": "Highwire Brand Studio",
+    "previousTitles": [],
+    "credits": 4,
+    "prereq": [
+      [
+        "ART 352",
+        "MKT 345"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MKT 461",
+    "altCodes": [],
+    "title": "Principles of Retailing",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MKT 291"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 475",
+    "altCodes": [],
+    "title": "Healthcare Sales",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "MKT 315"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MKT 490",
+    "altCodes": [],
+    "title": "Emerging Topics in Marketing",
+    "previousTitles": [],
+    "credits": 1,
+    "prereq": [
+      [
+        "MKT 291"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false,
+    "special": "freeform"
+  },
+  {
+    "code": "MKT 495",
+    "altCodes": [],
+    "title": "Strategy Works",
+    "previousTitles": [],
+    "credits": 4,
+    "prereq": [
+      [
+        "MKT 291"
+      ],
+      [
+        "MGT 291"
+      ],
+      [
+        "FIN 301"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MTH 141",
+    "altCodes": [],
+    "title": "Business Calculus",
+    "previousTitles": [],
+    "credits": 5,
+    "prereq": [
+      [
+        "MTH 122"
+      ],
+      [
+        "MTH 125"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MTH 151",
+    "altCodes": [],
+    "title": "Calculus I",
+    "previousTitles": [],
+    "credits": 4,
+    "prereq": [
+      [
+        "MTH 124",
+        "MTH 125"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "MTH 249",
+    "altCodes": [],
+    "title": "Calculus II",
+    "previousTitles": [],
+    "credits": 5,
+    "prereq": [
+      [
+        "MTH 151"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "MTH 251",
+    "altCodes": [],
+    "title": "Calculus II",
+    "previousTitles": [],
+    "credits": 4,
+    "prereq": [
+      [
+        "MTH 151"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "POL 437",
+    "altCodes": [],
+    "title": "Cyberlaw",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "PSY 376",
+    "altCodes": [],
+    "title": "Psychology of Judgment, Decision Making, and Reasoning",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "SOC 225",
+    "altCodes": [],
+    "title": "Work and Occupational Justice",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "SOC 454",
+    "altCodes": [
+      "ORG 454"
+    ],
+    "title": "Organizations and Society",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "SOC 151",
+        "SOC 153"
+      ],
+      [
+        "ORG 153"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  },
+  {
+    "code": "STA 402",
+    "altCodes": [
+      "STA 502"
+    ],
+    "title": "Statistical Programming",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 391",
+        "STA 333",
+        "STA 363",
+        "STA 463",
+        "STA 672"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "STA 404",
+    "altCodes": [
+      "STA 504"
+    ],
+    "title": "Advanced Data Visualization",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ISA 391",
+        "STA 333",
+        "STA 363",
+        "STA 463",
+        "STA 672"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "STA 432",
+    "altCodes": [
+      "STA 532"
+    ],
+    "title": "Sampling Design and Analysis",
+    "previousTitles": [],
+    "credits": 3,
+    "prereq": [
+      [
+        "ECO 301"
+      ],
+      [
+        "ISA 305"
+      ],
+      [
+        "STA 363"
+      ],
+      [
+        "STA 401",
+        "STA 463"
+      ]
+    ],
+    "prereqUncertain": true,
+    "retired": false
+  },
+  {
+    "code": "STA 463",
+    "altCodes": [
+      "STA 563"
+    ],
+    "title": "Regression Analysis",
+    "previousTitles": [],
+    "credits": 4,
+    "prereq": [
+      [
+        "MTH 222"
+      ],
+      [
+        "STA 363"
+      ],
+      [
+        "STA 401"
+      ]
+    ],
+    "prereqUncertain": false,
+    "retired": false
+  }
+]

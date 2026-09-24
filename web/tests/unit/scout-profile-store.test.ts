@@ -37,12 +37,12 @@ describe("profile store", () => {
   it("round-trips a profile", () => {
     expect(loadProfile()).toBeNull();
     saveProfile({
-      v: 1,
-      courses: ["ISA 241", "ISA 401"],
+      v: 2, programs: [], removedPrereqs: [],
+      courses: [{ code: "ISA 241", status: "done" }, { code: "ISA 401", status: "done" }],
       extras: [{ skillId: "tableau", level: "applied", source: "resume" }],
     });
     const loaded = loadProfile();
-    expect(loaded?.courses).toEqual(["ISA 241", "ISA 401"]);
+    expect(loaded?.courses.map((c) => c.code)).toEqual(["ISA 241", "ISA 401"]);
     expect(loaded?.extras[0]?.skillId).toBe("tableau");
   });
 

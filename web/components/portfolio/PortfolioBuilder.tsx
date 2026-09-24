@@ -124,6 +124,7 @@ export function PortfolioBuilder(props: {
       photo: stored.photoBase64 ? { base64: stored.photoBase64, bytes: 0 } : null,
       name: stored.student?.name ?? props.studentName, links: stored.student?.links ?? [],
       courses: stored.student?.courses ?? [], otherCourses: stored.student?.otherCourses ?? [],
+      inProgress: stored.student?.inProgress ?? [], coursePlan: stored.student?.coursePlan,
       origin: originOf(stored.showcaseMeta?.origin), course: stored.showcaseMeta?.course ?? "",
       semester: stored.showcaseMeta?.semester ?? "", team: stored.showcaseMeta?.team ?? [],
       files: stored.files.filter((f) => f.projectSlug === null),

@@ -148,7 +148,11 @@ export function Publish(props: {
       void putDraft(record.id, {
         v: 1, content: props.draft.content, html: plan.html,
         student: isCareer
-          ? { name: props.draft.name, links: props.draft.links, courses: props.draft.courses, otherCourses: props.draft.otherCourses ?? [] }
+          ? {
+              name: props.draft.name, links: props.draft.links, courses: props.draft.courses,
+              otherCourses: props.draft.otherCourses ?? [], inProgress: props.draft.inProgress ?? [],
+              coursePlan: props.draft.coursePlan,
+            }
           : null,
         showcaseMeta: isCareer
           ? null

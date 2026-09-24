@@ -11,6 +11,7 @@ import type { FileRole } from "./files";
 import { migrateCareerV1, type SiteContent } from "./content";
 import type { OtherCourse } from "./draft";
 import type { ProjectOrigin } from "./origin";
+import type { ChecklistState } from "@/lib/scout/checklist";
 import { getItem, putItem, removeItem } from "@/lib/scout/device-files";
 
 const SITES_KEY = "pb-sites-v1";
@@ -26,8 +27,14 @@ export interface StoredFile {
   projectSlug: string | null; name: string; role: FileRole; publish: boolean;
   bytes: number; text: string | null; base64: string | null;
 }
-/** otherCourses and origin are optional: sites stored before v6.6.0 lack them. */
-export interface CareerStudent { name: string; links: { label: string; url: string }[]; courses: string[]; otherCourses?: OtherCourse[] }
+/**
+ * otherCourses and origin are optional: sites stored before v6.6.0 lack them;
+ * inProgress and coursePlan likewise before v6.7.0.
+ */
+export interface CareerStudent {
+  name: string; links: { label: string; url: string }[]; courses: string[]; otherCourses?: OtherCourse[];
+  inProgress?: string[]; coursePlan?: ChecklistState;
+}
 export interface ShowcaseMeta { origin?: ProjectOrigin; course: string; semester: string; team: string[] }
 export interface SiteDraft {
   v: 1; content: SiteContent; html: string; student: CareerStudent | null;

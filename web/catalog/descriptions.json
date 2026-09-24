@@ -1,0 +1,666 @@
+{
+  "ACC 221": {
+    "description": "Introduction to the purposes of financial statements and the recognition, measurement, and disclosure concepts and methods underlying financial statements. Focus is on preparing, using and interpreting financial statements and on understanding the impact of transactions and events on financial statements and financial ratios.",
+    "prereqText": ""
+  },
+  "ACC 222": {
+    "description": "Introduction to the uses of accounting information provided to managers in production, service, and resale businesses. Focus is on classifying, measuring, and analyzing product and service costs for decision making, preparing budgets, and evaluating performance.",
+    "prereqText": ""
+  },
+  "ACC 256": {
+    "description": "This course will explore the historical, current and possible future role of the accounting profession in the domestic and global economy. Students will understand the various standard setters and opportunities for the accounting profession to interact and influence the outcomes of business organizations. This course will assist accountancy majors to explore career interests in future accountancy positions within public accounting, private industry or governmental positions. Specifically, the course will focus on helping students understand the variety of career opportunities available to accounting majors. The course will assist students with understanding the key career planning and job searching opportunities at Miami University. Students will be exposed to the timeline and types of events they can expect in the interview process and will be informed about how best to prepare for and be successful in executing each.",
+    "prereqText": ""
+  },
+  "ACC 321": {
+    "description": "Study of the conceptual framework and standard-setting process followed by the application and evaluation of generally accepted accounting principles underlying financial statements. Focus is on recording and reporting intermediate-level transactions and events in accordance with authoritative standards related to the recognition, measurement, and disclosure of assets, liabilities, owners' equity, revenues, expenses, gains, and losses.",
+    "prereqText": "ACC 221 and ACC 222 ."
+  },
+  "ACC 333": {
+    "description": "Focuses on the interactions between firm strategy and accounting information, with an emphasis on employee decision-making and analytical tools. Examines these topics in a variety of contexts, such as budgeting and forecasting; performance measurement, management, and incentives; product and service costing; or transfer pricing.",
+    "prereqText": "ACC 221 and ACC 222 ."
+  },
+  "ACC 343": {
+    "description": "Study of the basic features of the federal income tax system. Focuses on the determination of taxable individuals and corporations and on the effects of tax laws and regulations on decision making.",
+    "prereqText": "ACC 221 and ACC 222 ."
+  },
+  "ACC 361": {
+    "description": "Introduction to accounting information systems (AIS) as an enterprise-wide information system for business processes and internal controls. The course focuses on hands-on learning experiences with current and emerging technologies. The course also builds students’ business acumen in databases and data analytics.",
+    "prereqText": "ACC 221 and ACC 222 . Prerequisite or"
+  },
+  "ACC 422": {
+    "description": "Study of professional research methods and resources used for financial accounting and reporting. Focuses on the application of research methods and resources, through case analyses, to determine applicable recognition, measurement, and disclosure standards for advanced-level transactions and events.",
+    "prereqText": "ACC 321 ."
+  },
+  "ACC 453": {
+    "description": "Introduction to financial statement audits conducted by independent public accountants. Emphasizes the technical knowledge and skills required by entry-level auditors to meet professional standards, plan and perform audits, and communicate results. Pre-requisites or",
+    "prereqText": "ACC 321 ."
+  },
+  "ACC 468": {
+    "description": "Analysis of accounting standards and case studies for not-for-profit organizations and governmental entities. Emphasizes reporting transactions unique to not-for-profit/governmental sectors with a focus on fund accounting. Assesses organizational performance against unique missions and goals using financial information.",
+    "prereqText": "ACC 221 or ACC 211 ."
+  },
+  "ACC 495": {
+    "description": "This course is intended to assist students with the development of decision-making and problem-solving skills through data analysis. Specifically, ACC 495/ACC 595 is focused on students reviewing and applying the concepts of the scientific method within a business domain. The course is focused around broad cases and a student project where student inquiry is required to define the research question, specific hypotheses, methods and data for hypothesis testing, development of recommendations and communication of findings. Collaboration with the student and outside individuals for the student project is a key expectation. SC.",
+    "prereqText": "FSB Business Core - ACC 221 , 222 ; ECO 201 , 202 ; MGT 291 ; MKT 291 ; FIN 301 ; ISA 235 ."
+  },
+  "BLS 342": {
+    "description": "Nature and sources of law; legal analysis and reasoning; judicial system, litigation and alternative dispute resolution; constitutional and administrative law; criminal law; law of torts and products liability; ethics; international business law; law of contracts; law of agency; employment law; and government regulation of business.",
+    "prereqText": ""
+  },
+  "BLS 443": {
+    "description": "An introduction to a range of legal issues that may confront real estate managers and developers. Subjects covered include: land acquisition, ownership structures, real estate financing, environmental due diligence, zoning, development incentives, landlord-tenant issues, and condominium development. The course is beneficial for those with a career focused on real estate.",
+    "prereqText": ""
+  },
+  "BLS 465": {
+    "description": "Explores legal aspects of business decision-making from an ethical perspective. Focuses on the business manager as an ethical decision-maker and on the corporation as a social moral agent. Conducted in discussion style using cross-functional cases from the core business disciplines. This course may not be used as a finance major elective. SC.",
+    "prereqText": "Farmer Business School core courses and senior standing or permission of instructor."
+  },
+  "BUS 101": {
+    "description": "One of four courses that students will complete as part of the eight-credit hour First-Year Integrated Core. BUS 101 introduces students to the foundational concepts of business and allows students to develop essential skills including critical and creative thinking, communication and collaboration, ethical decision making, and utilizing technology to support business functions. Students will learn their own thinking preferences and identify their personal and professional goals.",
+    "prereqText": "enrollment in Farmer School of Business."
+  },
+  "BUS 102": {
+    "description": "As part of the Farmer School of Business's first-year integrated core curriculum, this course introduces students to the fundamentals of business rhetoric and laying the foundation for effective oral and written business communications. EL. Co-requisites: BUS 101 , BUS 104 and ESP 103 .",
+    "prereqText": ""
+  },
+  "BUS 104": {
+    "description": "As part of the Farmer School of Business first-year integrated core curriculum, this course introduces students to the fundamentals of computational thinking as an aid to data-driven business problem-solving. Topics include: computational thinking as problem solving, representing data through abstractions, and thinking in terms of algorithms (loops, conditions, reusable code, functions and events) to automate finding solutions. The course lays the foundations for students identifying, analyzing, and implementing solutions for data-driven business problems and the communication of results. EL. Co-requisite: BUS 101 , BUS 102 and ESP 103 .",
+    "prereqText": ""
+  },
+  "BUS 217": {
+    "description": "This course is for students who want to be stewards of our current resources, protect the world for future generations, and serve the greater good. Through active participation in simulations, debates, and activities students are encouraged to examine environmental, social, and governance (ESG) issues facing businesses in the world today. IIIB. PA-4C, SI-01.",
+    "prereqText": ""
+  },
+  "BUS 284": {
+    "description": "As part of the Farmer School of Business’s core curriculum, this course develops advanced rhetoric knowledge and skills needed to write and present effectively in local and global business contexts, including working in intercultural teams and digital networks. PA-1C.",
+    "prereqText": "ENG 109 or ENG 111 and BUS 101 , BUS 102 BUS 104 and ESP 103 ."
+  },
+  "CSE 148": {
+    "description": "An introduction to business-oriented computer skills. Extensive hands-on use of electronic spreadsheets and database software. Examples and exercises will stress problem-solving in a business context. Credit not awarded for both CSE 148 and CSE 243 . Not open to students with majors in the CSE department.",
+    "prereqText": ""
+  },
+  "CSE 271": {
+    "description": "Review of sequence, selection, and iteration. The design and implementation of software using object-oriented programming techniques including inheritance, polymorphism, object persistence, and overloading. Students will analyze program specifications and identify appropriate data types, objects, and classes. Additional programming topics include dynamic memory, recursion, searching and sorting, using existing object libraries, and binary and text file processing.",
+    "prereqText": "CSE 174 or CIT 163 with a grade of C- or better."
+  },
+  "ECO 201": {
+    "description": "Nature and scope of microeconomics, including the role of the market in resource allocation, the role of competition, market forces, the forces governing the distribution of income, and the role of foreign trade in economic welfare. IIC. PA-2A. CAS-C.",
+    "prereqText": ""
+  },
+  "ECO 202": {
+    "description": "Analysis of the determinants of output, prices, employment, and interest rates. Includes long run behavior of the economy, business cycle theory, monetary system, stabilization policy, and international finance. IIC. PA-2A. CAS-C.",
+    "prereqText": ""
+  },
+  "ECO 301": {
+    "description": "Nature of money and its role in the functioning of a modern monetary economy; the institutional framework of the U.S. monetary system; and aims, potentialities, and limitations of monetary policy.",
+    "prereqText": "ECO 201 and ECO 202 ."
+  },
+  "ECO 311": {
+    "description": "Introduction to the use of linear regression techniques for examining economic data and evaluating economic models. Topics may include hypothesis testing, dummy variables, forecasting, and limited dependent variable models. Sources of economic data are explored. Applications to topics in economics are stressed. CAS-C, CAS-Q, CAS-QL, CAS-W. This course is part of a Miami Plan Advanced Writing sequence. ADVW. PA-1C.",
+    "prereqText": "earn a grade of at least a C in ECO 201 , ECO 202 , and ISA 125 or STA 125 or STA 261 or STA 301 or STA 368, and MTH 151 or MTH 141 ; or permission of the instructor."
+  },
+  "ECO 315": {
+    "description": "Analysis of the theory of consumer behavior and theory of the firm. Emphasis on logic of rational choice, model building, and economic efficiency. Other topics may include general equilibrium analysis, decision making under uncertainty, and applications of game theory in understanding strategic behavior in imperfect competition. CAS-C, CAS-W.",
+    "prereqText": "earn a grade of at least a C in ECO 201 , and 202, and MTH 151 or 153 or 141 ; or permission of the instructor."
+  },
+  "ECO 317": {
+    "description": "National income, as a measure of economic activity, including examination of theories of consumption and investment spending, monetary demand and supply, and implications of alternative models for level and stability of output, employment and prices, and economic growth. CAS-C, CAS-W.",
+    "prereqText": "earn a grade of at least a C in ECO 201 , 202 , and MTH 141 or 151 or 153; or permission of instructor."
+  },
+  "ECO 409": {
+    "description": "Students use economic analysis, applying economic models and concepts from their liberal education to understand causes of problems, potential consequences of solutions, and apply cost-benefit analysis to propose a solution. Class time is allocated to the development of relevant economic models, evaluating research using primary and secondary sources, and applying analysis to solve problems. Gives students the opportunity to present as a team and produce a product for a real-world audience. The focus of the analysis may change each term based on student and faculty interest. SC.",
+    "prereqText": "senior standing and ECO 201 and ECO 202 ."
+  },
+  "ECO 411": {
+    "description": "Examination of the use of estimation techniques for analyzing economic data and evaluating economic models. Topics may include properties of estimators, hypothesis testing, serial correlation and heteroscedasticity, and simultaneous equations. Applications to topics in economics are stressed.",
+    "prereqText": "ECO 311 and ECO 315 ."
+  },
+  "ESP 101": {
+    "description": "This sprint course will provide a hands-on approach to understanding entrepreneurship in start-up, social, and corporate settings. The course will analyze and investigate the current trends and opportunities in entrepreneurship. Students will meet with and learn from successful entrepreneurs about their lives and work as entrepreneurs. The course will focus on the skills and tactics necessary to succeed in various entrepreneurial settings, and discuss how students can apply these skills to their personal and professional passions and interests. By collaborating with like-minded peers and award winning faculty, students will learn what it takes to turn \"possibilities\" into \"probabilities\". Credit/no credit only.",
+    "prereqText": ""
+  },
+  "ESP 102": {
+    "description": "This hands-on experience immerses students in the early stages of the entrepreneurial process. In a one weekend fast-paced environment, students develop ideas, build teams and discover insights. Over the course of the weekend, students pitch their concepts, ideas and solutions to real investors and practitioners who will provide mentorship, coaching and feedback. The course is designed to integrate creative thinking, critical thinking, problem solving and leadership skills in an environment similar to the business world. Students get a real world understanding of how to succeed in any venture.",
+    "prereqText": ""
+  },
+  "ESP 103": {
+    "description": "This course prepares students to understand and address two pressing issues in business today: how to recognize and create new business opportunities and how to think more creatively within business environments. Students will be introduced to a number of tools, concepts and approaches including human-centered design, ideation techniques, the importance of embracing ambiguity, personal responsibility and the place of risk and fail in entrepreneurship, creativity and life. The class is highly interactive and experiential. EL. Co-requisites: BUS 101 , BUS 102 , and BUS 104 .",
+    "prereqText": ""
+  },
+  "ESP 201": {
+    "description": "Topics include requirements and challenges of successful entrepreneurship, characteristics of successful entrepreneurs, the life cycle stages of a business, careers and opportunities for entrepreneurship. Pre-/Co-requisite: ESP 101 .",
+    "prereqText": ""
+  },
+  "ESP 251": {
+    "description": "In this class, students will focus on the marketing and financial issues confronting entrepreneurial venture. This course looks at the challenges entrepreneurs face in attempting to start, grow and build ventures, specifically aspects related to customer acquisition, customer retention, and capital resources. Students are exposed to tools, concepts, and approaches related to marketing and financial operations of entrepreneurial ventures with emphasis on the application of this material using a series of real-world cases and examples. Class environment is highly interactive and experiential. Prerequisite or Co-requisite: ESP 101 .",
+    "prereqText": ""
+  },
+  "ESP 252": {
+    "description": "In this class, students will learn concepts of leadership and creativity as it relates to the organization of entrepreneurial ventures. Students will learn the role of creative thinking and leadership models in the growth of entrepreneurial organizations. In both parts of the class, the environment is highly interactive and experiential. Prerequisite or Co-requisite: ESP 101 .",
+    "prereqText": ""
+  },
+  "ESP 321": {
+    "description": "This course is structured using an agile scrum project management approach favored by many high-tech startups in which tasks are completed in short \"sprints.\". In this course students will learn digital marketing and analytics strategies and techniques including landing page development, A/B testing and Google analytics. Be prepared to learn on the fly, test and iterate, and spend out-of-class time completing project sprints.",
+    "prereqText": "ESP 201 or approval from academic advisor."
+  },
+  "ESP 331": {
+    "description": "This course introduces students to the opportunities and challenges associated with building and growing enterprises that are both self-sustaining and focused on a social mission. Students will engage in an experiential learning process with others to develop a better understanding of the domain of social entrepreneurship including the development, measurement and assessment of various social enterprises.",
+    "prereqText": ""
+  },
+  "ESP 341": {
+    "description": "This course focuses on the value and use of entrepreneurial thinking and behavior in large, corporate and/or public organizations. Students will examine both the benefits and challenges of acting like an entrepreneur when they may not be the owner or CEO of the organization, or be a part of a much larger, complex organization. These concepts are introduced through research, cases and conversations with successful intrapraneurs.",
+    "prereqText": ""
+  },
+  "ESP 351": {
+    "description": "This course will explore the application of creative thinking in addressing business opportunities and problems, especially within an entrepreneurial context. The course takes a systematic approach to creating, evaluating, refining and selling breakthrough ideas. Students will be exposed to a number of techniques, concepts and methods useful in managing the creative process in individual and group contexts with emphasis on accountability for creative quality. Class is highly interactive and experiential. This is the first of three courses as part of the Creativity Track within the Entrepreneurship Curriculum.",
+    "prereqText": ""
+  },
+  "ESP 361": {
+    "description": "This course explores the growing movement of integrating faith into entrepreneurial ventures, including investors, entrepreneurs, and ecosystem participants. The course will provide students an understanding of the challenges and opportunities of integrating faith and entrepreneurship, regardless of their own views on the topic. The integration of faith and entrepreneurship builds on the emerging trends in society and highlights the importance of faith as a critical element. IC. PA-4A, SI-01.",
+    "prereqText": ""
+  },
+  "ESP 394": {
+    "description": "This course immerses students in the mindsets and practices of workplace excellence. The class focuses on three entrepreneurial concepts: critical workplace soft skills, how to use the creative/innovative mindset as an entry level employee and important technical skills. The course is designed to improve decision making, critical thinking, problem solving and leadership skills in preparation for The Altman Internship Summer Experience.",
+    "prereqText": "ESP 101 , ESP 201 , ESP 251 , and ESP 252 . Prerequisite or"
+  },
+  "ESP 401": {
+    "description": "This course examines the venture creation process within a startup ecosystem. ESP 401 explores a variety of issues surrounding new venture creation, including how to recognize and assess an opportunity, the process and steps in starting a new venture, the financials of the new business, determining and acquiring resource needs, marketing requirements, deal structure and exit strategy, technology issues, legal and ethical issues and creating a written business plan in support of the new venture. Small teams are formed to work on a new business venture, which is presented in an oral presentation and written business model. SC.",
+    "prereqText": ""
+  },
+  "ESP 444": {
+    "description": "The Venture Capital Immersion course is designed to provide you with a realistic understanding of the methods and approaches used by institutional investors to evaluate new businesses (startups) and high growth companies and to develop and negotiate investment terms. The prospect of raising outside capital is a consideration for many new business ventures at some point in order to grow and scale the company. The Venture Capital Immersion course focuses specifically on one such sources of outside capital: institutional investment from venture capital firms (angel group, venture capital, or private equity). It simulates what venture investors experience as a member of an institutional investment firm.",
+    "prereqText": ""
+  },
+  "ESP 461": {
+    "description": "Student teams apply a problem-solving methodology by consulting with selected entrepreneurial organizations that have requested assistance. Each selected company will have a wide range of entrepreneurial challenges crossing the fields of finance, marketing, accounting, production, human resources, information systems, strategic and tactical planning, growth or down-sizing problems, procurement issues, inventory control, quality control and forecasting. Through this consulting experience, students learn to integrate and apply their business knowledge to \"real-world\" settings and to test their analytical skills by solving complex entrepreneurial business problems. SC.",
+    "prereqText": ""
+  },
+  "ESP 481": {
+    "description": "An interdisciplinary perspective on the interfaces between new product development, innovation, and technology. Examines product development capability as an essential element of successful business strategy and a key component of an \"entrepreneurial mindset.\" Students develop a working prototype for a new product and a comprehensive new product plan.",
+    "prereqText": ""
+  },
+  "ESP 490": {
+    "description": "Issue oriented seminar for juniors or seniors focusing on a contemporary topic related to the rewards, requirements and challenges associated with entrepreneurship in different environments.",
+    "prereqText": "permission of instructor."
+  },
+  "FIN 301": {
+    "description": "Financial management of business enterprises with emphasis upon financial analysis, working capital management, short and long term financing, capital budgeting, cost of capital, and dividend policy.",
+    "prereqText": "ACC 221 . Prerequisite or"
+  },
+  "FIN 311": {
+    "description": "Introduction to core principles of finance with an emphasis on estimating and computing time value of money and its application to the valuation of financial securities and investments made by business. This course serves as an introduction to and a foundation of the finance field. Prerequisite(s): ACC 221 . Prerequisite(s) or Co-requisite(s): STA 125, ISA 125 , ISA 225 , STA 261 , or STA 301 .",
+    "prereqText": ""
+  },
+  "FIN 320": {
+    "description": "An experiential course to give students an opportunity to learn and practice equity analysis skills in a real-world setting. After completing this course students will be able to conduct equity analysis using appropriate methodology. In addition, students will be able to develop and give an effective presentation on the merits of a particular position to industry executives. Finally, students will be able to articulate whether or not they want to work for a financial services firm, such as an investment bank.",
+    "prereqText": "FIN 301 ."
+  },
+  "FIN 331": {
+    "description": "Principles course dealing with features of real estate, legal descriptions, brokerage industry and licensing, ownership interests, property tax, and closing transaction. Emphasis on applying finance principles to real estate with a focus on real estate financing and investing.",
+    "prereqText": "FIN 311 with a grade of \"C\" or better OR FIN 301 and FIN 309 with a grade of \"C\" or better OR OR FIN 301 and FIN 303 with a grade of \"C\" or better."
+  },
+  "FIN 361": {
+    "description": "An overview of the roles various financial institutions play in the economy, the services they perform, and the risks they take on in performing those services. This course covers a broad variety of the depository and non-depository institutions, including commercial banks, insurance companies, securities firms, investment banks, and mutual funds. This course is also intended to develop students’ understanding of the interest rates, monetary policy, and financial market environments in which the modern financial institutions are operating.",
+    "prereqText": "ECO 202 ."
+  },
+  "FIN 381": {
+    "description": "Theoretical development of financial decision making, working capital management, capital budgeting, capital structure, and dividend policy of the corporation. Finance majors are encouraged to take FIN 381 and FIN 401/FIN 501 during the same semester.",
+    "prereqText": "FIN 311 with a grade of \"C\" or better OR FIN 301 and FIN 309 with a grade of \"C\" or better."
+  },
+  "FIN 401": {
+    "description": "Emphasis on investment methodology, investment risks, and security selection. Introduction to security analysis, security valuation, and portfolio management; for the individual investor. Finance majors are strongly encouraged to take FIN 381 and FIN 401/FIN 501 during the same semester.",
+    "prereqText": "FIN 301 and FIN 303 with a grade \"C\" or better and one of ISA 225 , STA 261 , STA 301 or STA 368."
+  },
+  "FIN 402": {
+    "description": "Consideration of securities portfolio management objectives and techniques; investment risks, and diversification strategy. Detailed consideration of bond portfolio management, mathematics of bond yields, and interest rate environment. Individual and group participation required.",
+    "prereqText": "FIN 401/FIN 501 ."
+  },
+  "FIN 403": {
+    "description": "Theory and practice of modern portfolio management. Special consideration to asset pricing theories, nature and application of derivative securities, and investment strategies.",
+    "prereqText": "FIN 401/FIN 501 ."
+  },
+  "FIN 404": {
+    "description": "This course covers the fundamentals of option from pricing and hedging to their use in the management of financial risk. The course begins with a thorough theoretical development of futures, forwards, options and swaps, and ends with an analysis of structured products that have embedded derivative contracts. Discussion of issues of counter-party risk and the responsible use of derivatives is an integral part of the course.",
+    "prereqText": "FIN 401/FIN 501 ."
+  },
+  "FIN 408": {
+    "description": "Operations of financial institutions. Identification and analysis of problems of financial institutions within our changing environment. Consideration of competition and growth, profitability, capital, and regulation. Emphasis on commercial banking. Prerequisite or Co-requisite: FIN 301 or FIN 311 , and ECO 301 or permission of instructor.",
+    "prereqText": ""
+  },
+  "FIN 417": {
+    "description": "An introduction to the macro and market environments in which multinational firms operate and the additional risks they confront in a multi-currency world. Emphasis is on the decision-making process with an international perspective.",
+    "prereqText": "FIN 311 or FIN 301 ."
+  },
+  "FIN 431": {
+    "description": "An examination of the valuation and investment complexities in commercial real estate. Topics include market analysis, cash flow estimation from properties, effects of leverage and taxes on valuation, and investment in real estate related securities such as REITs and mortgage backed securities.",
+    "prereqText": "FIN 331 ."
+  },
+  "FIN 455": {
+    "description": "Creation and implementation of a professional financial plan that incorporates an individual’s unique circumstances and objectives. The planning processes focuses on essential elements including budgeting and saving, risk management, tax planning, investment planning, and retirement and estate planning. Emphasizes integrating these elements into a comprehensive personal financial plan.",
+    "prereqText": "FIN 251 ."
+  },
+  "FIN 461": {
+    "description": "An examination of the valuation complexities in corporate restructuring and corporate change of control on a global basis. Topics include free cash flow estimation and forecasting, estimation of capital costs using alternative methods, adjustments for complex financial structures, debt capacity, entry and exit options, alternative mediums of exchange, purchase contingencies, acquisitions in developed and emerging economies, leveraged buyouts and asset restructuring.",
+    "prereqText": "FIN 381 ."
+  },
+  "FIN 475": {
+    "description": "Advanced corporate finance course covering short and long term financial management. Topics include working capital management, capital budgeting, capital issuance and structure, managing growth and expansion, leasing, and mergers and acquisitions. Cases and applied financial modeling are used throughout the course.",
+    "prereqText": "FIN 381 ."
+  },
+  "FIN 481": {
+    "description": "An experiential learning opportunity that takes concepts learned earlier in the curriculum and applies them to an actual corporate setting and provides experience in managing a real-dollar portfolio based on appropriate trading and investment criteria.",
+    "prereqText": "FIN 401/FIN 501 ."
+  },
+  "FIN 482": {
+    "description": "Students actively manage an investment portfolio that is part of the Miami University endowment. Students will be responsible for administrative duties, compliance, portfolio performance and evaluation, leading equity analysis of teams, and providing an economic outlook that informs portfolio decisions. SC.",
+    "prereqText": "FIN 403 or FIN 481 ."
+  },
+  "FIN 485": {
+    "description": "This Capstone provides students opportunity to apply their broad base of knowledge from their Foundation courses and the Farmer Business School core in an integrative manner to the field of finance. Provides students ability to see financial decisions in the broader context of society, law, government, and the global environment at large. Students come from different academic backgrounds and form teams to analyze case problems and readings from these different perspectives. These teams are required to present and defend their recommendation keeping in mind the variegated interests of the firm's stakeholders: customers, stockholders, creditors, employees, suppliers, etc. This course may not be used as a finance major elective. SC.",
+    "prereqText": "FIN 381 and FIN 401/FIN 501 or permission of Instructor."
+  },
+  "GEO 441": {
+    "description": "Introduces students to the structure, concepts, capabilities, and functionality of Geographic Information Systems (GIS) and geospatial science inquiry. The course focuses on the management and processing of spatial data, emphasizing data models and structures, geographic data input, data manipulation and storage, spatial analysis and modeling techniques. Students will learn to frame and solve a sequence of problems with GIS across a wide range of topics including environmental planning, biogeography, conservation biology, sustainable development, natural resource conservation, environmental justice, political geography, and urban geography and planning.",
+    "prereqText": ""
+  },
+  "GEO 442": {
+    "description": "Advanced-level application of GIS technology to geographic problem-solving. Follows on from topics introduced in GEO 441/GEO 541 to provide (a) in-depth understanding of the technical and substantive issues associated with the use of GIS and (b) advanced-level training in the functionality of major GIS products.",
+    "prereqText": "GEO 441/GEO 541 or permission of instructor."
+  },
+  "GEO 451": {
+    "description": "Introduction to the purposes and possibilities of urban and regional planning. Topics include historical development and theoretical rationale of planning, analytical techniques, and policy and design strategies for addressing urban problems. Surveys contemporary urban issues and areas of planning specialization. Prepares students with fundamental concepts and skills for careers in urban planning and development. CAS-C.",
+    "prereqText": "GEO 201 ."
+  },
+  "GEO 454": {
+    "description": "Geographic principles related to the distribution, function, structure, and regional settings of urban centers.",
+    "prereqText": "some other urban course in social sciences or permission of instructor."
+  },
+  "GEO 459": {
+    "description": "Application of planning tools and techniques to significant urban and regional land use problems. Evaluation of major planning tools for redevelopment of central cities and declining regions in the U.S. Innovative techniques for solving American urban spatial problems at local to national levels.",
+    "prereqText": "GEO 451/GEO 551 or permission of instructor."
+  },
+  "IMS 392": {
+    "description": "Content marketing is a profession, a central marketing strategy in contemporary business. Students acquire proficiency in the creation and distribution of digital media (e.g., blogs, videos, social media posts) to promote brand interest and awareness while providing value to users. Cross-listed with MKT 392 .",
+    "prereqText": ""
+  },
+  "IMS 418": {
+    "description": "Traditional advertising and marketing models are being increasingly challenged by a world in which content creation, transmission, and aggregation are being decentralized. Markets are now conversations - some very short. Social media are living conversations that present marketers with the challenge of how to understand and participate in those conversations in an authentic and value-based manner. Moreover, these conversations don't happen in a vacuum. The connected nature of different social (and physical) relationships define a community of interest. The community manager uses this entire space to help bring value to this community. This class examines the variety and taxonomy of social media and the strategies and tactics associated with social media marketing and community management. Cross-listed with MKT 418 .",
+    "prereqText": ""
+  },
+  "IMS 419": {
+    "description": "Survey course emphasizing a hands-on immersion into ECommerce; studies the impact this technology has on the basics of the marketing mix and effective and efficient marketing strategies. Focuses on applications, innovations, and future direction (not on the technology that enables the Internet and www). Heavy reading, electronic and in-class discussions, and 'surfing' required (recommended",
+    "prereqText": "MKT 291 )."
+  },
+  "IMS 440": {
+    "description": "Examines the tools and methodologies involved in creating and managing the production of new media. Students will study different development models in a real-world setting and work with a client in business or industry to produce an interactive solution. This course particularly focuses on two aspects of the client project: (1) the management of new media development, and (2) the processes that best develop the synergy of an interdisciplinary team working toward a shared goal and the tools of development. It will also emphasize project planning and management. While it may be the case that programmers need to know coding and graphic designers need to know vector graphics, the successful manager will know something about all of these tools, about how they work together, and about how to specialize in one of them. SC.",
+    "prereqText": "( IMS 355 or IMS 421 ) and ( IMS 422/IMS 522 or IMS 351 or CSE 252 )."
+  },
+  "ISA 125": {
+    "description": "This course provides an introduction to data, probability, sampling and its importance to analytical decision-making in business. Upon successful completion of this course, students will have the foundational skills necessary to summarize data, describe relationships among variables, and conduct one-sample and two-sample statistical inference. Note: Credit for graduation will not be given for more than one of STA 125, ISA 125 , STA 261 , STA 301 , or STA 368.",
+    "prereqText": "MTH 102 or MTH 121 or MTH 125 , MTH 122 , MTH 141 or MTH 151 ; ACT Math Score of 22 or higher; SAT Math Score of 540 or higher; or Miami International Math Placement Test score of 8 or higher; or successful completion of MTH 025 ; or permission of department chair."
+  },
+  "ISA 211": {
+    "description": "Introduction to the concepts of information systems and analytics used to support organizations for the non-business major. Focus is on the critical information technology and systems impacting the operations of organizations in the digital world. Additionally, how organizations use business analytics to make data-driven decisions will be covered.",
+    "prereqText": ""
+  },
+  "ISA 225": {
+    "description": "Provides a continuation of the study of data and its importance to analytical decision-making in business. Topics include: probability and classification, data visualization, two or more population inference, predictive modeling with simple and multiple regression analysis, business forecasting, data-mining. Emphasis on computer implementation, analysis of real data, and communication of results.",
+    "prereqText": "( MTH 141 or MTH 151 ) and ISA/STA 125."
+  },
+  "ISA 235": {
+    "description": "This course prepares students for today’s tech and data driven business world through a focus on the strategic and transformational role of information technology and data. Topics include: challenges faced by business leaders and how information technology can help meet those challenges, technology driven innovation and disruptive technologies, information ethics, and the processes and policies needed to manage technical and digital assets. The course leverages the skills learned in the prerequisite course to further develop and demonstrate data driven business problem solving using tools such as spreadsheets, data visualization, and artificial intelligence.",
+    "prereqText": "CSE 148 ."
+  },
+  "ISA 241": {
+    "description": "This course is designed to help students develop knowledge and skills related to collection, manipulation, and management of structured data in databases along with skills to access and data. The course deals with the logical and physical design of databases, entity relationship modeling, and structured language query (SQL).",
+    "prereqText": ""
+  },
+  "ISA 242": {
+    "description": "This course is designed to help students develop programming skills to access and process data. The course equips students with programming skills and tools to build and maintain business applications. Emphasis is on the use of structured techniques and using application libraries for data retrieval, logic development, and information presentation.",
+    "prereqText": ""
+  },
+  "ISA 250": {
+    "description": "Provides students with practical and applied foundational mathematics needed as background for success in data-driven decision making. Topics include sets, functions in single and multiple variables including logarithms, exponentials, and trigonometric; matrix algebra operations; introductory calculus concepts; and basic optimization principles necessary for data analysis. Introduction to applied software driven techniques is included in the course.",
+    "prereqText": "MTH 102 or MTH 121 or three years of college preparatory mathematics or permission of department chair."
+  },
+  "ISA 301": {
+    "description": "Introduces theory, concepts and applications of data communications technologies in a today’s business environment. It includes and introduction to personal, local and wide area network architectures as well as wired, wireless, and mobile technology standards employed in those architectures. The course also introduces the business issues related to network and data security and covers methodologies and technologies commonly employed to protect corporate data assets. Finally, the course explores emerging standards and other related management considerations such as cloud computing.",
+    "prereqText": "ISA 235 ."
+  },
+  "ISA 303": {
+    "description": "An introduction to enterprise systems such as enterprise resource planning (ERP), Supply Chain and customer relationship management (CRM) systems. Both managerial and technological considerations in the implementation and use of these systems within businesses will be explored in depth.",
+    "prereqText": "ISA 235 ."
+  },
+  "ISA 305": {
+    "description": "The foundations of information technology risk management, security and assurance including the principles of which managerial strategy can be formulated and technical solutions can be selected.",
+    "prereqText": "ISA 235 or equivalent; or permission of instructor."
+  },
+  "ISA 321": {
+    "description": "Students will construct and analyze prescriptive models that guide and improve business operations. Emphasis is put on optimization models that capture complex real-life settings as defined by business performance measures, limited resources and/or other requirements, and various decision types. Selected topics include linear, integer, and nonlinear programming, and network analytics. Among others, examples rooted in production management, supply chain, human labor allocation, finance and social network analysis will be covered.",
+    "prereqText": "ISA 225 ."
+  },
+  "ISA 333": {
+    "description": "Applied study of statistical techniques useful in estimating parameters of a population whose underlying distribution is unknown. Chi-square, runs, and association tests covered. CAS-QL. (For majors in the department, this course counts only toward the B.S. in Data Science and Statistics.) Co-requisite: ISA 391 or STA 363 . Cross-listed with STA.",
+    "prereqText": ""
+  },
+  "ISA 335": {
+    "description": "This course introduces blockchain, the revolutionary technology behind Bitcoin. The first part of the course is designed to provide an understanding of all the traditional components of blockchain models, including cryptographic techniques required to make transactions safe and consensus mechanisms. In the second part of the course, we shift focus to blockchain applications. The topics covered include cryptocurrencies, smart contracts, fungible and non-fungible tokens, stablecoins, DAOs, DeFi, and the metaverse.",
+    "prereqText": ""
+  },
+  "ISA 336": {
+    "description": "This course provides a comprehensive introduction to Generative AI (Gen AI) and its transformative impact on business and society. Students will gain a solid understanding of the fundamental concepts powering Gen AI, including Large Language Models (LLMs), prompt (context) engineering, and multimodality. The course explores the practical application of Gen AI tools for content creation and process automation, while also examining methods for integrating AI with external data and systems. Crucially, it addresses the significant societal and ethical issues, such as bias, misinformation, and the future of work, equipping students with the critical perspectives needed to deploy this technology responsibly. Upon completion, students will be able to strategically evaluate and apply Generative AI to drive innovation and solve real-world business problems.",
+    "prereqText": ""
+  },
+  "ISA 340": {
+    "description": "Available to Farmer School of Business (FSB) majors and minors. Available for 0 credit hour during spring, summer and fall terms. Available for 1 credit hour during summer terms only. For one hour of credit, student must secure a sponsoring FSB faculty member within his/her major or minor to supervise the internship and accompanying required internship reflection paper. ISA 340 is not available during winter term. Students are to work through their respective academic departments to enroll in the course. Credit/no credit only. Note: FSB students may earn a maximum 2 credit hours toward graduation for ACC/BLS/BUS/ECO/ESP/FIN/ISA/MGT/ MKT 340 .",
+    "prereqText": "55 earned hours and permission of department."
+  },
+  "ISA 345": {
+    "description": "Provides an understanding of the importance of database systems in organizations. The course focuses on database concepts, design methodologies, database management systems, structured query language, implementation of database systems, and data warehousing.",
+    "prereqText": "ISA 235 or ISA 211 ."
+  },
+  "ISA 365": {
+    "description": "Introduction to statistical methods for monitoring process data and data streams. Introduction to experimental design with applications in business analytics.",
+    "prereqText": "ISA 225 or STA 301 or STA 363 or equivalent."
+  },
+  "ISA 381": {
+    "description": "The course focuses on the advanced structuring, design, and development of scalable, data-driven business applications. Emphasis is placed on using structured and object-oriented programming techniques, including subroutines, functions, lambda expressions, and custom libraries, for data retrieval, logic development, and information presentation across multiple file formats (TXT, CSV, Excel, databases).",
+    "prereqText": ""
+  },
+  "ISA 387": {
+    "description": "Introduces contemporary approaches for planning, evaluating, and acquiring business software applications such as development, outsourcing, and purchase. Provides an understanding of the business and development environment, the application life cycle, methods, techniques, and tools used today. Co-requisite: ISA 345 or CSE 385 .",
+    "prereqText": ""
+  },
+  "ISA 391": {
+    "description": "Multiple regression as related to the analysis of business problems. Includes both explanatory and predictive use of regression models. Topics include statistical inference (intervals and hypothesis tests), model assumptions, model building, and model evaluation.",
+    "prereqText": "ISA 225 with a grade of C or better, or SLM 275 with a C or better."
+  },
+  "ISA 401": {
+    "description": "An introduction to the use of business intelligence and data visualization in organizations, with emphasis on how information is gathered, stored, analyzed, and used. Topics covered include business intelligence, data warehousing, data visualization, and data mining.",
+    "prereqText": "ISA 245 or ISA 345 or CSE 385 ."
+  },
+  "ISA 403": {
+    "description": "A second course in the design and development of business applications for mobile and the web. It follows the data driven business programming prerequisite ISA 281 and focuses on delivering scalable web and web based mobile applications by using client and server side technologies.",
+    "prereqText": "ISA 281 and ISA 245 or CSE 385 ."
+  },
+  "ISA 405": {
+    "description": "Introduces the broad foundational topics of information security such as threats, vulnerabilities, encryption, controls, privacy issues. An in-depth coverage of organizational security concepts such as governance, policy, risk management frameworks, business continuity planning, security compliance, ethics etc. Concepts are covered using both case studies and cyber security tools. Finally the course will explore emerging standards and managerial issues in security.",
+    "prereqText": "ISA 301 or permission of instructor."
+  },
+  "ISA 406": {
+    "description": "Information technology project management theories, techniques, and software tools are taught. Focus is on the problems and methods of conduction projects with special attention to modern information technology and software implementation projects.",
+    "prereqText": "ISA 387 or CSE 201 ."
+  },
+  "ISA 414": {
+    "description": "The course covers both theories and technologies needed to successfully extract insights from unstructured data and large-scale datasets. Upon successful completion of the course, students will be able to articulate the importance of data analytics and big data management inside organizations. Moreover, they will be able to develop big data solutions to support business decisions and new business strategies.",
+    "prereqText": "One of (ISA 281, ISA 381 , ISA 401/ISA 501 , ISA 491/ISA 591 , STA 402/STA 502 , STA 404/STA 504 ); or permission of instructor."
+  },
+  "ISA 419": {
+    "description": "Traditionally, information technology (IT) security entailed using a few tools, solutions and best practices that focused on attack prevention and protecting a company's sensitive information and network assets. However, these solutions are no longer sufficient. Businesses are transitioning to a new era, where cybersecurity is enhanced and almost requires data-driven analytical solutions. The primarily goals of data-driven security are to: a) discover malicious patterns from the data-lakes of logs produced by security software, b) develop automated tools that can assist in the surveillance of security-related data. This course covers various analytic applications in information/ cybersecurity including: user behavior analysis, network and host intrusion detection, web security, phishing detection, and emerging issues in Industrial Internet of Things (IIoT) security. The course is very applied and involves a large amount of programming to examine real datasets.",
+    "prereqText": "BUS 104 , ISA 225 and ISA 235 ."
+  },
+  "ISA 424": {
+    "description": "This course provides a broad overview of the data infrastructure needs of business for data based decision making. It discusses emerging and established technologies for storing data such as data warehouses, data lakes, nosql database systems, and cloud computing systems. The course also introduces the students to managerial issues organizations face with data.",
+    "prereqText": "ISA 245."
+  },
+  "ISA 444": {
+    "description": "Applied techniques useful in analyzing and forecasting business time series. Emphasis on Box/Jenkins methodology. Time series regression with autocorrelated errors, exponential smoothing, and classical decomposition are also discussed.",
+    "prereqText": "ECO 311 or ISA 291 or ISA 391 or STA 463/STA 563 ."
+  },
+  "ISA 480": {
+    "description": "Issues oriented seminar focused upon significant emerging topics in the business analytics field.",
+    "prereqText": "determined by professor."
+  },
+  "ISA 481": {
+    "description": "Issues oriented seminar focused upon significant emerging topics in the decision sciences field.",
+    "prereqText": "determined by professor."
+  },
+  "ISA 491": {
+    "description": "Analysis of large data sets related to business is the focus. Topics such as cluster analysis, market basket analysis, tree diagrams, logistic regression, neural nets, model evaluation and application will be presented and implemented using current data mining software.",
+    "prereqText": "ECO 311 or ISA 291 or ISA 391 or STA 463/STA 563 ."
+  },
+  "ISA 495": {
+    "description": "Includes research, reading, writing, and discussion. Independent research on a topic and company from a management information systems perspective. Respond to issues or problems raised in cases in an analytic and creative manner. Present topic report and research to class. SC.",
+    "prereqText": "Farmer School of Business core courses, senior standing."
+  },
+  "ISA 496": {
+    "description": "Provide analytics consulting to various business clients to work through and solve analytical, data driven problems. Course will utilize skills gained from previous anlaytics courses including data mining, vizsualization, modeling and data skills.",
+    "prereqText": "ISA 401/ISA 501 or ISA 491/ISA 591 ."
+  },
+  "ISA 612": {
+    "description": "This course introduces business intelligence and its supporting corporate data infrastructure. Students will learn how to retrieve, clean, manipulate and model structured data for business intelligence. Several scenarios will be introduced to illustrate the variety of techniques that may be used in preparing data for analysis. In addition, students will visualize data using sound visualization principles and build interactive dashboards that utilize multiple charts, filters, and key performance indicators, in order to explore data visually and to assess business performance at a glance.",
+    "prereqText": "Math concepts covered in ISA/STA 250."
+  },
+  "ISA 616": {
+    "description": "Bridges the study of technical and computational tools to the audiences who need the results of this work. This course will span the entire process of developing a data analytic product from consultation with a client to implementing a solution to presenting the solution to the client. This course will address the fundamentals of effectively communicating with and about quantitative analyses. Topics include using data visualization to describe data; document descriptive, predictive, and prescriptive analytical methods for reproducibility; write professional white papers and technical reports; and ethical considerations related to writing and communication with data.",
+    "prereqText": ""
+  },
+  "ISA 621": {
+    "description": "Examines existing and emerging information technology (IT) within the organization. The foci of the course are the role IT plays in business processes, the underlying theoretical basis for innovation through IT, methodologies for successful IT innovation, and infrastructure technologies commonly employed and why.",
+    "prereqText": ""
+  },
+  "ISA 628": {
+    "description": "Examines existing and emerging information technology (IT) for reinventing processes, managing and disseminating data, and consuming that data to improve decision making within the organization. The foci of the course are the role IT plays in business processes, the underlying theoretical basis for innovation through IT, infrastructure technologies commonly employed and technologies for leveraging data.",
+    "prereqText": ""
+  },
+  "ISA 629": {
+    "description": "This course introduces common technologies and techniques for data manipulation and consumption in various business processes common to most organizations. The course is integrated with and taught in conjunction with the three other domain specific courses in the Certificate in Business Management taught in the first semester of the Master's in Management. Students will learn current tools and apply common techniques to solve discipline specific problems. The course reinforces both the use of data and technology for decision making and the domain specific knowledge covered in the other courses. Prerequisite or Co-requisite: ISA 628 .",
+    "prereqText": ""
+  },
+  "ISA 630": {
+    "description": "In this course students will learn supervised and unsupervised modeling techniques using artificial intelligence and machine learning. Methods will include ensemble modeling, customized ensembles and deep learning. The course will focus on the impact and implications of these advanced techniques in business.",
+    "prereqText": "ISA 591 ."
+  },
+  "ISA 632": {
+    "description": "This course will further develop students’ big data and AI skills for advanced data analytics tasks. We will introduce advanced operations and functions in in-memory cluster computing and non-relational storage solutions, and investigate how to integrate various data sources into a data lake. We will also discuss how data governance can help to improve the management and quality of big data. Moreover, we will examine advanced analytics functions enabled by in-memory cluster computing, such as distributed machine learning, real-time analytics on streaming data, and large-scale social network analysis. Following that, we will cover data-driven modern AI technologies, such as natural language processing, speech recognition, image processing and dialog generation. Those topics will be taught in an applied way, without focusing too much on the theory.",
+    "prereqText": "ISA 514 ."
+  },
+  "ISA 633": {
+    "description": "This course will cover methods to discover causal relationships in a business context. Students will study statistical techniques in business experimentation including A/B testing and more complex business experiments. Students will learn techniques in causal inference modeling for situations where experimentation is not feasible.",
+    "prereqText": ""
+  },
+  "ISA 634": {
+    "description": "This course offers a comprehensive exploration into several methods for designing and optimizing complex systems and complex decision processes. Students will learn the intricacies of creating mathematical programming models tailored to real-world scenarios, considering business metrics, resource constraints, and diverse decision-making contexts. Focus will also be put on modeling systems using networks, along with corresponding analysis tools rooted in graph theoretic methods. Throughout the course, students will gain insights into prescriptive analytics, network science, and complexity analysis, equipping them with skills applicable across various domains. Among others, practical examples from production management, supply chain dynamics, human resource allocation, financial modeling, and social network analysis will be used to demonstrate theoretical concepts and a wide range of applications.",
+    "prereqText": ""
+  },
+  "ISA 641": {
+    "description": "This course introduces the current, basic tools and methods of data driven decision making. Included in the course will be introduction to programming using open source software. Students will learn to apply basic programming concepts to summarize and visualize data as well as cursory data discovery.",
+    "prereqText": ""
+  },
+  "ISA 645": {
+    "description": "Business decisions have always been rooted in data. However, over the past decade more and more data has become available to marketers. This course details the analysis measures and methods used by leading organizations to make more precise business decisions in the 21st century. Cross-listed with BUS 645 .",
+    "prereqText": ""
+  },
+  "ISA 650": {
+    "description": "The graduate level Business Analytics Practicum is an immersive, project-based, experiential course intended to draw on skills and knowledge gained in courses throughout the MS in Business Analytics program. Students will be immersed in a semester long data driven problem solving project that requires the selection and application of appropriate skills, tools and methodologies covered in the MSBA program to address the problem at hand and appropriately communicate findings to multiple audiences.",
+    "prereqText": "Completion of the 12 hours of coursework in the Graduate Certificate in Analytics."
+  },
+  "MGT 111": {
+    "description": "Study of relationships between business and its environment, social responsibilities of business, and business management. Not open to business students.",
+    "prereqText": ""
+  },
+  "MGT 291": {
+    "description": "Introduction to the importance of investing in human capital. Students are introduced to the theories and practices of how to attract, develop, and retain a competitive workforce. The goal of this course is to help students better understand, predict, and manage themselves and their work relations with others and with organizations, and to understand how organizations utilize this knowledge to design competitive management practices.",
+    "prereqText": "sophomore standing."
+  },
+  "MGT 295": {
+    "description": "Identification, understanding, analysis, application, and measurement of basic issues encountered in the creation of goods and services for a given firm as well as the strategic and tactical relationships between firms that participate in an effective supply chain. Problems are examined through the use of cases, lectures, discussions, and computer-based approaches such as simulation, spreadsheets, and problem-solving software.",
+    "prereqText": "STA/ ISA 125 , STA 261 , or STA 301 ."
+  },
+  "MGT 303": {
+    "description": "Introduction to concepts, issues, and practices of modern human resource management and their impact on organizational effectiveness. Students develop a critical appreciation of the role human resource management plays in the dynamic environment in which organizations operate. Topics covered include human resource planning, recruitment, selection, training and career development, performance appraisal, compensation and benefits, employee and labor relations, and employee rights.",
+    "prereqText": ""
+  },
+  "MGT 304": {
+    "description": "As diversity in workplaces increases and the network of globalized operations expands, managers need increased multicultural competency to effectively address associated issues, challenges, and opportunities. This course explores how to improve diversity, equity, and inclusion (DEI) in the workplace and manage effectively in an intercultural environment. MGT304 is designed to increase intercultural conciseness and help students develop a better understanding of self and others in a multilingual and multicultural world. PA-4B.",
+    "prereqText": "MGT 291 or MGT 211."
+  },
+  "MGT 402": {
+    "description": "Examines the growing body of law that governs the employment relationship. Students learn the rights and responsibilities of employers and employees by reading and discussing judicial decisions. Aims at improving students' ability to analyze legal questions and to identify the applications of the law for the practice of human resource management.",
+    "prereqText": ""
+  },
+  "MGT 404": {
+    "description": "Explores design and evaluation of compensation programs that attract, retain, and motivate competent employees. Particular emphasis on job evaluation, performance appraisal, incentive wage systems, supplementary benefits, and international compensation.",
+    "prereqText": "MGT 303 or permission of instructor."
+  },
+  "MGT 405": {
+    "description": "Examines collective bargaining, employee involvement, organizational dispute resolution systems, and other means of ensuring participation and fair treatment in the workplace. Emphasis is given to understanding and practicing techniques for managing workplace conflicts, including mediation, negotiation, and arbitration.",
+    "prereqText": "MGT 303 or permission of instructor."
+  },
+  "MGT 406": {
+    "description": "Provides an in-depth exploration of the components of successful talent acquisition and development programs including demand and organizational needs forecasting, internal and external recruitment strategies, selection tools, training program design, and other employee development strategies. Emphasizes creating comprehensive talent aquisition and development programs that align with organizational goals, mission, and strategy.",
+    "prereqText": "MGT 291 or MGT 211; and MGT 303 ."
+  },
+  "MGT 414": {
+    "description": "In-depth examination of concepts, principles, and theories of motivation and their relationship to work behavior and work contexts. Historical and current perspectives are explored, emphasizing integration and application.",
+    "prereqText": "MGT 291 or MGT 211."
+  },
+  "MGT 415": {
+    "description": "Investigates current leadership thinking and behavior in formal organizations as well as its relationship to power and decision-making in those settings. Emphasis on exploring theory, research, and applications of leadership in order to develop personal guidelines for exercising leadership in organizations. Impact of power and dependence of both leaders and followers is investigated as well as the particular relationship of leadership to decision-making in organizations.",
+    "prereqText": "MGT 291 or MGT 211."
+  },
+  "MGT 416": {
+    "description": "Offers in-depth study of behavioral topics critical for success of contemporary organizations, including organizational theory, organizational design, organizational change and development, organizational culture, job stress, organizational conflict, and group dynamics. Extensive in-depth readings into selected topics and a major project form the basis of the course.",
+    "prereqText": "MGT 291 or MGT 211."
+  },
+  "MGT 418": {
+    "description": "Students will gain a broad understanding of contemporary issues related to environment, sustainability and governance in business. This class will provide a foundational understanding of social and environmental responsibility, the circular economy, Science Based Targets and GHG emissions Scopes. It will explore how companies, individuals, NGOs, supply chains and government activities in ESG across a wide range of business processes.",
+    "prereqText": "MGT 295 ."
+  },
+  "MGT 431": {
+    "description": "Develops a framework for understanding all the firm's movement-storage activities necessary to provide products to customers where and when they are desired. Transportation, warehousing, inventory, order-processing, and handling activities are investigated in terms of their impact on customer service and total distribution cost.",
+    "prereqText": "MGT 295 ."
+  },
+  "MGT 432": {
+    "description": "Provides an overview of the corporate sourcing function. Emphasis is on outsourcing analysis, sourcing strategies and supplier selection, strategic cost analysis, negotiations and assessments of supplier and sourcing department performance.",
+    "prereqText": "MGT 295 ."
+  },
+  "MGT 451": {
+    "description": "Problems and solution methodologies associated with planning and scheduling of operations in a production or service environment. Graduate credit not available for Farmer Business School students.",
+    "prereqText": "MGT 295 or equivalent or permission of instructor."
+  },
+  "MGT 453": {
+    "description": "Study of techniques used to improve productivity of organizational resources. Topics include employee involvement, total quality management, group technology, cellular manufacturing, supplier development, and preventive maintenance.",
+    "prereqText": "MGT 295 or equivalent or permission of instructor."
+  },
+  "MGT 474": {
+    "description": "Students will learn how to measure various aspects of an organization's human capital using a variety of tools enabling them to quantify the effect of human capital on organizational performance.",
+    "prereqText": "MGT 291 , MGT 303 ."
+  },
+  "MGT 490": {
+    "description": "Issues oriented seminar for seniors or graduate students; focuses on a significant contemporary topic in the management field.",
+    "prereqText": "senior or graduate standing and permission of instructor."
+  },
+  "MGT 495": {
+    "description": "Provides opportunity for students, at or near the conclusion of their undergraduate business curriculum, to integrate the concepts learned in the core courses and to bring together various disciplines to bear on the strategic issues facing any organization. Business problems are examined that simultaneously involve several functional areas, employ analysis methodologies from a variety of courses in marketing, organizational behavior, finance, accounting, statistics, law, operations and economics, and involve consequences that effect the entire organization. SC.",
+    "prereqText": "FIN 301 , MGT 291 , MGT 295 , MKT 291 , senior standing, or permission of instructor."
+  },
+  "MGT 498": {
+    "description": "Provides students with broad understanding of supply chain management. Covers primary activities required to manage supply chains effectively, how members of the supply chain are horizontally integrated, and processes for assessing performance and impact of supply chain management activities. Focuses on relationships between supply chain entities and behavioral issues that influence management of those issues. Students learn integrative tools for analyzing and evaluating alternative courses of action regarding supply chain management activities and functions.",
+    "prereqText": "MGT 432 and MGT 431 ."
+  },
+  "MKT 211": {
+    "description": "A business concepts course for students in majors and minors outside of the Farmer School of Business. The course content has been specifically designed to focus on critical areas of the customers' experiences in and with organizations. Concepts from courses in Consumer Behavior, Service Delivery, and Personal Selling will be used to examine the Customer Engagement Process. The course will be taught in three modules.",
+    "prereqText": ""
+  },
+  "MKT 291": {
+    "description": "Introduction to the principles of marketing and strategic decision-making. Emphasizes understanding customer needs, market segmentation, targeting, positioning, and the marketing mix, including product development, pricing, promotion, and distribution. Students will explore data-driven decision-making using market research, analytics, and marketing technologies, applying strategic decision-making in domestic and international markets. Prerequisite or Co-requisite: ECO 201 .",
+    "prereqText": ""
+  },
+  "MKT 315": {
+    "description": "A fundamental aspect of business is selling – whether it is an idea, product, service, or point of view. This course focuses on the role of personal selling and customer relationship management in business, including how salespeople carry out their boundary spanning responsibilities to their organization and customers.",
+    "prereqText": "MKT 291 , MKT 211 , or permission of the instructor."
+  },
+  "MKT 325": {
+    "description": "Successful marketers need to (a) understand their customers’ needs, motivations, attitudes, decision-making, and behaviors, and (b) use their understanding to generate insights that drive marketing strategies. This course is designed to help students develop an understanding of the skills, processes, and concepts necessary to generate meaningful and actionable customer insights. Students will gain hands-on experience with insight development techniques and learn to translate generated insights into actionable marketing recommendations.",
+    "prereqText": "MKT 291 ."
+  },
+  "MKT 335": {
+    "description": "Marketing in today’s environment with numerous large and real-time data sets requires new analytic skills. This class focuses on analytical research methods utilized by marketers to better understand the markets in which they compete; the categories, competition, channels and consumers that comprise their risks and growth opportunities. Students will be equipped to move at the speed of data availability, address complexity and ambiguities in information, quickly respond with research analyses and develop actionable conclusions with recommendations.",
+    "prereqText": "MKT 291 , ISA 125 or STA 125 or STA 261 or STA 301 ."
+  },
+  "MKT 345": {
+    "description": "This course is designed to teach students how to build and manage seamless brand experiences in an increasingly complex media environment. It provides students with conceptual frameworks and specific skills relevant to branding and brand management. Students will learn how to measure brand value, how to manage social media platforms, how to create branding synergistic effects through integration of traditional and digital media, and how to measure and optimize branding efforts.",
+    "prereqText": "MKT 291 , MKT 325 ."
+  },
+  "MKT 395": {
+    "description": "Strong strategic thinking skills are needed to effectively set goals, analyze the marketing and external environment, anticipate the unexpected, and develop long-range plans. This course will enhance students’ ability to think strategically, use creative thinking and processes to approach marketing problems and opportunities from multiple perspectives, employ strategic decision-making frameworks, tools, and capabilities to solve complex marketing challenges, and communicate strategic decisions and rationale to stakeholders.",
+    "prereqText": "MKT 291 , MKT 325 , MKT 335 ."
+  },
+  "MKT 412": {
+    "description": "The goal of this course is to provide an overview of the role of sustainability in marketing strategy. We use the triple bottom line perspective to cast sustainability as the simultaneous pursuit of financial, social/relational, and environmental performance. The course provides an assessment of current efforts to pursue sustainability with a primary focus on the interaction of the marketing organization with the environment. In the process, we investigate the interaction between consumption and the physical environment. We examine specific marketing tactics employed by firms seeking to maximize triple bottom line performance. We subsequently address consumption processes in the household, industrial, services, and transportation sectors of the economy.",
+    "prereqText": "MKT 291 ."
+  },
+  "MKT 415": {
+    "description": "Introduces the nature and functions of marketing between businesses and business/government in terms of structure, buyer behavior, processes, supply chain management, information flows and the marketing mix.",
+    "prereqText": "MKT 291 ."
+  },
+  "MKT 453": {
+    "description": "Highwire Brand Studio is a senior capstone practicum where students from communication design, marketing, and other relevant majors create comprehensive, professional-grade branding campaigns and solutions for real-world clients. Working in multidisciplinary teams, students apply and integrate primary research, market analysis, strategic planning, and creative execution using industry tools and methods. Teams compete to deliver the most effective campaign, with deliverables typically including brand positioning, visual identity, promotional programs, merchandising, social media strategies, and packaging design. The course culminates in formal client presentations, with many partner organizations implementing the students' recommendations. This course provides students with authentic agency experience while delivering actionable solutions that clients often incorporate into their marketing efforts. Students develop skills in teamwork, leadership, written and oral communication, critical and creative thinking, and both quantitative and qualitative analysis. Partner clients, including major brands like P&G, Nestlé, Pepsi, and Hasbro, engage with Highwire to gain fresh perspectives from Miami's top students. SC.",
+    "prereqText": "ART 352 or MKT 345 or permission of instructor."
+  },
+  "MKT 461": {
+    "description": "Survey of retail management issues impacting effective last mile customer service in contemporary product and service retailing; includes topics such as retail channels, retail mix, retail market strategy, financial strategy, ethics, location, trading area and site analysis, store design/environment, visual merchandising, merchandise assortments and budgets, and store operations.",
+    "prereqText": "MKT 291 ."
+  },
+  "MKT 475": {
+    "description": "The Healthcare Sales course is specifically designed for students enrolled in the Healthcare Sales Certificate Program. The course focused on the healthcare environment, the multiple stakeholders that salespeople must interact with, the complexity associated with selling to large healthcare systems, and the regulatory and legal environments in which salespeople must operate in these systems. Open only to students in the Healthcare Sales Certificate Program.",
+    "prereqText": "MKT 315 ."
+  },
+  "MKT 490": {
+    "description": "This course focuses on a significant emerging topic in the marketing field. The course itself may take the form of a lecture, seminar, practicum, or individual study depending on the topic.",
+    "prereqText": "MKT 291 or permission of instructor."
+  },
+  "MKT 495": {
+    "description": "This marketing strategy practicum will provide students an opportunity to integrate and apply marketing planning and strategic concepts to real-world problems while developing skills in teamwork, written and oral communication, critical thinking, and quantitative and qualitative analysis. EL.",
+    "prereqText": "MKT 291 , MGT 291 , and FIN 301 ."
+  },
+  "MTH 141": {
+    "description": "Service course. Limits and continuity, derivatives, graphing and optimization, exponential and logarithmic functions, integration, applications to problems arising in business. Credit not awarded for both MTH 141 and MTH 151 . V. PA-1A. CAS-E.",
+    "prereqText": "An ACT Math Score of at least 24, or an SAT Math score of at least 580, or Miami Math Placement Test score of at least 12, or MTH 122 (College Algebra) with a C- or better, or MTH 125 (Precalculus) with a C- or better."
+  },
+  "MTH 151": {
+    "description": "Topics include limits and continuity, derivatives and their applications, and early integration techniques of polynomial, rational, radical, trigonometric, inverse trigonometric, exponential, and logarithmic functions. It is expected that students have completed a trigonometry or pre-calculus course and possess the following pre-requisite knowledge: factoring polynomials, working with fractional exponents, finding the domain of functions, properties of common functions such as polynomial, absolute value, exponential, logarithmic, trigonometric, and rational functions, solving a variety of types of equations, inverse functions, graphing, and other related topics. Credit is not awarded for both MTH 141 and MTH 151 . V. PA-1A. CAS-E.",
+    "prereqText": "A grade of C- or better in MTH 124 or in MTH 125 , or an ACT Math score of at least 27, or an SAT Math score of at least 640, or score of at least 17 on the Miami Math Placement Test."
+  },
+  "MTH 249": {
+    "description": "This course is for first-year students only and intended for students who have earned credit for MTH 151 either through the AP exam by scoring a 4 or above or through a College Credit Plus opportunity with a grade of B or better. The course includes the content of Calculus II and some review of fundamental concepts of MTH 151 . Topics include plane analytic geometry, techniques of integration, parametric equations, polar coordinates, infinite series, approximations, applications. Admission to the honors course requires honors standing or permission of the instructor. Credit not awarded for both MTH 249 and MTH 251 . V. PA-1A. CAS-E.",
+    "prereqText": "Grade of B or better in MTH 151 ; if credit earned through the AP exam, a score of 4 or above."
+  },
+  "MTH 251": {
+    "description": "Continuation of Calculus I. Plane analytic geometry, techniques of integration, parametric equations, polar coordinates, infinite series, approximations, applications. Credit not awarded for both MTH 249 and 251 . PA-1A. CAS-E.",
+    "prereqText": "a grade of C or better in MTH 151 ."
+  },
+  "POL 437": {
+    "description": "Introduces the student to the legal issues surrounding e-commerce and cyberspace. Will develop awareness as to how the internet functions; the legal restrictions and limitations placed upon providers of internet service and those who do business on the internet; also explores issues raised in the area of intellectual property and information privacy.",
+    "prereqText": ""
+  },
+  "PSY 376": {
+    "description": "An exploration of the psychology of human judgment and decision making (JDM) and reasoning: what it means to interpret, evaluate, make inferences about and otherwise judge aspects of our world to make decisions and solve problems from the momentous to the mundane. Students participating in this seminar will develop a deep appreciation of central questions that have driven the field (e.g., the nature of rationality); the theories and methods used to tackle these questions; and the role of internal and external influences on how we make decisions and act upon them to achieve our goals.",
+    "prereqText": ""
+  },
+  "SOC 225": {
+    "description": "Introduction to the study of work, with an emphasis on the occupational structure, professions and professional powers, the employment relationship, and the institutional context in which work is done.",
+    "prereqText": ""
+  },
+  "SOC 454": {
+    "description": "Sociological analysis of complex organizations. Topics include theories, types of organizations, basic characteristics of organizations, organizational change and conflict, interactions with environments, and research in organizations.",
+    "prereqText": "SOC 151 or SOC 153 ; ORG 153 ; or SOC/ SJS 165 ."
+  },
+  "STA 402": {
+    "description": "Introduction to the use of computers to process and analyze data. Techniques and strategies for managing, manipulating, and analyzing data are discussed. Emphasis is on the use of the SAS system. Statistical computing topics, such as random number generation, randomization tests, and Monte Carlo simulation, will be used to illustrate these programming ideas.",
+    "prereqText": "A grade of C or better in ISA 391 or ISA/ STA 333 or STA 363 or STA 463/STA 563 or STA 672 ; or STA graduate standing."
+  },
+  "STA 404": {
+    "description": "Communicating clearly, efficiently, and in a visually compelling manner using data displays. Identifying appropriate displays based on various data characteristics/complexity, audiences, and goals. Using software to produce data displays. Integrating narratives and data displays. Critiquing visualizations based on design principles, statistical characteristics, and narrative quality. CAS-QL.",
+    "prereqText": "A grade of C or better in ISA 391 or ISA/ STA 333 or STA 363 or STA 463/STA 563 or STA 672 ; or STA Graduate Standing."
+  },
+  "STA 432": {
+    "description": "Survey sampling with applications to problems of business research. Simple random sampling, systematic sampling, stratified random sampling, ratio estimation, and cluster sampling. (For majors in the department, this course counts only toward B.S. in statistics.)",
+    "prereqText": "ECO 301 , ISA 305 , STA 363 , STA 401/STA 501 or STA 463/STA 563 or permission of instructor."
+  },
+  "STA 463": {
+    "description": "Linear regression model, theory of least squares, statistical inference procedures, general linear hypothesis, partial F tests, residual analysis, regression diagnostics, comparison of several regressions, model adequacy, and use of statistical computer packages.",
+    "prereqText": "MTH 222 with a grade of C or better and STA 363 with a grade of C or better and STA 401/STA 501 with a grade of C or better."
+  }
+}

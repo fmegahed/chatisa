@@ -535,7 +535,7 @@ function mockObjectFor(options: LanguageModelV4CallOptions): string {
     const prompt = promptText(options);
     const slugs = [...prompt.matchAll(/^Project slug: (\S+)$/gm)].map((m) => m[1]);
     const codes = [
-      ...(/Courses taken:\n([\s\S]*?)(?:\n\n|$)/.exec(prompt)?.[1] ?? "").matchAll(
+      ...(/Courses (?:completed|in progress[^:]*):\n([\s\S]*?)(?:\n\n|$)/.exec(prompt)?.[1] ?? "").matchAll(
         /^([^:\n]+):/gm,
       ),
     ].map((m) => m[1].trim());

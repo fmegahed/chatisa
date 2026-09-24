@@ -4,6 +4,15 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.7.0 - September 24, 2026
+
+**Job Scout and the Portfolio Builder cover the whole FSB: a major-first
+course checklist with automatic prerequisites, 30 business skills capped
+by course level, and a catalog that refreshes itself three times a year
+through a reviewed pull request.** Full notes: `docs/releases/v6.7.0.md`.
+
+---
+
 ## v6.6.1 - September 23, 2026
 
 **Portfolio Builder: no empty course labels on published pages, typed

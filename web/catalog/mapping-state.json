@@ -1,0 +1,642 @@
+{
+  "ACC 221": {
+    "fingerprint": "0860c60388d02848",
+    "status": "agreed"
+  },
+  "ACC 222": {
+    "fingerprint": "fc909fd4e6be916c",
+    "status": "agreed"
+  },
+  "ACC 256": {
+    "fingerprint": "7b4aeae5f25e3479",
+    "status": "resolved"
+  },
+  "ACC 321": {
+    "fingerprint": "83e7016d2d8c8ebd",
+    "status": "agreed"
+  },
+  "ACC 333": {
+    "fingerprint": "b442ca6e86f844ce",
+    "status": "agreed"
+  },
+  "ACC 343": {
+    "fingerprint": "e31b573e179f8561",
+    "status": "agreed"
+  },
+  "ACC 361": {
+    "fingerprint": "1feb7093bae8a12b",
+    "status": "agreed"
+  },
+  "ACC 422": {
+    "fingerprint": "6c1ce2576cb690c9",
+    "status": "agreed"
+  },
+  "ACC 453": {
+    "fingerprint": "1443e3a8d1d6bac0",
+    "status": "agreed"
+  },
+  "ACC 468": {
+    "fingerprint": "1806998e32c7dcda",
+    "status": "agreed"
+  },
+  "ACC 495": {
+    "fingerprint": "1661e3bb73c1d587",
+    "status": "agreed"
+  },
+  "BLS 342": {
+    "fingerprint": "008ee1b299851958",
+    "status": "agreed"
+  },
+  "BLS 443": {
+    "fingerprint": "c39ea851caefb8c8",
+    "status": "agreed"
+  },
+  "BLS 465": {
+    "fingerprint": "f3cd9d6734580d5f",
+    "status": "agreed"
+  },
+  "BUS 101": {
+    "fingerprint": "048fe6073b007d7a",
+    "status": "agreed"
+  },
+  "BUS 102": {
+    "fingerprint": "363f7c77acab495e",
+    "status": "agreed"
+  },
+  "BUS 104": {
+    "fingerprint": "0e986615584cce64",
+    "status": "agreed"
+  },
+  "BUS 217": {
+    "fingerprint": "2d0e37c76a733aab",
+    "status": "agreed"
+  },
+  "BUS 284": {
+    "fingerprint": "1a1c5aeae3286e9a",
+    "status": "agreed"
+  },
+  "CSE 148": {
+    "fingerprint": "37e264219013fc3f",
+    "status": "agreed"
+  },
+  "CSE 271": {
+    "fingerprint": "e072a05a82142adb",
+    "status": "agreed"
+  },
+  "ECO 201": {
+    "fingerprint": "d88333109db3467f",
+    "status": "agreed"
+  },
+  "ECO 202": {
+    "fingerprint": "586a8b25a1be6d11",
+    "status": "agreed"
+  },
+  "ECO 301": {
+    "fingerprint": "2c532e1183c854f3",
+    "status": "agreed"
+  },
+  "ECO 311": {
+    "fingerprint": "9a32d10b306a5b0c",
+    "status": "agreed"
+  },
+  "ECO 315": {
+    "fingerprint": "f70a1ee738039b96",
+    "status": "agreed"
+  },
+  "ECO 317": {
+    "fingerprint": "b1dcaf930ce7c71f",
+    "status": "agreed"
+  },
+  "ECO 409": {
+    "fingerprint": "b06bf5444492d6c4",
+    "status": "agreed"
+  },
+  "ECO 411": {
+    "fingerprint": "a290d4cfdc4922c8",
+    "status": "agreed"
+  },
+  "ESP 101": {
+    "fingerprint": "2430d9a11b85b5d1",
+    "status": "agreed"
+  },
+  "ESP 102": {
+    "fingerprint": "c9842a234775741e",
+    "status": "agreed"
+  },
+  "ESP 103": {
+    "fingerprint": "7d7733f1d2a1da0d",
+    "status": "agreed"
+  },
+  "ESP 201": {
+    "fingerprint": "d307efd6cdde55ab",
+    "status": "agreed"
+  },
+  "ESP 251": {
+    "fingerprint": "dfdbdb76ff3dcf17",
+    "status": "agreed"
+  },
+  "ESP 252": {
+    "fingerprint": "f5bb2928705e30e9",
+    "status": "agreed"
+  },
+  "ESP 321": {
+    "fingerprint": "1191ce668f84988a",
+    "status": "agreed"
+  },
+  "ESP 331": {
+    "fingerprint": "a09c76741074831e",
+    "status": "agreed"
+  },
+  "ESP 341": {
+    "fingerprint": "a10fbe5c74a242db",
+    "status": "agreed"
+  },
+  "ESP 351": {
+    "fingerprint": "555de2f96ca55fef",
+    "status": "agreed"
+  },
+  "ESP 361": {
+    "fingerprint": "5e27a95c5ffbe06a",
+    "status": "agreed"
+  },
+  "ESP 394": {
+    "fingerprint": "0b593d2532d1d6e8",
+    "status": "agreed"
+  },
+  "ESP 401": {
+    "fingerprint": "67e490722c59e56d",
+    "status": "agreed"
+  },
+  "ESP 444": {
+    "fingerprint": "c1a3054e8f6732f6",
+    "status": "agreed"
+  },
+  "ESP 461": {
+    "fingerprint": "b518e4402d16ced6",
+    "status": "agreed"
+  },
+  "ESP 481": {
+    "fingerprint": "3290918ae827eacc",
+    "status": "agreed"
+  },
+  "FIN 301": {
+    "fingerprint": "fde6325e2f13695e",
+    "status": "agreed"
+  },
+  "FIN 311": {
+    "fingerprint": "2a1fc1568832d42a",
+    "status": "agreed"
+  },
+  "FIN 320": {
+    "fingerprint": "cf3489137a16877f",
+    "status": "agreed"
+  },
+  "FIN 331": {
+    "fingerprint": "8e27cac0ef305f2d",
+    "status": "agreed"
+  },
+  "FIN 361": {
+    "fingerprint": "31ec45d7d49967ce",
+    "status": "agreed"
+  },
+  "FIN 381": {
+    "fingerprint": "15aeaa5b4d4c639a",
+    "status": "agreed"
+  },
+  "FIN 401": {
+    "fingerprint": "8fc92f1e1cad3f18",
+    "status": "agreed"
+  },
+  "FIN 402": {
+    "fingerprint": "2d486611b01fa253",
+    "status": "agreed"
+  },
+  "FIN 403": {
+    "fingerprint": "b93c31339703b221",
+    "status": "agreed"
+  },
+  "FIN 404": {
+    "fingerprint": "bac5ea49fe9b1694",
+    "status": "agreed"
+  },
+  "FIN 408": {
+    "fingerprint": "789cc900aab837c8",
+    "status": "agreed"
+  },
+  "FIN 417": {
+    "fingerprint": "531b324012ceaccb",
+    "status": "agreed"
+  },
+  "FIN 431": {
+    "fingerprint": "9220a9123ebb1608",
+    "status": "agreed"
+  },
+  "FIN 455": {
+    "fingerprint": "d2387d59097be31e",
+    "status": "agreed"
+  },
+  "FIN 461": {
+    "fingerprint": "21b4d59c7f759d19",
+    "status": "agreed"
+  },
+  "FIN 475": {
+    "fingerprint": "9fae1d71615ea0fa",
+    "status": "agreed"
+  },
+  "FIN 481": {
+    "fingerprint": "c75a1c254eb1ed20",
+    "status": "agreed"
+  },
+  "FIN 482": {
+    "fingerprint": "269f12e149234fed",
+    "status": "agreed"
+  },
+  "FIN 485": {
+    "fingerprint": "49170ed94e7142c8",
+    "status": "agreed"
+  },
+  "GEO 441": {
+    "fingerprint": "c2e92969ccbfb930",
+    "status": "agreed"
+  },
+  "GEO 442": {
+    "fingerprint": "e74ae8dcf8990a7a",
+    "status": "resolved"
+  },
+  "GEO 451": {
+    "fingerprint": "6009b8e36aaebf54",
+    "status": "resolved"
+  },
+  "GEO 454": {
+    "fingerprint": "2e69844e0b8d92a3",
+    "status": "resolved"
+  },
+  "GEO 459": {
+    "fingerprint": "a3d3356179334c9f",
+    "status": "resolved"
+  },
+  "IMS 392": {
+    "fingerprint": "808058c5fb3a6f31",
+    "status": "agreed"
+  },
+  "IMS 418": {
+    "fingerprint": "f7d7c9ccdcea6564",
+    "status": "agreed"
+  },
+  "IMS 419": {
+    "fingerprint": "17d82c2afd02b91b",
+    "status": "agreed"
+  },
+  "IMS 440": {
+    "fingerprint": "298048e92fd6ad4e",
+    "status": "agreed"
+  },
+  "ISA 125": {
+    "fingerprint": "e1494c3d9989f93c",
+    "status": "resolved"
+  },
+  "ISA 211": {
+    "fingerprint": "1fc50981954c9933",
+    "status": "agreed"
+  },
+  "ISA 225": {
+    "fingerprint": "b20add7dc2428e04",
+    "status": "resolved"
+  },
+  "ISA 235": {
+    "fingerprint": "d0cd7b6271e1e15e",
+    "status": "resolved"
+  },
+  "ISA 241": {
+    "fingerprint": "6f7bc51e8c7a8646",
+    "status": "resolved"
+  },
+  "ISA 242": {
+    "fingerprint": "c7e0499ea579942b",
+    "status": "agreed"
+  },
+  "ISA 250": {
+    "fingerprint": "ba38a740d15cba2b",
+    "status": "agreed"
+  },
+  "ISA 301": {
+    "fingerprint": "cea9e0ab4ca283af",
+    "status": "resolved"
+  },
+  "ISA 303": {
+    "fingerprint": "5eaca4c1db725fa0",
+    "status": "resolved"
+  },
+  "ISA 305": {
+    "fingerprint": "dac7e46ecc2e3003",
+    "status": "resolved"
+  },
+  "ISA 321": {
+    "fingerprint": "61a5e3b4df3cad0b",
+    "status": "resolved"
+  },
+  "ISA 333": {
+    "fingerprint": "6bee9f407d57c8f7",
+    "status": "resolved"
+  },
+  "ISA 335": {
+    "fingerprint": "d813c4ee5b5271a6",
+    "status": "resolved"
+  },
+  "ISA 336": {
+    "fingerprint": "225213ea12eb91e1",
+    "status": "resolved"
+  },
+  "ISA 345": {
+    "fingerprint": "f84d58cd8ee9af57",
+    "status": "resolved"
+  },
+  "ISA 365": {
+    "fingerprint": "05b5c0fe9af3ce2c",
+    "status": "resolved"
+  },
+  "ISA 381": {
+    "fingerprint": "4ab61f68b6ea52f8",
+    "status": "agreed"
+  },
+  "ISA 387": {
+    "fingerprint": "e0e63486be82e698",
+    "status": "resolved"
+  },
+  "ISA 391": {
+    "fingerprint": "7bcee053a5443875",
+    "status": "resolved"
+  },
+  "ISA 401": {
+    "fingerprint": "ae5a77f1ab9412a9",
+    "status": "resolved"
+  },
+  "ISA 403": {
+    "fingerprint": "5919381fd73216b1",
+    "status": "resolved"
+  },
+  "ISA 405": {
+    "fingerprint": "19c073f3106cdf68",
+    "status": "resolved"
+  },
+  "ISA 406": {
+    "fingerprint": "af8049cf61eb193b",
+    "status": "agreed"
+  },
+  "ISA 414": {
+    "fingerprint": "f491308e36b43e0f",
+    "status": "agreed"
+  },
+  "ISA 419": {
+    "fingerprint": "7ad33465184b0ff8",
+    "status": "resolved"
+  },
+  "ISA 424": {
+    "fingerprint": "2de4441f454f90ae",
+    "status": "resolved"
+  },
+  "ISA 444": {
+    "fingerprint": "f88b8374c8abcc02",
+    "status": "agreed"
+  },
+  "ISA 491": {
+    "fingerprint": "20ae0b8f3bef1344",
+    "status": "resolved"
+  },
+  "ISA 495": {
+    "fingerprint": "aef401037cf8e7de",
+    "status": "agreed"
+  },
+  "ISA 496": {
+    "fingerprint": "f2145fabe0089efc",
+    "status": "resolved"
+  },
+  "ISA 612": {
+    "fingerprint": "3c59405297217842",
+    "status": "agreed"
+  },
+  "ISA 616": {
+    "fingerprint": "1c44174da9a04681",
+    "status": "resolved"
+  },
+  "ISA 621": {
+    "fingerprint": "866b4041d7aecbd7",
+    "status": "resolved"
+  },
+  "ISA 628": {
+    "fingerprint": "d9571a9ecd894824",
+    "status": "agreed"
+  },
+  "ISA 629": {
+    "fingerprint": "d15907486cd35f8d",
+    "status": "resolved"
+  },
+  "ISA 630": {
+    "fingerprint": "ca1fccad3bd7b7de",
+    "status": "resolved"
+  },
+  "ISA 632": {
+    "fingerprint": "da067c54a980f3d7",
+    "status": "resolved"
+  },
+  "ISA 633": {
+    "fingerprint": "7b64765f46487e75",
+    "status": "resolved"
+  },
+  "ISA 634": {
+    "fingerprint": "95adb4dfd97e77ae",
+    "status": "resolved"
+  },
+  "ISA 641": {
+    "fingerprint": "5b77c2f5c7bd1b15",
+    "status": "resolved"
+  },
+  "ISA 645": {
+    "fingerprint": "c95edf68dc302cb9",
+    "status": "resolved"
+  },
+  "ISA 650": {
+    "fingerprint": "128864764e939710",
+    "status": "resolved"
+  },
+  "MGT 111": {
+    "fingerprint": "e9259d2222008f62",
+    "status": "agreed"
+  },
+  "MGT 291": {
+    "fingerprint": "321fab12843b943f",
+    "status": "agreed"
+  },
+  "MGT 295": {
+    "fingerprint": "7cb41e9a4c30c326",
+    "status": "agreed"
+  },
+  "MGT 303": {
+    "fingerprint": "ef7b5c9a20fa3332",
+    "status": "agreed"
+  },
+  "MGT 304": {
+    "fingerprint": "d22e2dda2ad17ab0",
+    "status": "agreed"
+  },
+  "MGT 402": {
+    "fingerprint": "6b655477acc97731",
+    "status": "agreed"
+  },
+  "MGT 404": {
+    "fingerprint": "4fc46aee8f389102",
+    "status": "agreed"
+  },
+  "MGT 405": {
+    "fingerprint": "5f599b493b787500",
+    "status": "agreed"
+  },
+  "MGT 406": {
+    "fingerprint": "b8636e6faca3020b",
+    "status": "agreed"
+  },
+  "MGT 414": {
+    "fingerprint": "6cc0c2217b4490bc",
+    "status": "agreed"
+  },
+  "MGT 415": {
+    "fingerprint": "d790122393f5a1a6",
+    "status": "agreed"
+  },
+  "MGT 416": {
+    "fingerprint": "bb83b166e90e8e1f",
+    "status": "agreed"
+  },
+  "MGT 418": {
+    "fingerprint": "3a56dea3870b570d",
+    "status": "agreed"
+  },
+  "MGT 431": {
+    "fingerprint": "94082c16e50b91ac",
+    "status": "agreed"
+  },
+  "MGT 432": {
+    "fingerprint": "2e5367bd16f7c28d",
+    "status": "agreed"
+  },
+  "MGT 451": {
+    "fingerprint": "72feb03ff8fabb5f",
+    "status": "agreed"
+  },
+  "MGT 453": {
+    "fingerprint": "7abbf1cbcf966d4e",
+    "status": "agreed"
+  },
+  "MGT 474": {
+    "fingerprint": "e0391333294a8754",
+    "status": "agreed"
+  },
+  "MGT 495": {
+    "fingerprint": "f8e987f0795d05b5",
+    "status": "agreed"
+  },
+  "MGT 498": {
+    "fingerprint": "befdc65d989c8fe4",
+    "status": "agreed"
+  },
+  "MKT 211": {
+    "fingerprint": "91d038a1b473d73b",
+    "status": "agreed"
+  },
+  "MKT 291": {
+    "fingerprint": "820be9a21fbf5432",
+    "status": "agreed"
+  },
+  "MKT 315": {
+    "fingerprint": "00fb0f23a2fff653",
+    "status": "agreed"
+  },
+  "MKT 325": {
+    "fingerprint": "2fd2d44f17c59dae",
+    "status": "agreed"
+  },
+  "MKT 335": {
+    "fingerprint": "4850f5efe55b94ca",
+    "status": "agreed"
+  },
+  "MKT 345": {
+    "fingerprint": "2179ace8af981e34",
+    "status": "agreed"
+  },
+  "MKT 395": {
+    "fingerprint": "135a7fe7cd411fb4",
+    "status": "agreed"
+  },
+  "MKT 412": {
+    "fingerprint": "ea1f4ae1c38d76e6",
+    "status": "agreed"
+  },
+  "MKT 415": {
+    "fingerprint": "62e872f553bf90f5",
+    "status": "agreed"
+  },
+  "MKT 453": {
+    "fingerprint": "8c827e7f3a42a12e",
+    "status": "agreed"
+  },
+  "MKT 461": {
+    "fingerprint": "033da6e9678f2aa4",
+    "status": "agreed"
+  },
+  "MKT 475": {
+    "fingerprint": "8f3440074f68dbcb",
+    "status": "agreed"
+  },
+  "MKT 495": {
+    "fingerprint": "98affceceaa29dd0",
+    "status": "agreed"
+  },
+  "MTH 141": {
+    "fingerprint": "3885ea127688d132",
+    "status": "agreed"
+  },
+  "MTH 151": {
+    "fingerprint": "da70ccde76de00e3",
+    "status": "agreed"
+  },
+  "MTH 249": {
+    "fingerprint": "048759055c5c809f",
+    "status": "agreed"
+  },
+  "MTH 251": {
+    "fingerprint": "18dafe4b6d96c965",
+    "status": "agreed"
+  },
+  "POL 437": {
+    "fingerprint": "6ee1be85f06e0564",
+    "status": "agreed"
+  },
+  "PSY 376": {
+    "fingerprint": "6cdfdef39cfcc78a",
+    "status": "resolved"
+  },
+  "SOC 225": {
+    "fingerprint": "7b0c8eff05e51b7a",
+    "status": "agreed"
+  },
+  "SOC 454": {
+    "fingerprint": "454c7b2553b45f7d",
+    "status": "agreed"
+  },
+  "STA 402": {
+    "fingerprint": "49e3816cb82b93de",
+    "status": "agreed"
+  },
+  "STA 404": {
+    "fingerprint": "0bdd203134f0cd85",
+    "status": "agreed"
+  },
+  "STA 432": {
+    "fingerprint": "e53d52758a87861b",
+    "status": "agreed"
+  },
+  "STA 463": {
+    "fingerprint": "1fb6b5acba8c8281",
+    "status": "agreed"
+  }
+}

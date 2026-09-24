@@ -31,12 +31,56 @@ export interface SkillOverride {
   level: "strong" | "working" | "introduced";
 }
 
+/**
+ * One course on the student's record (v6.7.0). Done or Taking now; a
+ * course not on the record is "Not yet". `term` is when it was (or is being)
+ * taken, where known; `addedBecause` marks a prerequisite added automatically
+ * because of another course, so the picker can label it and offer Remove.
+ */
+export interface ProfileCourse {
+  code: string;
+  status: "done" | "now";
+  term?: string;
+  addedBecause?: string;
+}
+
+/**
+ * Profile v2 (v6.7.0): the programs the student is in, and courses with a
+ * status. v1 stored a plain list of course codes; it migrates on read
+ * (every course Done), so nobody loses what they entered. Stored under the
+ * same key; the `v` field tells the two apart.
+ */
 export interface ScoutProfile {
-  v: 1;
-  /** Primary course codes ("ISA 401"), as checked off by the student. */
-  courses: string[];
+  v: 2;
+  /** Program keys from catalog/programs.config.json ("business-analytics"). */
+  programs: string[];
+  courses: ProfileCourse[];
+  /** Prerequisites the student removed; never added back automatically. */
+  removedPrereqs: string[];
   extras: ProfileExtra[];
   overrides?: SkillOverride[];
+}
+
+/** Every course the student has, done or in progress. */
+export function courseCodes(profile: Pick<ScoutProfile, "courses">): string[] {
+  return profile.courses.map((c) => c.code);
+}
+
+/**
+ * The academic term a date falls in: Fall (August to December), Spring
+ * (January to May), Summer (June and July). Winter term courses are simply
+ * recorded under Spring.
+ */
+export function currentTerm(date: Date): string {
+  const m = date.getMonth();
+  const y = date.getFullYear();
+  return m >= 7 ? `Fall ${y}` : m <= 4 ? `Spring ${y}` : `Summer ${y}`;
+}
+
+/** Taking-now courses recorded in an earlier term: "Did you finish it?" */
+export function staleTakingNow(profile: Pick<ScoutProfile, "courses">, date: Date): ProfileCourse[] {
+  const term = currentTerm(date);
+  return profile.courses.filter((c) => c.status === "now" && c.term !== undefined && c.term !== term);
 }
 
 /**
@@ -83,11 +127,22 @@ export function loadProfile(): ScoutProfile | null {
   try {
     const raw = localStorage.getItem(PROFILE_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as ScoutProfile;
-    if (parsed?.v !== 1 || !Array.isArray(parsed.courses)) return null;
+    const parsed = JSON.parse(raw) as { v?: number; courses?: unknown[]; programs?: string[]; removedPrereqs?: string[]; extras?: ProfileExtra[]; overrides?: SkillOverride[] };
+    if (!parsed || !Array.isArray(parsed.courses)) return null;
+    if (parsed.v === 1) {
+      return {
+        v: 2, programs: [], removedPrereqs: [],
+        courses: (parsed.courses as unknown[]).filter((c): c is string => typeof c === "string").map((code) => ({ code, status: "done" as const })),
+        extras: parsed.extras ?? [],
+        overrides: parsed.overrides ?? [],
+      };
+    }
+    if (parsed.v !== 2) return null;
     return {
-      v: 1,
-      courses: parsed.courses,
+      v: 2,
+      programs: parsed.programs ?? [],
+      removedPrereqs: parsed.removedPrereqs ?? [],
+      courses: (parsed.courses as ProfileCourse[]).filter((c) => c && typeof c.code === "string" && (c.status === "done" || c.status === "now")),
       extras: parsed.extras ?? [],
       overrides: parsed.overrides ?? [],
     };

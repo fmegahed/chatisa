@@ -1,0 +1,18 @@
+{
+  "_about": "Programs the course picker offers and the catalog pipeline reads. Add a program by adding one line; kinds: core, major, comajor, minor. URLs are Miami Bulletin pages.",
+  "programs": [
+    { "key": "business-core", "name": "FSB business core", "kind": "core", "url": "https://bulletin.miamioh.edu/farmer-business/" },
+    { "key": "accountancy", "name": "Accountancy", "kind": "major", "url": "https://bulletin.miamioh.edu/farmer-business/accountancy-bsb/" },
+    { "key": "business-analytics", "name": "Business Analytics", "kind": "major", "url": "https://bulletin.miamioh.edu/farmer-business/business-analytics-bsb/" },
+    { "key": "business-economics", "name": "Business Economics", "kind": "major", "url": "https://bulletin.miamioh.edu/farmer-business/business-economics-bsb/" },
+    { "key": "finance", "name": "Finance", "kind": "major", "url": "https://bulletin.miamioh.edu/farmer-business/finance-bsb/" },
+    { "key": "human-capital-management-leadership", "name": "Human Capital Management and Leadership", "kind": "major", "url": "https://bulletin.miamioh.edu/farmer-business/human-capital-management-leadership-bsb/" },
+    { "key": "information-systems-cybersecurity-management", "name": "Information Systems and Cybersecurity Management", "kind": "major", "url": "https://bulletin.miamioh.edu/farmer-business/information-systems-cybersecurity-management-bsb/" },
+    { "key": "marketing", "name": "Marketing", "kind": "major", "url": "https://bulletin.miamioh.edu/farmer-business/marketing-bsb/" },
+    { "key": "real-estate", "name": "Real Estate", "kind": "major", "url": "https://bulletin.miamioh.edu/farmer-business/real-estate-bsb/" },
+    { "key": "supply-chain-operations-management", "name": "Supply Chain and Operations Management", "kind": "major", "url": "https://bulletin.miamioh.edu/farmer-business/supply-chain-operations-management-bsb/" },
+    { "key": "business-leadership", "name": "Business Leadership (co-major)", "kind": "comajor", "url": "https://bulletin.miamioh.edu/farmer-business/business-leadership-comajor/" },
+    { "key": "entrepreneurship", "name": "Entrepreneurship (co-major)", "kind": "comajor", "url": "https://bulletin.miamioh.edu/farmer-business/entrepreneurship-comajor/" },
+    { "key": "ai-for-business", "name": "Artificial Intelligence for Business (minor)", "kind": "minor", "url": "https://bulletin.miamioh.edu/farmer-business/artificial-intelligence-business-minor/" }
+  ]
+}

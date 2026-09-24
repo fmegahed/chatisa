@@ -1,0 +1,3524 @@
+{
+  "ACC 221": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Closing Revenue and Expense Accounts",
+      "Financial Forecasting; How the Financial Statements relate to each other; Accounting Ethics; Complex problem solving.",
+      "Internal Controls; Other Balance Sheet Transactions; Exam 2",
+      "Introduction to Accounting and Business; Recording Asset, Liability, and Owners’ Equity Transactions",
+      "Introduction to Adjusting Entries",
+      "PP&E – Prepaid Assets – Accrued Liabilities; Unearned Revenue Liabilities – Accrued Assets; Accounting Cycle Project 2",
+      "Preparing a Post-Closing Trial Balance",
+      "Preparing the Balance Sheet",
+      "Preparing the Income Statement;",
+      "Recording Transactions Affecting Retained Earnings;",
+      "Recording Transactions in Revenue and Expense Accounts",
+      "Statement of Cash Flows; Sources of Financing; Financial Ratio Analysis",
+      "The Accounting Cycle; Accounting Cycle Project; Dividends; Exam 1"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Insight Through Numbers",
+      "Solid Footing"
+    ]
+  },
+  "ACC 222": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Cost-volume-profit analysis; variable costing and segment reporting; activity-based costing.",
+      "Cumulative final exam covering all course material, at the university-designated common exam time.",
+      "Differential analysis; capital budgeting. No class Wed Nov 25 (Thanksgiving); campuses closed Nov 26 – 29.",
+      "Financial accounting review and the Prologue; cost concepts and classifications; job-order costing — unit product costs, cost flows, and external reporting. No class Mon Sep 7 (Labor Day).",
+      "Management Control Systems",
+      "Master budgeting; flexible budgets and performance analysis; standard costs and variance analysis.",
+      "What Is Managerial Accounting Information"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Managerial Accounting"
+    ]
+  },
+  "ACC 256": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Academic Planning & CPA",
+      "Career Topic - CSH",
+      "Career Topic - Deal Advisory with KPMG",
+      "Career Topic - EY",
+      "Career Topic - PwC",
+      "Career Topic - Speaker James Tighe",
+      "Career Topic - TBD",
+      "LinkedIn, Internship Panel, OSCPA",
+      "Syllabus, Resumes & Interviewing"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Top Hat Subscription"
+    ]
+  },
+  "ACC 321": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Accounting Process",
+      "Accounts Receivable and Notes Receivable",
+      "Acquisition and Disposition of Property, Plant, and Equipment",
+      "Balance Sheet",
+      "Bonds and Long-Term Notes",
+      "Bonds Payable",
+      "Completing the Accounting Cycle",
+      "Comprehensive Income",
+      "Course Introduction",
+      "Current Liabilities",
+      "Depletion",
+      "Depreciation and Impairment of Property, Plant, and Equipment",
+      "Discontinued Operations",
+      "Income Statement",
+      "Intangibles",
+      "Introduction / Conceptual Framework",
+      "Introduction to Statement of Cash Flows",
+      "Inventories (Measurement) / Inventories (Additional Issues)",
+      "Inventory Valuation",
+      "Long-term Liabilities:",
+      "Multi-Step Income Statement",
+      "Notes Payable",
+      "Notes to Financial Statements",
+      "PP&E and Intangible Assets (Acquisition)",
+      "PP&E and Intangible Assets (Utilization and Disposition)",
+      "Receivables",
+      "Receivables / Inventories (Measurement)",
+      "Statement of Cash Flows",
+      "Stockholders' Equity",
+      "The Accounting Information System",
+      "The Conceptual Framework",
+      "The Reporting Environment"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Intermediate Accounting"
+    ]
+  },
+  "ACC 333": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Accounting Fraud",
+      "Agency Problems",
+      "Balanced Scorecard;",
+      "Budgeting and Variance Analysis",
+      "COSO and Internal Controls;",
+      "Data Analytics;",
+      "Employee Recognition",
+      "Evaluating the Entire Management Control Systems",
+      "Field Experiment",
+      "Group Presentation",
+      "Heuristics and Biases;",
+      "Interactive Control and Budgeting;",
+      "Introduction and Course Overview",
+      "Introduction to the Levers of Control; Organizational Architecture and Decision Rights",
+      "Management Control Systems",
+      "Mid-term Exam",
+      "Mid-term Exam Review;",
+      "Organizational Culture;",
+      "Performance Feedback and Promotion",
+      "Performance Measure Management;",
+      "Reward System Design",
+      "Transfer Pricing",
+      "Whistleblowing"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Course Packet",
+      "Managerial Accounting: The Cornerstone of Business Decision-Making"
+    ]
+  },
+  "ACC 343": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 3,
+    "topics": [
+      "Accounting Periods and Methods",
+      "AMT, SE tax, credits",
+      "An Introduction to Taxation",
+      "Artificial Intelligence in Taxation",
+      "Basis",
+      "Business Expenses",
+      "Business Expenses, and Losses",
+      "Corporate Formations",
+      "Corporate Formations (cont.)",
+      "Corporate Formations and Capital Structure",
+      "Corporate Non-liquidating Distributions",
+      "Corporate Taxable Income",
+      "Deductions and Losses",
+      "Deferred Compensation",
+      "Deferred Income Tax Accounting",
+      "Depreciation, Cost Recovery, Amortization, and Depletion",
+      "Determination of Tax",
+      "Dispositions of Business Use Property",
+      "Dispositions of Business Use Property (cont.)",
+      "Dispositions of Capital Assets",
+      "Employer Provided Retirement Plans and Individual Retirement Plans",
+      "For AGI Deductions",
+      "From AGI Deductions",
+      "Gross Income",
+      "Gross Income: Inclusions and Exclusions",
+      "Installment Sales",
+      "Introduction to Federal Income Taxation",
+      "Liquidating Distributions",
+      "Multijurisdictional Project",
+      "Non-Liquidating Distributions",
+      "Nontaxable Exchanges",
+      "Overview of Flow-Through Entities",
+      "Overview of Individual Tax",
+      "Overview: Taxation of Property Transactions",
+      "Partnership Formation and Operation",
+      "Property Transactions: Capital Gain/Losses",
+      "Property Transactions: Section 1231 and Recapture",
+      "Putting it All Together",
+      "S Corporations",
+      "Special Partnership Issues",
+      "Tax Credits",
+      "Tax Deferred Transactions",
+      "Tax Memo Presenations Day 1",
+      "Tax Memo Presenations Day 2",
+      "TEST 1 - Individual Taxation",
+      "TEST 2 - Property Transactions",
+      "The Basics of Tax Planning",
+      "The Basics of Tax Planning (cont.)",
+      "The Corporate Income Tax"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Fundamentals of Taxation for Individuals and Business Entities: A Practical Approach, 2026 Edition",
+      "No required textbook",
+      "Pearson's Federal Taxation 2026 Comprehensive"
+    ]
+  },
+  "ACC 361": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 3,
+    "topics": [
+      "AIS and Course Introduction",
+      "AIS Beyond Financial Statements",
+      "AIS Strategic Planning & Systems Development",
+      "Database Design",
+      "Documenting the AIS",
+      "Enterprise Resource Planning System Implementation",
+      "Expenditure Cycle & Controls",
+      "Financial Reporting",
+      "Flow of Information",
+      "Internal Control Framework",
+      "IT Security & Controls",
+      "Revenue Cycle & Controls",
+      "The Conversion Cycle",
+      "The Data Analytic Cycle",
+      "The Data Analytic Cycle Cont."
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Accounting Information Systems: Thinking, Development, and Evaluation",
+      "AI and Payments Fraud: An Evolving Landscape",
+      "AI Doesn’t Reduce Work—It Intensifies It",
+      "Blockchain and its potential impact on the audit profession",
+      "Inside the AI network orchestrating Walmart’s fastest holiday deliveries yet",
+      "Meet the Gen Z grads reviving accounting",
+      "Quarterly Reports Are Written for AI",
+      "SolarCity adviser Lazard made mistake in Tesla deal analysis",
+      "The $4trn accounting puzzle at the heart of the AI cloud",
+      "We Went to the Boot Camp Where KPMG Teaches Auditors to Think Critically"
+    ]
+  },
+  "ACC 422": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 3,
+    "topics": [
+      "Bonds and Long-Term Notes",
+      "Class Project - POV",
+      "complex financial instruments",
+      "Current Liabilities and Contingencies",
+      "Debt and Equity instruments",
+      "Investments",
+      "Labor Day",
+      "Leases",
+      "Leases/ Class Project-POV",
+      "Long-Term Assets",
+      "Pensions",
+      "Pensions/ Exam review",
+      "Project Day",
+      "Revenue",
+      "Revenue Recognition",
+      "Share-Based Compensation",
+      "Special project/deferred taxes",
+      "stock compensation/EPS"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "FASB Accounting Standards Codification",
+      "Intermediate Accounting"
+    ]
+  },
+  "ACC 453": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Assurance Applications and Assertions; Top-Down Risk-Based Auditing – Strategic Analysis",
+      "Assurance Innovations",
+      "Assurance Overview",
+      "Audit Risk Model; Internal Controls Overview",
+      "Earnings Management and Fraud Risk",
+      "ESG Assurance; Auditor Independence",
+      "Ethics & Professional Judgment",
+      "Internal Control Testing Procedures",
+      "Planning and Understanding the Client",
+      "Professional Skepticism & Code of Conduct",
+      "Standards, Regulations, and Reporting",
+      "Substantive Testing",
+      "Top-Down Risk-Based Auditing – Business Process Analysis",
+      "Wrapping up the Audit"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": []
+  },
+  "ACC 468": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Not-for-profit accounting",
+      "State and local governmental accounting",
+      "Student project on governmental accounting",
+      "Student project on nonprofit accounting"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Accounting for Governmental & Nonprofit Entities",
+      "Miami University Foundation Annual Report; Miami University Foundation Form 990; State of Ohio Annual Comprehensive Financial Report; City of Oxford Annual Comprehensive Financial Report"
+    ]
+  },
+  "ACC 495": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Chapter 1",
+      "Chapter 2",
+      "Chapter 3",
+      "Chapter 4",
+      "Chapter 6",
+      "Chapter 8",
+      "Client Project 1",
+      "Client Project 2"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": []
+  },
+  "BLS 342": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Kubasek: Dynamic Business Law: The Essentials, 2006 Release"
+    ]
+  },
+  "BLS 443": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Leasing, Condominiums, and Brokers",
+      "Real Estate Interests and Real Estate Ownership",
+      "Transferring Title to Real Estate"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "REAL ESTATE LAW 12TH.ED. JENNINGS E.E"
+    ]
+  },
+  "BLS 465": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "A Brand Called You",
+      "Corporate Culture; Ethical Leadership",
+      "Employee Responsibility;",
+      "Ethics , What are the components of ethical theories",
+      "Fraud in The Workplace",
+      "Groupthink",
+      "Importance of Personal Values and Respect",
+      "International Law and Ethics",
+      "Manufacturing; Supply Chain; Product Liability",
+      "Marketing Ethics",
+      "Marketing Ethics-Advertising and Digital Marketing",
+      "Moral Rights in the Workplace;",
+      "Policy Drafting and Implementation",
+      "Product Safety",
+      "Sustainability and Natural Environment",
+      "The Importance of Corporate Social Responsibility.",
+      "Whistleblowers",
+      "Whistleblowers continued"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "An Introduction to Business Ethics",
+      "Articles as Posted on Canvas Depending on class Interests"
+    ]
+  },
+  "BUS 101": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Accounting and Market Games Simulation",
+      "Business Ethics and Social Responsibility",
+      "Culture and Business",
+      "Finance and Market Games Simulation",
+      "FYIC Consulting Challenge",
+      "Introduction to the FYIC and Business World",
+      "Management",
+      "Marketing and Market Games Simulation",
+      "Operations",
+      "The Dynamics of Business and Economics"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Business Custom Edition"
+    ]
+  },
+  "BUS 102": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "• 30–60 Second Personal Introduction",
+      "• 43-Message Teams Thread Case",
+      "• AI Judgment in Workplace Communication",
+      "• Apply Feedback from Other FYIC Professors",
+      "• Apply Graded-Practice Feedback",
+      "• Apply Information from the Client Q&A",
+      "• Applying Research to the Client Consulting Prompt • Evidence-Supported Recommendation Directions",
+      "• Asking Better Questions",
+      "• Audience, Channel & Recommendation Strategy",
+      "• Audience, Purpose & Credibility",
+      "• Building a Credible Client Argument",
+      "• Building a Research Log",
+      "• Building the Team Research Story",
+      "• Choosing the Right Communication Channel",
+      "• Chris Is Brilliant and Impossible Role-Play",
+      "• Client Q&A — Friday, Nov. 20 at 1:30 p.m. (outside class)",
+      "• Communicating Personal Value",
+      "• Communicating Research to a Client",
+      "• Communicating Under Ambiguity",
+      "• Communication Judgment Unit Wrap-Up",
+      "• Developing Client-Relevant Research Questions",
+      "• Developing the Client Recommendation • Organizing an 8–9 Minute Consulting Pitch",
+      "• Difficult Conversations",
+      "• Email, Chat, Meetings & Collaboration Tools",
+      "• Evidence Analysis & Problem Diagnosis",
+      "• Evidence, Insight & Client Relevance",
+      "• Evidence, Storyline, and Client Relevance",
+      "• Executive Briefings",
+      "• Facts, Assumptions & Unknowns",
+      "• Final Client Consulting Pitches • 8–9 Minute Team Presentation to the Client",
+      "• Finding & Evaluating Credible Business Sources",
+      "• From Information to Insight",
+      "• FYIC Showcase — Friday, Dec. 4",
+      "• Graded Practice Client Consulting Presentations — Day 2",
+      "• Informal Oral Communication",
+      "• Integrated Communication Judgment",
+      "• Integrating the Client Prompt, Consumer Evidence, Data, and Industry Research",
+      "• Introduction to Client / Industry Research",
+      "• Introduction to the Seven-Question Communication Framework",
+      "• Labor Day — No Class Sept. 7",
+      "• Launch Industry Research Unit",
+      "• Launch Unit 1: Communication Judgment at Work",
+      "• Listening & Inquiry",
+      "• Mapping Evidence to the Client’s Problem",
+      "• No Regular BUS 102 Class — presentation schedule replaces class meetings",
+      "• Oral Defense Workshop",
+      "• Peterson Account Case",
+      "• Preparing for the Client Prompt",
+      "• Presentation Revision Workshop — Day 1 • Revise Recommendations, Evidence, Storyline, and Slides",
+      "• Professional Disagreement & Feedback",
+      "• Reading Research Strategically • Facts, Trends, Claims & Limitations",
+      "• Research Gaps for the Consulting Challenge",
+      "• Responding to Challenge Questions",
+      "• Shark Tank — all four FYIC courses attend; no regular BUS 102 class on Day 1 • Launch Client Consulting Pitch Unit on Day 2",
+      "• Should We Launch? Case",
+      "• Summative Case: Northstar’s First 48 Hours",
+      "• Summative Oral Defense",
+      "• Synthesizing Across Sources",
+      "• Team Industry Research Presentations",
+      "• Thanksgiving Break — No Class Day 2",
+      "• The Project Is Late Case",
+      "• Turning Information into Insight",
+      "• Welcome & Course Overview"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Business Communication Developing Leaders for a Networked World"
+    ]
+  },
+  "BUS 104": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Aggregating Data",
+      "Communicating with Code & Data Types and Variables",
+      "Conditional Code Flow",
+      "Cumulative Exam",
+      "Cumulative Exam Review",
+      "Data Type Conversions and Mathematical Expressions",
+      "Filtering Aggregated Data",
+      "Filtering Data, Sorting Data and NULL",
+      "FYIC Client Challenge",
+      "Grouping Data",
+      "Introduction to Databases & Retrieving Simple Data",
+      "Looping: while",
+      "Mathematical Expressions & Aliases",
+      "Merging Data",
+      "Program Input and Output",
+      "Python Exam",
+      "Python Exam Review",
+      "Rounding and External Modules/Libraries",
+      "Table Relationships",
+      "Welcome to BUS 104 & Computational Thinking"
+    ],
+    "tools": [
+      "Python",
+      "SQL"
+    ],
+    "outcomes": [],
+    "readings": [
+      "BUS 104: Introduction to Computational Thinking for Business"
+    ]
+  },
+  "BUS 217": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "CSR and ESG",
+      "Ethical Behavior",
+      "Ethical Frameworks",
+      "Legitimacy and Governance",
+      "Market Failure",
+      "Stakeholder Theory",
+      "Sustainability",
+      "The Macroenvironment of Business"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": []
+  },
+  "BUS 284": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Communicating Across Cultures and Virtual Collaboration",
+      "Components of Bad News Messages",
+      "Consulting Memo",
+      "Delivering Bad News and Writing with AI Virtual Presentation",
+      "Digital Presence Portfolio: Resume, Linked In Profile, Professional Introduction Video, and Reflection Memo",
+      "Digital Presence Portfolio: Resume, LinkedIn Profile, Professional Introduction Video, and Reflection Memo",
+      "Intercultural Communication Virtual Presentation",
+      "Intercultural Communication Written Report",
+      "Introduction to Global Communication",
+      "Module 1: Digital Presence",
+      "Module 2: Delivering Bad News and Writing with AI",
+      "Module 3:",
+      "Module 3: Communicating Across Cultures and Virtual Collaboration",
+      "Performance Evaluation Memo",
+      "Team Research, Writing and Virtual Collaboration",
+      "Trends in the Job Search: Hybrid Work and AI, team presentations",
+      "Welcome and Course Overview"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Business Communication: Developing Leaders for a Networked World",
+      "Business Communication: Developing Leaders for a Networked World: 2026 Release"
+    ]
+  },
+  "CSE 148": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Charts and chart elements",
+      "Course Evaluations; Final Exam Review",
+      "Data Visualization - Dashboard",
+      "Data Visualization - Power BI",
+      "Data Visualization - Tableau",
+      "Excel Dates & Formatting; Page Scaling; Row/Column Management",
+      "Excel Tables, Data management",
+      "Labor Day (No Mon/Tue Class); Excel Functions",
+      "Multiple Worksheets, Groups",
+      "Nested IF; IFS; AND/OR Functions",
+      "Pivot Tables",
+      "Quick Analysis; Running Totals; Cell Addressing; Date Functions",
+      "Syllabus & Account Registration; File Management; Business Foundations"
+    ],
+    "tools": [
+      "Excel",
+      "Power BI",
+      "Tableau"
+    ],
+    "outcomes": [],
+    "readings": []
+  },
+  "CSE 271": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Abstract classes, interfaces, dynamic lookup",
+      "ArrayLists and Basic I/O",
+      "Collections and Thanksgiving Break",
+      "Complexity and Binary I/O",
+      "Course overview, IDE introduction, Java basics",
+      "Creating Objects: Instance properties, constructors, getters/setters, static/non-static methods",
+      "Exception handling, using objects, IDE debugger, Javadoc",
+      "File reading and writing",
+      "Inheritance and Polymorphism",
+      "Inheritance, polymorphism, UML",
+      "Inheritances and Interfaces",
+      "Interfaces",
+      "Interfaces and Abstract Classes",
+      "Introduction Java",
+      "Java basics (arrays, console input, loops)",
+      "JAVA Collections Framework",
+      "Method overloading & overriding, object reference",
+      "Object Operations and References",
+      "Object-Oriented Principles",
+      "Objects and Classes",
+      "Objects and Exceptions",
+      "OOP Introduction and Review",
+      "Principles of Object-Oriented programming, binary file IO",
+      "Recursion",
+      "Recursion, unit testing",
+      "Search Algorithms",
+      "Searching algorithms",
+      "Sorting Algorithms",
+      "Sorting algorithms, time complexity",
+      "Sorting and Searching",
+      "Streams and Binary Input/Output",
+      "UML Diagram",
+      "Unit Testing and Debugging"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Big Java Late Objects",
+      "Java How To Program, Late Objects"
+    ]
+  },
+  "ECO 201": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Background",
+      "Behind Supply (Costs)",
+      "Chapter 1",
+      "Chapter 12",
+      "Chapter 13",
+      "Chapter 14",
+      "Chapter 16",
+      "Chapter 17",
+      "Chapter 19",
+      "Chapter 2",
+      "Chapter 3",
+      "Chapter 5",
+      "Chapter 6",
+      "Chapter 9",
+      "Common Property Goods",
+      "Demand and Supply and Market Equilibrium",
+      "Elasticity of Demand and Other Elasticity’s",
+      "Elasticity, Efficiency, and Price Controls",
+      "Equilibrium and Changes in Equilibrium",
+      "Externalities",
+      "Gains from Trade, International Trade, Game Theory, and Externalities",
+      "Introduction to Economics",
+      "Market Structures and Sophisticated Pricing Schemes",
+      "Monopoly",
+      "Nov 10",
+      "Oligopoly In Practice",
+      "Perfect Competition",
+      "Price Controls",
+      "Resource Markets",
+      "Social Welfare",
+      "Taxes and Utility",
+      "The Firm’s Decisions",
+      "Tuesday",
+      "Understanding Demand",
+      "Understanding Tradeoff – PPC"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Microeconomics",
+      "PRINCIPLES OF MICROECONOMICS (TH BUNDLE)"
+    ]
+  },
+  "ECO 202": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "&",
+      "Aggregate Demand and Aggregate Supply, impacts of policies on Economy",
+      "Aggregate Demand, Aggregate Supply, and Inflation",
+      "Economic Growth, Productivity, and Living Standards",
+      "Exchange rate, Balance of Payments",
+      "Financial Markets and International Capital Flows",
+      "Macroeconomic Policy",
+      "Macroeconomics: The Bird's-Eye View of the Economy",
+      "Measuring Economic Activity: GDP and Unemployment",
+      "Measuring the Price Level and Inflation",
+      "Measuring value of Production",
+      "Money, Prices, and the Federal Reserve",
+      "Monitoring Jobs and Inflation",
+      "Saving and Capital Formation",
+      "Sectors of the Macroeconomy",
+      "Short-Term Economic Fluctuations: An Introduction",
+      "Sources of Inflation, Expectations, Trade-offs",
+      "Spending and Output in the Short Run",
+      "Stabilizing the Economy: The Role of the Fed",
+      "Workers, Wages, and Unemployment"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Access to Packback Platform",
+      "MACROECONOMICS",
+      "Principles of Macroeconomics"
+    ]
+  },
+  "ECO 301": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Banking and the Management of Financial Institutions",
+      "Banks and Bank Management",
+      "Behavior of Interest Rates",
+      "Central Banks",
+      "Conduct of Monetary Policy",
+      "Determinants of the Money Supply",
+      "Financial System Overview",
+      "Group Project, Presentations, and Review",
+      "Lecture 1: An Overview of the Financial System",
+      "Lecture 2: What is Money?",
+      "Lecture 3: The Meaning of Interest Rates",
+      "Lecture 4: Central Banks and the Federal Reserve System",
+      "Lecture 5: The Behavior of Interest Rates",
+      "Lecture 6: The Risk and Term Structure of Interest Rates",
+      "Lecture 7: Efficient Market Hypothesis",
+      "Lecture 8: Banking and the Management of Financial Institutions",
+      "Lecture 9: The Money Supply Process",
+      "Model of Stock Prices",
+      "Money Supply Process",
+      "Money, Meaning of Interest Rates",
+      "Overview of the Financial System",
+      "Project Presentation I",
+      "Risk and Term Structure of Interest Rates",
+      "Stock Market, Rational Expectations, and the Efficient Market Hypothesis",
+      "Structure of the Federal Reserve System",
+      "The Behavior of Interest Rates",
+      "The Money Supply Process",
+      "The Risk and Term Structure of Interest Rates",
+      "Tools of Monetary Policy",
+      "Understanding Interest Rates",
+      "What is Money?"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Additional Resources: https://www.federalreserve.gov/",
+      "None",
+      "See Recommended Readings",
+      "The Economics of Money, Banking, and Financial Markets"
+    ]
+  },
+  "ECO 311": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Dummy Variable",
+      "Heteroskedasticity",
+      "Multiple Regression",
+      "Syllabus and Simple Regression",
+      "Time Series and Panel Data"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Course Packet"
+    ]
+  },
+  "ECO 315": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Consumer Choice",
+      "Consumer Demand",
+      "Cost Minimization",
+      "Externalities/Public Goods",
+      "Imperfect Information",
+      "Monopoly",
+      "Oligopoly",
+      "Perfect Competition",
+      "Preferences/Budget Constraints",
+      "Production and Costs",
+      "Supply and Demand/Elasticity",
+      "Welfare"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Microeconomics"
+    ]
+  },
+  "ECO 317": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Macroeconomic Data",
+      "Math Review",
+      "Microfoundations",
+      "Neoclassical Model",
+      "New Keynesian Model",
+      "Solow Growth Model"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Intermediate Macroeconomics"
+    ]
+  },
+  "ECO 409": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Competitors & Competition",
+      "Dynamics",
+      "Entry & Exit",
+      "Horizontal Boundaries of Firm",
+      "Presentations",
+      "Setting Up",
+      "Strategic Positioning",
+      "Sustaining Competitive Advantage",
+      "Vertical Boundaries of Firm"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Economics of Strategy"
+    ]
+  },
+  "ECO 411": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Causal Diagrams and Potential Outcomes Framework",
+      "Event-Studies, Synthetic Control",
+      "Instrumental Variables",
+      "Intro to Causal Inference and Research Questions",
+      "Panel Data, DiD",
+      "Project Management, Intro to R",
+      "Regression Review, Causality and Regression",
+      "Simulations and Limited Dependent Variables",
+      "Standard Errors, Clustering, Bootstrapping"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Causal Inference: The Mixtape"
+    ]
+  },
+  "ESP 101": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Corporate Entrepreneurship",
+      "Group Project",
+      "Intro, Creativity & Leadership",
+      "Social Entrepreneurship",
+      "StartUp Entrepreneurship",
+      "Wrap up"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "There is no required reading for this class."
+    ]
+  },
+  "ESP 102": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Activities",
+      "All students sign in, complete their final pitch slides by 9:30 am, present during preliminary judging rounds, gather for the announcement of top teams, watch or present as part of the top teams to external judges, accept prizes if awarded, and clean up workspaces.",
+      "All students sign in, gather for an organized kickoff presentation and workshop, break for dinner, work in teams, and begin the creative problem-solving process in assigned team rooms.",
+      "All students sign in, gather for workshops, work in teams, break for meals, get feedback from online or onsite mentors, and continue the creative problem-solving process.",
+      "Various short assignments posted to Canvas to prepare for the weekend"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "None"
+    ]
+  },
+  "ESP 103": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "10 Days of Creativity",
+      "Client Challenge",
+      "Creative Confidence",
+      "Creative Problem Solving Process / Break",
+      "Creativity and AI",
+      "Curiosity (mindsets)",
+      "FlightPath Creative Business Strategy & Flourishing",
+      "Mindsets Review and Applications",
+      "Resilience & Tolerance for Ambiguity"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "ESP 103 Creativity, Innovation, and Entrepreneurial Thinking"
+    ]
+  },
+  "ESP 201": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Art of the pitch",
+      "Business model and finance",
+      "Business Models",
+      "Customer discovery",
+      "Market opportunity",
+      "Market Opportunity Analysis",
+      "Pitch week",
+      "Testing and validation"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Instructor-created Coursepack also available on Canvas",
+      "The Mom Test: How to Talk to Customers & Learn If Your Business Is a Good Idea When Everyone Is Lying to You",
+      "Value Proposition Design: How to Create Products and Services Customers Want"
+    ]
+  },
+  "ESP 251": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "ad creation and targeting, operating model",
+      "financing methods, financial model, project completion",
+      "gross profit model, average order value",
+      "landing pages, capacity model",
+      "market segmentation, marketing funnel"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Value Creation and Capture - instructor-created Coursepack available on Canvas"
+    ]
+  },
+  "ESP 252": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 3,
+    "topics": [
+      "Application / Break",
+      "C4 Process \"The Entrepreneur\"",
+      "Catching, Practice",
+      "Challenge the Process, Practice",
+      "Clarification, Design Thinking",
+      "Creative Person/Feedback",
+      "Creative Process / Personal Branding",
+      "Creativity Toolkit",
+      "Creativity, Process, C4",
+      "Deliverables",
+      "Empathy, Ideation",
+      "Enable Others, Encourage Heart",
+      "Ethics, Creativity, Leadership",
+      "HBDI, Leadership Overview",
+      "Inspire Shared Vision, Empathy",
+      "Introduction & Foundations",
+      "Leadership (Challenge)",
+      "Leadership (Inspire)",
+      "Leadership (Model)",
+      "Leadership (Vision)",
+      "Leadership Overview",
+      "Mindsets",
+      "Model the Way, Feedback",
+      "Practice, Intro Uncle Rube",
+      "Stuff, The End",
+      "The Case, WWMD"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "QBQ!",
+      "The Leadership Challenge"
+    ]
+  },
+  "ESP 321": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Audit Ecosystem and Startups",
+      "Benchmark Ecosystem and Startups",
+      "Create Ecosystem and Startup Recommendations",
+      "Project completion and Founder interview",
+      "Startups and Entrepreneurial Ecosystem"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Startup Entrepreneurship - - instructor-created coursepack available on Canvas"
+    ]
+  },
+  "ESP 331": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Case Study",
+      "Community & Place: Field Visit Dayton",
+      "Core Gift Workshop & Theory U",
+      "How does mission become embedded in an organization?",
+      "How does place shape entrepreneurship and social change?",
+      "Hybrid organizing",
+      "Impact and Scale",
+      "Impact and Scale II",
+      "Social Business Models & Financing",
+      "Student-led teaching case sessions + course synthesis",
+      "Theory of Change",
+      "What is Social Entrepreneurship?",
+      "Why do social challenges persist?"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Required Articles",
+      "Understanding Social Entrepreneurship"
+    ]
+  },
+  "ESP 341": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Authentic Leadership, Design Thinking, Customer Discover and entrepreneurial tools in Corporate Innovation",
+      "Cross Silo Leadership, Systems thinking",
+      "Entrepreneurial Manager; Types of Innovation; Business Model Innovation"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Instructor created materials available on Canvas"
+    ]
+  },
+  "ESP 351": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Creative Person",
+      "Creative Person, Creative Press",
+      "Creative Person, Creative Process",
+      "Development, Prototyping,",
+      "Introductions, Foundations",
+      "Lateral Thinking, Ideation",
+      "Manifesto Due, Final Class",
+      "Manifesto, Creative Person",
+      "Presentation Prep",
+      "Press Presentation, Group Project",
+      "Press, Clarification",
+      "Press, Process, Product"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Chop Wood Carry Water",
+      "QBQ! The Question Behind the Question Practicing Personal Accountability at Work and in Life"
+    ]
+  },
+  "ESP 361": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Connecting with practice",
+      "External side of entrepreneur",
+      "Internal side of entrepreneur"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Instructor created coursepack available on Canvas.",
+      "Life Worth Living"
+    ]
+  },
+  "ESP 401": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Addressable Market, Market Segmentation, User Persona, Journey Mapping",
+      "Art of the pitch",
+      "Customer discovery",
+      "Funding, Pro-Forma Income Statement, Scale/Growth, Capital Requirements/Runway, Proof of Concept phase",
+      "Pitch week",
+      "Prototype/MVP, Customer Acquisition and Conversion Assumptions, and Monetization Approach"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Instructor-created Coursepack available on Canvas",
+      "Running Lean Iterate from Plan A to a Plan that Works",
+      "Value Proposition Design How to Create Products and Services Customers Want"
+    ]
+  },
+  "ESP 461": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 3,
+    "topics": [
+      "Application of entrepreneurial tools into consulting",
+      "Building a consulting team, understanding the client, project management, research, client management",
+      "Executing and delivering client project"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Instructor created materials available on Canvas"
+    ]
+  },
+  "FIN 301": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Chapter 1 – Introduction to Corporate Finance",
+      "Chapter 10 – Making Capital Investment Decisions",
+      "Chapter 12 – Some Lessons from Capital Market History",
+      "Chapter 13 – Risk, Return, and the Security Market Line",
+      "Chapter 14 – Cost of Capital",
+      "Chapter 16 – Leverage and Capital Structure",
+      "Chapter 2 – Financial Statements, Taxes, and Cash Flow",
+      "Chapter 3 – Working with Financial Statements",
+      "Chapter 5 – Introduction to Valuation: Time Value of Money",
+      "Chapter 6 – Discounted Cash Flow Valuation",
+      "Chapter 7 – Interest Rates and Bond Valuation",
+      "Chapter 8 – Stock Valuation",
+      "Chapter 9 – Net Present Value and Other Investment Criteria",
+      "Cost of Capital",
+      "Cumulative Final Exam",
+      "Discounted Cash Flow Valuation",
+      "Equity Markets and Stock Valuation",
+      "Financial Statements, Taxes, and Cash Flows",
+      "Interest Rates and Bond Valuation",
+      "Intro to Valuation: Time Value of Money",
+      "Introduction to Financial Management",
+      "Making Capital Investment Decisions",
+      "NPV and Other Investment Criteria",
+      "Risk and Return",
+      "Working with Financial Statements"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Essentials of Corporate Finance",
+      "Financial calculator",
+      "Fundamentals of Corporate Finance"
+    ]
+  },
+  "FIN 311": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Activity and Exam 2 review",
+      "Activity day",
+      "Activity day and Exam 3 review",
+      "Activity day; Stock Valuation",
+      "Chapter 1",
+      "Chapter 1 (continued); Introduction to Financial Statement Analysis",
+      "Chapter 10",
+      "Chapter 10 activity; Chapter 11 – Risk and Return in Capital Markets",
+      "Chapter 11",
+      "Chapter 12",
+      "Chapter 13",
+      "Chapter 2",
+      "Chapter 3",
+      "Chapter 4",
+      "Chapter 5",
+      "Chapter 6",
+      "Chapter 7",
+      "Chapter 8",
+      "Chapter 9",
+      "Fundamentals of Capital Budgeting; Chapter 10 (continued)",
+      "Interest Rates; Bonds",
+      "Introduction to the course; Corporate Finance and the Financial Manager",
+      "Systematic Risk and the Equity Risk Premium; activity",
+      "The Cost of Capital; activity day",
+      "Time Value of Money: An Introduction",
+      "Time Value of Money: Valuing Cash Flow Streams; in-class activity"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Fundamentals of Corporate Finance",
+      "Fundamentals of Corporate Finance (Pearson+)",
+      "no required readings"
+    ]
+  },
+  "FIN 331": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Argus Lab",
+      "Conveying of Real Property Interests",
+      "Group Presentations",
+      "Interest Rates / Time Value of Money",
+      "Introduction",
+      "Investment Decisions",
+      "Investment Decisions / Course Review",
+      "Investment Process & Analysis",
+      "Leases",
+      "Legal Case & Speaker",
+      "Legal Foundations; Conveying Real Property Interests",
+      "Nature of Real Estate",
+      "Property Types",
+      "Property Types - Industrial, Retail",
+      "Property Types - Land, SFR, Multifamily",
+      "Property Types - Office, Hospitality",
+      "Real Estate & Government",
+      "Real Estate Debt - Commercial Types",
+      "Real Estate Debt - Contract Foundations",
+      "Real Estate Debt - Factors in Decision",
+      "Real Estate Debt – Commercial Types",
+      "Real Estate Debt – Contract Foundation",
+      "Real Estate Debt – Factors in Decision",
+      "Real Estate Legal Foundation",
+      "Valuation"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Real Estate Principles A Value Approach"
+    ]
+  },
+  "FIN 381": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Applied Case studies",
+      "Capital Budgeting",
+      "Capital Budgeting; Project Finance, SPV",
+      "Capital Budgeting: Capital Budgeting Examples; Sensitivity and Scenario Analysis; Real Options",
+      "Capital Structure",
+      "Capital Structure Discussion",
+      "Capital Structure, Debt Structure, Credit Rating",
+      "Clarkson Lumber Company Case: Pro Forma Base Case, Cash Discount",
+      "Cost of Capital",
+      "Course Introduction, Edgar, 10-K Review and Analysis, Capital IQ",
+      "Earnings Call; Ratio / Trend analysis",
+      "Financial Information",
+      "Financial Statements Analysis: Trade Credit and Credit Terms; Other Ratios",
+      "Financial Statements Analysis: Working Capital Management, Cash Conversion Cycle",
+      "Financial Statements: Build Financial Statements",
+      "Financial Statements: Income Statement; Balance Sheet",
+      "Financial Statements: Statement of Cash Flows; Build Financial Statements",
+      "Forecasting Financial Statements: Pro Forma Intro; Textbook Example;",
+      "Forecasting Financial Statements: Textbook Example in Excel. Clarkson Lumber Case Introduction.",
+      "Introduction to Capital Budgeting",
+      "Investment Decision Principles",
+      "Investment Decision Principles: Net Present Value (NPV), Internal Rate of Return (IRR), Payback Rule",
+      "Lady M Case",
+      "Mergers and Acquisition",
+      "Ocean Carrier Case",
+      "Playtime Toy Company Case: Monthly Cash Flow Analysis",
+      "Procter & Gamble Laundry Case",
+      "Raising and Distributing Capital",
+      "Raising Capital, IPO Process, Payout Policy, Liquidity Management",
+      "Stock / Firm Valuation",
+      "Stock / Firm Valuation (including Relative Valuation Exercise)",
+      "Valuation"
+    ],
+    "tools": [
+      "Excel"
+    ],
+    "outcomes": [],
+    "readings": [
+      "Fundamentals of Corporate Finance"
+    ]
+  },
+  "FIN 401": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Behavioral Finance/Technical Analysis; Bond Prices and Yields",
+      "Bond Prices and Yields",
+      "Bond Prices and Yields; Managing Bond Portfolios",
+      "Capital Asset Pricing Model; Efficient Market Hypothesis",
+      "Capital Asset Pricing; Portfolio Performance Evaluation;",
+      "Efficient Diversification",
+      "Efficient Diversification; Capital Asset Pricing",
+      "Efficient Market Hypothesis",
+      "Equity Valuation",
+      "Futures Markets",
+      "Futures Markets and Risk Management",
+      "Introduction; Assets Classes and Financial Instruments",
+      "Managing Bond Portfolios",
+      "Mutual Funds and Other Investment Companies; Risk and Return",
+      "Option Markets; Option Valuation",
+      "Option Valuation",
+      "Option Valuation; Futures Markets and Risk Management",
+      "Options Markets",
+      "Rates of Return; Buying on Margin; Short Sales",
+      "Risk and Return; Efficient Diversification",
+      "Risk and Risk Premiums; Asset Allocation",
+      "Securities Markets; Mutual Funds and Other Investment Companies"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Calculator (required)",
+      "Essentials of Investments"
+    ]
+  },
+  "FIN 403": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Active vs. Passive Management",
+      "Asset Allocation",
+      "Asset allocation & Endowment funds",
+      "Asset pricing models",
+      "Asset Pricing Models: Multifactor Models",
+      "Asset Pricing Models: Testing CAPM",
+      "Basics of portfolio planning",
+      "Basics of Portfolio Planning + Investment Vehicles",
+      "Buffett's alpha & Factor investing",
+      "Case: Selecting Mutual Funds",
+      "Case: Selecting mutual funds A",
+      "Case: Selecting mutual funds B",
+      "Case: Smart Beta ETF",
+      "Endowment Funds",
+      "Factor investing",
+      "Introduction & Stock returns and diversification",
+      "Market efficiency",
+      "Performance evaluation",
+      "Portfolio risk management",
+      "Portfolio theory",
+      "Stock returns and diversification"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Course Packet from Harvard Business Publishing",
+      "Portfolio Management for Miami University - Farmer School of Business ePDF.",
+      "Reading materials from Harvard Business Publishing Website"
+    ]
+  },
+  "FIN 404": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Arbitrage and Law of One Price",
+      "Forward and Futures Markets",
+      "Forward and Futures Pricing"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "An Introduction to Derivatives and Risk Management"
+    ]
+  },
+  "FIN 408": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Bank Financial Statements",
+      "Bank Regulation",
+      "Credit Risk",
+      "Interest Rate Risk",
+      "Introduction to Banking",
+      "Liquidity Risk",
+      "Operational Risk",
+      "Risk Hedging"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Financial Institutions Management A Risk Management Approach",
+      "Wall Street Journal"
+    ]
+  },
+  "FIN 417": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Chapter 1",
+      "Chapter 1 & Chapter 2",
+      "Chapter 14",
+      "Chapter 18",
+      "Chapter 2",
+      "Chapter 3",
+      "Chapter 5",
+      "Chapter 6",
+      "Chapter 8",
+      "Chapter 9",
+      "Chapters 4, 12, & 13"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "International Financial Management",
+      "none"
+    ]
+  },
+  "FIN 431": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Analyzing Metropolitan LT-growth Patterns",
+      "Capitalization Rates",
+      "Case Presentations",
+      "CRE Due Diligence",
+      "CRE Financial Modelling",
+      "CRE Forces of Change",
+      "Debt - Basic & Loan Types",
+      "Debt - Structuring and Risk",
+      "Equity - Private",
+      "Equity - Public",
+      "Introduction",
+      "Market Analysis",
+      "Negotiation",
+      "Property Level Pro-forma Analysis",
+      "Real Estate Cycles",
+      "Return Characteristics & Volatility of CRE",
+      "Valuation"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": []
+  },
+  "FIN 461": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 3,
+    "topics": [
+      "Accretion / Dilution Analysis",
+      "Business Alliances & Restructuring",
+      "Comparable Companies Analysis",
+      "DCF Analysis",
+      "Initial Public Offerings",
+      "Introduction to M&A",
+      "Leveraged Buyouts",
+      "Precedent Transactions Analysis",
+      "Private Equity",
+      "The Corporate Takeover Market"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": []
+  },
+  "FIN 481": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Course introduction; portfolio management process and IPS review; equity valuation applications and processes; return concepts",
+      "Discounted dividend valuation; free cash flow valuation; comparable-company valuation; macro review; stock pitch guidance; exam review",
+      "End-of-semester report",
+      "In-house stock pitch; pitch-deck revision; SMIF stock pitch event",
+      "In-house stock pitches;",
+      "In-house stock pitches; SMIF stock pitch event",
+      "Industry and company analysis; SMIF portfolio holdings summary presentation; discuss stock ideas",
+      "Labor Day (no class); sector/industry presentations; discuss stock ideas and portfolio rebalancing",
+      "Mid-term exam study session; stock pitch preparation; guest speaker visit",
+      "Stock pitch preparation; in-house stock pitch",
+      "Study sessions and stock pitch preparation"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Equity Asset Valuation (CFA Institute Investment Series)",
+      "Investment Valuation: Tools and Techniques for Determining the Value of Any Asset",
+      "Security Analysis and Business Valuation on Wall Street: A Comprehensive Guide to Today's Valuation Methods"
+    ]
+  },
+  "FIN 482": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Course introduction; portfolio management process and IPS review; equity portfolio management; risk management",
+      "End-of-semester report",
+      "MUSMIF IPS revision; review current holdings; active investment strategies; trade strategy and execution; SMIF portfolio holdings summary presentation; discuss stock ideas",
+      "Portfolio performance evaluation; technical analysis; macro review; stock pitch guidance",
+      "Sector/industry presentations; discuss stock ideas and portfolio rebalancing",
+      "Study session and stock pitch preparation; in-house stock pitch pitch-deck revision; SMIF stock pitch event - 1st round",
+      "Study session; stock pitch preparation; guest speaker visit"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Investment Valuation: Tools and Techniques for Determining the Value of Any Asset",
+      "Portfolio Management in Practice, Volume 1: Investment Management: Equity Portfolio Management (CFA Institute Investment Series)",
+      "Portfolio Management in Practice, Volume 3: Equity Portfolio Management (CFA Institute Investment Series)",
+      "Security Analysis and Business Valuation on Wall Street: A Comprehensive Guide to Today's Valuation Methods",
+      "Valuation Techniques: Discounted Cash Flow, Earnings Quality, Measures of Value Added, and Real Options (CFA Institute Investment Perspectives)"
+    ]
+  },
+  "FIN 485": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "A complete report Decision orientated",
+      "Analysis and synthesis",
+      "Balance and weighing",
+      "Becoming informed",
+      "Collecting what's needed",
+      "Develop and refine proposal",
+      "Effective practitioner project approaches",
+      "Frame report structure",
+      "Ideate",
+      "Implementation",
+      "Introduction and roadmap",
+      "keeping the project advancing",
+      "Making use of literatures",
+      "Path to implementation",
+      "Peer-to-peer feedback",
+      "Practical and grounded",
+      "Presentation, Poster",
+      "Prioritizing the effort",
+      "Producing an effective business report",
+      "Proposal hand-in",
+      "Ready to implement",
+      "Recommend",
+      "Report hand-in",
+      "Risk management",
+      "Stakeholder management",
+      "Team contract",
+      "Terms of Reference"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Undertaking Capstone Projects in Education"
+    ]
+  },
+  "GEO 441": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "ArcGIS GUI",
+      "Bring Spatial Analysis Together: Spatial Analysis Recap",
+      "Bring Spatial Analysis Together: Work with Census Data",
+      "Cartographiy (II); New Development in GIS",
+      "Coordinate Systems and How Does Positioning Work",
+      "Coordinate Systems and Map Projections (I)",
+      "Coordinate systems, global positioning",
+      "Coordinates system and map projections I",
+      "Coordinates system and map projections II",
+      "Data model",
+      "Database management and database concept",
+      "Digital data display and cartography",
+      "Digital spatial data",
+      "Drone demonstration",
+      "Geospatial data models",
+      "Geospatial Data Models and Coordinate System",
+      "Getting familiar with ArcGIS",
+      "GIS data acquisition",
+      "Introduction & software installation",
+      "Introduction to geospatial technologies",
+      "Introduction To Geospatial Technologies; Cartography (I)",
+      "Labor Day",
+      "Map projections",
+      "Map Projections (II)",
+      "New developments in GIS",
+      "Practice Vector Data Query and Filter",
+      "Practice Vector Data Query and Filter; Q&A for Midterm",
+      "Project Poster Presentation",
+      "Project Proposal Lightning Presentation",
+      "Project Work Day",
+      "Raster data analysis",
+      "Raster data and Aerial and Satellite Images",
+      "Raster Data Model and Acquisition",
+      "Raster data: data model and acquisition",
+      "Raster data: spatial analysis",
+      "Raster data: terrain analysis",
+      "Raster data:earth observation",
+      "Scale and Coordinate Transformation",
+      "Scale, generalization, and cartographic design",
+      "Spatial Analysis for Raster Data",
+      "Spatial Analysis for Vector Data: Buffer Analysis",
+      "Spatial Analysis for Vector Data: Overlay",
+      "Spatial analysis: census data",
+      "Spatial analysis: census data, cont.",
+      "Spatial analysis: vector buffer",
+      "Spatial analysis: vector overlay",
+      "Spatial Data Acquisition: From Earth Observation to Map",
+      "Spatial Estimation",
+      "Spatial Interpolation",
+      "Spatial patterns & correlation",
+      "Terrain Analysis",
+      "The World in 3D",
+      "Use Vector Data: Attribute Table and Geometry",
+      "Use Vector Data: Query or Filter by Attributes",
+      "Use Vector Data: Query or Filter by Location",
+      "Vector data analysis and geoprocessing",
+      "Vector data: attribute tables",
+      "Vector data: query/filter by attribute",
+      "Vector data: query/filter by location",
+      "Welcome & Introduction to Geospatial Technologies"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "GIS Fundamentals",
+      "GIS Fundamentals A First Text on Geographic Information Systems",
+      "Miami University GIS Resources"
+    ]
+  },
+  "GEO 442": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Ethics; Intro to ArcGIS Online",
+      "Geocoding & Network Analysis",
+      "Geodatabase Topology",
+      "Geodatabases",
+      "Introductions, Projections, & Cartography",
+      "Mobile Data Collections",
+      "Multi-Criterion Analysis",
+      "Project Presentations",
+      "Project Work",
+      "Raster Analyses",
+      "Spatial Interpolation & LiDAR",
+      "Vector Data Analysis"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "3D Elevation Program",
+      "A GIS Code of Ethics",
+      "ArcGIS Brings Topology to the Geodatabase",
+      "ArcGIS field data types",
+      "Can Only Taking Right Turns Really Save You Fuel?",
+      "Code of Ethics",
+      "Designing Better Maps: A Guide for GIS Users",
+      "Geographic Information System Basics",
+      "GIS Fundamentals: A First Text on Geographic Information Systems",
+      "GPS Accuracy",
+      "Hazard Mitigation Plan Status",
+      "Hazard Mitigation Planning",
+      "Introduction to Geographic Information Systems",
+      "Introduction to the geodatabase",
+      "LIDAR Quality Levels – Part 1",
+      "Manual of Geographic Information Systems",
+      "Mitigation Planning and Grants",
+      "Space Segment",
+      "The GIS Professional Ethics Project: Practical Ethics Education for GIS Pros",
+      "The Top Nine Reasons to Use a File Geodatabase"
+    ]
+  },
+  "GEO 451": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Community and Economic Development",
+      "History of Planning and the Planning Process",
+      "Housing Opportunity and Affordability",
+      "Labor Day - No Class",
+      "Local Examples: Planning in Oxford, Ohio",
+      "Mid Term Exam",
+      "Sustainability and Planning Ethics",
+      "The Comprehensive Plan",
+      "The Legal Framework for Planning",
+      "The Role of the Community in Planning",
+      "Transportation Planning",
+      "Urban Design and Design Review",
+      "What is Planning?: Introduction to the Course and to Planning",
+      "Zoning and Land Use Controls"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "\"Advocacy and Pluralism in Planning\" from Journal of the American Planning Association",
+      "\"Planning Through Consensus Building\" from Journal of the American Planning Association",
+      "\"When the Building Still Works but the Use Doesn’t\"",
+      "2026 Survey of State Planning Laws",
+      "2026 Trend Report for Planners",
+      "3 steps to make GIS part of a successful smart city",
+      "7 Trends Knocking at the Planning Office Door",
+      "A Better Way to Zone",
+      "A Guide to Planning in Ohio 2nd Edition",
+      "American Institute of Certified Planners (AICP) Code of Ethics",
+      "APA Policy Guide on Smart Growth",
+      "Arnstein's Ladder of Citizen Participation",
+      "Building 15 Minute Communities - A Leadership Guide",
+      "City of Cincinnati Zoning Administration",
+      "City of Oxford Climate Action Plan",
+      "Climate Change 2021 - The Physical Science Basis Working Group I Contribution to the Sixth Assessment Report of the Intergovernmental Panel on Climate Change",
+      "Community By Design: New Urbanism for Suburbs and Small Communities",
+      "Comprehensive City Planning: Introduction & Explanation",
+      "Dangerous by Design",
+      "Department of Commerce Standard State Zoning Enabling Act"
+    ]
+  },
+  "IMS 392": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Blogging, SEO/AIO, Building a Website, Content Marketing Principles and Creation Techniques",
+      "Brand Development",
+      "Building content for websites, applying to social channels",
+      "Client meetings, feedback and application",
+      "Client meetings, feedback, and application",
+      "Community building, events marketing and portfolio building.",
+      "Community building, events, marketing, and portfolio building",
+      "Content marketing basics",
+      "Copy Writing, Email Marketing",
+      "Copywriting, Email Marketing",
+      "Creating Pitches for Clients",
+      "Creating Videos",
+      "Customer Journey Maps",
+      "Feedback",
+      "Social Media Building",
+      "Social Media, Influencer Marketing, Critique, Infographics, Email Marketing, Podcasts, Analytics, Storytelling, and LinkedIn Resume additions and Post",
+      "What is Content Marketing? Creating a Business, Research, The Consumer, Product and Business Plan"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Materials for Class",
+      "No book but see additional Information for supplies",
+      "www.contentmarketinginstitute.com"
+    ]
+  },
+  "IMS 418": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Course Intro/Social Platform Tour",
+      "Foundational Social Media Strategy (Audits, Objectives, Platform Selection, Campaigns, Measurement)",
+      "Influencer Marketing",
+      "Project Wrap-up & Final Exam",
+      "Social Media Campaigns, Policy, and Advanced Content Creation Topics",
+      "Social Media History, Strategy, Evaluation, and Content Creation",
+      "Social Media Platforms",
+      "Social Media Platforms & Execution (Facebook, Instagram, TikTok, LinkedIn, YouTube)"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Essentials of Social Media Marketing",
+      "Essentials of Social Media Marketing with the Social Media Simternship",
+      "Required Course Materials"
+    ]
+  },
+  "IMS 419": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Analytics",
+      "Artificial Intelligence",
+      "Course Introduction & Digital Marketing Foundations",
+      "Digital Marketing Foundations",
+      "Digital Strategy",
+      "Digital Strategy and AI Integration",
+      "Display Advertising",
+      "Email Marketing",
+      "Introduction",
+      "Mobile Marketing",
+      "Off-Site SEO",
+      "On-Site SEO",
+      "Online Reputation Management",
+      "Paid Search",
+      "Paid Search (SEM)",
+      "Project Working Session",
+      "Social Media Platforms",
+      "Social Media Strategies",
+      "Web Analytics",
+      "Web Design",
+      "Web Design & Conversion Fundamentals"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Digital Marketing Essentials",
+      "Digital Marketing Essentials: A Comprehensive Digital Marketing Textbook"
+    ]
+  },
+  "IMS 440": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Concept Development",
+      "Portfolio Development",
+      "Production",
+      "Staging"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Students will review similar projects in production mapping"
+    ]
+  },
+  "ISA 125": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Continuous Distributions/Surveys",
+      "Correlation & Linear Regression",
+      "Data and Decisions",
+      "Discrete Random Variables",
+      "Hypothesis Testing - One sample means/ Final Review",
+      "Hypothesis Testing - One sample proportions",
+      "Hypothesis Testing Basics",
+      "Linear Regression/Exam 1",
+      "Normal and Other Continuous Distributions",
+      "Probability & Contingency Tables",
+      "Qualitative/Quantitative Data",
+      "Quantitative Data/ Correlation",
+      "Sampling Distributions & Confidence Intervals for a Population Mean/Exam 2",
+      "Sampling Distributions & Confidence Intervals for a Population Proportion",
+      "Surveys & Sampling/ Sampling Distributions"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Business Statistics"
+    ]
+  },
+  "ISA 211": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "AI Ideation: World Issue Solutions & Exam 2",
+      "BPMN Practicum & Exam 1",
+      "Connectivity",
+      "Data Collection",
+      "Data Presentation",
+      "Data Security",
+      "Data Storage",
+      "Enterprise Systems",
+      "Ethics & Data Governance",
+      "Infrastructure Management",
+      "Porter's Building Blocks",
+      "Problem Identification",
+      "Project Management",
+      "Project Management Exercise: AirISA",
+      "Systems Thinking and Business Process Modeling & Notation"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "None"
+    ]
+  },
+  "ISA 225": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "(Review",
+      "Building Models",
+      "Building Models Practice",
+      "Chi Square Tests",
+      "Comparing Two Population Means",
+      "Comparing two population means/proportions",
+      "Correlation and Simple Regression Analysis",
+      "Data Mining and Decision Trees",
+      "Decision Trees",
+      "Decision Trees+Review",
+      "Dummy Variables",
+      "Hypothesis Testing for One Sample Mean",
+      "Inference for SLR",
+      "Linear Relationships & Correlation",
+      "Market Basket",
+      "Market Basket Analysis (not in book)",
+      "Multiple Linear Regression (MLR)",
+      "Multiple Regression",
+      "One-Sample Hypothesis Testing for Means",
+      "Probability Trees and Bayes Rule",
+      "Sampling Distributions and CI for Means",
+      "Simple Linear Regression (SLR)",
+      "Time Series Analysis, Smoothing & Regression Methods",
+      "Time Series: Regression- based models and smoothing methods",
+      "Transformations"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Business Statistics"
+    ]
+  },
+  "ISA 235": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "AI",
+      "BPMN Skill Extension and Exam 1: Chapters 1 – 4 + assigned articles + activities",
+      "Business Process Management Practicum",
+      "Course Introduction / Module 1.1",
+      "Data Literacy Practicum",
+      "Data Literacy Skill Extension and Exam 2: Chapters 5 – 7 + assigned articles + activities",
+      "ISA235 Ch 2",
+      "ISA235 Ch 3",
+      "ISA235 Ch 5",
+      "ISA235 Ch 6",
+      "ISA235 Ch 7",
+      "ISA235 Ch 8",
+      "ISA235 Ch 9",
+      "ISA235 Ch1",
+      "ISA235 Ch4",
+      "ISA235 Exam",
+      "Module 1.2 / Module 2",
+      "Module 3",
+      "Module 4",
+      "Module 5",
+      "Module 6",
+      "Module 8",
+      "PowerBI Activity and Module 7",
+      "Voice of Practice Session & AI Skill Extension"
+    ],
+    "tools": [
+      "Power BI"
+    ],
+    "outcomes": [],
+    "readings": [
+      "M: Information Systems"
+    ]
+  },
+  "ISA 301": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Circuit-Switched, Packet-Switched and IP-Based Communications",
+      "Course Introduction/ Data Communications and Networking Models",
+      "Defending Against Virus Attacks, Trojan Horses, Spyware & Adware",
+      "Encryption Fundamentals + Virtual Private Network",
+      "Group Project Practicum",
+      "In-Class Term Paper session",
+      "Introduction to Network Security",
+      "Intrusion-Detection Systems + Encryption Fundamentals",
+      "Local Area Networks and Backbone Networks",
+      "Network Infrastructure Implementation",
+      "Security Policies + Assessing System Security",
+      "The Network and Transport Layers + The Session, Presentation and Application layers",
+      "Types of Attacks + Fundamentals of Firewalls",
+      "Wide Area Networks + Exam 1"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Fundamentals of Communications and Networking",
+      "Network Defense and Countermeasures"
+    ]
+  },
+  "ISA 303": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Business Process Modeling using BPMN",
+      "ERPsim Advanced Manufacturing Game",
+      "Financial Accounting and ERP",
+      "Fulfillment Process and ERP",
+      "Integrated Processes and ERP",
+      "Introduction to Business Processes",
+      "Introduction to ERP, SAP, and GBI",
+      "Introduction to ERPsim Logistics Game",
+      "Material Planning Process and ERP",
+      "Procurement Process and ERP",
+      "Production Process and ERP",
+      "Securing the Enterprise: SAP Access Control and GRC (Governance, Risk, and Compliance)"
+    ],
+    "tools": [
+      "SAP"
+    ],
+    "outcomes": [],
+    "readings": [
+      "BUSINESS PROCESS INTEGRATION WITH SAP S/4HANA",
+      "ERPsim Learning Portal - Purchase required"
+    ]
+  },
+  "ISA 321": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Integer programming",
+      "Introduction to optimization",
+      "Introductory nonlinear programming",
+      "Introductory stochastic programming",
+      "Linear programming",
+      "Network flow optimization",
+      "Network science",
+      "Sensitivity analysis"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Operations Research Applications and Algorithms"
+    ]
+  },
+  "ISA 345": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 3,
+    "topics": [
+      "Access Control",
+      "Advanced Data Modeling: Introduction to Logical Models",
+      "Advanced Data Modeling: Introduction to Logical Models (part 2)",
+      "Advanced Data Modeling: Normalization",
+      "Advanced Data Modeling: Normalization part (2)",
+      "Advanced SQL Statements: Introduction to VIEW and INDEX",
+      "Advanced SQL Statements: Introduction to VIEW and INDEX (part 2)",
+      "Advanced SQL Statements: SQL Functions, Procedures, and Triggers",
+      "Advanced SQL Statements: SQL Functions, Procedures, and Triggers( Part 2)",
+      "Course Introduction",
+      "Group Project Review",
+      "In-Class Group Project Work",
+      "Introduction to Relational Models: Modeling Single Entities",
+      "Introduction to SQL: Insert, Update, and Delete Statements",
+      "Introduction to SQL: Select Statement/ GROUP BY Clause",
+      "Introduction to SQL: String Manipulation and Date/Time Functions",
+      "Introduction to SQL: Table Manipulation",
+      "Modeling 1:M Relationships",
+      "Modeling and Querying 1:1 and Recursive Relationships",
+      "Modeling and Querying 1:1 and Recursive Relationships (Part 2)",
+      "Modeling M:M Relationships",
+      "Other Topics: AI-Driven Development",
+      "Other Topics: AI-Driven Development (Part 2)",
+      "Other Topics: Data Integrity and Transaction Management and Data",
+      "Other Topics: SQL Agents",
+      "Other Topics: SQL Agents (Part 2)",
+      "Querying 1:M Relationships: Join Statement",
+      "Querying M:M Relationships: Join Statement /Set Operations"
+    ],
+    "tools": [
+      "SQL"
+    ],
+    "outcomes": [],
+    "readings": [
+      "Database Systems and Data Warehousing"
+    ]
+  },
+  "ISA 365": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "A/B/n Tests",
+      "A/B/n Tests &",
+      "Analyzing A/B Tests: Basics",
+      "Analyzing A/B Tests: Basics &",
+      "Analyzing Designs via Regression",
+      "Designing A/B Tests with Large Samples",
+      "Designing A/B Tests with Large Samples &",
+      "Designing Tests with Small Samples",
+      "Designing Tests with Small Samples &",
+      "Process Monitoring Basics",
+      "R, Basic Stats Review",
+      "R, Basic Stats Review &",
+      "Simpson's Paradox &",
+      "Subgroup Analysis",
+      "Why Experiment?"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Business Experiments with R"
+    ]
+  },
+  "ISA 381": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Classes",
+      "Decision Structures and Boolean Logic",
+      "Dictionary Sets",
+      "Files and Exceptions",
+      "Functions and Modules",
+      "Group Project Work",
+      "Input, Processing, and Output",
+      "Introduction to Computers and Programming",
+      "Lists and Tuples",
+      "Object-Oriented Programming",
+      "Project Presentations",
+      "Repetition Structures"
+    ],
+    "tools": [
+      "Python"
+    ],
+    "outcomes": [],
+    "readings": [
+      "Starting out with Python, 6th ed"
+    ]
+  },
+  "ISA 387": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Agile Planning & Intro to SCRUM",
+      "Analysis and Modeling Wrap-up & Exam 1",
+      "Data and Process Modeling",
+      "Design, Implementation & Testing",
+      "Product Focus & Sprint 2 Work",
+      "Product vs Project Focus Intro to the Systems Development Life Cycle",
+      "Project Planning & Company Interview Presentations",
+      "Project Wrap-up and Presentations",
+      "Scaled Agile Methods & Sprint 1 Work",
+      "SCRUM & Project Kickoff",
+      "Systems Architecture & Sprint 1 Work",
+      "Systems Methodologies - Waterfall and Agile",
+      "Systems Planning and Analysis",
+      "Systems Thinking The Evolution of IS Work"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Escaping the Build Trap"
+    ]
+  },
+  "ISA 391": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 3,
+    "topics": [
+      "Analysis of Variance (ANOVA)",
+      "Complex Regressors",
+      "Complex Regressors: Factors",
+      "Hypothesis Testing",
+      "Interpretation of Main Effects",
+      "Introduction to R & R Markdown",
+      "Logistic (Binomial) Regression",
+      "Logistic Regression",
+      "Logistic Regression/Case Studies",
+      "Model Diagnostics and Transformations",
+      "Model Testing",
+      "Multiple Linear Regression",
+      "Multiple Regression",
+      "Poisson Regression",
+      "Polynomial effects, missing data and imputation",
+      "R and R basics",
+      "Regression Diagnostics",
+      "Transformations",
+      "Variable Selection",
+      "Variable Selection-explanatory vs predictive models"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Applied Linear Regression"
+    ]
+  },
+  "ISA 401": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Clustering",
+      "Data Wrangling with dplyr",
+      "Fundamentals of Data Visualization (Cont.); Lab: Tableau + Power BI",
+      "Introduction to R (Cont.); Structured Data: Import & Export",
+      "Lab: Flourish + DataWrapper; Commonly Used Charts",
+      "Project Work Sessions",
+      "Structured Data: APIs; Web Scraping I",
+      "Technically Correct & Consistent Data; End-to-End Data Pipeline Example",
+      "The Modern Data Landscape and an Introduction to the R Programming Language",
+      "Unstructured Data: LLM Text Extraction; Transformation: Tidy Data",
+      "Visualizing High-Dimensional Data; Business Reporting",
+      "Visualizing Time Series; Spatial & Spatiotemporal",
+      "Web Scraping II & III"
+    ],
+    "tools": [
+      "Excel",
+      "Power BI",
+      "Tableau"
+    ],
+    "outcomes": [],
+    "readings": [
+      "Advanced R",
+      "Data Visualization A Practical Introduction",
+      "Fundamentals of Data Visualization A Primer on Making Informative and Compelling Figures",
+      "Instructor-created class slides, which is available on Canvas",
+      "R for Data Science Import, Tidy, Transform, Visualize, and Model Data"
+    ]
+  },
+  "ISA 414": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Cloud Computing and Storage",
+      "Course Introduction and Preliminaries",
+      "Data Analysis",
+      "Data Collection",
+      "Introduction to the Hadoop Ecosystem",
+      "Modern AI Tools"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "No Textbook Required"
+    ]
+  },
+  "ISA 444": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Module 0: Course Overview; Module 1: Intro to Forecasting",
+      "Module 2: Basic Tools & Goodness of Fit",
+      "Module 3: Nonseasonal Smoothing",
+      "Module 4: Decomposition and Seasonal Smoothing",
+      "Module 5: Autocorrelation and Seasonality",
+      "Module 6: ARIMA Methods",
+      "Module 7: Seasonal ARIMA Models",
+      "Module 8: Time Series Regression",
+      "Project and Exam"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Forecasting Principles and Practice",
+      "Fortune Tellers",
+      "Principles of Business Forecasting, 2e"
+    ]
+  },
+  "ISA 491": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Clustering Analysis",
+      "Data Exploration and Preparation",
+      "Decision Trees",
+      "Dimension Reduction",
+      "Evaluating Predictive Performance",
+      "Introduction to R & R Markdown",
+      "Logistic Regression",
+      "Random Forests and Boosted Trees",
+      "The Data Mining Process"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Data Mining for Business Analytics"
+    ]
+  },
+  "ISA 495": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Case Study (Coursera) & Guest Speaker (Tom Melzl, CRO at Big Panda)",
+      "Case Study (Handy) & Project Updates",
+      "Course Intro & Topic Discussion (IT Business Value)",
+      "Guest Speaker (David Woodworth, President at Terillium) & Topic Discussion (IT Ethics)",
+      "Project Presentations",
+      "Project Work Day & Topic Discussion (Predictive AI)"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "A Three-Layer Model for Successful Organizational Digital Transformation",
+      "Addressing User Resistance Would Have Prevented a Healthcare AI Project Failure",
+      "AI on the Front Lines",
+      "Computing on Platforms",
+      "Coursera's Foray into GenAI",
+      "Cybersecurity at Fireeye: Human + AI",
+      "Designing a Customer Information Privacy Program Aligned with Organizational Priorities",
+      "Email: From Hero to Zero - The Beginning of the End?",
+      "Eric Hawkins Leading Agile Teams @ Digitally-Born Appfolio",
+      "Getting Strategic About Sustainability",
+      "Handy: The Future of Work?",
+      "How Smart, Connected Products Are Transforming Competition",
+      "How Verizon Media Built a Cybersecurity Culture",
+      "Human Values in the Loop: Design Principles for Ethical AI",
+      "IT Doesn't Matter",
+      "Pipelines, Platforms, and the New Rules of Strategy",
+      "Prompting for Action",
+      "Review: Information Technology and Organizational Performance: An Integrative Model of IT Business Value",
+      "Robotic Process Automation at Telefonica O2",
+      "Strategy, not Technology, Drives Digital Transformation"
+    ]
+  },
+  "MGT 111": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Accounting and Financial Statements",
+      "Business Ethics and Social responsibility",
+      "Business in a Borderless World",
+      "Customer-Driven Marketing",
+      "Digital Marketing and social media",
+      "Managing Human Resources",
+      "Money and the Financial System",
+      "Motivating the Workforce",
+      "Options for Organizing Business",
+      "Organization, Teamwork, and Communication",
+      "Smail Business, Entrepreneurship, and Franchising",
+      "Supply Chain: Procurement, Operations, and Logistics",
+      "The Dynamics of Business and Economics",
+      "The Nature of Management"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Business Foundations:"
+    ]
+  },
+  "MGT 291": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Bias & Diversity",
+      "Grit & Goal Setting",
+      "Groups & Teams",
+      "Individual Differences",
+      "Introduction to Org Behavior",
+      "Job Performance",
+      "Job Satisfaction",
+      "Leadership Strategy",
+      "Managing Conflict & Negotiations",
+      "Organizational Commitment",
+      "Organizational Culture",
+      "Power, Influence & Politics",
+      "Stress Management"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Introduction to Management & Leadership: Coursepacket",
+      "No textbook required.",
+      "Organizational Behavior"
+    ]
+  },
+  "MGT 295": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Forecasting",
+      "Forecasting and Integrated Business Planning",
+      "Global Supply Chain Management",
+      "Introduction to Logistics",
+      "Introduction to Purchasing",
+      "Introduction to Supply Chain & Operations Management",
+      "Introduction to Supply Chain Management",
+      "Introduction, strategy and performance",
+      "Inventory",
+      "Inventory Management",
+      "Lean Operations",
+      "Logistics",
+      "Manufacturing Planning & Control",
+      "Meeting Customers’ Needs",
+      "NPD, Process Design & Lean",
+      "Process Design",
+      "Process Design and Improvement",
+      "Purchasing & Strategic Sourcing",
+      "Purchasing, Inventory and Logistics",
+      "Quality",
+      "Quality Management",
+      "Quality, Network Design & the Future",
+      "SCM Network Design",
+      "Strategic Cost Management",
+      "Strategy & Creating Customer Value",
+      "Strategy & Managing Performance",
+      "Supplier Development and Integration",
+      "Supplier Selection",
+      "Supply Chain Sustainability",
+      "Sustainability & Risk Management",
+      "This is a study abroad so scheduling may change based on tours and",
+      "Transportation & Warehousing"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Introduction to Supply Chain Management: Enhancing Competitiveness and Customer Value",
+      "Operations and SUpply Chain Management: The Core"
+    ]
+  },
+  "MGT 303": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 3,
+    "topics": [
+      "21st Century HR, Emotional Intelligence, Employment Law, and Evidence-Based HR Practices",
+      "Analyzing, Designing, and Enriching Jobs",
+      "Creating Innovative 21st Century HR Practices",
+      "Designing, Implementing, and Evaluating Innovative Recruitment and Selection Practices",
+      "Designing, Implementing, and Evaluating Innovative Training, Talent Development, and Performance Enrichment Practices",
+      "HR consulting teams design, implement, and evaluate recruitment and selection practices for a \"client\" organization.",
+      "HR consulting teams design, implement, and evaluate training, development, and performance enrichment practices for a \"client\" organization.",
+      "HR Simulation and HR Case Analysis",
+      "Introduction and HR Consulting Teams"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Harvard Business Review student subscription",
+      "Human Resource Management"
+    ]
+  },
+  "MGT 304": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Course Introduction and Team Building",
+      "Cross-cultural Communication",
+      "Cross-cultural Decision-Making",
+      "Cross-cultural Leadership",
+      "Cross-cultural Motivation",
+      "Diversity Management",
+      "Expatriates",
+      "Introduction to Diversity and Cross-Cultural Management",
+      "Introduction to Globalization",
+      "Mid-term Exam",
+      "Religion",
+      "The Basics of Cultural Diversity",
+      "The Basics of Diversity",
+      "Theories of Cultural Values"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Management across cultures: Challenges, strategies, and skills, by Steers & Osalnd, 4th edition, Cambridge University Press."
+    ]
+  },
+  "MGT 404": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Chapter 01: Pay Model",
+      "Chapter 02: Totality of Decisions",
+      "Chapter 03: Defining Internal Alignment",
+      "Chapter 04: Job Analysis",
+      "Chapter 05: Job-Based Structures and Job Evaluation",
+      "Chapter 06: Person-Based Structures",
+      "Chapter 07: Defining Competitiveness",
+      "Chapter 08: Designing Pay Levels, Mix and Pay Structures",
+      "Chapter 09: Pay-for-Performance",
+      "Chapter 10: Pay-for-Performance: Types of Plans",
+      "Chapter 11: Performance Appraisals",
+      "Chapter 12: The Benefits Determination Process",
+      "Chapter 13: Benefits Options",
+      "Chapter 14: Compensation of Special Groups – Executives and Others",
+      "Chapter 15: Union Role in Wage and Salary Administration",
+      "Chapter 16: International Pay Systems",
+      "Chapter 17: Government and Legal Issues in Compensation",
+      "Chapter 18: Making it Work",
+      "Mod 1 8/25-9/13",
+      "Mod 2 9/14- 10/2",
+      "Mod 3 10/5 – 10/23",
+      "Mod 4 10/26 – 11/13",
+      "Mod 5 11/16 – 12/3"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "OXFORD CONNECT ACCESS CARD FOR COMPENSATION"
+    ]
+  },
+  "MGT 406": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "1. Introduction and Course Overview",
+      "10/15 Candidate Selection Day",
+      "10/9 Fall Break",
+      "2. Expectations",
+      "3. Staffing Models and Strategy",
+      "9/11 Fall Break",
+      "9/8 DHL will be in class to go over our project.",
+      "Behavior Based Interviewing",
+      "Decision Making",
+      "DHL Service-Learning Project",
+      "External Recruitment",
+      "External Selection I & II",
+      "External Speakers",
+      "Group Project Presentations 175 points",
+      "High School Employee Selection/Interview Project",
+      "Internal Recruitment",
+      "Internal Selection",
+      "Job Analysis: Requirements, Competencies, and Rewards",
+      "Measurement",
+      "Mentor Project",
+      "Planning",
+      "Project giveback time",
+      "Retention Management",
+      "Seven Hills HS Interview Day",
+      "SLP Companies and Teams Announced 9/1",
+      "Social and Legal Environment",
+      "Staffing System Management",
+      "Team Sourcing Project"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Connect Online Access for Staffing Organizations"
+    ]
+  },
+  "MGT 415": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Required Cases & Readings"
+    ]
+  },
+  "MGT 418": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Circular Economy, Risk & Consumption Behaviors, guest speaker, Sustainable Design and Lifecycle",
+      "Humanitarian Logistics (simulation), Ecommerce and Packaging, Measurement & Certification, Telling a good story/the Future",
+      "Introduction, SDGs, Big Picture, Enroads Climate Simulation",
+      "Purchasing and Supplier Management, Midterm",
+      "Total Cost of Ownership, Sustainable Logistics and Manufacturing; class project presentations begin"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Sustainability and Risk Across the Supply Chain"
+    ]
+  },
+  "MGT 431": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "AB #4--Circular Logistics/SCM assignment (will work on in class)—due by 11:59pm Sun. 10/11",
+      "AB #6--Global Trade assmt—due by 11:59pm Fri. 10/23",
+      "AI Policy & LITN Project Overview & Setup– review ahead",
+      "Bring speaker questions. Will have a follow up assignment (AB #5—due by 11:59pm Sun. 10/18",
+      "Cost & Performance Measurement",
+      "Fall Supply Chain Roundtable",
+      "Finish Topic 1",
+      "Guest Speakers from Terillium (2nd half): Matt Lamanna & Tyler Bookman",
+      "Humanitarian Logistics & SCM",
+      "Intro to course; Logistics overview",
+      "Inventory",
+      "Labor Day – NO CLASSES",
+      "LITN 2 on Global Trade",
+      "LITN: Humanitarian Logistics",
+      "LITN: Inventory issues",
+      "LITN: Reverse Logistics",
+      "LITN: Risk Mgmt. in Logistics",
+      "LITN: Sustainability in logistics",
+      "LITN: Warehousing & DC Mgmt.",
+      "Logistics Order Mgmt.—Fulfillment & Forecasting",
+      "ME Quiz 11—Topic 14 by 11:30am",
+      "MEQuiz 10–Topic 10 by 11:30am",
+      "MEQuiz 12-Topic 11 by 11:30am",
+      "MEQuiz 2-Topic 2 by 11:30am",
+      "MEQuiz 3—Topic 3 by 11:30am",
+      "MEQuiz 6—Topic 5 by 11:30am",
+      "Read Topic 10",
+      "Read Topic 11",
+      "Read Topic 14",
+      "Read Topic 3",
+      "Read Topic 5",
+      "Read Topic 8 (incl. opening story)—MEQuiz 9—Topic 8 by 11:30am",
+      "Reverse Logistics",
+      "SPEAKER COMP DAY—NO CLASS",
+      "Transportation & Global Trade in Logistics",
+      "Video: Circular Supply Chains",
+      "Warehousing & DC mgmt. (cont.)",
+      "Watch Video—What is Supply Chain Resiliency? (SupplyChainBrain.com)",
+      "Watch videos on Canvas!",
+      "Wrap up Topic 4—AB #3 due before class (by 11:40 or 1:15 based on class) in CANVAS"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Logistics Management: Enhancing Competitiveness and Customer Value"
+    ]
+  },
+  "MGT 432": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Introduction",
+      "Project Presentations",
+      "Restaurant Concepts",
+      "vb"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Purchasing and Supply Management"
+    ]
+  },
+  "MGT 451": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Bottlenecks and Operating Focus",
+      "Capacity Planning and CRP",
+      "Course Introduction and Operations Tradeoffs",
+      "Distribution Requirements Planning",
+      "Little's Law and Flow",
+      "Lot Sizing and Planning Parameters",
+      "Master Scheduling",
+      "Material Requirements Planning",
+      "Practical Science of Processes",
+      "Production Activity Control",
+      "Production Planning Systems",
+      "Push, Pull, and WIP Control",
+      "Sales and Operations Planning",
+      "Variability and Queues"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Factory Physics for Managers",
+      "Introduction to Materials Management, 9th edition"
+    ]
+  },
+  "MGT 453": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Foundation of Quality Management",
+      "Introduction to Quality",
+      "Lean Six Sigma Yellow Belt",
+      "Quality and Process Fundamentals"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "A Guide to Six Sigma and Process Improvement for Practitioners and Students: Foundations, DMAIC, Tools, Cases, and Certification"
+    ]
+  },
+  "MGT 474": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Calculating human capital ROI",
+      "Class and project introduction",
+      "Client presentations",
+      "Costing employee health and wellness",
+      "Data visualization",
+      "HR Analytics Simulation",
+      "Human capital measurement pitfalls",
+      "Human capital quantification",
+      "Human capital research design",
+      "Project analyses presentations",
+      "Project management",
+      "Project work",
+      "Project work and exam",
+      "Soft skill measurement introduction",
+      "Team building and project management tools"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Employee Health, Wellness, and Well-Being, from \"Investing in People\"",
+      "Proving the Value of Soft Skills: Measuring Impact and Calculating ROI",
+      "Why Did We Ever Go Into HR",
+      "Why Investors are thinking about Human Capital"
+    ]
+  },
+  "MGT 495": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Basic Strategies",
+      "Corporate Strategy",
+      "Ethics",
+      "External Analysis",
+      "Guest Speaker",
+      "Internal Analysis",
+      "International Strategy",
+      "Intro to Strategy",
+      "Intro to the Course"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Case Packet",
+      "Strategic Management"
+    ]
+  },
+  "MGT 498": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "& Round 1 Corporate Project Interim Update #1",
+      "Assign Client Projects Case Study and Simulation Review",
+      "Case Study Presentation #1, #2, #3, & #4",
+      "Case Study Presentation #5 & #6",
+      "Corporate Client Project Final Presentation",
+      "Corporate Client Project Kick off",
+      "Corporate Project Interim Update #2",
+      "Game 1 - Practice Round",
+      "Game 1 - Round 2",
+      "Game 1 - Round 3 & 4-Final Round",
+      "Game 2 - Practice Round & Round 1",
+      "Game 2 - Round 2 & 3",
+      "Game 2 - Round 4 - Final Round",
+      "Introductions, Review Syllabus, Discuss Student Expectations, and Discuss Major Course Projects",
+      "Prepare for Final Client Presentations",
+      "Prepare for Simulation Current Event Presentations",
+      "Prepare Simulation"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "The Supply Chain Management Casebook:"
+    ]
+  },
+  "MKT 211": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "10 Best Customer Service Experiences Due",
+      "Anti-CEO Playbook Paper Due",
+      "Apply It #1 & Learn It #1: Overview of Personal Selling",
+      "Apply It #2 & Learn It #2: Building Trust & Ethics",
+      "Apply It #3 & Learn It #3: Understanding Buyers",
+      "Apply It #4 & Learn It #4: Communication Skills",
+      "Apply It #9 & Learn It #9: Expanding Customer Relationships",
+      "Assignment #1 & Case Activity #1: Customer-Driven Strategic Marketing",
+      "Assignment #2 & Case Activity #2: Planning, Implementing, and Evaluating Marketing",
+      "Assignment #3 & Case Activity #3: The Marketing Environment, Social Responsibility",
+      "Assignment #6 & Case Activity #6: Consumer Buying Behavior",
+      "Assignment #7 & Case Activity #7: Business Markets and Buying Behavior",
+      "B2B/B2C Paper Due – Due 9/27",
+      "Buyer Persona and Selling Styles Assessments Due",
+      "Class Material: Chapter 1: Business Concepts in Marketing",
+      "Class Material: Chapter 2: Planning, Implementing, and Evaluating Marketing",
+      "Class Material: Chapter 3: The Marketing Environment, Social Responsibility",
+      "Class Material: Chapter 6: Consumer Buying Behavior",
+      "Class Material: Chapter 7: Business Markets and Buying Behavior",
+      "Class Material: Deep Dive into B2B & B2C",
+      "Class Material: Introduction & Course Overview",
+      "Class Material: Overview of Customer Relationship Management – Systems and Tools",
+      "Class Material: Overview of Personal Selling",
+      "Class Material: Real-Life CRM",
+      "Class Material: Selling Yourself – Elevator Pitch",
+      "Class Material: Services Delivery – Positive and Negative Examples of Services Execution",
+      "Class Material: Services Delivery in Relation to Customer Engagement",
+      "Class Material: Understanding Services – Concepts, Characteristics, and Practical Applications",
+      "Course Material: Communication Skills",
+      "Course Material: Deep Dive into Buyer Personas",
+      "Course Material: Deep Dive into LAARC & SPIN",
+      "Course Material: Deep Dive into LAARC & SPIN #2",
+      "Course Material: Introducing LAARC & SPIN",
+      "Course Material: Professional Networking and Personal Branding",
+      "Course Material: Pulling It All Together",
+      "Course Material: Review for Final",
+      "Course Material: Trust & Ethics in the Workplace and Marketplace",
+      "Course Material: Understanding Buyer Behavior",
+      "Customer Service Paper/Presentation",
+      "Discussion Topic Due: “Introduce Yourself”",
+      "Disney Quiz",
+      "How To Build Customer Relationships: A Crash Course in Entrepreneurship Due",
+      "In-Class Activity (Ungraded): Review for Final",
+      "In-Class Activity #1: Select Partner for Personal Selling Interview",
+      "In-Class Activity #10: Customer Experience Activity",
+      "In-Class Activity #11: CRM Systems",
+      "In-Class Activity #14: Personal Selling Activity #1",
+      "In-Class Activity #14: Personal Selling Activity #2",
+      "In-Class Activity #16: 4 Cores of Credibility Activity",
+      "In-Class Activity #17: Buying Center Activity",
+      "In-Class Activity #18: Selling Styles & Buyer Personas",
+      "In-Class Activity #19: Communication Activity",
+      "In-Class Activity #2: Strategic Marketing Activity",
+      "In-Class Activity #20: Role Play Review and Initial Scripting",
+      "In-Class Activity #3: Guest Speaker, David Gaines, Conscious Capitalism & Societal Marketing",
+      "In-Class Activity #4: In-Class Role Plays – Elevator Pitch",
+      "In-Class Activity #5: Consumer Purchasing Influences",
+      "In-Class Activity #6: Buying Center and Types of Buys",
+      "In-Class Activity #7: B2B & B2C Activity",
+      "In-Class Activity #8: Research Services Activity",
+      "In-Class Activity #9: Disney Compass Activity",
+      "In-Class Activity 21: LAARC Role-Play #1",
+      "In-Class Activity 22: LAARC Role-Play #2",
+      "In-Class Activity 23: Pulling it All Together",
+      "In-Class EXAM #1: Modules 1-3 [Remotely Proctored – No Class]",
+      "In-Class Exercise #12: Attend Class to Hear Guest Speaker – Al Lindeman",
+      "In-Class Exercise #13: Talent Impact and Customer Engagement",
+      "In-Class Exercise: Review Syllabus; Discuss Class Structure & Requirements",
+      "Independent Study Day – Review Video and Complete Paper",
+      "Independent Study Day – Talent Impact",
+      "LAARC Role Play Videorecorded Session",
+      "MODULE 1: BUSINESS CONCEPTS IN MARKETING",
+      "MODULE 2: B2B & B2C MARKETING",
+      "MODULE 3: SERVICES & SERVICES DELIVERY",
+      "MODULE 4: CUSTOMER RELATIONSHIP MANAGEMENT",
+      "MODULE 5: PROFESSIONAL SELLING",
+      "Personalization, Customer Experience, and Operational Efficiency",
+      "Professional Selling Interview Due",
+      "Read Slides for Personal Branding and Take the Quiz",
+      "Read the Syllabus and Complete the Quiz"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Be Our Guest: Perfecting the Art of Customer Service",
+      "Foundations of Marketing, 9th edition",
+      "Sell, 7th edition",
+      "Talent Impact: Grow Your People, Grow Your Business"
+    ]
+  },
+  "MKT 291": {
+    "terms": [
+      "Fall Semester 2026-27",
+      "Winter Term 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Consumer Behavior & Marketing Strategy",
+      "Coursework completion by February 6",
+      "Digtial Marketing & Integrated Marketing Communications",
+      "Distribution Channels",
+      "International Marketing & Exam Review",
+      "Introduction to Marketing",
+      "Library Databases",
+      "Marketing Environment & Market Research",
+      "Marketing Strategy & B2B Marketing",
+      "Portfolio Analysis & Market Opportunitites",
+      "Predeparture Coursework; Intro to Marketing, Market Research, Segmentation and Target Marketing, Positioning",
+      "Presentation Workshop",
+      "Pricing & Exam Review",
+      "Pricing Products and Services, Promotions Overview and Advertising, Digital Marketing and SEO, Social Media Marketing, Distributing Products",
+      "Product & Brand Management",
+      "Team Presentations",
+      "The Buyer Behavior Process, Product Management, Services Marketing, Brand and Brand Management, Retail",
+      "The Marketing Environment, Marketing Plan and Analytic Process, International Marketing, The Sales Marketing Relationship"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Marketing The Core",
+      "Modern Marketing Principles"
+    ]
+  },
+  "MKT 315": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Approach and Adaptive Selling",
+      "B2B Buying",
+      "Closing the Sale",
+      "Consultative selling and sales presentation",
+      "Course Introduction and Understand the sales profession",
+      "CRM and Account Management",
+      "Develop Prospects and CRM",
+      "Handling Objections",
+      "Needs Identification",
+      "Negotiation",
+      "Pre-approach and Understand customer needs",
+      "Prospecting, Qualifying, and Pre-Approach",
+      "Sales Ethics",
+      "Sales ethics, relationship strategy and buyer behavior",
+      "Sales negotiations and closing",
+      "Sales Role Play",
+      "Sales Technology",
+      "Sales/negotiation Role plays",
+      "Selling and Salespeople"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Individual Chapter Readings",
+      "Selling Today Partnering to Create Value"
+    ]
+  },
+  "MKT 325": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Attitudes & How to Change Them",
+      "Attitudes and Behavior",
+      "Buying, Using & Disposing",
+      "Consumer Decision Making",
+      "Consumer Research",
+      "Culture",
+      "Decision Making",
+      "IDEATION PITCH MEETING",
+      "Introduction",
+      "Learning and Memory",
+      "Learning, Remembering, and Knowing",
+      "Motivation",
+      "Overview of Consumer Behavior",
+      "Overview of Consumer Behavior & Insights",
+      "Perceiving & Making Meaning",
+      "Perception",
+      "Personality and Self-Concept",
+      "Personality, Values, & Lifestyles",
+      "PRESENTATION 1",
+      "PRESENTATION 2",
+      "PRESENTATION 3 & Course Wrap-Up",
+      "Qualitative Consumer Research Methods",
+      "Quantitative Consumer Research Methods",
+      "Social Structures",
+      "Team Project Work"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Consumer Behavior and Insights",
+      "Consumer Behavior: Buying, Having, and Being"
+    ]
+  },
+  "MKT 335": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "A/B Testing, Secondary Data, and Big Data",
+      "Basic Stats for Marketers",
+      "Collecting Data",
+      "Conjoint",
+      "Correlation",
+      "Drivers Presentations",
+      "Drivers Project",
+      "Hypotheses, Research Process, and Data Collection",
+      "MaxDiff and Experiments",
+      "Regression",
+      "Segmentation: Clustering Shoppers",
+      "Survey Design",
+      "Survey Foundations",
+      "Variable Importance and Simulations"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Basic Marketing Research: Customer Insights and Managerial Action"
+    ]
+  },
+  "MKT 345": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Brand Architecture",
+      "Brand Outcomes",
+      "Brand Overview & SWOT Analysis",
+      "Brand Personality",
+      "Brand Positioning",
+      "Brand Pyramid",
+      "Branding & Positioning",
+      "Brands & Branding Domain",
+      "Business Models & Strategies",
+      "Consumer Insights",
+      "Digital Marketing Platforms",
+      "Digital Mktg. Case Studies",
+      "Group work",
+      "Market Segmentation",
+      "Marketing Strategy - Exam # 1",
+      "Messaging",
+      "Paid Search & Social Media",
+      "Presentations",
+      "Pricing",
+      "Search & Social",
+      "Segmentation / Target Marketing",
+      "Strategic Market Planning",
+      "Syllabus Review & Class Overview"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "• Cengage Unlimited",
+      "None"
+    ]
+  },
+  "MKT 395": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Assessment #1",
+      "Case Study",
+      "Case Study Kickoff",
+      "Competitive Strategies",
+      "Content Knowledge Exam",
+      "Foundational Texts",
+      "Introduction and Foundational Text",
+      "Overview of Playing to Win Model",
+      "Strategy Process Map and Strategy Choice Cascade Discussion and Workshops",
+      "Student Case Presentations",
+      "Student Teams Meet",
+      "Text Review Chapters 1 - 4",
+      "Text Review Chapters 5 - 9",
+      "Utilizing Gen AI in Strategy"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Playing to Win How Strategy Really Works"
+    ]
+  },
+  "MKT 412": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Chapter 1: Sustainable Marketing Overview",
+      "Chapter 10: Sustainable Pricing Strategies",
+      "Chapter 11: Sustainable Supply Strategies",
+      "Chapter 12: Delivering Sustainable Value in Retailing",
+      "Chapter 14: Sustainable Value in Services Marketing",
+      "Chapter 2: Sustainable Planning",
+      "Chapter 3: Corporate Social Responsibility & Ethics",
+      "Chapter 4: Consumer Decision Making",
+      "Chapter 5: Influencing Consumer Decision Making",
+      "Chapter 6: Market Analysis",
+      "Chapter 7: Communicating Sustainable Value",
+      "Chapter 8: Sustainable Branding",
+      "Chapter 9: Sustainable Product Strategies",
+      "Course Overview",
+      "Guest Speaker",
+      "Marketing Plan Workshop"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Sustainable Marketing"
+    ]
+  },
+  "MKT 461": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "1",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "2",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24",
+      "25",
+      "26",
+      "27",
+      "28",
+      "29",
+      "3",
+      "30",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "CLASS"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Levy, M., Weitz, B.A., & Grewal, D. (2026). Retailing Management, 12th Edition. New York: McGraw-Hill Education"
+    ]
+  },
+  "MKT 475": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Class Introduction, material summary, Instructor introductions",
+      "Emotional Intelligence",
+      "Selling in the Operating Room",
+      "The Anatomy of a Sales Professional",
+      "The Fundamentals of Selling",
+      "What is Healthcare Sales"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Emotional Intelligence"
+    ]
+  },
+  "MKT 495": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Client Presentation/Market Analysis",
+      "Course Overview/Roadmap",
+      "Debrief & Final Presentation Prep",
+      "Initial Presentation to Client & Debrief",
+      "Launch Plan/Budget",
+      "Market Analysis",
+      "Market Analysis and Insights",
+      "Market Analysis/Strategy Presentation & Debrief",
+      "Market Strategy",
+      "Marketing Strategy",
+      "Marketplace Execution",
+      "Pitch Development",
+      "Preparation and Team Building",
+      "Project Kickoff",
+      "Tactical Execution",
+      "Tactical Execution & Launch Plan/Budget Presentation",
+      "Team Pitches to Client"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Not Applicable",
+      "Not Application",
+      "This is a client-based experiential capstone. The client will provide proprietary data sets, articles for students to read. We are governed by an NDA."
+    ]
+  },
+  "MTH 141": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Application of limits, derivatives",
+      "Applied integration, partial derivatives",
+      "Concavity and asymptotes, optimization and antidifferentiation",
+      "Definite integrals, applied integration",
+      "Differentiation rules, logarithms, exponentials and implicit differentiation",
+      "Limits, application of limits",
+      "Logarithmic and higher order derivatives, and extreme values, concavity and asymptotes",
+      "Logarithms, exponentials and implicit differentiation, logarithmic and higher order derivatives, and extreme values",
+      "Multivariable optimization",
+      "Optimization and antidifferentiation, substitution"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "APC Single Term MyLab Math with Pearson eText (up to 18-weeks) Access Code for Introductory Mathematical Analysis for Business, Economics, and the Life and Social Sciences"
+    ]
+  },
+  "MTH 151": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Applications of Differentiation",
+      "Areas and Distances, The Definite Integral, The Fundamental Theorem of Calculus",
+      "Areas and Distances, The Definite Integral, The Fundamental Theorem of Calculus, Indefinite Integrals and the Net Change Theorem",
+      "Areas between curves",
+      "Continuity, Limits at Infinity; Horizontal Asymptotes",
+      "Derivatives and Rates of Change, The Derivative as a Function, Derivatives of Polynomials and Exponential Functions",
+      "Derivatives of Logarithmic and Inverse Trigonometric Functions",
+      "Derivatives of Logarithmic and Inverse Trigonometric Functions, Rates of Change in the Natural and Social Sciences",
+      "Derivatives of Trigonometric Functions, The Chain Rule, Implicit Differentiation",
+      "Differentiation Rules",
+      "Indefinite Integrals and the Net Change Theorem,The Substitution Rule",
+      "Indeterminate Forms and L'Hospital's Rule, Summary of Curve Sketching",
+      "Integrals",
+      "Limits and Derivatives",
+      "Maximum and Minimum Values, The Mean Value Theorem",
+      "Optimization Problems",
+      "Optimization Problems, Antiderivatives",
+      "Rates of Change in the Natural and Social Sciences, Related Rates, Linear Approximation and Differentials",
+      "Related Rates, Linear Approximation and Differentials",
+      "The Product and Quotient Rules",
+      "The Substitution Rule",
+      "The Tangent and Velocity Problems, The Limit of a Function, Calculating Limits Using the Limit Laws",
+      "What Derivatives Tell Us about the Shape of a Graph"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "WebAssign for Stewart/Clegg/Watson's Calculus: Early Transcendentals"
+    ]
+  },
+  "MTH 249": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 2,
+    "topics": [
+      "Alternating Series and Absolute Convergence",
+      "Application of Derivatives",
+      "Arc Length, Area of a Surface of Revolution",
+      "Differentiation Rules",
+      "Integral Test, Comparison Tests",
+      "Integrals",
+      "Integration by Parts, Trigonometric Integrals",
+      "Limits and Derivatives",
+      "Parametric Equations, Calculus with Parametric Equations",
+      "Polar Coordinates, Calculus with Polar Coordinates",
+      "Power Series",
+      "Representation of functions as Power Series, Taylor and Maclaurin Series",
+      "Sequences, Series",
+      "Strategy for Integration, Improper Integrals",
+      "Trigonometric Substitution, Integration of Rational Functions"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Calculus: Early Transcendentals"
+    ]
+  },
+  "MTH 251": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 4,
+    "topics": [
+      "Absolute convergence, review, and Exam 2",
+      "Alternating Series, Absolute and Conditional Convergence, Ratio and Root Tests",
+      "Approximate Integration, Arc Length, Surface Area",
+      "Approximation by Taylor polynomials, Parametric Equations",
+      "Calculus with Parametric Curves, Test 3",
+      "Calculus with Parametric Equations, Polar Coordinates",
+      "Calculus with Polar Coordinates, Final Review",
+      "Comparison Tests, Alternating Series / Absolute Convergence, Test 2",
+      "Conic sections in Cartesian and polar coordinates",
+      "Fundamental Theorem of Calculus, Substitution, Volumes by Washers",
+      "Geometric series and integral test",
+      "Improper Integrals and arc length",
+      "Improper Integrals, Arc Length",
+      "Integration by Parts, Trig Integrals",
+      "Integration of Rational Functions and approximation of integrals",
+      "Parametric Equations, review and Exam 3",
+      "Partial Fractions, Improper Integrals, Test 1",
+      "Polar coordinates, areas and Lengths in Polar Coordinates",
+      "Polar Coordinates, Calculus with Polar Coordinates",
+      "Power Series, Representing Functions as Power Series",
+      "Probability, Sequences",
+      "Ratio and Root Tests, Power Series",
+      "Representations of Functions as Power Series",
+      "Representing functions by power series, Taylor Series",
+      "Separable and Linear DEs, Sequences",
+      "Sequences and geometric series",
+      "Series, Integral Test",
+      "Substitution, Volumes",
+      "Taylor and Maclaurin Series and Their ApplicationsParametric Equations and Polar coordinates",
+      "Taylor and MacLaurin Series, Applications of Taylor Polynomials",
+      "The comparison tests, and alternating series",
+      "Trig Substitution, Partial Fractions",
+      "Trigonometric Integrals, Trigonometric Substitutions",
+      "Trigonometric integration and substitution",
+      "Volumes by Shells, Integration by Parts",
+      "Volumes by The Slicing Method, review, and Exam 1"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Calculus: Early Transcendentals"
+    ]
+  },
+  "SOC 225": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "How Do People Find Jobs? — Networks, social ties, and labor-market opportunities",
+      "How Does Inequality Become a Pattern? — Gender, hiring, inequality, and research evidence",
+      "How Is Technology Changing Work? — Artificial intelligence, automation, platforms, and changing occupations",
+      "What Happens When Work Meets the Rest of Life? — Work-family conflict, scheduling, flexibility, and the ideal worker",
+      "What Is the Future of Work? — Bringing the course together; changing jobs and organizations; what makes work better or worse?",
+      "What Is Work? — Defining work; why work matters; sociological approaches to work",
+      "What Makes a Good Job? — Job quality, satisfaction, meaning, and job design",
+      "When Are Your Feelings Part of the Job? — Emotional labor, service work, and customer interactions",
+      "Who Gets Ahead at Work? — Performance evaluation, meritocracy, and organizational rewards",
+      "Who Gets to Do What? — Occupations, professions, jurisdiction, and professional boundaries",
+      "Who—or What—Is Managing You? — Workplace surveillance, people analytics, and algorithmic management",
+      "Why Do People Do the Work They Do? — Careers, calling, meaning, and occupational choice",
+      "Why Do People Leave Good Jobs? — Meaning, job satisfaction, and changing careers",
+      "Why Do Some Jobs Pay More Than Others? — Labor markets, occupations, rewards, and job differences"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Work: A Critique"
+    ]
+  },
+  "STA 402": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Light intro to SAS and statistical programming task",
+      "Monte Carlo methods in SAS",
+      "Other SAS data-management procedures",
+      "Programming objects and constructs in R",
+      "SAS DATA-step programming",
+      "SAS macro programming",
+      "Tables and graphs in SAS"
+    ],
+    "tools": [
+      "R",
+      "SAS"
+    ],
+    "outcomes": [],
+    "readings": [
+      "One-pagers on programming concepts in SAS/R and on Monte Carlo methods"
+    ]
+  },
+  "STA 404": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "AI Tools, Positron & GitHub Copilot",
+      "Basic R, Data Visualization Intro",
+      "Dygraphs, ShinyThemes, ReadMe Tab",
+      "Dynamic UI, Tabset, Conditional Panel, Deployment, Leaflet",
+      "ggplot themes, regular expression, Shapefiles",
+      "Heatmap, Design principles",
+      "Lubridate, Wide&long format, Join",
+      "Map, Choropleth map, Midterm Exam",
+      "Minard's map, tidyr, stringr",
+      "Presentation and Discussion",
+      "R Shiny App Basics",
+      "Shapefiles, Multivariate, Aggregation,",
+      "Stacked bar, Data manipulation",
+      "Visualizing distribution",
+      "Visualizing relationship, frequency, distribution"
+    ],
+    "tools": [
+      "Git",
+      "R"
+    ],
+    "outcomes": [],
+    "readings": [
+      "FUNDAMENTALS OF DATA VISUALIZATION",
+      "R Graphics Cookbook",
+      "Storytelling with Data A Data Visualization Guide for Business Professionals"
+    ]
+  },
+  "STA 463": {
+    "terms": [
+      "Fall Semester 2026-27"
+    ],
+    "sections": 1,
+    "topics": [
+      "Diagnostics, Remedial Measures and Advanced Topics in Simple Linear Regression Models",
+      "Inference and Prediction in Simple Linear Regression Models",
+      "Inference, Prediction and Model Selection in Multiple Regression Models",
+      "Matrix Approach and Multiple Regression Models"
+    ],
+    "tools": [],
+    "outcomes": [],
+    "readings": [
+      "Applied Linear Statistical Models"
+    ]
+  }
+}

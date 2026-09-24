@@ -27,18 +27,24 @@ function resumePdf(): Buffer {
   );
 }
 
-/** Builds a profile through the real UI: two popular chips + one disclosed. */
+
+/** A course row in the checklist (v6.7.0): a fieldset named by its legend. */
+function courseRow(page: Page, code: string) {
+  return page.getByRole("group", { name: new RegExp(`^${code} `) }).first();
+}
+
+/** Builds a profile through the real checklist: a major, two rows, one search. */
 async function setUpProfile(page: Page) {
   await page.goto("/job-scout");
   await expect(
-    page.getByRole("heading", { name: "Your ISA courses" }),
+    page.getByRole("heading", { name: "Your courses" }),
   ).toBeVisible();
-  // Popular chips are visible immediately.
-  await page.getByTitle("Principles of Business Analytics").click();
-  await page.getByTitle("Business Intelligence and Data Visualization").click();
-  // ISA 241 sits behind the Foundations disclosure.
-  await page.getByRole("button", { name: /Show 4 more/ }).click();
-  await page.getByTitle("Database for Analytics").click();
+  await page.getByRole("checkbox", { name: "Business Analytics" }).check();
+  await courseRow(page, "ISA 225").getByRole("radio", { name: "Done" }).check();
+  await courseRow(page, "ISA 401").getByRole("radio", { name: "Done" }).check();
+  // ISA 241 is in no program's groups: search finds it.
+  await page.getByLabel("Search all FSB courses").fill("241");
+  await courseRow(page, "ISA 241").getByRole("radio", { name: "Done" }).check();
   await page
     .getByRole("button", { name: "Save profile and see this week's jobs" })
     .click();
@@ -67,16 +73,16 @@ test.describe("Job Scout", () => {
       page.getByRole("link", { name: "Build your portfolio" }),
     ).toHaveAttribute("href", "/portfolio?mode=career");
     await expect(page.getByRole("tab", { name: "Portfolio Site" })).toHaveCount(0);
-    // Checking a course updates the skills panel without saving anything.
-    await page.getByRole("button", { name: /Show 4 more/ }).click();
-    await page.getByTitle("Database for Analytics").click();
+    // Marking a course updates the skills panel without saving anything.
+    await page.getByLabel("Search all FSB courses").fill("database for");
+    await courseRow(page, "ISA 241").getByRole("radio", { name: "Done" }).check();
     const skillsPanel = page.getByRole("heading", {
       name: "Skills you are building",
     });
     await expect(skillsPanel).toBeVisible();
     await expect(page.getByText("SQL", { exact: true }).first()).toBeVisible();
 
-    await page.getByTitle("Principles of Business Analytics").click();
+    await courseRow(page, "ISA 225").getByRole("radio", { name: "Done" }).check();
     await page
       .getByRole("button", { name: "Save profile and see this week's jobs" })
       .click();
@@ -238,7 +244,7 @@ test.describe("Job Scout", () => {
   test("meets WCAG A and AA on the profile and jobs tabs", async ({ page }) => {
     await page.goto("/job-scout");
     await expect(
-      page.getByRole("heading", { name: "Your ISA courses" }),
+      page.getByRole("heading", { name: "Your courses" }),
     ).toBeVisible();
     const profileScan = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa"])

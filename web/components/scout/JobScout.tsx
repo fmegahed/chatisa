@@ -15,6 +15,7 @@ import { ProfileTab } from "./ProfileTab";
 import { ProjectsTab } from "./ProjectsTab";
 import { JobFeed } from "./JobFeed";
 import { SavedTab } from "./SavedTab";
+import { NextTermPrompt } from "./NextTermPrompt";
 
 /**
  * Job Scout's client root: four tabs (user flow decision, 2026-07-29,
@@ -46,6 +47,7 @@ export function JobScout(props: {
   githubEnabled: boolean;
 }) {
   const [profile, setProfile] = useScoutProfile();
+  const [profileTabKey, setProfileTabKey] = useState(0);
   const { saved, toggle, hide } = useScoutSaved();
   const projectsStore = useScoutProjects();
   // Sites published with the Portfolio Builder are real, built work, so
@@ -84,13 +86,14 @@ export function JobScout(props: {
   const strengths = useMemo(() => {
     if (profile === "unknown" || profile === false) return new Map<string, number>();
     return profileStrengths(
-      profile.courses,
+      [],
       [
         ...profile.extras,
         ...projectExtras(projectsStore.projects),
         ...publishedExtras(published),
       ],
       profile.overrides ?? [],
+      profile.courses,
     );
   }, [profile, projectsStore.projects, published]);
 
@@ -121,6 +124,16 @@ export function JobScout(props: {
 
   return (
     <div>
+      {profile !== false ? (
+        <NextTermPrompt
+          profile={profile}
+          onChange={(next) => {
+            setProfile(next);
+            // The profile tab keeps its own working copy; start it afresh.
+            setProfileTabKey((k) => k + 1);
+          }}
+        />
+      ) : null}
       <div
         role="tablist"
         aria-label="Job Scout sections"
@@ -164,6 +177,7 @@ export function JobScout(props: {
       >
         {activeTab === "profile" ? (
           <ProfileTab
+            key={profileTabKey}
             models={props.models}
             defaultModelId={props.defaultModelId}
             profile={profile === false ? null : profile}

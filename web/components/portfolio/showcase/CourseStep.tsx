@@ -47,7 +47,6 @@ export function CourseStep({ draft, patch, nav, isGuest }: StepProps & { isGuest
   }, [isGuest, origin]);
 
   const choices = isGuest ? CHOICES.filter((c) => c.value !== "miami") : CHOICES;
-  const selected = draft.course ? [draft.course] : [];
   const needsCourse = origin === "miami" || origin === "other";
   const canContinue = !needsCourse || draft.course.trim().length > 0;
 
@@ -87,7 +86,7 @@ export function CourseStep({ draft, patch, nav, isGuest }: StepProps & { isGuest
       </fieldset>
       {origin === "miami" ? (
         <div className="mt-4">
-          <CoursePicker single selected={selected} onChange={(c) => patch({ course: c[0] ?? "" })} />
+          <CoursePicker selected={draft.course} onChange={(course) => patch({ course })} />
         </div>
       ) : null}
       {origin === "other" ? (

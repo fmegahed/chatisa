@@ -1,0 +1,216 @@
+{
+ "sys": {
+  "success": true,
+  "feedback": [],
+  "request_id": 1790217757,
+  "site_signature": ""
+ },
+ "pagination": {
+  "total": 1,
+  "returned": 1,
+  "page": 0,
+  "page_size": 50
+ },
+ "info": [],
+ "items": [
+  {
+   "doc_data": {
+    "code": "0nuq1y51d",
+    "status": "completed",
+    "created": "2026-08-19T11:53:13.514966-04:00",
+    "term_id": "085a2a24-cce7-4247-aed4-54f953833e5d",
+    "modified": "2026-08-30T09:42:24.524794-04:00",
+    "entity_id": "0a90b9b4-1eca-4187-aca8-9888825a9f66",
+    "is_active": true,
+    "is_working": false,
+    "visibility": "general_public",
+    "entity_type": "section",
+    "family_name": "syllabus",
+    "is_published": true,
+    "current_step_number": 0,
+    "current_workflow_id": 1,
+    "previous_snapshot_id": "31d78ca8-6d71-4f26-889a-8309484a95d4",
+    "published_snapshot_id": "31d78ca8-6d71-4f26-889a-8309484a95d4",
+    "title": "ISA 225 A",
+    "sub_title": "Business Analytics",
+    "entity": {
+     "id": "0a90b9b4-1eca-4187-aca8-9888825a9f66",
+     "name": "ISA 225 A",
+     "created": "2026-07-01T06:10:56.18174",
+     "fulltext": "'225':2A 'isa':1A",
+     "modified": "2026-07-01T06:10:56.181741",
+     "is_active": true,
+     "entity_type": "section"
+    },
+    "term": {
+     "name": "Winter Term 2026-27",
+     "status": "future",
+     "created": "2026-06-25T07:12:03.144335",
+     "end_date": "2027-01-22",
+     "modified": "2026-06-30T15:42:16.106144",
+     "entity_id": "085a2a24-cce7-4247-aed4-54f953833e5d",
+     "is_active": true,
+     "start_date": "2027-01-02",
+     "entity_type": "term",
+     "is_published": true,
+     "plan_due_date": null,
+     "canvas_term_id": null,
+     "is_independent": true,
+     "is_self_active": true,
+     "is_parent_active": true,
+     "syllabus_due_date": "2026-12-31",
+     "allow_syllabus_editing": true,
+     "allow_course_master_editing": true
+    },
+    "following": false,
+    "has_content": null,
+    "previous_snapshot": null,
+    "rows": null,
+    "components": [
+     {
+      "html": "<div _ngcontent-ng-c2033960577=\"\" class=\"component-wrapper test-class\" id=\"id_0a90b9b4-1eca-4187-aca8-9888825a9f66_e52f314c-0ecb-4e13-b099-e9d048908b3e\"><app-heading-component-variation _ngcontent-ng-c2033960577=\"\" _nghost-ng-c3127123243=\"\"><div _ngcontent-ng-c3127123243=\"\" inviewport=\"\" class=\"flex flex-row\"><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component component-id-e52f314c-0ecb-4e13-b099-e9d048908b3e component-index-1 component-without-name content-component\" style=\"flex: 0 1 816px; max-width: 816px; padding: 0px 24px;\"><!----><app-heading-component-name _ngcontent-ng-c3127123243=\"\" _nghost-ng-c496842214=\"\"><!----><!----><div _ngcontent-ng-c496842214=\"\" style=\"height: 0.5rem !important;\"></div><!----></app-heading-component-name><!----><span _ngcontent-ng-c3127123243=\"\"><!----></span><!----><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component-body component-content-item app-body-view\"><!----><!----><!----><app-heading-component-editor-content _ngcontent-ng-c3127123243=\"\" class=\"md:heading-component-editor-lg\"><app-form-editor _nghost-ng-c486095641=\"\" style=\"display: block;\"><div class=\"fr-view\" id=\"editor-0.9787512282679045\"><h1 style=\"text-align: center;\" class=\"accessibility-heading-empty-0.1459263666483015\"><img src=\"/ui/account-image/81a565fe-11d4-44f4-a92d-b22d71ac8ed7\" style=\"width: 300px;\" class=\"fr-fic fr-dib accessibility-img-alt-0.02908403716518937\" alt=\"Miami University Logo\" /><span class=\"block-container fr-draggable\" contenteditable=\"false\"><span class=\"block-node block-placeholder\" data-block-name=\"term_name\" data-block-title=\"Term/Semester Name\">Winter Term 2026-27</span></span><br /><span class=\"block-container fr-draggable\" contenteditable=\"false\"><span class=\"block-node block-placeholder\" data-block-name=\"course_title\" data-block-title=\"Course Title\" style=\"font-weight: 700;\">Business Analytics</span></span><br /><span class=\"block-container fr-draggable\" contenteditable=\"false\"><span class=\"block-node block-placeholder\" data-block-name=\"subject_name\" data-block-title=\"Subject Code Name\">ISA</span></span> <span class=\"block-container fr-draggable\" contenteditable=\"false\"><span class=\"block-node block-placeholder\" data-block-name=\"course_number\" data-block-title=\"Course Number\">225</span></span> <span class=\"block-container fr-draggable\" contenteditable=\"false\"><span class=\"block-node block-placeholder\" data-block-name=\"section_name\" data-block-title=\"Section Name\">A</span></span></h1></div></app-form-editor></app-heading-component-editor-content><!----><!----></div><div _ngcontent-ng-c3127123243=\"\" class=\"component-footer component-content-item\"></div></div><!----></div></app-heading-component-variation><!----><!----><!----><!----></div>",
+      "locale": "en-US",
+      "is_public": true,
+      "signature": "12920192-da64-b3e7-2497-9b23b0afbe44",
+      "sort_order": 0,
+      "word_count": 8,
+      "snapshot_id": "31d78ca8-6d71-4f26-889a-8309484a95d4",
+      "component_id": "e52f314c-0ecb-4e13-b099-e9d048908b3e",
+      "component_type": "content",
+      "variation_status": "passed"
+     },
+     {
+      "html": "<div _ngcontent-ng-c2033960577=\"\" class=\"component-wrapper test-class\" id=\"id_0a90b9b4-1eca-4187-aca8-9888825a9f66_66c0d492-8ff9-437f-8c04-0154f4ab278d\"><app-heading-component-variation _ngcontent-ng-c2033960577=\"\" _nghost-ng-c3127123243=\"\"><div _ngcontent-ng-c3127123243=\"\" inviewport=\"\" class=\"flex flex-row\"><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component component-id-66c0d492-8ff9-437f-8c04-0154f4ab278d component-index-2 component-with-name content-component\" style=\"flex: 0 1 816px; max-width: 816px; padding: 0px 24px;\"><!----><app-heading-component-name _ngcontent-ng-c3127123243=\"\" _nghost-ng-c496842214=\"\"><h2 _ngcontent-ng-c496842214=\"\" class=\"component-content-item app-name-view component-name\"> Course Information\n</h2><!----><!----><!----></app-heading-component-name><!----><span _ngcontent-ng-c3127123243=\"\"><!----></span><!----><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component-body component-content-item app-body-view\"><!----><!----><!----><app-heading-component-editor-content _ngcontent-ng-c3127123243=\"\" class=\"md:heading-component-editor-lg\"><app-form-editor _nghost-ng-c486095641=\"\" style=\"display: block;\"><div class=\"fr-view\" id=\"editor-0.11357802150223018\"><p><span class=\"block-container fr-draggable\" contenteditable=\"false\"><span class=\"block-node block-prefix\" style=\"font-weight: 700;\">College:\u00a0</span><span class=\"block-node block-placeholder\" data-block-name=\"organization2_name\" data-block-title=\"College Name\">Farmer School of Business (FSB)</span></span><br /><span class=\"block-container fr-draggable\" contenteditable=\"false\"><span class=\"block-node block-prefix\" style=\"font-weight: 700;\">Credit Hours:\u00a0</span><span class=\"block-node block-placeholder\" data-block-name=\"course_ca_1\" data-block-title=\"Course Credit\">3</span></span><br /><span class=\"block-container fr-draggable\" contenteditable=\"false\"><span class=\"block-node block-prefix\" style=\"font-weight: 700;\">Prerequisites:\u00a0</span><span class=\"block-node block-placeholder\" data-block-name=\"course_ca_3\" data-block-title=\"Course Prerequisites\">(ISA125 or STA125 or STA261 or STA261H) and (MTH141 or MTH151 or MTH151H)</span></span></p></div></app-form-editor></app-heading-component-editor-content><!----><!----></div><div _ngcontent-ng-c3127123243=\"\" class=\"component-footer component-content-item\"></div></div><!----></div></app-heading-component-variation><!----><!----><!----><!----></div>",
+      "locale": "en-US",
+      "is_public": true,
+      "signature": "b941bc63-0844-c218-4c8e-420a0dd84385",
+      "sort_order": 1,
+      "word_count": 25,
+      "snapshot_id": "31d78ca8-6d71-4f26-889a-8309484a95d4",
+      "component_id": "66c0d492-8ff9-437f-8c04-0154f4ab278d",
+      "component_type": "content",
+      "variation_status": "passed"
+     },
+     {
+      "html": "<div _ngcontent-ng-c2033960577=\"\" class=\"component-wrapper test-class\" id=\"id_0a90b9b4-1eca-4187-aca8-9888825a9f66_1d07a808-5c78-4a98-b4ce-a15ea659b6ed\"><app-heading-component-variation _ngcontent-ng-c2033960577=\"\" _nghost-ng-c3127123243=\"\"><div _ngcontent-ng-c3127123243=\"\" inviewport=\"\" class=\"flex flex-row\"><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component component-id-1d07a808-5c78-4a98-b4ce-a15ea659b6ed component-index-3 component-with-name content-component\" style=\"flex: 0 1 816px; max-width: 816px; padding: 0px 24px;\"><!----><app-heading-component-name _ngcontent-ng-c3127123243=\"\" _nghost-ng-c496842214=\"\"><h2 _ngcontent-ng-c496842214=\"\" class=\"component-content-item app-name-view component-name\"> Course Description\n</h2><!----><!----><!----></app-heading-component-name><!----><span _ngcontent-ng-c3127123243=\"\"><!----></span><!----><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component-body component-content-item app-body-view\"><!----><!----><!----><app-heading-component-editor-content _ngcontent-ng-c3127123243=\"\" class=\"md:heading-component-editor-lg\"><app-form-editor _nghost-ng-c486095641=\"\" style=\"display: block;\"><div class=\"fr-view\" id=\"editor-0.3439265189661038\"><p><span class=\"block-container fr-draggable\" contenteditable=\"false\"><span class=\"block-node block-placeholder\" data-block-name=\"course_ca_2\" data-block-title=\"Course Description\">225 Principles of Business Analytics (3)<br /><br />Provides a continuation of the study of data and its importance to analytical decision-making in business. Topics include: probability and classification, data visualization, two or more population inference, predictive modeling with simple and multiple regression analysis, business forecasting, data-mining. Emphasis on computer implementation, analysis of real data, and communication of results. Prerequisite: (MTH 141 or MTH 151) and ISA/STA 125.</span></span></p></div></app-form-editor></app-heading-component-editor-content><!----><!----></div><div _ngcontent-ng-c3127123243=\"\" class=\"component-footer component-content-item\"></div></div><!----></div></app-heading-component-variation><!----><!----><!----><!----></div>",
+      "locale": "en-US",
+      "is_public": true,
+      "signature": "73d00c70-d7f2-5782-ce2f-ccb30d13408a",
+      "sort_order": 2,
+      "word_count": 68,
+      "snapshot_id": "31d78ca8-6d71-4f26-889a-8309484a95d4",
+      "component_id": "1d07a808-5c78-4a98-b4ce-a15ea659b6ed",
+      "component_type": "content",
+      "variation_status": "passed"
+     },
+     {
+      "html": "<div _ngcontent-ng-c2033960577=\"\" class=\"component-wrapper test-class\" id=\"id_0a90b9b4-1eca-4187-aca8-9888825a9f66_7e541b79-3263-46c6-9cfa-5581a56478a0\"><app-heading-component-variation _ngcontent-ng-c2033960577=\"\" _nghost-ng-c3127123243=\"\"><div _ngcontent-ng-c3127123243=\"\" inviewport=\"\" class=\"flex flex-row\"><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component component-id-7e541b79-3263-46c6-9cfa-5581a56478a0 component-index-4 component-with-name instructor-component\" style=\"flex: 0 1 816px; max-width: 816px; padding: 0px 24px;\"><!----><app-heading-component-name _ngcontent-ng-c3127123243=\"\" _nghost-ng-c496842214=\"\"><h2 _ngcontent-ng-c496842214=\"\" class=\"component-content-item app-name-view component-name\"> Instructor Information\n</h2><!----><!----><!----></app-heading-component-name><!----><span _ngcontent-ng-c3127123243=\"\"><!----></span><!----><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component-body component-content-item app-body-view\"><!----><!----><!----><!----><app-heading-component-editor-list _ngcontent-ng-c3127123243=\"\" class=\"md:heading-component-editor-lg\" _nghost-ng-c1882919875=\"\"><div _ngcontent-ng-c1882919875=\"\" class=\"read-only-row-container component-content-item\"><!----><ul _ngcontent-ng-c1882919875=\"\" class=\"list-none\"><li _ngcontent-ng-c1882919875=\"\" app-heading-row-save=\"\" class=\"component-content-item row-0\"><app-heading-cell-container><div class=\"heading-cells-container flex flex-row md:flex-nowrap flex-wrap\"><!----><!----><div class=\"flex-1\" style=\"padding-top: 10px; align-self: baseline;\"><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-0 cell-basic component-content-item\"><div _ngcontent-ng-c1488142284=\"\" class=\"text-cell\"><!----><span _ngcontent-ng-c1488142284=\"\" class=\"cell-content\"> Instructor A </span></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></app-heading-cell><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-1 cell-basic component-content-item\"><div _ngcontent-ng-c1488142284=\"\" class=\"text-cell\"><span _ngcontent-ng-c1488142284=\"\" class=\"cell-name\"> Email: </span><!----><span _ngcontent-ng-c1488142284=\"\" class=\"cell-content\"> instructor@example.edu </span></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></app-heading-cell><!----></div><!----></div><!----><!----></app-heading-cell-container><!----><!----><!----></li><li _ngcontent-ng-c1882919875=\"\" app-heading-row-save=\"\" class=\"component-content-item row-1\"><app-heading-cell-container><div class=\"heading-cells-container flex flex-row md:flex-nowrap flex-wrap\"><!----><!----><div class=\"flex-1\" style=\"padding-top: 10px; align-self: baseline;\"><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-0 cell-basic component-content-item\"><div _ngcontent-ng-c1488142284=\"\" class=\"text-cell\"><!----><span _ngcontent-ng-c1488142284=\"\" class=\"cell-content\"> Instructor B </span></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></app-heading-cell><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-1 cell-basic component-content-item\"><div _ngcontent-ng-c1488142284=\"\" class=\"text-cell\"><span _ngcontent-ng-c1488142284=\"\" class=\"cell-name\"> Email: </span><!----><span _ngcontent-ng-c1488142284=\"\" class=\"cell-content\"> instructor@example.edu </span></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></app-heading-cell><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-2 cell-basic component-content-item\"><!----><div _ngcontent-ng-c1488142284=\"\" style=\"margin-top: 5px;\"><div _ngcontent-ng-c1488142284=\"\"><span _ngcontent-ng-c1488142284=\"\">Instructor Qualifications</span><!----></div><!----><!----><app-form-editor _ngcontent-ng-c1488142284=\"\" blockmode=\"all\" mode=\"dashed\" class=\"cell-content\" _nghost-ng-c486095641=\"\"><div class=\"fr-view\" id=\"editor-0.3992067739212313\"><p>Ph.D., Statistics</p></div></app-form-editor></div><!----><!----><!----><!----><!----><!----></app-heading-cell><!----></div><!----></div><!----><!----></app-heading-cell-container><!----><!----><!----></li><!----></ul><!----><!----><!----></div><!----><!----></app-heading-component-editor-list><!----></div><div _ngcontent-ng-c3127123243=\"\" class=\"component-footer component-content-item\"></div></div><!----></div></app-heading-component-variation><!----><!----><!----><!----></div>",
+      "locale": "en-US",
+      "is_public": true,
+      "signature": "0f800098-d235-f2b2-3804-da9d37e5797d",
+      "sort_order": 3,
+      "word_count": 14,
+      "snapshot_id": "31d78ca8-6d71-4f26-889a-8309484a95d4",
+      "component_id": "7e541b79-3263-46c6-9cfa-5581a56478a0",
+      "component_type": "instructor",
+      "variation_status": "passed"
+     },
+     {
+      "html": "<div _ngcontent-ng-c2033960577=\"\" class=\"component-wrapper test-class\" id=\"id_0a90b9b4-1eca-4187-aca8-9888825a9f66_fa288320-ca58-4b4a-ae12-3faedb1cba96\"><app-heading-component-variation _ngcontent-ng-c2033960577=\"\" _nghost-ng-c3127123243=\"\"><div _ngcontent-ng-c3127123243=\"\" inviewport=\"\" class=\"flex flex-row\"><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component component-id-fa288320-ca58-4b4a-ae12-3faedb1cba96 component-index-5 component-with-name material-component\" style=\"flex: 0 1 816px; max-width: 816px; padding: 0px 24px;\"><!----><app-heading-component-name _ngcontent-ng-c3127123243=\"\" _nghost-ng-c496842214=\"\"><h2 _ngcontent-ng-c496842214=\"\" class=\"component-content-item app-name-view component-name\"> Required Readings\n</h2><!----><!----><!----></app-heading-component-name><!----><span _ngcontent-ng-c3127123243=\"\"><!----></span><!----><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component-body component-content-item app-body-view\"><!----><!----><!----><!----><app-heading-component-editor-list _ngcontent-ng-c3127123243=\"\" class=\"md:heading-component-editor-lg\" _nghost-ng-c1882919875=\"\"><div _ngcontent-ng-c1882919875=\"\" class=\"read-only-row-container component-content-item\"><!----><ul _ngcontent-ng-c1882919875=\"\" class=\"list-none\"><li _ngcontent-ng-c1882919875=\"\" app-heading-row-save=\"\" class=\"component-content-item row-0\"><app-heading-cell-container><div class=\"heading-cells-container flex flex-row md:flex-nowrap flex-wrap\"><!----><div style.flex=\"0 1 auto\"><app-heading-cell aria-hidden=\"true\" alt=\"\" style=\"padding-right: 24px;\" _nghost-ng-c1488142284=\"\" class=\"cell-0 cell-image component-content-item\" aria-label=\"Image cell\"><!----><!----><div _ngcontent-ng-c1488142284=\"\" class=\"image-cell\"><!----><!----><div _ngcontent-ng-c1488142284=\"\" class=\"cell-content image-container\"><img _ngcontent-ng-c1488142284=\"\" alt=\"\" class=\"thumbnail-image\" src=\"https://images.isbndb.com/covers/26111523482235.jpg\"></div><!----></div><!----><!----><!----><!----><!----><!----></app-heading-cell><!----></div><!----><div class=\"flex-1\" style=\"padding-top: 10px; align-self: baseline;\"><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-0 cell-basic component-content-item\"><div _ngcontent-ng-c1488142284=\"\" class=\"text-cell\"><!----><span _ngcontent-ng-c1488142284=\"\" class=\"cell-content\"> Business Statistics </span></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></app-heading-cell><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-1 cell-basic component-content-item\"><div _ngcontent-ng-c1488142284=\"\" class=\"text-cell\"><span _ngcontent-ng-c1488142284=\"\" class=\"cell-name\"> ISBN: </span><!----><span _ngcontent-ng-c1488142284=\"\" class=\"cell-content\"> 9780134705217 </span></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></app-heading-cell><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-2 cell-basic component-content-item\"><div _ngcontent-ng-c1488142284=\"\" class=\"text-cell\"><span _ngcontent-ng-c1488142284=\"\" class=\"cell-name\"> Authors: </span><!----><span _ngcontent-ng-c1488142284=\"\" class=\"cell-content\"> Norean Radke Sharpe, Richard D. De Veaux, Paul F. Velleman </span></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></app-heading-cell><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-3 cell-basic component-content-item\"><div _ngcontent-ng-c1488142284=\"\" class=\"text-cell\"><span _ngcontent-ng-c1488142284=\"\" class=\"cell-name\"> Publisher: </span><!----><span _ngcontent-ng-c1488142284=\"\" class=\"cell-content\"> Pearson </span></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></app-heading-cell><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-4 cell-basic component-content-item\"><div _ngcontent-ng-c1488142284=\"\" class=\"text-cell\"><span _ngcontent-ng-c1488142284=\"\" class=\"cell-name\"> Publication Date: </span><!----><span _ngcontent-ng-c1488142284=\"\" class=\"cell-content\"> 2018 </span></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></app-heading-cell><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-5 cell-basic component-content-item\"><div _ngcontent-ng-c1488142284=\"\" class=\"text-cell\"><span _ngcontent-ng-c1488142284=\"\" class=\"cell-name\"> Edition: </span><!----><span _ngcontent-ng-c1488142284=\"\" class=\"cell-content\"> 4 </span></div><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----></app-heading-cell><app-heading-cell _nghost-ng-c1488142284=\"\" class=\"cell-6 cell-basic component-content-item\"><!----><div _ngcontent-ng-c1488142284=\"\" style=\"margin-top: 5px;\"><div _ngcontent-ng-c1488142284=\"\"><span _ngcontent-ng-c1488142284=\"\">Additional Information:</span><!----></div><!----><!----><app-form-editor _ngcontent-ng-c1488142284=\"\" blockmode=\"all\" mode=\"dashed\" class=\"cell-content\" _nghost-ng-c486095641=\"\"><div class=\"fr-view\" id=\"editor-0.9231442000796732\"><p>Needs access to MyLab Statistics</p></div></app-form-editor></div><!----><!----><!----><!----><!----><!----></app-heading-cell><!----></div><!----></div><!----><!----></app-heading-cell-container><!----><!----><!----></li><!----></ul><!----><!----><!----></div><!----><!----></app-heading-component-editor-list><!----></div><div _ngcontent-ng-c3127123243=\"\" class=\"component-footer component-content-item\"></div></div><!----></div></app-heading-component-variation><!----><!----><!----><!----></div>",
+      "locale": "en-US",
+      "is_public": true,
+      "signature": "862e1892-0224-5bdb-28ff-7675355a3573",
+      "sort_order": 4,
+      "word_count": 31,
+      "snapshot_id": "31d78ca8-6d71-4f26-889a-8309484a95d4",
+      "component_id": "fa288320-ca58-4b4a-ae12-3faedb1cba96",
+      "component_type": "material",
+      "variation_status": "passed"
+     },
+     {
+      "html": "<div _ngcontent-ng-c2033960577=\"\" class=\"component-wrapper test-class\" id=\"id_0a90b9b4-1eca-4187-aca8-9888825a9f66_23aca464-4900-4d2b-a296-dd7dd94efccf\"><app-heading-component-variation _ngcontent-ng-c2033960577=\"\" _nghost-ng-c3127123243=\"\"><div _ngcontent-ng-c3127123243=\"\" inviewport=\"\" class=\"flex flex-row\"><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component component-id-23aca464-4900-4d2b-a296-dd7dd94efccf component-index-6 component-with-name content-component\" style=\"flex: 0 1 816px; max-width: 816px; padding: 0px 24px;\"><!----><app-heading-component-name _ngcontent-ng-c3127123243=\"\" _nghost-ng-c496842214=\"\"><h2 _ngcontent-ng-c496842214=\"\" class=\"component-content-item app-name-view component-name\"> University Attendance Policy\n</h2><!----><!----><!----></app-heading-component-name><!----><span _ngcontent-ng-c3127123243=\"\"><!----></span><!----><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component-body component-content-item app-body-view\"><!----><!----><!----><app-heading-component-editor-content _ngcontent-ng-c3127123243=\"\" class=\"md:heading-component-editor-lg\"><app-form-editor _nghost-ng-c486095641=\"\" style=\"display: block;\"><div class=\"fr-view\" id=\"editor-0.3911094584013681\"><p>Please review the university class attendance policy <a href=\"https://miamioh.edu/policy-library/students/undergraduate/academic-regulations/class-attendance.html#general-attendance\" target=\"_blank\" rel=\"noopener noreferrer\">here</a>.</p></div></app-form-editor></app-heading-component-editor-content><!----><!----></div><div _ngcontent-ng-c3127123243=\"\" class=\"component-footer component-content-item\"></div></div><!----></div></app-heading-component-variation><!----><!----><!----><!----></div>",
+      "locale": "en-US",
+      "is_public": true,
+      "signature": "61715572-b1b8-bed8-e4fd-23cecf538dff",
+      "sort_order": 5,
+      "word_count": 12,
+      "snapshot_id": "31d78ca8-6d71-4f26-889a-8309484a95d4",
+      "component_id": "23aca464-4900-4d2b-a296-dd7dd94efccf",
+      "component_type": "content",
+      "variation_status": "passed"
+     },
+     {
+      "html": "<div _ngcontent-ng-c2033960577=\"\" class=\"component-wrapper test-class\" id=\"id_0a90b9b4-1eca-4187-aca8-9888825a9f66_0df97551-4d6f-4d5f-bb5a-2b5a465c8afa\"><app-heading-component-variation _ngcontent-ng-c2033960577=\"\" _nghost-ng-c3127123243=\"\"><div _ngcontent-ng-c3127123243=\"\" inviewport=\"\" class=\"flex flex-row\"><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component component-id-0df97551-4d6f-4d5f-bb5a-2b5a465c8afa component-index-7 component-with-name content-component\" style=\"flex: 0 1 816px; max-width: 816px; padding: 0px 24px;\"><!----><app-heading-component-name _ngcontent-ng-c3127123243=\"\" _nghost-ng-c496842214=\"\"><h2 _ngcontent-ng-c496842214=\"\" class=\"component-content-item app-name-view component-name\"> Calendar \n</h2><!----><!----><!----></app-heading-component-name><!----><span _ngcontent-ng-c3127123243=\"\"><!----></span><!----><!----><div _ngcontent-ng-c3127123243=\"\" class=\"component-body component-content-item app-body-view\"><!----><!----><!----><app-heading-component-editor-content _ngcontent-ng-c3127123243=\"\" class=\"md:heading-component-editor-lg\"><app-form-editor _nghost-ng-c486095641=\"\" style=\"display: block;\"><div class=\"fr-view\" id=\"editor-0.9071238490097535\"><p><br /></p><table style=\"width: 100%;\" class=\"accessibility-table-header-0.6744312616668369 accessibility-table-caption-0.5054108595426808 \"><thead><tr><th style=\"text-align: center;\">Week / Date</th><th style=\"text-align: center;\">Topic</th><th style=\"text-align: center;\">Required Readings / Materials</th></tr></thead><tbody><tr><td style=\"width: 33.3333%;\">Week 1</td><td style=\"width: 33.3333%;\">Sampling Distributions and CI for Means</td><td style=\"width: 33.3333%;\">Ch.\u00a010<br />Ch. 11</td></tr><tr><td style=\"width: 33.3333%;\">Week 2</td><td style=\"width: 33.3333%;\">One-Sample Hypothesis Testing for Means</td><td style=\"width: 33.3333%;\">Ch. 12<br />Ch. 13</td></tr><tr><td style=\"width: 33.3333%;\">Week 3</td><td style=\"width: 33.3333%;\">Comparing Two Population Means</td><td style=\"width: 33.3333%;\">Ch. 14</td></tr><tr><td style=\"width: 33.3333%;\">Week 4</td><td style=\"width: 33.3333%;\">Chi Square Tests</td><td style=\"width: 33.3333%;\">Ch. 15</td></tr><tr><td style=\"width: 33.3333%;\">Week 5</td><td style=\"width: 33.3333%;\">Review &#43; Exam 1</td><td style=\"width: 33.3333%;\">Ch. 10-15</td></tr><tr><td style=\"width: 33.3333%;\">Week 6\u00a0</td><td style=\"width: 33.3333%;\">Linear Relationships &amp; Correlation<br />Simple Linear Regression (SLR)</td><td style=\"width: 33.3333%;\">Ch. 4</td></tr><tr><td style=\"width: 33.3333%;\">Week 7</td><td style=\"width: 33.3333%;\">Inference for SLR<br />Transformations</td><td style=\"width: 33.3333%;\">Ch. 16<br />Ch. 17</td></tr><tr><td style=\"width: 33.3333%;\">Week 8</td><td style=\"width: 33.3333%;\">Multiple Linear Regression (MLR)</td><td style=\"width: 33.3333%;\">Ch. 18</td></tr><tr><td style=\"width: 33.3333%;\">Week 9\u00a0</td><td style=\"width: 33.3333%;\">Dummy Variables<br /></td><td style=\"width: 33.3333%;\">Ch. 19</td></tr><tr><td style=\"width: 33.3333%;\">Week 10</td><td style=\"width: 33.3333%;\">Review &#43; Exam 2</td><td style=\"width: 33.3333%;\">Ch. 4, 16-19</td></tr><tr><td style=\"width: 33.3333%;\">Week 11</td><td style=\"width: 33.3333%;\">Time Series: Regression- based models and smoothing methods</td><td style=\"width: 33.3333%;\">Ch. 20</td></tr><tr><td style=\"width: 33.3333%;\">Week 12\u00a0</td><td style=\"width: 33.3333%;\">Review of Probability<br />Probability Trees and Bayes Rule</td><td style=\"width: 33.3333%;\">Ch. 5</td></tr><tr><td style=\"width: 33.3333%;\">Week 13</td><td style=\"width: 33.3333%;\">Market Basket Analysis (questions: ta.person@miamioh.edu) (not in book)<br />Decision Trees</td><td style=\"width: 33.3333%;\">Ch. 21</td></tr><tr><td style=\"width: 33.3333%;\">Week 14</td><td style=\"width: 33.3333%;\">Decision Trees</td><td style=\"width: 33.3333%;\">Ch. 21</td></tr><tr><td style=\"width: 33.3333%;\">Week 15\u00a0</td><td style=\"width: 33.3333%;\">Decision Trees&#43;Review</td><td style=\"width: 33.3333%;\"><br /></td></tr><tr><td style=\"width: 33.3333%;\">Week 16</td><td style=\"width: 33.3333%;\">Final Exam - Date\u00a0TBD</td><td style=\"width: 33.3333%;\">All readings covered this semester</td></tr></tbody><caption>Weekly Schedule</caption></table></div></app-form-editor></app-heading-component-editor-content><!----><!----></div><div _ngcontent-ng-c3127123243=\"\" class=\"component-footer component-content-item\"></div></div><!----></div></app-heading-component-variation><!----><!----><!----><!----></div>",
+      "locale": "en-US",
+      "is_public": true,
+      "signature": "671e104e-026e-7c82-b811-5b272a4c619e",
+      "sort_order": 6,
+      "word_count": 158,
+      "snapshot_id": "31d78ca8-6d71-4f26-889a-8309484a95d4",
+      "component_id": "0df97551-4d6f-4d5f-bb5a-2b5a465c8afa",
+      "component_type": "content",
+      "variation_status": "passed"
+     }
+    ],
+    "properties": {
+     "ca_1": "3",
+     "ca_2": "225 Principles of Business Analytics (3)<br /><br />Provides a continuation of the study of data and its importance to analytical decision-making in business. Topics include: probability and classification, data visualization, two or more population inference, predictive modeling with simple and multiple regression analysis, business forecasting, data-mining. Emphasis on computer implementation, analysis of real data, and communication of results. Prerequisite: (MTH 141 or MTH 151) and ISA/STA 125.",
+     "ca_3": "(ISA125 or STA125 or STA261 or STA261H) and (MTH141 or MTH151 or MTH151H)",
+     "ca_4": "",
+     "ca_6": "20271510402",
+     "name": "A",
+     "title": "Business Analytics",
+     "created": "2026-07-01T06:08:54.915625",
+     "term_id": "085a2a24-cce7-4247-aed4-54f953833e5d",
+     "modified": "2026-07-01T06:08:54.915625",
+     "timezone": "US/Eastern",
+     "entity_id": "a6576303-850a-4bc5-887e-16e9b989159f",
+     "full_name": "ISA 225 - Business Analytics",
+     "is_active": true,
+     "parent_id": "5fded678-76a1-4260-92ad-48c4bfa7d76f",
+     "entity_type": "course",
+     "subject_name": "ISA",
+     "course_number": "225",
+     "is_self_active": true,
+     "is_parent_active": true,
+     "syllabus_due_date": "2026-12-31"
+    },
+    "is_editable": true,
+    "is_missing_required_content": false,
+    "engagement": {
+     "engaged_count": 0,
+     "student_count": 0
+    },
+    "uploads": [],
+    "history": null,
+    "last_edited_date": "2026-08-19T12:00:42.414091-04:00",
+    "ancestry_ids": [
+     "a6576303-850a-4bc5-887e-16e9b989159f",
+     "085a2a24-cce7-4247-aed4-54f953833e5d",
+     "01a91efb-e988-4baf-b6a2-7c3f211b012c",
+     "5fded678-76a1-4260-92ad-48c4bfa7d76f",
+     "1cb37fd4-083a-4ec1-beab-814457daf00c",
+     "7bca9295-672e-4082-842a-5486126a1752"
+    ],
+    "version_count": 3
+   },
+   "step_numbers": [
+    {
+     "account_id": "6bae926b-108f-409f-be7a-99de2ae227c4",
+     "step_number": 0
+    },
+    {
+     "account_id": "c971caed-78dd-4ad0-a35a-ddbf43e54890",
+     "step_number": 0
+    },
+    {
+     "account_id": "ee4ec30f-a4ae-4d04-81c4-08dc174b64fb",
+     "step_number": 0
+    }
+   ],
+   "has_approver_edits": null,
+   "has_private_access": false,
+   "can_edit_visibility": false
+  }
+ ]
+}

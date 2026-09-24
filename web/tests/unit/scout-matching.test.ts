@@ -7,11 +7,15 @@ import { describe, expect, it } from "vitest";
 import { profileStrengths, scoreJob } from "@/lib/scout/matching";
 
 describe("profileStrengths (noisy-OR, credit-scaled)", () => {
-  it("a 1.5-credit anchor contributes half depth: ISA 241 sql = 0.5", () => {
+  it("a 1.5-credit anchor contributes half depth: ISA 628 information_systems = 0.5", () => {
+    const s = profileStrengths(["ISA 628"], []);
+    expect(s.get("information_systems")).toBeCloseTo(0.5, 10);
+  });
+
+  it("a 200-level course gives applied at most (level cap, 2026-09-24): ISA 241 sql = 0.3", () => {
     const s = profileStrengths(["ISA 241"], []);
-    expect(s.get("sql")).toBeCloseTo(0.5, 10);
-    expect(s.get("database_design")).toBeCloseTo(0.5, 10);
-    // applied 0.6 x 1.5/3
+    // applied 0.6 x 1.5/3, and no anchor for SQL from a sophomore course
+    expect(s.get("sql")).toBeCloseTo(0.3, 10);
     expect(s.get("data_wrangling")).toBeCloseTo(0.3, 10);
   });
 
@@ -20,10 +24,11 @@ describe("profileStrengths (noisy-OR, credit-scaled)", () => {
     expect(s.get("regression")).toBe(1);
   });
 
-  it("two applied 3-credit courses compose with diminishing returns: 0.84", () => {
-    // data_wrangling is applied (0.6) in both ISA 345 and ISA 381.
+  it("two applied courses compose (0.84) but, with no anchor, stop just below Strong (v6.7.0 guard)", () => {
+    // data_wrangling is applied (0.6) in both ISA 345 and ISA 381: 1 - 0.4 x 0.4
+    // = 0.84 would read as Strong though no course anchors it. Capped at 0.79.
     const s = profileStrengths(["ISA 345", "ISA 381"], []);
-    expect(s.get("data_wrangling")).toBeCloseTo(1 - 0.4 * 0.4, 10);
+    expect(s.get("data_wrangling")).toBeCloseTo(0.79, 10);
   });
 
   it("resolves cross-listed alt codes: ISA 501 counts as ISA 401", () => {
@@ -64,6 +69,36 @@ describe("profileStrengths (noisy-OR, credit-scaled)", () => {
       [{ skillId: "not_a_skill", level: "anchor" }],
     );
     expect(s.size).toBe(0);
+  });
+});
+
+describe("anti-overselling guards (v6.7.0)", () => {
+  it("a stack of exposure-only contributions stops at Introduced", () => {
+    // Four exposures would compose to 0.68 (Working) from introductions alone.
+    const e = { skillId: "tableau", level: "exposure" as const };
+    expect(profileStrengths([], [e, e, e, e]).get("tableau")).toBeCloseTo(0.44, 10);
+  });
+
+  it("an anchor from a completed course, or a confirmed anchor-level extra, may reach Strong", () => {
+    expect(profileStrengths(["ISA 391"], []).get("regression")).toBe(1);
+    expect(profileStrengths([], [{ skillId: "tableau", level: "anchor" }]).get("tableau")).toBe(1);
+  });
+
+  it("a course being taken now counts at half weight and never alone reaches Strong", () => {
+    const now = profileStrengths([], [], [], [{ code: "ISA 391", status: "now" }]);
+    expect(now.get("regression")).toBeCloseTo(0.5, 10);
+    const twoNow = profileStrengths([], [], [], [{ code: "ISA 391", status: "now" }, { code: "ISA 444", status: "now" }]);
+    expect(twoNow.get("regression") ?? 0).toBeLessThanOrEqual(0.79);
+  });
+
+  it("the student's own word still beats every cap", () => {
+    const e = { skillId: "tableau", level: "exposure" as const };
+    expect(profileStrengths([], [e, e, e], [{ skillId: "tableau", level: "strong" }]).get("tableau")).toBe(1);
+  });
+
+  it("plain course codes still mean completed courses", () => {
+    expect(profileStrengths(["ISA 391"], []).get("regression"))
+      .toBe(profileStrengths([], [], [], [{ code: "ISA 391", status: "done" }]).get("regression"));
   });
 });
 

@@ -25,6 +25,8 @@ import { MAX_CHARS_PER_FILE, MAX_PAYLOAD_CHARS } from "@/lib/portfolio/files";
  */
 
 const MAX_TOTAL_CHARS = 150_000;
+/** Enough for the business core plus a major, a co-major and a minor. */
+const MAX_COURSES = 80;
 const ROLE = z.enum(["data", "code", "notebook", "report", "slides", "figure", "other"]);
 
 /**
@@ -46,7 +48,13 @@ const careerPayload = z.object({
     name: z.string().min(1).transform((s) => s.slice(0, 80)),
     links: z.array(z.object({ label: z.string().min(1).transform((s) => s.slice(0, 40)), url: z.url() })).max(4),
   }),
-  courses: z.array(clipped(20)).max(30),
+  /**
+   * A whole major's checklist can run to 60 courses (v6.7.0); clipped
+   * rather than rejected, like every other list here.
+   */
+  courses: z.array(clipped(20)).transform((rows) => rows.slice(0, MAX_COURSES)),
+  /** The listed courses marked Taking now (v6.7.0). Absent from older browsers. */
+  inProgress: z.array(clipped(20)).default([]).transform((rows) => rows.slice(0, MAX_COURSES)),
   /**
    * Courses from other schools, typed by guests (v6.6.0). Clipped and cut to
    * five rather than rejected; blank rows are dropped. Absent in payloads
@@ -168,7 +176,7 @@ const CAREER_INSTRUCTIONS = `You write the content for a student's one-page port
 Ground every claim in the resume, the courses, and the project files provided; never invent employers, dates, metrics, or skills. Use bracketed placeholders like [X%] for numbers the material does not state. Write in the first person, plainly, without buzzwords. Do not use em dashes.
 
 projects: one entry per submitted project, using its exact slug. Title it well, describe what it does and what it shows in two to four sentences, and list the skills the files actually demonstrate.
-courses: pick up to 8 courses that best support the story and say in one sentence why each matters. Put ONLY the course code in code (for example "ISA 444"), never the title; the page adds the title itself.
+courses: pick up to 8 courses that best support the story and say in one sentence why each matters. A course listed as in progress is not finished: say what the student is learning in it, never that they completed it. Put ONLY the course code in code (for example "ISA 444"), never the title; the page adds the title itself.
 otherCourses: for each listed outside course that supports the story, one sentence on why it matters. Copy the course name exactly as given. Leave it empty if none were listed.
 experience and education: only from the resume. Leave them empty if the resume has none.
 skillGroups: three to five groups (for example Tools, Methods, Domains).
@@ -248,13 +256,19 @@ export async function POST(req: Request) {
       });
       return `Project slug: ${proj.slug}\nTitle hint: ${proj.title || "(none)"}\nExternal link: ${proj.externalUrl ?? "(none)"}\n${files.join("\n")}`;
     });
-    const courseLines = p.courses.map((c) => `${c}: ${getCourse(c)?.title ?? ""}`.trim());
+    const courseLine = (c: string) => `${c}: ${getCourse(c)?.title ?? ""}`.trim();
+    // Taking-now courses are named as such, so the page never claims a
+    // course the student has not finished (v6.7.0).
+    const inProgress = new Set(p.inProgress.filter((c) => p.courses.includes(c)));
+    const courseLines = p.courses.filter((c) => !inProgress.has(c)).map(courseLine);
+    const progressLines = [...inProgress].map(courseLine);
     const otherLabel = (c: { name: string; school: string }) => (c.school ? `${c.name}, ${c.school}` : c.name);
     // No course block at all when there are none (v6.6.0): a guest who skips
     // courses must not get a page that mentions having none.
     const prompt = [
       `Student: ${p.student.name}`,
-      ...(courseLines.length ? [`Courses taken:\n${courseLines.join("\n")}`] : []),
+      ...(courseLines.length ? [`Courses completed:\n${courseLines.join("\n")}`] : []),
+      ...(progressLines.length ? [`Courses in progress (not finished yet):\n${progressLines.join("\n")}`] : []),
       // Typed by the student, so fenced like every other student text: a
       // course name is data and cannot close the fence (v6.6.1).
       ...(p.otherCourses.length

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { scoreJob, type JobMatch, type JobSkill } from "@/lib/scout/matching";
 import { getSkill } from "@/lib/scout/taxonomy";
 import { COURSE_SKILLS } from "@/lib/scout/course-skills";
+import { courseCodes } from "@/lib/scout/profile-store";
 import type {
   SavedSnapshot,
   SavedState,
@@ -214,7 +215,7 @@ export function JobFeed(props: {
     (skillId: string): string[] => {
       const fromCourses = COURSE_SKILLS.filter(
         (l) =>
-          l.skillId === skillId && props.profile.courses.includes(l.course),
+          l.skillId === skillId && courseCodes(props.profile).includes(l.course),
       ).map((l) => l.course);
       const fromExtras = props.profile.extras
         .filter((e) => e.skillId === skillId)

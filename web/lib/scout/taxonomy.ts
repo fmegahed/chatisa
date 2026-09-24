@@ -17,7 +17,7 @@
  * invalidate or migrate old tags instead of silently mismatching.
  */
 
-export const TAXONOMY_VERSION = 1;
+export const TAXONOMY_VERSION = 2;
 
 export type SkillKind = "tool" | "method" | "domain" | "professional";
 
@@ -34,6 +34,7 @@ export interface SkillDef {
     | "visualization_bi"
     | "information_systems"
     | "security_risk"
+    | "business"
     | "professional";
   aliases: string[];
   implies: string[];
@@ -161,6 +162,45 @@ export const SKILLS: SkillDef[] = [
   S("it_governance", "IT Governance", "method", "security_risk", ["cobit", "itil", "security policy", "governance frameworks"]),
   S("business_continuity", "Business Continuity", "method", "security_risk", ["disaster recovery", "incident planning", "resilience"]),
 
+  // === Business domains (v2, 2026-09-24) ===
+  // Added with the FSB course catalog so finance, accounting, marketing,
+  // management, and economics courses have skills to map to. Kept at the
+  // level analytics postings ask for ("finance background preferred"), and
+  // designed to split later through `implies` edges when the job feed grows
+  // (professor's decision). The tagger tags these only when the role's
+  // duties or qualifications ask for them, never from the employer's
+  // industry, and defaults them to "preferred".
+  S("financial_accounting", "Financial Accounting & Reporting", "domain", "business", ["financial reporting", "gaap", "ifrs", "financial statements", "accounting"]),
+  S("managerial_accounting", "Managerial & Cost Accounting", "domain", "business", ["cost accounting", "management accounting", "budgeting", "variance analysis", "budget formulation", "budget execution", "cost analysis"]),
+  S("auditing", "Auditing", "domain", "business", ["financial audit", "external audit", "internal audit", "assurance"]),
+  S("tax", "Tax", "domain", "business", ["taxation", "tax accounting", "income tax", "tax planning"]),
+  S("corporate_finance", "Corporate Finance", "domain", "business", ["capital budgeting", "cost of capital", "capital structure", "financial management", "working capital"]),
+  S("financial_analysis", "Financial Analysis", "method", "business", ["financial statement analysis", "ratio analysis", "fp&a", "financial planning and analysis"]),
+  S("financial_modeling", "Financial Modeling & Valuation", "method", "business", ["valuation", "dcf", "discounted cash flow", "company valuation", "financial model"], ["financial_analysis"]),
+  S("investments", "Investments & Portfolio Management", "domain", "business", ["portfolio management", "asset management", "equity research", "securities analysis", "fixed income", "derivatives"]),
+  S("financial_planning", "Personal Financial Planning", "domain", "business", ["personal finance", "wealth management", "retirement planning", "financial advising"]),
+  S("real_estate", "Real Estate Analysis", "domain", "business", ["real estate finance", "property valuation", "commercial real estate", "real estate development"]),
+  S("economics", "Economic Analysis", "domain", "business", ["microeconomics", "macroeconomics", "economic modeling", "economic research"]),
+  S("econometrics", "Econometrics", "method", "business", ["panel data", "instrumental variables", "applied econometrics"], ["regression"]),
+  S("marketing_strategy", "Marketing Strategy", "domain", "business", ["marketing management", "go-to-market", "market positioning", "marketing planning", "segmentation and targeting"]),
+  S("market_research", "Market Research", "method", "business", ["marketing research", "consumer research", "survey design", "focus groups"]),
+  S("consumer_behavior", "Consumer Behavior", "domain", "business", ["buyer behavior", "consumer psychology", "shopper insights"]),
+  S("digital_marketing", "Digital Marketing", "domain", "business", ["seo", "search engine optimization", "social media marketing", "content marketing", "email marketing", "sem"]),
+  S("sales", "Sales", "professional", "business", ["professional selling", "business development", "account management", "sales management"]),
+  S("brand_management", "Brand Management", "domain", "business", ["branding", "brand strategy", "advertising", "integrated marketing communications"]),
+  S("operations_management", "Operations Management", "domain", "business", ["production planning", "capacity planning", "operations planning", "service operations"]),
+  S("process_improvement", "Process Improvement (Lean and Six Sigma)", "method", "business", ["lean", "six sigma", "lean six sigma", "continuous improvement", "kaizen"]),
+  S("human_capital_management", "Human Capital Management", "domain", "business", ["human resources", "hr", "hrm", "talent management", "recruiting", "compensation and benefits", "workforce planning"]),
+  S("organizational_behavior", "Organizational Behavior", "domain", "business", ["organizational psychology", "team dynamics", "change management", "organizational culture"]),
+  S("negotiation", "Negotiation", "professional", "business", ["negotiating", "conflict resolution", "deal making"]),
+  S("entrepreneurship", "Entrepreneurship", "domain", "business", ["new ventures", "startups", "venture creation", "business planning", "business model canvas"]),
+  S("design_thinking", "Innovation & Design Thinking", "method", "business", ["design thinking", "human-centered design", "innovation management", "creative problem solving"]),
+  S("business_law", "Business Law", "domain", "business", ["contract law", "legal environment of business", "employment law", "corporate law"]),
+  S("international_business", "International Business", "domain", "business", ["global business", "international trade", "cross-cultural management", "global markets"]),
+  S("sustainability", "Sustainability", "domain", "business", ["esg", "corporate social responsibility", "csr", "sustainable business"]),
+  S("business_ethics", "Business Ethics", "domain", "business", ["corporate ethics", "ethical decision making", "corporate governance"]),
+  S("strategic_management", "Strategic Management", "domain", "business", ["competitive strategy", "corporate strategy", "strategy execution"], ["business_strategy"]),
+
   // === Professional ===
   S("communication", "Communication", "professional", "professional", ["written communication", "verbal communication", "interpersonal skills"]),
   S("presentation_skills", "Presentation Skills", "professional", "professional", ["public speaking", "powerpoint", "presentations"], ["communication"]),
@@ -188,6 +228,24 @@ const byAlias = new Map<string, string>();
 for (const s of SKILLS) {
   byAlias.set(s.label.toLowerCase(), s.id);
   for (const a of s.aliases) byAlias.set(a, s.id);
+}
+
+/**
+ * Where a text names a skill by its label or an alias, as whole words
+ * ("hr" never matches inside "three"). Returns the matched snippet with some
+ * context, or null. Used to require textual evidence for business-domain
+ * job tags (v6.7.0), so a tag reflects what the posting asks for rather than
+ * a guess from the employer's industry.
+ */
+export function mentionsSkill(skillId: string, text: string): string | null {
+  const skill = byId.get(skillId);
+  if (!skill) return null;
+  for (const term of [skill.label.toLowerCase(), ...skill.aliases]) {
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const m = new RegExp(`(?<![a-z0-9])${escaped}s?(?![a-z0-9])`, "i").exec(text);
+    if (m) return text.slice(Math.max(0, m.index - 60), m.index + m[0].length + 60).replace(/\s+/g, " ").trim();
+  }
+  return null;
 }
 
 /**

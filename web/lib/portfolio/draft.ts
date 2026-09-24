@@ -8,6 +8,7 @@
 import type { PreparedFile } from "./files";
 import type { SiteContent } from "./content";
 import type { ProjectOrigin } from "./origin";
+import type { ChecklistState } from "@/lib/scout/checklist";
 
 export type Step =
   | "mode" | "resume" | "classes" | "projects" | "details"
@@ -37,6 +38,14 @@ export interface Draft {
   resume: File | null;
   resumeLink: boolean;
   courses: string[];
+  /** The subset of `courses` marked Taking now (v6.7.0); absent means none. */
+  inProgress?: string[];
+  /**
+   * The checklist behind `courses` (v6.7.0): programs, statuses and removed
+   * prerequisites, so returning to the step shows what the student chose.
+   * Absent on drafts from before it; the step rebuilds it from `courses`.
+   */
+  coursePlan?: ChecklistState;
   /**
    * Courses from other schools, typed by guests (v6.6.0). Optional because
    * autosaves and stored sites from before v6.6.0 lack it: read as [].

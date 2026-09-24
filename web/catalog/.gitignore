@@ -1,0 +1,4 @@
+# Per-run outputs: the Action uses REPORT.md as the pull request description.
+.collect-report.json
+.map-report.json
+REPORT.md
