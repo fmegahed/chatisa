@@ -47,7 +47,6 @@ export function JobScout(props: {
   githubEnabled: boolean;
 }) {
   const [profile, setProfile] = useScoutProfile();
-  const [profileTabKey, setProfileTabKey] = useState(0);
   const { saved, toggle, hide } = useScoutSaved();
   const projectsStore = useScoutProjects();
   // Sites published with the Portfolio Builder are real, built work, so
@@ -127,11 +126,9 @@ export function JobScout(props: {
       {profile !== false ? (
         <NextTermPrompt
           profile={profile}
-          onChange={(next) => {
-            setProfile(next);
-            // The profile tab keeps its own working copy; start it afresh.
-            setProfileTabKey((k) => k + 1);
-          }}
+          // The profile tab adopts the changed plan itself, keeping any
+          // suggestions and text still in progress there.
+          onChange={(next) => setProfile(next)}
         />
       ) : null}
       <div
@@ -177,7 +174,6 @@ export function JobScout(props: {
       >
         {activeTab === "profile" ? (
           <ProfileTab
-            key={profileTabKey}
             models={props.models}
             defaultModelId={props.defaultModelId}
             profile={profile === false ? null : profile}

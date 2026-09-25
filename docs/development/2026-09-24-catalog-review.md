@@ -2,7 +2,7 @@
 
 For the professor's release-gate review of the FSB catalog, the business skills, the course-to-skill links, and the job tagger. Nothing here reaches students until you sign off and v6.7.0 ships.
 
-Sources: the [Miami Bulletin 2026-27](https://bulletin.miamioh.edu/) program pages listed in `web/catalog/programs.config.json`, and the [syllabus library](https://syllabus.miamioh.edu/en-US/syllabus-library) (Fall 2026 pull; 115 of 166 courses had a syllabus). The next syllabus pull runs Feb 1, 2027.
+Sources: the [Miami Bulletin 2026-27](https://bulletin.miamioh.edu/) program pages listed in `web/catalog/programs.config.json`, and the [syllabus library](https://syllabus.miamioh.edu/en-US/syllabus-library) (Fall 2026 pull; 115 of 166 courses had a syllabus). The syllabus pull runs one week into each term; the next runs are Jan 9, 2027 (Winter term) and Monday, Feb 1, 2027 (one week into Spring).
 
 Mapping run: 160 courses mapped by two models (claude-sonnet-5 and gpt-6-sol), $2.31. A link needs both models; where they differ on depth, the lower level is kept (181 links lowered that way). 349 suggestions from only one model were dropped. Approved links from before this release are never removed or re-levelled by the models.
 

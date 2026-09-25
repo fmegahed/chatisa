@@ -13,7 +13,7 @@ students, sponsored by the university.
 | `web/` | The application: Next.js 16, React 19. Start at `web/README.md`. |
 | `docs/` | Design docs, decision log, migration log, `operations.md` (running it). |
 | `assets/` | Source brand assets (deck template, TikZ figures). |
-| `legacy/` | The retired Streamlit app (2023-2026), kept for reference. |
+| `legacy-streamlit-final` (git tag) | The retired Streamlit app (2023-2026), removed from main in v6.9.2 and kept at [that tag](https://github.com/fmegahed/chatisa/tree/legacy-streamlit-final/legacy). |
 
 ## Running it
 

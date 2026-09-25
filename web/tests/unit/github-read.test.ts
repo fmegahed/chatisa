@@ -40,7 +40,7 @@ describe("readRepo", () => {
   const full = () => fake({
     "/repos/ada/churn/languages": () => json(200, { Python: 12_000 }),
     "/repos/ada/churn/contributors": () => json(200, [{ login: "ada", type: "User", contributions: 20 }]),
-    "/repos/ada/churn/git/trees/main": () => json(200, { truncated: false, tree: [
+    "/repos/ada/churn/git/trees/HEAD": () => json(200, { truncated: false, tree: [
       { path: "README.md", type: "blob", size: 20 }, { path: "requirements.txt", type: "blob", size: 20 },
       { path: "src/model.py", type: "blob", size: 40 }, { path: "src", type: "tree" },
     ] }),
@@ -66,7 +66,7 @@ describe("readRepo", () => {
     const routes = () => fake({
       "/repos/ada/churn/languages": () => json(200, { Python: 1 }),
       "/repos/ada/churn/contributors": () => json(200, [{ login: "ada", type: "User", contributions: 20 }]),
-      "/repos/ada/churn/git/trees/main": () => json(200, { truncated: false, tree: [{ path: "big.ipynb", type: "blob", size: 14_000_000 }] }),
+      "/repos/ada/churn/git/trees/HEAD": () => json(200, { truncated: false, tree: [{ path: "big.ipynb", type: "blob", size: 14_000_000 }] }),
       "/repos/ada/churn/readme": () => new Response("# Churn"),
       "/repos/ada/churn/contents/big.ipynb": () => new Response(JSON.stringify({ cells: [{ cell_type: "code", source: ["import pandas as pd"], outputs: [{ data: "x".repeat(1000) }] }] })),
       "/repos/ada/churn": () => json(200, { description: "", topics: [], fork: false, archived: false }),
@@ -79,11 +79,31 @@ describe("readRepo", () => {
     expect(included.ok && included.summary.skippedLarge).toEqual([]);
   });
 
+  it("leaves a Git LFS pointer out of what the model reads", async () => {
+    const lfs = `version https://git-lfs.github.com/spec/v1
+oid sha256:${"b".repeat(64)}
+size 9000000
+`;
+    const { f } = fake({
+      "/repos/ada/churn/languages": () => json(200, { Python: 1 }),
+      "/repos/ada/churn/contributors": () => json(200, [{ login: "ada", type: "User", contributions: 20 }]),
+      "/repos/ada/churn/git/trees/HEAD": () => json(200, { tree: [
+        { path: "src/model.py", type: "blob", size: 40 }, { path: "src/weights.py", type: "blob", size: 130 },
+      ] }),
+      "/repos/ada/churn/readme": () => json(404, {}),
+      "/repos/ada/churn/contents/src/model.py": () => new Response("import pandas as pd"),
+      "/repos/ada/churn/contents/src/weights.py": () => new Response(lfs),
+      "/repos/ada/churn": () => json(200, { description: "", topics: [], fork: false, archived: false }),
+    });
+    const out = await readRepo(conn, listing, f);
+    expect(out.ok && out.summary.codeFiles.map((c) => c.path)).toEqual(["src/model.py"]);
+  });
+
   it("reads an empty repository as a README-only summary, not an error", async () => {
     const { f } = fake({
       "/repos/ada/churn/languages": () => json(200, {}),
       "/repos/ada/churn/contributors": () => new Response(null, { status: 204 }),
-      "/repos/ada/churn/git/trees/main": () => json(409, { message: "Git Repository is empty." }),
+      "/repos/ada/churn/git/trees/HEAD": () => json(409, { message: "Git Repository is empty." }),
       "/repos/ada/churn/readme": () => json(404, {}),
       "/repos/ada/churn": () => json(200, { description: "", topics: [], fork: false, archived: false }),
     });
@@ -103,16 +123,21 @@ describe("readRepo", () => {
 });
 
 describe("readRepoTree", () => {
+  it("reads the default branch as HEAD, so a branch name with a slash works", async () => {
+    const { f, calls } = fake({ "/repos/ada/churn/git/trees/HEAD": () => json(200, { tree: [] }) });
+    await readRepoTree(conn, { ...listing, defaultBranch: "release/2026" }, f);
+    expect(calls[0]).toBe("/repos/ada/churn/git/trees/HEAD?recursive=1");
+  });
   it("lists blobs with sizes on the default branch", async () => {
     const { f, calls } = fake({
-      "/repos/ada/churn/git/trees/main": () => json(200, { truncated: true, tree: [{ path: "a.py", type: "blob", size: 5 }, { path: "src", type: "tree" }] }),
+      "/repos/ada/churn/git/trees/HEAD": () => json(200, { truncated: true, tree: [{ path: "a.py", type: "blob", size: 5 }, { path: "src", type: "tree" }] }),
     });
     expect(await readRepoTree(conn, listing, f)).toEqual({ ok: true, tree: [{ path: "a.py", size: 5 }], truncated: true });
     expect(calls[0]).toContain("recursive=1");
   });
   it("treats an empty repository as no files, and reports a revoked token", async () => {
-    expect(await readRepoTree(conn, listing, fake({ "/repos/ada/churn/git/trees/main": () => json(409, {}) }).f)).toEqual({ ok: true, tree: [], truncated: false });
-    expect(await readRepoTree(conn, listing, fake({ "/repos/ada/churn/git/trees/main": () => json(401, {}) }).f)).toEqual({ ok: false, error: { kind: "auth" } });
+    expect(await readRepoTree(conn, listing, fake({ "/repos/ada/churn/git/trees/HEAD": () => json(409, {}) }).f)).toEqual({ ok: true, tree: [], truncated: false });
+    expect(await readRepoTree(conn, listing, fake({ "/repos/ada/churn/git/trees/HEAD": () => json(401, {}) }).f)).toEqual({ ok: false, error: { kind: "auth" } });
   });
 });
 
@@ -120,11 +145,63 @@ describe("fetchRepoFile", () => {
   it("returns the raw bytes, binary included", async () => {
     const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
     const { f, calls } = fake({ "/repos/ada/churn/contents/figures/roc%20curve.png": () => new Response(png) });
-    const out = await fetchRepoFile(conn, "ada/churn", "figures/roc curve.png", f);
+    const out = await fetchRepoFile(conn, listing, "figures/roc curve.png", f);
     expect(out.ok && new Uint8Array(out.bytes)).toEqual(png);
     expect(calls[0]).toBe("/repos/ada/churn/contents/figures/roc%20curve.png");
   });
   it("reports a file that has gone as not-found", async () => {
-    expect(await fetchRepoFile(conn, "ada/churn", "gone.py", fake({}).f)).toEqual({ ok: false, error: { kind: "not-found" } });
+    expect(await fetchRepoFile(conn, listing, "gone.py", fake({}).f)).toEqual({ ok: false, error: { kind: "not-found" } });
+  });
+
+  describe("Git LFS", () => {
+    const pointer = (size: number) =>
+      `version https://git-lfs.github.com/spec/v1
+oid sha256:${"a".repeat(64)}
+size ${size}
+`;
+    const media = "https://media.githubusercontent.com/media/ada/churn/main/data/sales%202026.csv";
+
+    it("follows a pointer to GitHub's LFS host, without sending the token there", async () => {
+      const csv = new TextEncoder().encode("region,sales\neast,10\n");
+      const seen: { url: string; auth: string | null }[] = [];
+      const f = (async (input: string | URL, init?: RequestInit) => {
+        const url = String(input);
+        seen.push({ url, auth: new Headers(init?.headers).get("authorization") });
+        if (url.startsWith("https://api.github.com/")) return new Response(pointer(csv.byteLength));
+        if (url === media) return new Response(csv);
+        return json(404, {});
+      }) as typeof fetch;
+      const out = await fetchRepoFile(conn, listing, "data/sales 2026.csv", f);
+      expect(out.ok && new TextDecoder().decode(out.bytes)).toBe("region,sales\neast,10\n");
+      expect(seen[1]).toEqual({ url: media, auth: null });
+    });
+
+    it("refuses a pointer to a file over 25 MB before downloading it", async () => {
+      const seen: string[] = [];
+      const f = (async (input: string | URL) => {
+        seen.push(String(input));
+        return new Response(pointer(40 * 1024 * 1024));
+      }) as typeof fetch;
+      expect(await fetchRepoFile(conn, listing, "data/big.csv", f)).toEqual({ ok: false, error: { kind: "lfs-too-large", bytes: 40 * 1024 * 1024 } });
+      expect(seen).toHaveLength(1);
+    });
+
+    it("reports an LFS file GitHub will not serve (or serves at the wrong size)", async () => {
+      const unavailable = (async (input: string | URL) =>
+        String(input).startsWith("https://api.github.com/") ? new Response(pointer(20)) : new Response("quota", { status: 403 })) as typeof fetch;
+      expect(await fetchRepoFile(conn, listing, "data/a.csv", unavailable)).toEqual({ ok: false, error: { kind: "lfs" } });
+      const short = (async (input: string | URL) =>
+        String(input).startsWith("https://api.github.com/") ? new Response(pointer(20)) : new Response("abc")) as typeof fetch;
+      expect(await fetchRepoFile(conn, listing, "data/a.csv", short)).toEqual({ ok: false, error: { kind: "lfs" } });
+    });
+
+    it("leaves a file that merely mentions LFS alone", async () => {
+      const text = `# Notes
+
+${pointer(10)}`;
+      const { f } = fake({ "/repos/ada/churn/contents/NOTES.md": () => new Response(text) });
+      const out = await fetchRepoFile(conn, listing, "NOTES.md", f);
+      expect(out.ok && new TextDecoder().decode(out.bytes)).toBe(text);
+    });
   });
 });

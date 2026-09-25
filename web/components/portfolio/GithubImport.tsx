@@ -7,7 +7,7 @@ import type { RepoListing } from "@/lib/scout/github-summary";
 import { githubRepoUrl, importCandidates, importedName, type ImportCandidate } from "@/lib/portfolio/github-import";
 import { formatSize, guessRole } from "@/lib/portfolio/files";
 import type { PreparedFile } from "@/lib/portfolio/files";
-import { prepareFile } from "@/lib/portfolio/intake";
+import { prepareFile, splitOversize } from "@/lib/portfolio/intake";
 import { GithubConnect } from "@/components/scout/GithubConnect";
 
 /**
@@ -23,6 +23,7 @@ function problem(e: ReadError, what: string): string {
   if (e.kind === "not-found") return `${what} could not be read. It may be private, renamed or deleted.`;
   if (e.kind === "rate-limit") return "GitHub asked us to slow down. Try again in a few minutes.";
   if (e.kind === "network") return `${what} could not be reached. Check your connection and try again.`;
+  if (e.kind === "lfs") return `${what} is stored with Git LFS, and GitHub did not provide it. Try again later.`;
   return `${what} could not be read. Try again later.`;
 }
 
@@ -115,12 +116,17 @@ export function GithubImport(props: {
     setError(null);
     const files: PreparedFile[] = [];
     const failed: string[] = [];
+    /** Git LFS files: their real size only shows once the pointer is read. */
+    const tooLarge: { name: string; size: number }[] = [];
+    const lfsFailed: string[] = [];
     for (const [i, path] of ticked.entries()) {
       setStatus(`Reading ${i + 1} of ${ticked.length}: ${path}`);
-      const out = await fetchRepoFile(connection, repo.fullName, path);
+      const out = await fetchRepoFile(connection, repo, path);
       if (!out.ok) {
         if (out.error.kind === "auth") { setBusy(false); return expire(); }
-        failed.push(path);
+        if (out.error.kind === "lfs-too-large") tooLarge.push({ name: path, size: out.error.bytes });
+        else if (out.error.kind === "lfs") lfsFailed.push(path);
+        else failed.push(path);
         continue;
       }
       const name = importedName(path, ticked, [...props.existingNames, ...files.map((f) => f.name)]);
@@ -134,12 +140,21 @@ export function GithubImport(props: {
     const url = githubRepoUrl(repo.htmlUrl) ?? `https://github.com/${repo.fullName}`;
     const added = files.length ? props.onImport(files, { fullName: repo.fullName, url }) : 0;
     // What arrived is no longer ticked, so Import never brings it twice; a
-    // failed file stays ticked for a retry (review fix).
-    setTicked(failed);
+    // failed file stays ticked for a retry (review fix). A file over the
+    // limit is unticked: a retry cannot change its size.
+    setTicked([...failed, ...lfsFailed]);
     const dropped = files.length - added;
     const tail = dropped > 0 ? ` ${dropped} did not fit in the project.` : "";
-    if (failed.length) {
-      fail(`${failed.join(", ")} could not be read. ${added} other ${added === 1 ? "file was" : "files were"} imported.${tail}`);
+    if (failed.length || lfsFailed.length || tooLarge.length) {
+      const parts = [
+        failed.length ? `${failed.join(", ")} could not be read.` : "",
+        lfsFailed.length
+          ? `${lfsFailed.join(", ")} ${lfsFailed.length === 1 ? "is" : "are"} stored with Git LFS, and GitHub did not provide ${lfsFailed.length === 1 ? "it" : "them"}. Try again later.`
+          : "",
+        splitOversize(tooLarge).refused ?? "",
+        `${added} other ${added === 1 ? "file was" : "files were"} imported.${tail}`,
+      ];
+      fail(parts.filter(Boolean).join(" "));
       return;
     }
     setStatus(`Imported ${added} ${added === 1 ? "file" : "files"} from ${repo.fullName}.${tail}`);

@@ -92,6 +92,20 @@ test.describe("Import from GitHub", () => {
     await expect(page.getByText("README.md").first()).toBeVisible();
   });
 
+  test("a Git LFS file imports its real content, and one over 25 MB is refused with the reason", async ({ page }) => {
+    await fakeGithubApi(page, { lfs: true });
+    await openCareerProjects(page);
+    await page.getByRole("button", { name: "Import from GitHub into project 1" }).click();
+    await page.getByRole("radio", { name: /mockstudent\/churn-model/ }).check();
+    await page.getByRole("checkbox", { name: /src\/vanishing\.py/ }).uncheck();
+    await page.getByRole("checkbox", { name: /data\/sales\.csv/ }).check();
+    await page.getByRole("checkbox", { name: /data\/raw\.parquet/ }).check();
+    await page.getByRole("button", { name: /^Import \d+ files$/ }).click();
+    await expect(page.getByRole("alert").filter({ hasText: "data/raw.parquet (40.0 MB) is over the 25 MB limit for one file on a published page, so it was not added." })).toBeVisible();
+    await expect(page.getByText("sales.csv", { exact: true })).toBeVisible();
+    await expect(page.getByText("README.md").first()).toBeVisible();
+  });
+
   test("an expired connection stops and offers Connect GitHub", async ({ page }) => {
     await fakeGithubApi(page, { expireAfterList: true });
     await openCareerProjects(page);

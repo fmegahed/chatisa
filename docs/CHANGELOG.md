@@ -4,6 +4,16 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.9.2 - September 25, 2026
+
+**Git LFS files import with their real content (over 25 MB refused), branch
+names with a slash read, the next-term prompt keeps work in progress, the
+syllabus refresh runs one week into each term (Actions on v7), and the
+retired Streamlit app moves to the `legacy-streamlit-final` tag.** Full
+notes: `docs/releases/v6.9.2.md`.
+
+---
+
 ## v6.9.1 - September 25, 2026
 
 **Security release: Next.js 16.3.6 (fixes two critical remote code

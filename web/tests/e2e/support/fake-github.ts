@@ -12,12 +12,22 @@ import type { Page } from "@playwright/test";
  */
 export async function fakeGithubApi(
   page: Page,
-  opts: { expireAfterList?: boolean; slowContentsMs?: number; slowTreeMs?: number } = {},
+  /** lfs: churn-model also holds two Git LFS files, one over the 25 MB limit. */
+  opts: { expireAfterList?: boolean; slowContentsMs?: number; slowTreeMs?: number; lfs?: boolean } = {},
 ): Promise<{ trees: { path: string }[][]; setExpired: (value: boolean) => void }> {
   // Mutable, so a test can expire the token and then "reconnect".
   let expired = Boolean(opts.expireAfterList);
   const repos = new Set<string>();
   const trees: { path: string }[][] = [];
+  const lfsCsv = "region,sales\neast,10\n";
+  const pointer = (size: number) => `version https://git-lfs.github.com/spec/v1\noid sha256:${"a".repeat(64)}\nsize ${size}\n`;
+  if (opts.lfs) {
+    await page.route("https://media.githubusercontent.com/**", (route) =>
+      new URL(route.request().url()).pathname === "/media/mockstudent/churn-model/main/data/sales.csv"
+        ? route.fulfill({ status: 200, body: lfsCsv, headers: { "access-control-allow-origin": "*" } })
+        : route.fulfill({ status: 404, body: "", headers: { "access-control-allow-origin": "*" } }),
+    );
+  }
   await page.route("https://api.github.com/**", async (route) => {
     const req = route.request();
     const path = new URL(req.url()).pathname;
@@ -60,7 +70,13 @@ export async function fakeGithubApi(
         { path: "src/vanishing.py", type: "blob", size: 20 },
         { path: "figures/roc.png", type: "blob", size: 4 },
         ...(name === "churn-model" ? [{ path: "notebooks/eda.ipynb", type: "blob", size: 14_000_000 }] : []),
+        ...(name === "churn-model" && opts.lfs ? [
+          { path: "data/sales.csv", type: "blob", size: pointer(lfsCsv.length).length },
+          { path: "data/raw.parquet", type: "blob", size: pointer(40 * 1024 * 1024).length },
+        ] : []),
       ] });
+      if (rest === "/contents/data/sales.csv") return route.fulfill({ status: 200, body: pointer(lfsCsv.length) });
+      if (rest === "/contents/data/raw.parquet") return route.fulfill({ status: 200, body: pointer(40 * 1024 * 1024) });
       if (rest === "/contents/README.md") return route.fulfill({ status: 200, body: "# Churn model\nPredicts churn." });
       if (rest === "/contents/tests/model.py") return route.fulfill({ status: 200, body: "def test_fit():\n    assert True" });
       if (rest === "/contents/figures/roc.png") return route.fulfill({ status: 200, contentType: "image/png", body: Buffer.from([0x89, 0x50, 0x4e, 0x47]) });

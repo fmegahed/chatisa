@@ -22,9 +22,35 @@ const wf = yaml.load(readFileSync(file, "utf8")) as {
 const steps = wf.jobs.refresh.steps;
 
 describe("catalog refresh workflow", () => {
-  it("runs Feb 1, Jun 1 and Sep 1, and on demand", () => {
-    expect(wf.on.schedule).toEqual([{ cron: "0 12 1 2,6,9 *" }]);
+  it("runs one week into each term (professor, 2026-09-24), and on demand", () => {
+    // Classes start on a Monday between the 22nd and 28th (Fall Aug 24 2026
+    // and Aug 23 2027, Spring Jan 25 2027 and Jan 24 2028, Summer's main
+    // sessions May 24 2027), so a daily window from the 29th to the 4th plus
+    // a Monday guard lands exactly one week in, once per term. One run per
+    // window matters: a second run before the first PR is merged would map
+    // the same courses again and open a duplicate PR (review fix). Winter
+    // term (from Jan 2) runs on Jan 9.
+    expect(wf.on.schedule).toEqual([
+      { cron: "0 12 29-31 1,5,8 *" },
+      { cron: "0 12 1-4 2,6,9 *" },
+      { cron: "0 12 9 1 *" },
+    ]);
     expect(wf.on).toHaveProperty("workflow_dispatch");
+  });
+
+  it("guards scheduled runs to the Monday one week in (or Jan 9), never manual ones", () => {
+    const when = steps.find((s) => s.name === "Decide whether this run is due");
+    expect(when?.run).toContain("workflow_dispatch");
+    expect(when?.run).toContain("date -u +%u");
+    // It runs before checkout, when the web/ default directory does not exist.
+    expect((when as { "working-directory"?: string })["working-directory"]).toBe(".");
+    const guarded = steps.filter((s) => s.run && s !== when);
+    for (const s of guarded) expect((s as { if?: string }).if, s.name).toBe("steps.when.outputs.due == 'true'");
+  });
+
+  it("uses current action versions (Node 20 actions are retired)", () => {
+    const uses = steps.map((s) => s.uses).filter(Boolean);
+    expect(uses).toEqual(["actions/checkout@v7", "actions/setup-node@v7"]);
   });
 
   it("may write contents and pull requests, nothing else", () => {

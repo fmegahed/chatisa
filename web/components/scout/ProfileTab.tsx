@@ -89,6 +89,21 @@ export function ProfileTab(props: {
     courses: props.profile?.courses ?? [],
     removedPrereqs: props.profile?.removedPrereqs ?? [],
   }));
+  // A plan change made outside this tab (the next-term prompt) is adopted
+  // here, without a remount that would clear unconfirmed suggestions and
+  // typed text. Compared by content: the store may hand back a fresh object.
+  const planKey = JSON.stringify([props.profile?.programs, props.profile?.courses, props.profile?.removedPrereqs]);
+  const [seenPlanKey, setSeenPlanKey] = useState(planKey);
+  if (planKey !== seenPlanKey) {
+    setSeenPlanKey(planKey);
+    if (props.profile) {
+      setDraftPlan({
+        programs: props.profile.programs,
+        courses: props.profile.courses,
+        removedPrereqs: props.profile.removedPrereqs,
+      });
+    }
+  }
   const draftCourses = useMemo(
     () => new Set(draftPlan.courses.map((c) => c.code)),
     [draftPlan],

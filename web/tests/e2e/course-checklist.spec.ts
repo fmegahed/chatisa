@@ -93,6 +93,26 @@ test.describe("Course checklist", () => {
     await expect(courseRow(page, "ISA 444").getByRole("radio", { name: "Done" })).toBeChecked();
   });
 
+  test("answering the prompt on the profile tab keeps the work in progress there (deferred minor, v6.9.2)", async ({ page }) => {
+    await page.evaluate(() =>
+      localStorage.setItem(
+        "js-profile-v1",
+        JSON.stringify({
+          v: 2, programs: ["business-analytics"], removedPrereqs: [], extras: [], overrides: [],
+          courses: [{ code: "ISA 444", status: "now", term: "Spring 2020" }],
+        }),
+      ),
+    );
+    await page.reload();
+    await page.getByRole("tab", { name: "My Profile" }).click();
+    const notes = page.getByLabel("Internship, ISA 340/480/481, or independent work");
+    await notes.fill("Summer analytics internship at a regional bank");
+    await page.getByRole("region", { name: /Did you finish these\?/ }).getByRole("button", { name: "Finished ISA 444" }).click();
+    await expect(notes).toHaveValue("Summer analytics internship at a regional bank");
+    await page.getByLabel("Search all FSB courses").fill("444");
+    await expect(courseRow(page, "ISA 444").getByRole("radio", { name: "Done" })).toBeChecked();
+  });
+
   test("a row that disappears hands focus to the search box, not the page (review fix)", async ({ page }) => {
     const search = page.getByLabel("Search all FSB courses");
     await search.fill("241");

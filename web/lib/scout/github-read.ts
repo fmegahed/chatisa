@@ -6,7 +6,7 @@
  */
 
 import type { GithubConnection } from "./github-store";
-import { classifyGithubResponse } from "./github";
+import { classifyGithubResponse, PUSH_LIMITS } from "./github";
 import {
   authorshipFrom, clipSummary, pickCodePaths, pickDependencyPaths, stripNotebook,
   SUMMARY_LIMITS, type RepoListing, type RepoSummary,
@@ -17,7 +17,11 @@ export type ReadError =
   | { kind: "not-found" }
   | { kind: "rate-limit"; resetAt: string | null }
   | { kind: "network" }
-  | { kind: "github"; status: number };
+  | { kind: "github"; status: number }
+  /** A Git LFS file larger than the 25 MB one-file limit (not downloaded). */
+  | { kind: "lfs-too-large"; bytes: number }
+  /** A Git LFS file GitHub's LFS host would not serve (quota, or gone). */
+  | { kind: "lfs" };
 
 type Result<T> = ({ ok: true } & T) | { ok: false; error: ReadError };
 
@@ -42,6 +46,25 @@ function client(conn: GithubConnection, fetchImpl: typeof fetch) {
 }
 
 const enc = (p: string) => p.split("/").map(encodeURIComponent).join("/");
+
+// "HEAD" is the default branch, whatever its name: a name with a slash
+// ("release/2026") cannot be passed through this endpoint's path.
+const treePath = (fullName: string) => `/repos/${enc(fullName)}/git/trees/HEAD?recursive=1`;
+
+/**
+ * A Git LFS pointer: the small text file git stores in place of a large one
+ * (https://github.com/git-lfs/git-lfs/blob/main/docs/spec.md). GitHub's
+ * contents API returns the pointer, not the file. Returns the real size.
+ */
+export function lfsPointerSize(bytes: ArrayBuffer | string): number | null {
+  const size = typeof bytes === "string" ? bytes.length : bytes.byteLength;
+  if (size > 1024) return null;
+  const text = typeof bytes === "string" ? bytes : new TextDecoder().decode(bytes);
+  if (!text.startsWith("version https://git-lfs.github.com/spec/v1\n")) return null;
+  if (!/^oid sha256:[0-9a-f]{64}$/m.test(text)) return null;
+  const m = /^size (\d+)$/m.exec(text);
+  return m ? Number(m[1]) : null;
+}
 
 export async function listOwnRepos(conn: GithubConnection, fetchImpl: typeof fetch = fetch): Promise<Result<{ repos: RepoListing[] }>> {
   try {
@@ -86,7 +109,7 @@ export async function readRepo(
     const contributors = contribRes.status === 200 ? ((await contribRes.json()) as { login?: string; type?: string; contributions: number }[]) : [];
 
     // 409 is GitHub's answer for an empty repository.
-    const treeRes = await get(`${repo}/git/trees/${encodeURIComponent(listing.defaultBranch)}?recursive=1`);
+    const treeRes = await get(treePath(listing.fullName));
     const treeBody = treeRes.ok ? ((await treeRes.json()) as { truncated?: boolean; tree?: { path: string; type: string; size?: number }[] }) : { tree: [] };
     if (!treeRes.ok && treeRes.status !== 409 && treeRes.status !== 404) return { ok: false, error: await asError(treeRes) };
     const tree = (treeBody.tree ?? []).filter((t) => t.type === "blob").map((t) => ({ path: t.path, size: t.size ?? 0 }));
@@ -100,6 +123,8 @@ export async function readRepo(
       const r = await get(`${repo}/contents/${enc(path)}`, true);
       if (!r.ok) return null;
       const raw = await r.text();
+      // A Git LFS pointer says nothing about the student's code.
+      if (lfsPointerSize(raw) !== null) return null;
       return { path, text: path.endsWith(".ipynb") ? stripNotebook(raw) : raw.slice(0, SUMMARY_LIMITS.fileChars) };
     };
     const picked = pickCodePaths(tree, include);
@@ -136,9 +161,7 @@ export async function readRepoTree(
   fetchImpl: typeof fetch = fetch,
 ): Promise<Result<{ tree: { path: string; size: number }[]; truncated: boolean }>> {
   try {
-    const res = await client(conn, fetchImpl).get(
-      `/repos/${enc(listing.fullName)}/git/trees/${encodeURIComponent(listing.defaultBranch)}?recursive=1`,
-    );
+    const res = await client(conn, fetchImpl).get(treePath(listing.fullName));
     // 409 is GitHub's answer for an empty repository.
     if (res.status === 409) return { ok: true, tree: [], truncated: false };
     if (!res.ok) return { ok: false, error: await asError(res) };
@@ -153,17 +176,30 @@ export async function readRepoTree(
   }
 }
 
-/** One file's raw bytes (text or binary), read-only. */
+/**
+ * One file's raw bytes (text or binary), read-only. A Git LFS file is
+ * followed to GitHub's LFS host (public repositories only, so no token is
+ * sent there), unless it is over the 25 MB one-file limit.
+ */
 export async function fetchRepoFile(
   conn: GithubConnection,
-  fullName: string,
+  repo: Pick<RepoListing, "fullName" | "defaultBranch">,
   path: string,
   fetchImpl: typeof fetch = fetch,
 ): Promise<Result<{ bytes: ArrayBuffer }>> {
   try {
-    const res = await client(conn, fetchImpl).get(`/repos/${enc(fullName)}/contents/${enc(path)}`, true);
+    const res = await client(conn, fetchImpl).get(`/repos/${enc(repo.fullName)}/contents/${enc(path)}`, true);
     if (!res.ok) return { ok: false, error: await asError(res) };
-    return { ok: true, bytes: await res.arrayBuffer() };
+    const bytes = await res.arrayBuffer();
+    const lfsSize = lfsPointerSize(bytes);
+    if (lfsSize === null) return { ok: true, bytes };
+    if (lfsSize > PUSH_LIMITS.fileBytes) return { ok: false, error: { kind: "lfs-too-large", bytes: lfsSize } };
+    const media = await fetchImpl(`https://media.githubusercontent.com/media/${enc(repo.fullName)}/${enc(repo.defaultBranch)}/${enc(path)}`);
+    if (!media.ok) return { ok: false, error: { kind: "lfs" } };
+    const real = await media.arrayBuffer();
+    // A short or substituted body (a quota page, say) is not the file.
+    if (real.byteLength !== lfsSize) return { ok: false, error: { kind: "lfs" } };
+    return { ok: true, bytes: real };
   } catch {
     return { ok: false, error: { kind: "network" } };
   }

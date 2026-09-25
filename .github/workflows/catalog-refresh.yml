@@ -1,10 +1,11 @@
 # FSB course catalog refresh (v6.7.0).
 #
-# Three times a year (Feb 1, Jun 1, Sep 1, after each term's syllabi are
-# posted), and on demand from the Actions tab: pull the Miami Bulletin and the
-# public syllabus library, map changed courses to skills with two models, and
-# open a pull request for the professor to review. Nothing reaches students
-# until that PR is merged and a release ships.
+# One week into each term (the professor's schedule, 2026-09-24: the Monday a
+# week after Fall, Spring and Summer classes start, and Jan 9 for Winter term,
+# once that term's syllabi are posted), and on demand from the Actions tab:
+# pull the Miami Bulletin and the public syllabus library, map changed courses
+# to skills with two models, and open a pull request for the professor to
+# review. Nothing reaches students until that PR is merged and a release ships.
 #
 # One-time setup (repository Settings):
 #   - Secrets and variables > Actions: ANTHROPIC_API_KEY and OPENAI_API_KEY.
@@ -17,8 +18,16 @@
 name: Catalog refresh
 
 on:
+  # Cron cannot say "the Monday a week after classes start", so these are
+  # daily windows and the first step lets only a Monday (or Jan 9) through.
+  # Classes start on a Monday between the 22nd and 28th, so the one Monday
+  # from the 29th to the 4th is exactly one week in. One run per window
+  # matters: a second run before the first PR is merged would map the same
+  # courses again and open a duplicate PR.
   schedule:
-    - cron: "0 12 1 2,6,9 *"
+    - cron: "0 12 29-31 1,5,8 *"
+    - cron: "0 12 1-4 2,6,9 *"
+    - cron: "0 12 9 1 *"
   workflow_dispatch:
     inputs:
       max_usd:
@@ -42,23 +51,41 @@ jobs:
       run:
         working-directory: web
     steps:
-      - uses: actions/checkout@v4
+      # Manual runs always go ahead. This runs before checkout, when the web/
+      # default directory does not exist yet.
+      - name: Decide whether this run is due
+        id: when
+        working-directory: .
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]             || [ "$(date -u +%m-%d)" = "01-09" ]             || [ "$(date -u +%u)" = "1" ]; then
+            echo "due=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Not the Monday one week into a term; nothing to do today."
+            echo "due=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+        if: steps.when.outputs.due == 'true'
+
+      - uses: actions/setup-node@v7
+        if: steps.when.outputs.due == 'true'
         with:
           node-version: "24"
           cache: npm
           cache-dependency-path: web/package-lock.json
 
       - name: Install
+        if: steps.when.outputs.due == 'true'
         run: npm ci
 
       - name: Collect the Bulletin and syllabi
+        if: steps.when.outputs.due == 'true'
         run: npm run catalog:collect
 
       # The only step that sees the API keys. Unchanged courses are skipped by
       # fingerprint, so a quiet term costs nothing.
       - name: Map changed courses to skills
+        if: steps.when.outputs.due == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -66,17 +93,20 @@ jobs:
         run: npm run catalog:map
 
       - name: Write the review report
+        if: steps.when.outputs.due == 'true'
         run: npm run catalog:report
 
       # A failing check does not stop the PR: the reviewer needs to see the
       # change and the failure together. The result goes at the top of the
       # PR body.
       - name: Check catalog integrity
+        if: steps.when.outputs.due == 'true'
         id: checks
         continue-on-error: true
         run: npx vitest run tests/unit/catalog-*.test.ts tests/unit/scout-taxonomy.test.ts
 
       - name: Open a pull request
+        if: steps.when.outputs.due == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           CHECKS: ${{ steps.checks.outcome }}
