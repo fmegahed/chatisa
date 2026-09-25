@@ -36,6 +36,9 @@ export function GithubConnect(props: { returnPath: string }) {
       type="button"
       onClick={() => {
         const popup = window.open(startUrl, "chatisa-github", "width=900,height=700");
+        // A full page load is required: the start route is an API route that
+        // redirects to GitHub's sign-in, which client navigation cannot follow.
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         if (!popup) window.location.assign(startUrl);
       }}
       className="rounded-card border-2 border-miami-red px-3 py-1 font-bold text-miami-red hover:bg-light-tan"

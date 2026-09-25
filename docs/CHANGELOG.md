@@ -4,6 +4,16 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.9.1 - September 25, 2026
+
+**Security release: Next.js 16.3.6 (fixes two critical remote code
+execution advisories, one specific to Windows servers like ours), Auth.js
+beta.32, and every other flagged package; `npm audit` reports 0
+vulnerabilities. Also: Coding Studio keeps text typed while its editor
+loads.** Full notes: `docs/releases/v6.9.1.md`.
+
+---
+
 ## v6.9.0 - September 24, 2026
 
 **Portfolio Builder: import a career project or showcase from your own

@@ -71,9 +71,15 @@ async function main() {
   for (const { p, v1, v1b, v2 } of rows) {
     const a = new Set(v1.skills.map((s) => s.skillId));
     const again = new Set(v1b.skills.map((s) => s.skillId));
-    for (const id of a) (again.has(id) ? baseKept++ : baseDropped++);
+    for (const id of a) {
+      if (again.has(id)) baseKept++;
+      else baseDropped++;
+    }
     const b = new Set(v2.skills.filter((s) => !business.has(s.skillId)).map((s) => s.skillId));
-    for (const id of a) (b.has(id) ? kept++ : dropped++);
+    for (const id of a) {
+      if (b.has(id)) kept++;
+      else dropped++;
+    }
     for (const id of b) if (!a.has(id)) added++;
     for (const s of v2.skills.filter((x) => business.has(x.skillId))) {
       const t = mentionsSkill(s.skillId, `${p.title}

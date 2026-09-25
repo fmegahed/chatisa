@@ -53,8 +53,11 @@ setup("authenticate as test student", async ({ page }) => {
   }
   try {
     await page.goto("/coding-tutor", { waitUntil: "domcontentloaded", timeout: 60_000 });
-    await page.getByLabel("Your message").fill("Show me some SQL");
-    await page.getByRole("button", { name: "Send message" }).click();
+    // Capped like every other warmup: typed before hydration, the text can be
+    // reset and Send stays disabled; an uncapped click then waited out the
+    // whole 10-minute setup budget (seen twice with Next.js 16.3).
+    await page.getByLabel("Your message").fill("Show me some SQL", { timeout: 30_000 });
+    await page.getByRole("button", { name: "Send message" }).click({ timeout: 30_000 });
     const customize = page.getByRole("button", { name: "Customize" }).first();
     await customize.waitFor({ timeout: 30_000 });
     await customize.click();

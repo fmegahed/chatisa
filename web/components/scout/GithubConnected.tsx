@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { saveGithubConnection } from "@/lib/scout/github-store";
 import { safeReturnPath } from "@/lib/scout/github-state";
 
@@ -25,7 +25,15 @@ export function GithubConnected() {
     { kind: "working" } | { kind: "done" } | { kind: "error"; message: string }
   >({ kind: "working" });
 
+  // The fragment is read exactly once. React may run this effect twice in
+  // development (Strict Mode, seen with Next.js 16.3): the second run found
+  // the hash already cleared and replaced the right message with the
+  // generic one. A ref survives that double run.
+  const handled = useRef(false);
+
   useEffect(() => {
+    if (handled.current) return;
+    handled.current = true;
     const hash = window.location.hash;
     // Clear immediately: the token must not sit in the address bar or history.
     window.history.replaceState(null, "", window.location.pathname + window.location.search);

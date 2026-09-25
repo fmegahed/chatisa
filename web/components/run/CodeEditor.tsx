@@ -52,6 +52,10 @@ export function CodeEditor(props: {
   const viewRef = useRef<EditorView | null>(null);
   // Keep the latest onChange without re-creating the editor on every keystroke.
   const onChangeRef = useRef(props.onChange);
+  // The latest text, so an editor that finishes loading after the student
+  // has typed into the stand-in textarea starts from what they typed, not
+  // from the text as it was when loading began.
+  const valueRef = useRef(props.value);
   // The completion sources are read fresh on each request, so switching them (or
   // turning them off) does not rebuild the editor; only their presence does.
   const completionSourceRef = useRef(props.completionSource);
@@ -75,6 +79,10 @@ export function CodeEditor(props: {
   useEffect(() => {
     onChangeRef.current = props.onChange;
   }, [props.onChange]);
+
+  useEffect(() => {
+    valueRef.current = props.value;
+  }, [props.value]);
 
   useEffect(() => {
     completionSourceRef.current = props.completionSource;
@@ -102,7 +110,7 @@ export function CodeEditor(props: {
       .then(({ view, cm, lang, state, autocomplete, tags, commands, langExt, inline, langStructure, helpDocs, lint }) => {
         if (cancelled || !host.current) return;
         const editor = new view.EditorView({
-          doc: props.value,
+          doc: valueRef.current,
           parent: host.current,
           extensions: [
             cm.basicSetup,

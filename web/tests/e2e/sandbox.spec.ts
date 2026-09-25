@@ -300,15 +300,21 @@ test.describe("AI Sandbox", () => {
     const editor = page.getByRole("textbox", { name: /SQL code/i });
     await expect(editor).toBeVisible();
 
-    // Create a table and query it.
-    await editor.click();
-    await page.keyboard.press("ControlOrMeta+A");
-    await page.keyboard.press("Delete");
-    await page.keyboard.insertText(
-      "CREATE TABLE t(n INTEGER);\n" +
-        "INSERT INTO t VALUES (1),(2),(3);\n" +
-        "SELECT COUNT(*) AS c FROM t;",
-    );
+    // Create a table and query it. On a cold dev server the editor can be
+    // rebuilt just after the click (a completion source arrives), taking focus
+    // with it, so confirm the script landed and type again if it did not.
+    await expect(async () => {
+      await editor.click();
+      await page.keyboard.press("ControlOrMeta+A");
+      await page.keyboard.press("Delete");
+      await page.keyboard.insertText(
+        "CREATE TABLE t(n INTEGER);\n" +
+          "INSERT INTO t VALUES (1),(2),(3);\n" +
+          "SELECT COUNT(*) AS c FROM t;",
+      );
+      await expect(editor).toContainText("SELECT COUNT(*) AS c FROM t;", { timeout: 2_000 });
+      await expect(editor).not.toContainText("SQL runs in your browser", { timeout: 2_000 });
+    }).toPass({ timeout: 60_000 });
     await page.getByRole("button", { name: "Run", exact: true }).click();
 
     const output = page.getByLabel("Console output");
