@@ -10,6 +10,7 @@ import type { CourseSkillLevel } from "@/lib/scout/course-skills";
 import { getSkill } from "@/lib/scout/taxonomy";
 import { GithubConnect } from "./GithubConnect";
 import { ModelChooser } from "@/components/ModelChooser";
+import { formatSize } from "@/lib/portfolio/files";
 import type { ModelOption } from "@/lib/config/models";
 import { REPO_SKILLS_DEFAULT_MODEL } from "@/lib/scout/repo-skills";
 
@@ -251,7 +252,7 @@ export function GithubSkills(props: { models: ModelOption[]; extras: ProfileExtr
                           onChange={() => setSelected(on ? selected.filter((x) => x !== r.fullName) : [...selected, r.fullName])}
                         />
                         <span className="min-w-0">
-                          <strong className="break-all">{r.fullName}</strong>
+                          <strong className="wrap-break-word">{r.fullName}</strong>
                           {r.language ? ` (${r.language})` : ""}
                           {r.description ? <span className="block text-dark-tan">{r.description}</span> : null}
                           <span className="block text-sm text-dark-tan">Updated {r.pushedAt.slice(0, 10)}</span>
@@ -318,7 +319,7 @@ function RepoGroup(props: { outcome: RepoOutcome; busy: boolean; onRetry: () => 
   const levelOf = (s: RepoSuggestion) => levels[s.skillId] ?? s.suggested;
   return (
     <fieldset className="mt-4 min-w-0 rounded-card border border-medium-tan bg-paper p-3">
-      <legend className="px-1 font-bold break-all">{o.fullName}</legend>
+      <legend className="px-1 font-bold wrap-break-word">{o.fullName}</legend>
       <p className="text-dark-tan">{ruleText(o)}</p>
       {o.skippedLarge.length > 0 ? (
         <div className="mt-2">
@@ -326,7 +327,7 @@ function RepoGroup(props: { outcome: RepoOutcome; busy: boolean; onRetry: () => 
           <ul className="mt-1">
             {o.skippedLarge.map((f) => (
               <li key={f.path} className="flex flex-wrap items-center gap-2">
-                <span className="break-all">{f.path} ({Math.round(f.size / 1_000_000)} MB)</span>
+                <span className="wrap-break-word">{f.path} ({formatSize(f.size)})</span>
                 <button
                   type="button" className="underline" disabled={props.busy} onClick={() => props.onReadLarge(f.path)}
                   aria-label={`Read it anyway: ${f.path}`}

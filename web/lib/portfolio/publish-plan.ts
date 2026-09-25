@@ -53,6 +53,7 @@ export function buildPublishPlan(
   const html = renderShowcase(content, {
     origin, course: draft.course, semester: draft.semester, team: draft.team,
     repoUrl: `https://github.com/${login}/${repoName}`, figures, deliverablePaths,
+    sourceRepoUrl: draft.sourceRepoUrl ?? null,
   });
   const readme = draft.readme && draft.readme.trim().length > 0
     ? draft.readme

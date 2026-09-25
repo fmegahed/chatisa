@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { listOwnRepos, readRepo } from "@/lib/scout/github-read";
+import { fetchRepoFile, listOwnRepos, readRepo, readRepoTree } from "@/lib/scout/github-read";
 
 const conn = { v: 1 as const, token: "t", login: "ada", connectedAt: "" };
 const json = (status: number, body: unknown, headers: Record<string, string> = {}) =>
@@ -99,5 +99,32 @@ describe("readRepo", () => {
   it("reports GitHub's rate limit with its reset time", async () => {
     const { f } = fake({ "/repos/ada/churn": () => json(403, {}, { "x-ratelimit-remaining": "0", "x-ratelimit-reset": "1790000000" }) });
     expect(await readRepo(conn, listing, f)).toEqual({ ok: false, error: { kind: "rate-limit", resetAt: new Date(1790000000 * 1000).toISOString() } });
+  });
+});
+
+describe("readRepoTree", () => {
+  it("lists blobs with sizes on the default branch", async () => {
+    const { f, calls } = fake({
+      "/repos/ada/churn/git/trees/main": () => json(200, { truncated: true, tree: [{ path: "a.py", type: "blob", size: 5 }, { path: "src", type: "tree" }] }),
+    });
+    expect(await readRepoTree(conn, listing, f)).toEqual({ ok: true, tree: [{ path: "a.py", size: 5 }], truncated: true });
+    expect(calls[0]).toContain("recursive=1");
+  });
+  it("treats an empty repository as no files, and reports a revoked token", async () => {
+    expect(await readRepoTree(conn, listing, fake({ "/repos/ada/churn/git/trees/main": () => json(409, {}) }).f)).toEqual({ ok: true, tree: [], truncated: false });
+    expect(await readRepoTree(conn, listing, fake({ "/repos/ada/churn/git/trees/main": () => json(401, {}) }).f)).toEqual({ ok: false, error: { kind: "auth" } });
+  });
+});
+
+describe("fetchRepoFile", () => {
+  it("returns the raw bytes, binary included", async () => {
+    const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
+    const { f, calls } = fake({ "/repos/ada/churn/contents/figures/roc%20curve.png": () => new Response(png) });
+    const out = await fetchRepoFile(conn, "ada/churn", "figures/roc curve.png", f);
+    expect(out.ok && new Uint8Array(out.bytes)).toEqual(png);
+    expect(calls[0]).toBe("/repos/ada/churn/contents/figures/roc%20curve.png");
+  });
+  it("reports a file that has gone as not-found", async () => {
+    expect(await fetchRepoFile(conn, "ada/churn", "gone.py", fake({}).f)).toEqual({ ok: false, error: { kind: "not-found" } });
   });
 });

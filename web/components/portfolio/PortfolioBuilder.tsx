@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useReducer, useRef, useState } from "react";
+import { githubRepoUrl } from "@/lib/portfolio/github-import";
 import type { ModelOption } from "@/lib/config/models";
 import {
   CAREER_STEPS, SHOWCASE_STEPS, initialDraft,
@@ -127,6 +128,8 @@ export function PortfolioBuilder(props: {
       inProgress: stored.student?.inProgress ?? [], coursePlan: stored.student?.coursePlan,
       origin: originOf(stored.showcaseMeta?.origin), course: stored.showcaseMeta?.course ?? "",
       semester: stored.showcaseMeta?.semester ?? "", team: stored.showcaseMeta?.team ?? [],
+      // Only a valid GitHub repository address is restored (review fix).
+      sourceRepoUrl: githubRepoUrl(stored.showcaseMeta?.sourceRepoUrl) ?? undefined,
       files: stored.files.filter((f) => f.projectSlug === null),
       projects: Array.from(
         new Set(stored.files.filter((f) => f.projectSlug !== null).map((f) => f.projectSlug as string)),

@@ -54,7 +54,7 @@ const DEPENDENCY_NAMES = new Set([
 const CODE_EXT = /\.(py|r|rmd|qmd|ipynb|sql|js|jsx|ts|tsx|jl|java|go|cpp|cc|c|cs|rb|php|sas|scala|kt|swift)$/i;
 // renv/ is generated as a whole (activate.R is bootstrap boilerplate, found
 // taking a code slot in the v6.8.0 eval), not only renv/library/.
-const VENDORED = /(^|\/)(node_modules|dist|build|\.venv|venv|site-packages|renv|\.git)\//;
+export const VENDORED = /(^|\/)(node_modules|dist|build|\.venv|venv|site-packages|renv|\.git)\//;
 
 const base = (p: string) => p.split("/").pop() ?? p;
 

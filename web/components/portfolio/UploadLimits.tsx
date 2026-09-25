@@ -17,7 +17,8 @@ export function UploadLimits(props: { perProject?: number }) {
     <p className="mt-2 rounded-card bg-light-tan p-3 text-sm">
       <strong>Limits.</strong> Up to {mb(PUSH_LIMITS.fileBytes)} per file and {mb(PUSH_LIMITS.totalBytes)} for the
       whole site, at most {PUSH_LIMITS.files} files{props.perProject ? ` (${props.perProject} per project)` : ""}.
-      Files over {mb(PUSH_LIMITS.fileBytes)} are kept out of the publish. When writing the page, the AI reads the
+      A file over {mb(PUSH_LIMITS.fileBytes)} cannot be added, from your computer or from GitHub: the builder
+      publishes from your browser, and {mb(PUSH_LIMITS.fileBytes)} is the most it sends for one file. The limits are the same whichever AI model you choose. When writing the page, the AI reads the
       first {MAX_CHARS_PER_FILE.toLocaleString()} characters of each text file (code, notebooks, Word, PowerPoint);
       text files over {kb(MAX_TEXT_BYTES)} and notebooks over {mb(MAX_NOTEBOOK_BYTES)} are published as they are but not
       read. PDFs and images are published, not read.

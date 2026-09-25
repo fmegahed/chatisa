@@ -1,15 +1,17 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   guessRole, MAX_SHOWCASE_FILES, ROLE_LABELS, rolePath, showcaseFileSet, DEFAULT_GITIGNORE,
   type FileRole,
 } from "@/lib/portfolio/files";
-import { prepareFile, pushable } from "@/lib/portfolio/intake";
+import { prepareFile, pushable, splitOversize } from "@/lib/portfolio/intake";
 import { UploadLimits } from "@/components/portfolio/UploadLimits";
 import type { StepProps } from "@/lib/portfolio/draft";
 import { SizeMeter } from "../SizeMeter";
 import { StepNav } from "../StepNav";
+import { GithubImport } from "../GithubImport";
+import { githubRepoUrl } from "@/lib/portfolio/github-import";
 
 /**
  * Step 2 of the showcase wizard. Each file gets a guessed role, which is
@@ -22,6 +24,11 @@ const ROLES = Object.keys(ROLE_LABELS) as FileRole[];
 
 export function FilesStep({ draft, patch, nav }: StepProps) {
   const [busy, setBusy] = useState(false);
+  // The latest draft, for an import that finishes after other edits.
+  const draftRef = useRef(draft);
+  useEffect(() => {
+    draftRef.current = draft;
+  });
   const [error, setError] = useState<string | null>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
 
@@ -38,10 +45,16 @@ export function FilesStep({ draft, patch, nav }: StepProps) {
     setBusy(true);
     try {
       const room = MAX_SHOWCASE_FILES - draft.files.length;
+      // Files over 25 MB are not added (one rule for uploads and imports).
+      const { accepted, refused } = splitOversize(Array.from(list));
       const prepared = await Promise.all(
-        Array.from(list).slice(0, room).map((f) => prepareFile(f, guessRole(f.name))),
+        accepted.slice(0, room).map((f) => prepareFile(f, guessRole(f.name))),
       );
       patch({ files: [...draft.files, ...prepared] });
+      if (refused) {
+        setError(refused);
+        setTimeout(() => errorRef.current?.focus(), 0);
+      }
     } catch {
       setError("One of those files could not be read. Try adding it again.");
       setTimeout(() => errorRef.current?.focus(), 0);
@@ -91,6 +104,25 @@ export function FilesStep({ draft, patch, nav }: StepProps) {
         />
         {busy ? "Reading files..." : `Add files (${draft.files.length}/${MAX_SHOWCASE_FILES})`}
       </label>
+      <GithubImport
+        label="Import from GitHub"
+        room={MAX_SHOWCASE_FILES - draft.files.length}
+        existingNames={draft.files.map((f) => f.name)}
+        disabled={busy}
+        onImport={(files, repo) => {
+          const latest = draftRef.current.files;
+          const kept = [...latest, ...files].slice(0, MAX_SHOWCASE_FILES);
+          patch({ files: kept, sourceRepoUrl: repo.url });
+          return kept.length - latest.length;
+        }}
+      />
+      {githubRepoUrl(draft.sourceRepoUrl) ? (
+        <p className="mt-2">
+          Original repository:{" "}
+          <a href={githubRepoUrl(draft.sourceRepoUrl)!} className="underline" target="_blank" rel="noreferrer">{githubRepoUrl(draft.sourceRepoUrl)}</a>{" "}
+          <button type="button" className="underline" onClick={() => patch({ sourceRepoUrl: undefined })}>Remove link</button>
+        </p>
+      ) : null}
       {hasData ? (
         <p className="mt-3 rounded-card bg-light-tan p-3">
           Data files start unpublished. Course datasets are often licensed or provided by an

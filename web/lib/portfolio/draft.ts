@@ -62,6 +62,11 @@ export interface Draft {
   course: string;
   semester: string;
   team: string[];
+  /**
+   * The GitHub repository a showcase was imported from (v6.9.0); the page
+   * links to it as "Original repository". Absent before v6.9.0.
+   */
+  sourceRepoUrl?: string;
   files: PreparedFile[];
   prompts: { problem: string; hardest: string; next: string };
   // output

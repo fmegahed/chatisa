@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { guessRole, MAX_PROJECT_FILES, slugify, careerFileSet } from "@/lib/portfolio/files";
-import { prepareFile, pushable } from "@/lib/portfolio/intake";
+import { prepareFile, pushable, splitOversize } from "@/lib/portfolio/intake";
 import { UploadLimits } from "@/components/portfolio/UploadLimits";
 import { normalizeUrl } from "@/lib/portfolio/links";
 import { loadProjects } from "@/lib/scout/profile-store";
@@ -10,6 +10,7 @@ import { usePublishedWork } from "@/lib/portfolio/published";
 import type { CareerProject, StepProps } from "@/lib/portfolio/draft";
 import { SizeMeter } from "../SizeMeter";
 import { StepNav } from "../StepNav";
+import { GithubImport } from "../GithubImport";
 
 /**
  * Step 3 of the career wizard: one to five projects, each a set of files
@@ -25,6 +26,12 @@ const MAX_TITLE = 80;
 
 export function ProjectsStep({ draft, patch, nav }: StepProps) {
   const [busy, setBusy] = useState<string | null>(null);
+  // The latest draft, for an import that finishes after other edits
+  // (review fix: it used to write back the draft from when it started).
+  const draftRef = useRef(draft);
+  useEffect(() => {
+    draftRef.current = draft;
+  });
   const [error, setError] = useState<string | null>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
   const published = usePublishedWork().filter((w) => w.kind === "showcase");
@@ -56,10 +63,16 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
     setBusy(draft.projects[i].slug);
     try {
       const room = MAX_PROJECT_FILES - draft.projects[i].files.length;
+      // Files over 25 MB are not added (one rule for uploads and imports).
+      const { accepted, refused } = splitOversize(Array.from(list));
       const prepared = await Promise.all(
-        Array.from(list).slice(0, room).map((f) => prepareFile(f, guessRole(f.name))),
+        accepted.slice(0, room).map((f) => prepareFile(f, guessRole(f.name))),
       );
       update(i, { files: [...draft.projects[i].files, ...prepared] });
+      if (refused) {
+        setError(refused);
+        setTimeout(() => errorRef.current?.focus(), 0);
+      }
     } catch {
       setError("One of those files could not be read. Try adding it again.");
       setTimeout(() => errorRef.current?.focus(), 0);
@@ -162,6 +175,29 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
               />
               {busy === p.slug ? "Reading files..." : `Add files (${p.files.length}/${MAX_PROJECT_FILES})`}
             </label>
+            <GithubImport
+              label={`Import from GitHub into project ${i + 1}`}
+              room={MAX_PROJECT_FILES - p.files.length}
+              existingNames={p.files.map((f) => f.name)}
+              disabled={busy !== null}
+              onImport={(files, repo) => {
+                // By slug, against the latest draft: edits made while the
+                // files downloaded are kept.
+                const latest = draftRef.current.projects;
+                const target = latest.find((x) => x.slug === p.slug);
+                if (!target) return 0;
+                const kept = [...target.files, ...files].slice(0, MAX_PROJECT_FILES);
+                patch({
+                  projects: latest.map((x) => x.slug !== p.slug ? x : {
+                    ...x,
+                    files: kept,
+                    title: x.title.trim() ? x.title : repo.fullName.split("/")[1],
+                    externalUrl: x.externalUrl.trim() ? x.externalUrl : repo.url,
+                  }),
+                });
+                return kept.length - target.files.length;
+              }}
+            />
             {p.files.length > 0 ? (
               <ul className="mt-2 space-y-1">
                 {p.files.map((f, k) => (

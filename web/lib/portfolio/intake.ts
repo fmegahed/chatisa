@@ -6,7 +6,7 @@
  */
 import { notebookToText } from "@/lib/files/notebook-text";
 import { officeTextFromFile } from "@/lib/files/office-text";
-import { MAX_CHARS_PER_FILE, type FileRole, type PreparedFile } from "./files";
+import { formatSize, MAX_CHARS_PER_FILE, type FileRole, type PreparedFile } from "./files";
 import { PUSH_LIMITS } from "@/lib/scout/github";
 
 const TEXT_EXT = /\.(py|r|ipynb|sql|md|txt|csv|tsv|qmd|rmd|js|ts|json|yml|yaml|html)$/i;
@@ -50,6 +50,25 @@ export function base64ToBytes(base64: string): Uint8Array<ArrayBuffer> {
   const out = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) out[i] = binary.charCodeAt(i);
   return out;
+}
+
+/**
+ * The one size rule for every way a file enters the Portfolio Builder
+ * (professor, 2026-09-24): a file over 25 MB, the publishing limit for one
+ * file, is not added, and the student is told why. The same for every
+ * model: no model receives a file's bytes.
+ */
+export function splitOversize<T extends { name: string; size: number }>(files: T[]): { accepted: T[]; refused: string | null } {
+  const limit = PUSH_LIMITS.fileBytes;
+  const accepted = files.filter((f) => f.size <= limit);
+  const over = files.filter((f) => f.size > limit);
+  if (over.length === 0) return { accepted, refused: null };
+  const names = over.map((f) => `${f.name} (${formatSize(f.size)})`);
+  const list = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  return {
+    accepted,
+    refused: `${list} ${over.length === 1 ? "is" : "are"} over the ${Math.round(limit / (1024 * 1024))} MB limit for one file on a published page, so ${over.length === 1 ? "it was" : "they were"} not added.`,
+  };
 }
 
 export async function prepareFile(file: File, role: FileRole): Promise<PreparedFile> {

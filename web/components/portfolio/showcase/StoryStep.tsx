@@ -64,7 +64,7 @@ export function StoryStep({
       const figures = publishedPaths.filter((p) => p.startsWith("figures/"));
       const html = renderShowcase(content, {
         origin: originOf(draft.origin), course: draft.course, semester: draft.semester, team: draft.team,
-        repoUrl: null, figures, deliverablePaths: publishedPaths,
+        repoUrl: null, figures, deliverablePaths: publishedPaths, sourceRepoUrl: draft.sourceRepoUrl ?? null,
       });
       patch({
         content: { kind: "showcase", content },

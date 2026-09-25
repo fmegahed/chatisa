@@ -35,7 +35,11 @@ export interface CareerStudent {
   name: string; links: { label: string; url: string }[]; courses: string[]; otherCourses?: OtherCourse[];
   inProgress?: string[]; coursePlan?: ChecklistState;
 }
-export interface ShowcaseMeta { origin?: ProjectOrigin; course: string; semester: string; team: string[] }
+export interface ShowcaseMeta {
+  origin?: ProjectOrigin; course: string; semester: string; team: string[];
+  /** Absent before v6.9.0. */
+  sourceRepoUrl?: string;
+}
 export interface SiteDraft {
   v: 1; content: SiteContent; html: string; student: CareerStudent | null;
   showcaseMeta: ShowcaseMeta | null; files: StoredFile[];

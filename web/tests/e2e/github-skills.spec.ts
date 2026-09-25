@@ -81,9 +81,9 @@ test.describe("Skills from GitHub", () => {
     await block.getByRole("checkbox", { name: /class-notes/ }).check();
     await block.getByRole("button", { name: "Suggest skills from 2 repositories" }).click();
     const churn = block.getByRole("group", { name: /mockstudent\/churn-model/ });
-    await expect(churn.getByText("notebooks/eda.ipynb (14 MB)")).toBeVisible();
+    await expect(churn.getByText("notebooks/eda.ipynb (13.4 MB)")).toBeVisible();
     await churn.getByRole("button", { name: "Read it anyway: notebooks/eda.ipynb" }).click();
-    await expect(block.getByRole("group", { name: /mockstudent\/churn-model/ }).getByText("notebooks/eda.ipynb (14 MB)")).toHaveCount(0);
+    await expect(block.getByRole("group", { name: /mockstudent\/churn-model/ }).getByText("notebooks/eda.ipynb (13.4 MB)")).toHaveCount(0);
     // The other repository's unconfirmed cards are still there (review fix).
     await expect(block.getByRole("group", { name: /mockstudent\/class-notes/ }).getByRole("button", { name: "Add to my skills" }).first()).toBeVisible();
   });

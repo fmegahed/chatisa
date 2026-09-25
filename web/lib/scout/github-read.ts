@@ -128,3 +128,43 @@ export async function readRepo(
     return { ok: false, error: { kind: "network" } };
   }
 }
+
+/** A repository's files (blobs) with sizes, for Import from GitHub (v6.9.0). */
+export async function readRepoTree(
+  conn: GithubConnection,
+  listing: RepoListing,
+  fetchImpl: typeof fetch = fetch,
+): Promise<Result<{ tree: { path: string; size: number }[]; truncated: boolean }>> {
+  try {
+    const res = await client(conn, fetchImpl).get(
+      `/repos/${enc(listing.fullName)}/git/trees/${encodeURIComponent(listing.defaultBranch)}?recursive=1`,
+    );
+    // 409 is GitHub's answer for an empty repository.
+    if (res.status === 409) return { ok: true, tree: [], truncated: false };
+    if (!res.ok) return { ok: false, error: await asError(res) };
+    const body = (await res.json()) as { truncated?: boolean; tree?: { path: string; type: string; size?: number }[] };
+    return {
+      ok: true,
+      tree: (body.tree ?? []).filter((t) => t.type === "blob").map((t) => ({ path: t.path, size: t.size ?? 0 })),
+      truncated: Boolean(body.truncated),
+    };
+  } catch {
+    return { ok: false, error: { kind: "network" } };
+  }
+}
+
+/** One file's raw bytes (text or binary), read-only. */
+export async function fetchRepoFile(
+  conn: GithubConnection,
+  fullName: string,
+  path: string,
+  fetchImpl: typeof fetch = fetch,
+): Promise<Result<{ bytes: ArrayBuffer }>> {
+  try {
+    const res = await client(conn, fetchImpl).get(`/repos/${enc(fullName)}/contents/${enc(path)}`, true);
+    if (!res.ok) return { ok: false, error: await asError(res) };
+    return { ok: true, bytes: await res.arrayBuffer() };
+  } catch {
+    return { ok: false, error: { kind: "network" } };
+  }
+}

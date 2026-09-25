@@ -4,6 +4,15 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.9.0 - September 24, 2026
+
+**Portfolio Builder: import a career project or showcase from your own
+public GitHub repository (read only, the page links back), and one file
+size rule for uploads and imports: nothing over 25 MB, with the reason
+stated, the same for every model.** Full notes: `docs/releases/v6.9.0.md`.
+
+---
+
 ## v6.8.0 - September 24, 2026
 
 **Job Scout suggests skills from a student's own public GitHub

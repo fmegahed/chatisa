@@ -151,6 +151,20 @@ describe("renderShowcase", () => {
     expect(html).toContain("<strong>ISA 444 - Business Forecasting</strong>: Forecasting.");
     expect(html).toContain("<strong>XYZ 100</strong>: Unknown.");
   });
+
+  it("links the original repository when the showcase was imported from GitHub (v6.9.0)", () => {
+    const html = renderShowcase(content, { course: "ISA 401", semester: "", team: [], repoUrl: null, figures: [], deliverablePaths: [], sourceRepoUrl: "https://github.com/ada/churn-model" });
+    expect(html).toContain('<a href="https://github.com/ada/churn-model"');
+    expect(html).toContain(">Original repository</a>");
+  });
+
+  it("never renders a source link that is not a GitHub repository address", () => {
+    for (const bad of ["javascript:alert(1)", "https://evil.com/x/y", "https://github.com/ada/x\"><script>alert(1)</script>"]) {
+      const html = renderShowcase(content, { course: "ISA 401", semester: "", team: [], repoUrl: null, figures: [], deliverablePaths: [], sourceRepoUrl: bad });
+      expect(html).not.toContain("Original repository");
+      expect(html).not.toContain("<script>alert");
+    }
+  });
 });
 
 describe("outside courses (v6.6.0)", () => {

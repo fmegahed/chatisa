@@ -12,7 +12,7 @@ import type { Page } from "@playwright/test";
  */
 export async function fakeGithubApi(
   page: Page,
-  opts: { expireAfterList?: boolean } = {},
+  opts: { expireAfterList?: boolean; slowContentsMs?: number; slowTreeMs?: number } = {},
 ): Promise<{ trees: { path: string }[][]; setExpired: (value: boolean) => void }> {
   // Mutable, so a test can expire the token and then "reconnect".
   let expired = Boolean(opts.expireAfterList);
@@ -51,7 +51,20 @@ export async function fakeGithubApi(
       if (rest === "") return reply(200, { description: name, topics: [], fork: false, archived: false });
       if (rest === "/languages") return reply(200, name === "churn-model" ? { Python: 9000 } : { R: 500 });
       if (rest.startsWith("/contributors")) return reply(200, [{ login: "mockstudent", type: "User", contributions: commits }, ...(name === "class-notes" ? [{ login: "classmate", type: "User", contributions: 30 }] : [])]);
-      if (rest.startsWith("/git/trees/")) return reply(200, { truncated: false, tree: [{ path: "README.md", type: "blob", size: 30 }, { path: "src/model.py", type: "blob", size: 60 }, ...(name === "churn-model" ? [{ path: "notebooks/eda.ipynb", type: "blob", size: 14_000_000 }] : [])] });
+      if (rest.startsWith("/contents/") && opts.slowContentsMs) await new Promise((r) => setTimeout(r, opts.slowContentsMs));
+      if (rest.startsWith("/git/trees/") && opts.slowTreeMs) await new Promise((r) => setTimeout(r, opts.slowTreeMs));
+      if (rest.startsWith("/git/trees/")) return reply(200, { truncated: false, tree: [
+        { path: "README.md", type: "blob", size: 30 },
+        { path: "src/model.py", type: "blob", size: 60 },
+        { path: "tests/model.py", type: "blob", size: 40 },
+        { path: "src/vanishing.py", type: "blob", size: 20 },
+        { path: "figures/roc.png", type: "blob", size: 4 },
+        ...(name === "churn-model" ? [{ path: "notebooks/eda.ipynb", type: "blob", size: 14_000_000 }] : []),
+      ] });
+      if (rest === "/contents/README.md") return route.fulfill({ status: 200, body: "# Churn model\nPredicts churn." });
+      if (rest === "/contents/tests/model.py") return route.fulfill({ status: 200, body: "def test_fit():\n    assert True" });
+      if (rest === "/contents/figures/roc.png") return route.fulfill({ status: 200, contentType: "image/png", body: Buffer.from([0x89, 0x50, 0x4e, 0x47]) });
+      if (rest === "/contents/src/vanishing.py") return reply(404, {});
       if (rest === "/contents/notebooks/eda.ipynb") return route.fulfill({ status: 200, body: JSON.stringify({ cells: [{ cell_type: "code", source: ["import seaborn as sns"], outputs: [] }] }) });
       if (rest === "/readme") return route.fulfill({ status: 200, body: "# Churn model" });
       if (rest === "/contents/src/model.py") return route.fulfill({ status: 200, body: "import pandas as pd\nfrom sklearn.ensemble import GradientBoostingClassifier" });

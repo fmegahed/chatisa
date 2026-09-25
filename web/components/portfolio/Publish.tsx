@@ -156,7 +156,10 @@ export function Publish(props: {
           : null,
         showcaseMeta: isCareer
           ? null
-          : { origin: originOf(props.draft.origin), course: props.draft.course, semester: props.draft.semester, team: props.draft.team },
+          : {
+              origin: originOf(props.draft.origin), course: props.draft.course, semester: props.draft.semester, team: props.draft.team,
+              sourceRepoUrl: props.draft.sourceRepoUrl,
+            },
         files: [
           ...props.draft.files.map((f) => ({ ...f, projectSlug: null })),
           ...props.draft.projects.flatMap((p) => p.files.map((f) => ({ ...f, projectSlug: p.slug }))),

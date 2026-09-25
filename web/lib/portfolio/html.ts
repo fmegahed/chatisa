@@ -14,6 +14,7 @@
 import { SAFE_PATH, type CareerContent, type ShowcaseContent } from "./content";
 import { getCourse } from "@/lib/scout/courses";
 import { originLabel, originOf, type ProjectOrigin } from "./origin";
+import { githubRepoUrl } from "./github-import";
 
 export function escapeHtml(value: string): string {
   return value
@@ -194,6 +195,8 @@ export function renderShowcase(
     origin?: ProjectOrigin;
     course: string; semester: string; team: string[]; repoUrl: string | null;
     figures: string[]; deliverablePaths: string[];
+    /** The GitHub repository the showcase was imported from (v6.9.0). */
+    sourceRepoUrl?: string | null;
   },
 ): string {
   const allowed = new Set(meta.figures);
@@ -206,6 +209,8 @@ export function renderShowcase(
     where,
     meta.team.length ? meta.team.map(escapeHtml).join(", ") : "",
     meta.repoUrl ? link(meta.repoUrl, "Repository") : "",
+    // Only an exact GitHub repository address; anything else is dropped.
+    githubRepoUrl(meta.sourceRepoUrl) ? link(githubRepoUrl(meta.sourceRepoUrl)!, "Original repository") : "",
   ].filter(Boolean);
   const head = `<header><h1>${escapeHtml(content.title)}</h1><p class="lede">${escapeHtml(content.tagline)}</p>${metaParts.length ? `<p class="meta">${metaParts.join(" · ")}</p>` : ""}</header>`;
   const findings = content.findings.map((f) => {

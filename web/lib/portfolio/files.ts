@@ -31,6 +31,16 @@ export interface PreparedFile {
   base64: string | null;
 }
 
+/**
+ * A file size in one unit everywhere the builder states a size or a limit
+ * (review fix, v6.9.0): binary megabytes with one decimal, the unit of the
+ * 25 MB publishing limit, so a file under the limit never reads as over it.
+ */
+export function formatSize(bytes: number): string {
+  if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1000))} KB`;
+}
+
 export function guessRole(name: string): FileRole {
   const ext = name.toLowerCase().split(".").pop() ?? "";
   if (["csv", "tsv", "xlsx", "xls", "json", "parquet", "rds", "rdata", "sav", "dta", "db", "sqlite"].includes(ext)) return "data";

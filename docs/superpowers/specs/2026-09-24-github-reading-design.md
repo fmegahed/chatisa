@@ -169,6 +169,14 @@ The page links back to the original repository:
 
 The source repository is only read, never written.
 
+**Import size (professor, 2026-09-24):** files over 25 MB cannot be imported,
+and the list says why ("over the 25 MB limit for one file on a published
+page"). This is one limit for every model: no model receives a file's
+bytes. Text files give at most their first 30,000 characters and other
+files only their name and size, and the route's whole prompt (about 45,000
+tokens at most) fits the smallest context window offered in the Portfolio
+Builder (131,072 tokens).
+
 ## Screens
 
 ### Job Scout, My Profile: "Your GitHub (optional)"
