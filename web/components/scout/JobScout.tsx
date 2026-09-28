@@ -245,8 +245,8 @@ function EmptyState(props: { onGoProfile: () => void }) {
   return (
     <div className="rounded-card border border-medium-tan bg-light-tan p-5">
       <p>
-        Start with your profile: check off the ISA courses you have taken so
-        the matching has something to work with.
+        Start with your profile: check off the courses you have taken so the
+        matching has something to work with.
       </p>
       <button
         type="button"

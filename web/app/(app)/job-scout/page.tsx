@@ -28,7 +28,7 @@ export default async function JobScoutPage() {
       <h1 className="mt-5 text-4xl">Job Scout</h1>
       <p className="mt-3 max-w-2xl text-lg leading-relaxed">
         A fresh board of analytics, information systems, and security jobs
-        every Sunday, matched to the ISA courses you have taken. Found one
+        every Sunday, matched to the courses you have taken. Found one
         you want? Draft a customized resume and cover letter with JobApp
         Drafter.
       </p>

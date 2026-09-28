@@ -212,3 +212,30 @@ describe("isRelevantTitle", () => {
     );
   });
 });
+
+describe("searchActiveJobs error reporting (2026-09-28)", () => {
+  // Production logged "429 (plan quota exhausted)" for weeks while the
+  // account's PRO plan showed 0% used: the key in use was not the one
+  // subscribed. RapidAPI's own message says which, so it is kept.
+  const reply = (status: number, message: string) =>
+    (async () => new Response(JSON.stringify({ message }), { status, headers: { "content-type": "application/json" } })) as unknown as typeof fetch;
+  const params = { title: '"Data Analyst"', timeFrame: "7d" as const, limit: 1, category: "fulltime" as const };
+
+  it("keeps RapidAPI's message for a 429", async () => {
+    process.env.RAPIDAPI_KEY = "test-key";
+    const { searchActiveJobs } = await import("@/lib/scout/sources/activejobs");
+    const out = await searchActiveJobs(params, reply(429, "You have exceeded the MONTHLY quota for Jobs on your current plan, BASIC."));
+    expect(out.error).toContain("429");
+    expect(out.error).toContain("current plan, BASIC");
+    expect(out.quotaExhausted).toBe(true);
+  });
+
+  it("keeps RapidAPI's message for a 403 and stops, since every query would fail the same way", async () => {
+    process.env.RAPIDAPI_KEY = "test-key";
+    const { searchActiveJobs } = await import("@/lib/scout/sources/activejobs");
+    const out = await searchActiveJobs(params, reply(403, "You are not subscribed to this API."));
+    expect(out.error).toContain("403");
+    expect(out.error).toContain("not subscribed");
+    expect(out.quotaExhausted).toBe(true);
+  });
+});

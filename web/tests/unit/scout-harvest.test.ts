@@ -209,3 +209,32 @@ describe("runHarvest", () => {
     expect(summary.sourceErrors.usajobs).toBeDefined();
   });
 });
+
+describe("runHarvest: a tagging call that never answers (2026-09-27 production stall)", () => {
+  it("gives up on that posting after the time limit and still finishes the run", async () => {
+    let calls = 0;
+    const summary = await runHarvest(
+      { trigger: "manual" },
+      {
+        fetcher: fakeFetcher(),
+        tagTimeoutMs: 50,
+        // The first posting's call hangs forever, as a stuck provider
+        // request did on production; the rest answer normally.
+        tagger: (p, signal) => {
+          calls += 1;
+          if (calls === 1) {
+            return new Promise((_, reject) => signal?.addEventListener("abort", () => reject(new Error("aborted"))));
+          }
+          return okTag([{ skillId: "sql", importance: "required" }])(p);
+        },
+      },
+    );
+    expect("alreadyRunning" in summary).toBe(false);
+    if ("alreadyRunning" in summary) return;
+    expect(summary.tagged).toBe(calls - 1);
+    expect(latestSuccessfulScoutRun()).not.toBeNull();
+    const run = getScoutDb().select().from(schema.scoutRuns).get();
+    expect(run?.status).not.toBe("running");
+    expect(run?.sourceErrorsJson).toContain("failed tagging");
+  }, 10_000);
+});

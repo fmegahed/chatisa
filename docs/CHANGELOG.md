@@ -4,6 +4,16 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.9.3 - September 28, 2026
+
+**Job harvest fixes: a stalled tagging call can no longer stop the weekly
+pull, and a refused source now records RapidAPI's real reason (employer
+postings had been failing since August on a key that was not the
+subscribed one; set the new `RAPIDAPI_KEY` on the server). Job Scout copy
+no longer says "ISA courses".** Full notes: `docs/releases/v6.9.3.md`.
+
+---
+
 ## v6.9.2 - September 25, 2026
 
 **Git LFS files import with their real content (over 25 MB refused), branch

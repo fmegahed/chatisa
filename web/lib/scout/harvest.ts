@@ -49,7 +49,34 @@ export interface ScoutRunSummary {
 /** Injectable for tests; production callers pass nothing. */
 export interface HarvestDeps {
   fetcher?: Fetcher;
-  tagger?: (p: RawPosting) => Promise<TagResult>;
+  tagger?: (p: RawPosting, signal?: AbortSignal) => Promise<TagResult>;
+  /** Per-posting tagging limit; tests shorten it. */
+  tagTimeoutMs?: number;
+}
+
+/**
+ * One tagging call may take this long. On 2026-09-27 a single model request
+ * on production never answered, so the run never finished and, because the
+ * scheduler books its next check only after a run ends, no harvest ran
+ * again until a restart. A call past the limit is cancelled and counted as
+ * one failed posting, like any other tagging error.
+ */
+export const TAG_TIMEOUT_MS = 120_000;
+
+async function withTimeout<T>(ms: number, run: (signal: AbortSignal) => Promise<T>): Promise<T> {
+  const controller = new AbortController();
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const expired = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      controller.abort();
+      reject(new Error(`tagging timed out after ${Math.round(ms / 1000)} s`));
+    }, ms);
+  });
+  try {
+    return await Promise.race([run(controller.signal), expired]);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function mapWithConcurrency<T, R>(
@@ -78,7 +105,8 @@ export async function runHarvest(
 ): Promise<ScoutRunSummary | { alreadyRunning: true }> {
   if (scoutRunInProgress()) return { alreadyRunning: true };
   const fetcher = deps.fetcher ?? fetch;
-  const tagger = deps.tagger ?? tagPosting;
+  const tagger = deps.tagger ?? ((p: RawPosting, signal?: AbortSignal) => tagPosting(p, "v2", signal));
+  const tagTimeoutMs = deps.tagTimeoutMs ?? TAG_TIMEOUT_MS;
   const runId = createScoutRun(opts.trigger);
   const sourceErrors: ScoutRunSummary["sourceErrors"] = {};
 
@@ -178,7 +206,7 @@ export async function runHarvest(
         return;
       }
       try {
-        const tags = await tagger(posting);
+        const tags = await withTimeout(tagTimeoutMs, (signal) => tagger(posting, signal));
         costUsd += tags.costUsd;
         if (!tags.seniorityOk) return;
         upsertScoutPosting({

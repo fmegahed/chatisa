@@ -101,6 +101,19 @@ export function normalizeActiveJobs(
   return out;
 }
 
+/** RapidAPI's error message ({"message": ...}), clipped for the run log. */
+async function rapidApiMessage(res: Response): Promise<string> {
+  const text = await res.text().catch(() => "");
+  let message = text;
+  try {
+    const body = JSON.parse(text) as { message?: unknown };
+    if (typeof body.message === "string") message = body.message;
+  } catch {
+    // not JSON: keep the text
+  }
+  return message.trim().slice(0, 160) || "no message";
+}
+
 export async function searchActiveJobs(
   params: {
     /** OR-expression over quoted phrases, e.g. `"Data Analyst" OR "BI Analyst"`. */
@@ -144,12 +157,16 @@ export async function searchActiveJobs(
       },
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
-    if (res.status === 429) {
-      // Monthly job/request pool exhausted; further requests only burn it.
+    if (res.status === 429 || res.status === 401 || res.status === 403) {
+      // Out of quota, throttled, or a key without this subscription: every
+      // further query this run would fail the same way, so stop. RapidAPI's
+      // own message is kept, because it says which: for weeks production
+      // logged "plan quota exhausted" while the subscribed PRO plan showed
+      // 0% used, since the key in use was not the subscribed one.
       return {
         postings: [],
         requests: 1,
-        error: "Active Jobs DB answered 429 (plan quota exhausted)",
+        error: `Active Jobs DB answered ${res.status}: ${await rapidApiMessage(res)}`,
         quotaExhausted: true,
       };
     }

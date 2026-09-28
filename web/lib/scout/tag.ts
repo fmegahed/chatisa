@@ -106,7 +106,11 @@ export function keepSupportedDomainTags<T extends { skillId: string }>(skills: T
   return skills.filter((s) => !BUSINESS.has(s.skillId) || mentionsSkill(s.skillId, postingText) !== null);
 }
 
-export async function tagPosting(posting: RawPosting, vocab: TagVocabulary = "v2"): Promise<TagResult> {
+export async function tagPosting(
+  posting: RawPosting,
+  vocab: TagVocabulary = "v2",
+  abortSignal?: AbortSignal,
+): Promise<TagResult> {
   const model =
     process.env.CHATISA_MOCK_LLM === "1"
       ? getMockModel()
@@ -126,6 +130,7 @@ export async function tagPosting(posting: RawPosting, vocab: TagVocabulary = "v2
     // postings fail on output length with v1 and 4 in 60 with v2's longer
     // instructions, each one a posting silently missing from that week.
     maxOutputTokens: 3_000,
+    abortSignal,
   });
   const cost = calculateCost(
     TAG_MODEL_ID,
