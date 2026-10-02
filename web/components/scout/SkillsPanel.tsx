@@ -118,11 +118,15 @@ export function SkillsPanel(props: {
         </p>
       ) : (
         <div className="mt-2 max-h-[28rem] space-y-4 overflow-y-auto rounded-card border border-medium-tan bg-paper p-4">
+          {/* A fieldset per category groups its level pickers; the h3
+              inside the legend keeps the heading outline (#37). */}
           {grouped.map(([category, rows]) => (
-            <div key={category}>
-              <h3 className="font-bold">
-                {CATEGORY_LABELS[category] ?? category}
-              </h3>
+            <fieldset key={category} className="min-w-0">
+              <legend>
+                <h3 className="font-bold">
+                  {CATEGORY_LABELS[category] ?? category}
+                </h3>
+              </legend>
               <ul className="mt-1 space-y-1">
                 {rows.map((row) => {
                   const label = getSkill(row.skillId)?.label ?? row.skillId;
@@ -177,7 +181,7 @@ export function SkillsPanel(props: {
                   );
                 })}
               </ul>
-            </div>
+            </fieldset>
           ))}
         </div>
       )}

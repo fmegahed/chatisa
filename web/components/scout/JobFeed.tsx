@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { announce, focusElement } from "@/lib/a11y/announce";
 import { scoreJob, type JobMatch, type JobSkill } from "@/lib/scout/matching";
 import { getSkill } from "@/lib/scout/taxonomy";
 import { COURSE_SKILLS } from "@/lib/scout/course-skills";
@@ -11,7 +12,11 @@ import type {
   SavedState,
   ScoutProfile,
 } from "@/lib/scout/profile-store";
-import type { FeedFreshness, FeedPosting } from "@/lib/scout/feed-types";
+import {
+  postingName,
+  type FeedFreshness,
+  type FeedPosting,
+} from "@/lib/scout/feed-types";
 
 /**
  * The Jobs tab. Matches are computed HERE, in the browser, from the
@@ -37,6 +42,15 @@ const CATEGORY_LABEL = {
 const PAGE_SIZE = 25;
 /** States shown as one-click chips before "More states". */
 const TOP_STATES = 6;
+/** Rapid filter toggling announces the result count once (#36). */
+const COUNT_ANNOUNCE_DELAY_MS = 600;
+
+const jobTitleId = (id: string) => `job-title-${id}`;
+const unhideId = (id: string) => `unhide-${id}`;
+
+function jobCount(n: number): string {
+  return `${n} ${n === 1 ? "job matches" : "jobs match"} your filters.`;
+}
 
 /** Full names for the type-ahead, so "ken" finds KY. */
 const STATE_NAMES: Record<string, string> = {
@@ -69,6 +83,7 @@ function StateFilter(props: {
   onToggleOpen: () => void;
 }) {
   const [query, setQuery] = useState("");
+  const fieldsetRef = useRef<HTMLFieldSetElement>(null);
   const top = props.stateCounts.slice(0, TOP_STATES);
   const topIds = new Set(top.map(([s]) => s));
   // Selected tail states surface as chips too, so removal is one click.
@@ -96,7 +111,7 @@ function StateFilter(props: {
   };
 
   return (
-    <fieldset>
+    <fieldset ref={fieldsetRef}>
       <legend className="font-bold">
         States
         {props.selected.size > 0 ? ` (${props.selected.size} selected)` : ""}
@@ -118,7 +133,8 @@ function StateFilter(props: {
                 type="checkbox"
                 className="sr-only"
                 checked={on}
-                aria-label={`${STATE_NAMES[state] ?? state} (${count === 1 ? "1 posting" : `${count} postings`})`}
+                // Starts with the visible code ("OH") for voice control.
+                aria-label={`${state}, ${STATE_NAMES[state] ?? state} (${count === 1 ? "1 posting" : `${count} postings`})`}
                 onChange={(e) => toggle(state, e.target.checked)}
               />
               {on ? "✓ " : ""}
@@ -140,7 +156,15 @@ function StateFilter(props: {
         {props.selected.size > 0 ? (
           <button
             type="button"
-            onClick={() => props.onChange(new Set())}
+            onClick={() => {
+              props.onChange(new Set());
+              // Clear removes itself; keep focus inside the state filter.
+              setTimeout(
+                () => fieldsetRef.current?.querySelector("input")?.focus(),
+                0,
+              );
+            }}
+            aria-label="Clear selected states"
             className="underline"
           >
             Clear
@@ -196,6 +220,7 @@ export function JobFeed(props: {
   saved: SavedState;
   onToggleSaved: (snapshot: Omit<SavedSnapshot, "savedAt">) => void;
   onHide: (id: string) => void;
+  onUnhide: (id: string) => void;
   onBuildSkills: (skillIds: string[]) => void;
   onRetry: () => void;
 }) {
@@ -209,6 +234,21 @@ export function JobFeed(props: {
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [details, setDetails] = useState<Record<string, string>>({});
+  const [showHidden, setShowHidden] = useState(false);
+  /** The posting just hidden, offered back with Undo (#39). */
+  const [lastHidden, setLastHidden] = useState<FeedPosting | null>(null);
+
+  // Hiding or unhiding removes the control that had focus; the element id
+  // queued here receives it after the re-render (#35, #39).
+  const pendingFocus = useRef<string | null>(null);
+  useEffect(() => {
+    const target = pendingFocus.current;
+    if (!target) return;
+    pendingFocus.current = null;
+    focusElement(
+      document.getElementById(target) ?? document.getElementById("feed-heading"),
+    );
+  });
 
   /** Which of the student's courses evidence a skill, for honest provenance. */
   const provenance = useCallback(
@@ -282,6 +322,78 @@ export function JobFeed(props: {
       return false;
     return true;
   });
+  const shown = filtered.slice(0, visible);
+
+  // Hidden postings still in this week's feed; ids of retired postings stay
+  // in storage harmlessly and are not counted.
+  const hiddenPostings = useMemo(() => {
+    const hidden = new Set(props.saved.hiddenIds);
+    return props.postings.filter((p) => hidden.has(p.id));
+  }, [props.postings, props.saved.hiddenIds]);
+
+  // Filters change the list silently, so the new count is announced once
+  // the student stops toggling (#36). Mount and hides do not announce.
+  const filterKey = JSON.stringify([
+    category,
+    [...selectedStates].sort(),
+    remoteOnly,
+    hideNoSponsorship,
+  ]);
+  const announcedKey = useRef(filterKey);
+  const filteredCount = filtered.length;
+  useEffect(() => {
+    if (announcedKey.current === filterKey) return;
+    const timer = setTimeout(() => {
+      announcedKey.current = filterKey;
+      announce(jobCount(filteredCount));
+    }, COUNT_ANNOUNCE_DELAY_MS);
+    return () => clearTimeout(timer);
+  }, [filterKey, filteredCount]);
+
+  function toggleSave(posting: FeedPosting, isSaved: boolean) {
+    props.onToggleSaved({
+      id: posting.id,
+      title: posting.title,
+      company: posting.company,
+      applyUrl: posting.applyUrl,
+    });
+    announce(
+      isSaved
+        ? `Removed ${postingName(posting)} from saved jobs.`
+        : `Saved ${postingName(posting)}.`,
+    );
+  }
+
+  function hide(posting: FeedPosting) {
+    // Focus moves to the next card (or the one before) so it is not lost
+    // with the removed card (#35).
+    const at = shown.findIndex((r) => r.posting.id === posting.id);
+    const neighbour = shown[at + 1] ?? shown[at - 1];
+    pendingFocus.current = neighbour
+      ? jobTitleId(neighbour.posting.id)
+      : "feed-heading";
+    props.onHide(posting.id);
+    setLastHidden(posting);
+    if (expanded === posting.id) setExpanded(null);
+    announce(
+      `Hidden: ${postingName(posting)}. Use Undo or Show hidden jobs to bring it back.`,
+    );
+  }
+
+  function unhide(posting: FeedPosting, from: "undo" | "list") {
+    if (from === "list") {
+      const at = hiddenPostings.findIndex((p) => p.id === posting.id);
+      const neighbour = hiddenPostings[at + 1] ?? hiddenPostings[at - 1];
+      pendingFocus.current = neighbour
+        ? unhideId(neighbour.id)
+        : jobTitleId(posting.id);
+    } else {
+      pendingFocus.current = jobTitleId(posting.id);
+    }
+    props.onUnhide(posting.id);
+    if (lastHidden?.id === posting.id) setLastHidden(null);
+    announce(`${postingName(posting)} is back in the list.`);
+  }
 
   async function expand(id: string) {
     if (expanded === id) {
@@ -397,12 +509,78 @@ export function JobFeed(props: {
           />
           <span>Hide &quot;no visa sponsorship&quot; postings</span>
         </label>
+        {hiddenPostings.length > 0 ? (
+          <button
+            type="button"
+            aria-expanded={showHidden}
+            aria-controls="hidden-jobs"
+            onClick={() => setShowHidden(!showHidden)}
+            className="underline"
+          >
+            {showHidden ? "Close" : "Show"} hidden jobs ({hiddenPostings.length})
+          </button>
+        ) : null}
       </div>
 
+      {lastHidden && props.saved.hiddenIds.includes(lastHidden.id) ? (
+        <p className="mt-4 flex flex-wrap items-baseline gap-x-3 rounded-card border border-medium-tan bg-light-tan px-4 py-2">
+          <span>Hidden: {postingName(lastHidden)}.</span>
+          <button
+            type="button"
+            onClick={() => unhide(lastHidden, "undo")}
+            aria-label={`Undo hiding ${postingName(lastHidden)}`}
+            className="font-bold underline"
+          >
+            Undo
+          </button>
+        </p>
+      ) : null}
+
+      {showHidden && hiddenPostings.length > 0 ? (
+        <section
+          id="hidden-jobs"
+          aria-labelledby="hidden-jobs-heading"
+          className="mt-4 rounded-card border border-medium-tan bg-light-tan p-4"
+        >
+          <h3 id="hidden-jobs-heading" className="text-xl">
+            Hidden jobs
+          </h3>
+          <p className="text-dark-tan">
+            Hidden on this device only. Unhide one to put it back in the list.
+          </p>
+          <ul className="mt-2 space-y-2">
+            {hiddenPostings.map((p) => (
+              <li
+                key={p.id}
+                className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-card border border-medium-tan bg-paper px-3 py-2"
+              >
+                <span>
+                  <span className="mr-2 rounded-card border border-dark-tan px-1 text-sm font-bold text-dark-tan">
+                    Hidden
+                  </span>
+                  <strong>{p.title}</strong>
+                  {p.company ? ` · ${p.company}` : ""}
+                </span>
+                <button
+                  type="button"
+                  id={unhideId(p.id)}
+                  onClick={() => unhide(p, "list")}
+                  aria-label={`Unhide ${postingName(p)}`}
+                  className="underline"
+                >
+                  Unhide
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <ul className="mt-4 space-y-3">
-        {filtered.slice(0, visible).map(({ posting, match }) => {
+        {shown.map(({ posting, match }) => {
           const isOpen = expanded === posting.id;
           const isSaved = props.saved.saved.some((s) => s.id === posting.id);
+          const name = postingName(posting);
           const location = posting.remote
             ? "Remote"
             : [posting.locationCity, posting.locationState]
@@ -415,7 +593,9 @@ export function JobFeed(props: {
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h3 className="text-xl">{posting.title}</h3>
+                  <h3 id={jobTitleId(posting.id)} className="text-xl">
+                    {posting.title}
+                  </h3>
                   <p className="text-dark-tan">
                     {posting.company} · {location} ·{" "}
                     {CATEGORY_LABEL[posting.category]}
@@ -466,11 +646,14 @@ export function JobFeed(props: {
                 </p>
               ) : null}
 
-              <div className="mt-3 flex flex-wrap gap-3">
+              {/* Each repeated control names its job; the visible text stays
+                  at the start of the name for voice control (#34). */}
+              <div className="mt-3 flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   aria-expanded={isOpen}
-                  aria-controls={`posting-${posting.id}`}
+                  aria-controls={isOpen ? `posting-${posting.id}` : undefined}
+                  aria-label={`${isOpen ? "Hide details" : "Details"} for ${name}`}
                   onClick={() => void expand(posting.id)}
                   className="rounded-card border-2 border-miami-red px-3 py-1 font-bold text-miami-red hover:bg-light-tan"
                 >
@@ -480,33 +663,38 @@ export function JobFeed(props: {
                   href={posting.applyUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`Apply on employer site for ${name} (opens in a new tab)`}
                   className="rounded-card bg-miami-red px-3 py-1 font-bold text-paper hover:bg-accent-red"
                 >
                   Apply on employer site
                 </a>
                 <Link
                   href={`/jobapp-drafter?job=${posting.id}`}
+                  aria-label={`Draft my resume and cover letter for ${name}`}
                   className="rounded-card border-2 border-miami-red px-3 py-1 font-bold text-miami-red hover:bg-light-tan"
                 >
                   Draft my resume and cover letter
                 </Link>
+                {/* A toggle: the name stays "Save ..." and aria-pressed
+                    carries the state (#35). */}
                 <button
                   type="button"
-                  onClick={() =>
-                    props.onToggleSaved({
-                      id: posting.id,
-                      title: posting.title,
-                      company: posting.company,
-                      applyUrl: posting.applyUrl,
-                    })
+                  aria-pressed={isSaved}
+                  aria-label={`Save ${name}`}
+                  onClick={() => toggleSave(posting, isSaved)}
+                  className={
+                    isSaved
+                      ? "rounded-card border-2 border-miami-red bg-light-tan px-2 font-bold text-miami-red"
+                      : "rounded-card border-2 border-transparent px-2 underline"
                   }
-                  className="underline"
                 >
-                  {isSaved ? "Unsave" : "Save"}
+                  {isSaved ? <span aria-hidden="true">✓ </span> : null}
+                  Save
                 </button>
                 <button
                   type="button"
-                  onClick={() => props.onHide(posting.id)}
+                  aria-label={`Hide ${name}`}
+                  onClick={() => hide(posting)}
                   className="underline"
                 >
                   Hide
@@ -561,7 +749,13 @@ export function JobFeed(props: {
       {filtered.length > visible ? (
         <button
           type="button"
-          onClick={() => setVisible(visible + PAGE_SIZE)}
+          onClick={() => {
+            const next = visible + PAGE_SIZE;
+            setVisible(next);
+            announce(
+              `Showing ${Math.min(next, filtered.length)} of ${filtered.length} jobs.`,
+            );
+          }}
           className="mt-4 rounded-card border-2 border-miami-red px-4 py-2 font-bold text-miami-red hover:bg-light-tan"
         >
           Show more ({filtered.length - visible} left)

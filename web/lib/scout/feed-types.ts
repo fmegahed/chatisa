@@ -19,6 +19,15 @@ export interface FeedPosting {
   visaSponsorship: "sponsors" | "no_sponsorship" | "unknown";
 }
 
+/**
+ * "Data Analyst at Acme": appended to repeated card controls ("Save",
+ * "Details") so each accessible name identifies its job (#34).
+ */
+export function postingName(p: { title: string; company: string }): string {
+  const title = p.title.trim() || "Saved posting";
+  return p.company.trim() ? `${title} at ${p.company.trim()}` : title;
+}
+
 export interface FeedFreshness {
   updatedAt: string | null;
   totalActive: number;

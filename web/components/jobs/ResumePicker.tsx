@@ -67,7 +67,7 @@ export function ResumePicker(props: {
         />
         <label
           htmlFor="resume-file"
-          className="inline-block cursor-pointer rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-miami-red"
+          className="inline-block cursor-pointer rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-miami-red"
         >
           {props.file ? "Choose a different PDF" : "Choose your resume (PDF)"}
         </label>

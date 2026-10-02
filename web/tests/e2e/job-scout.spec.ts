@@ -126,7 +126,8 @@ test.describe("Job Scout", () => {
     page,
   }) => {
     await setUpProfile(page);
-    await page.getByRole("button", { name: "Save", exact: true }).first().click();
+    // Save names its job ("Save Data Analyst at ...", #34).
+    await page.getByRole("button", { name: /^Save / }).first().click();
     await page.getByRole("tab", { name: /Saved Jobs/ }).click();
     await expect(page.getByRole("heading", { name: "Saved jobs" })).toBeVisible();
     await expect(
@@ -134,6 +135,149 @@ test.describe("Job Scout", () => {
     ).toBeVisible();
     await page.getByRole("button", { name: "Unsave" }).click();
     await expect(page.getByText("Nothing saved yet")).toBeVisible();
+  });
+
+  test("saving the profile moves focus to the jobs heading (#38)", async ({
+    page,
+  }) => {
+    await setUpProfile(page);
+    await expect(
+      page.getByRole("heading", { name: "This week's jobs" }),
+    ).toBeFocused();
+    // The tabs follow the APG pattern: only the selected tab is in the tab
+    // order and points at the rendered panel.
+    const jobsTab = page.getByRole("tab", { name: /This Week's Jobs/ });
+    await expect(jobsTab).toHaveAttribute("aria-selected", "true");
+    await expect(jobsTab).toHaveAttribute("aria-controls", "panel-jobs");
+    await expect(page.getByRole("tabpanel")).toHaveAttribute("id", "panel-jobs");
+  });
+
+  test("card controls name their job and Save exposes its state (#34, #35)", async ({
+    page,
+  }) => {
+    await setUpProfile(page);
+    const job = "Data Analyst at Queen City Insurance";
+    await expect(
+      page.getByRole("button", { name: `Details for ${job}`, exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", {
+        name: `Apply on employer site for ${job} (opens in a new tab)`,
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", {
+        name: `Draft my resume and cover letter for ${job}`,
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: `Hide ${job}`, exact: true }),
+    ).toBeVisible();
+
+    const save = page.getByRole("button", { name: `Save ${job}`, exact: true });
+    await expect(save).toHaveAttribute("aria-pressed", "false");
+    await save.click();
+    await expect(save).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByTestId("announcer-polite")).toHaveText(
+      `Saved ${job}.`,
+    );
+    await save.click();
+    await expect(save).toHaveAttribute("aria-pressed", "false");
+    await expect(page.getByTestId("announcer-polite")).toHaveText(
+      `Removed ${job} from saved jobs.`,
+    );
+  });
+
+  test("hidden jobs can be undone, listed, and unhidden (#35, #39)", async ({
+    page,
+  }) => {
+    await setUpProfile(page);
+    const job = "Data Analyst at Queen City Insurance";
+    const card = page.getByRole("heading", { name: "Data Analyst", exact: true });
+    const announcer = page.getByTestId("announcer-polite");
+
+    // Hide: the card leaves, focus lands on a neighbouring card's heading.
+    await page.getByRole("button", { name: `Hide ${job}`, exact: true }).click();
+    await expect(card).toHaveCount(0);
+    await expect(announcer).toHaveText(
+      `Hidden: ${job}. Use Undo or Show hidden jobs to bring it back.`,
+    );
+    await expect(page.locator(":focus")).toHaveAttribute("id", /^job-title-/);
+
+    // Undo puts it straight back and focuses it.
+    await page.getByRole("button", { name: `Undo hiding ${job}`, exact: true }).click();
+    await expect(card).toBeFocused();
+    await expect(announcer).toHaveText(`${job} is back in the list.`);
+
+    // Hidden state survives a reload; the list brings it back later.
+    await page.getByRole("button", { name: `Hide ${job}`, exact: true }).click();
+    await expect(card).toHaveCount(0);
+    await page.reload();
+    await expect(
+      page.getByRole("heading", { name: "This week's jobs" }),
+    ).toBeVisible();
+    await expect(card).toHaveCount(0);
+    const toggle = page.getByRole("button", { name: "Show hidden jobs (1)" });
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await toggle.click();
+    const hiddenList = page.getByRole("region", { name: "Hidden jobs" });
+    await expect(hiddenList.getByText("Hidden", { exact: true })).toBeVisible();
+    await hiddenList
+      .getByRole("button", { name: `Unhide ${job}`, exact: true })
+      .click();
+    await expect(card).toBeVisible();
+    await expect(card).toBeFocused();
+    await expect(announcer).toHaveText(`${job} is back in the list.`);
+    await expect(page.getByRole("button", { name: /hidden jobs/ })).toHaveCount(0);
+  });
+
+  test("filter changes announce the result count (#36)", async ({ page }) => {
+    await setUpProfile(page);
+    const announcer = page.getByTestId("announcer-polite");
+    const cards = page.locator('h3[id^="job-title-"]');
+
+    await page.getByTitle("District of Columbia").click();
+    await expect(announcer).toHaveText(/^\d+ jobs? match(es)? your filters\.$/);
+    expect(await announcer.textContent()).toContain(`${await cards.count()} `);
+
+    // Rapid toggles announce once, with the final count.
+    await page.getByTitle("Ohio", { exact: true }).click();
+    await page.getByLabel("Remote only").check();
+    await page.getByLabel("Remote only").uncheck();
+    await expect(announcer).toHaveText(
+      `${await cards.count()} jobs match your filters.`,
+    );
+    // The state pills show a focus ring through their hidden checkbox.
+    await page.getByRole("checkbox", { name: /^OH, Ohio/ }).focus();
+    await page.keyboard.press("Shift+Tab");
+    await page.keyboard.press("Tab");
+    const outline = await page
+      .getByTitle("Ohio", { exact: true })
+      .evaluate((el) => getComputedStyle(el).outlineStyle);
+    expect(outline).toBe("solid");
+  });
+
+  test("profile checkbox and skill groups are fieldsets with legends (#37)", async ({
+    page,
+  }) => {
+    await page.goto("/job-scout");
+    for (const name of ["Majors", "Co-majors", "Minors"]) {
+      await expect(page.getByRole("group", { name, exact: true })).toBeVisible();
+    }
+    await expect(
+      page
+        .getByRole("group", { name: "Majors", exact: true })
+        .getByRole("checkbox", { name: "Business Analytics" }),
+    ).toBeVisible();
+    await page.getByLabel("Search all FSB courses").fill("database for");
+    await courseRow(page, "ISA 241").getByRole("radio", { name: "Done" }).check();
+    await expect(
+      page
+        .getByRole("group", { name: "Programming", exact: true })
+        .getByRole("combobox", { name: "Your level for SQL" }),
+    ).toBeVisible();
   });
 
   test("projects become artifacts, and a repo link marks them built", async ({

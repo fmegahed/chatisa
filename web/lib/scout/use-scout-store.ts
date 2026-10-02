@@ -11,6 +11,7 @@ import {
   saveProfile,
   setProjectRepoUrl,
   toggleSaved,
+  unhidePosting,
   type ProjectRecord,
   type ProjectsState,
   type SavedSnapshot,
@@ -89,6 +90,7 @@ export function useScoutSaved(): {
   saved: SavedState;
   toggle: (snapshot: Omit<SavedSnapshot, "savedAt">) => void;
   hide: (id: string) => void;
+  unhide: (id: string) => void;
 } {
   const saved = useSyncExternalStore(
     subscribe,
@@ -103,6 +105,10 @@ export function useScoutSaved(): {
     },
     hide: (id: string) => {
       savedCache = hidePosting(id);
+      notify();
+    },
+    unhide: (id: string) => {
+      savedCache = unhidePosting(id);
       notify();
     },
   };

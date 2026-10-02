@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import type { ModelOption } from "@/lib/config/models";
 import { ModelChooser } from "@/components/ModelChooser";
@@ -318,6 +318,11 @@ function ProjectCard(props: {
   const [editingUrl, setEditingUrl] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const p = props.project;
+  // The button that opened the URL field unmounts; focus follows into it.
+  const urlInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (editingUrl) urlInputRef.current?.focus();
+  }, [editingUrl]);
 
   return (
     <li className="rounded-card border border-medium-tan bg-paper p-4">
@@ -367,10 +372,11 @@ function ProjectCard(props: {
         {editingUrl ? (
           <span className="flex flex-wrap items-center gap-2">
             <label htmlFor={`repo-${p.id}`} className="sr-only">
-              GitHub repository URL
+              GitHub repository URL for {p.repoName}
             </label>
             <input
               id={`repo-${p.id}`}
+              ref={urlInputRef}
               type="url"
               value={urlDraft}
               onChange={(e) => setUrlDraft(e.target.value)}
@@ -398,12 +404,19 @@ function ProjectCard(props: {
           <button
             type="button"
             onClick={() => setEditingUrl(true)}
+            // Repeated on every project card, so the name carries the repo (#34).
+            aria-label={`${p.repoUrl ? "Change the repo link" : "I pushed it to GitHub"}: ${p.repoName}`}
             className="rounded-card border-2 border-miami-red px-3 py-1 font-bold text-miami-red hover:bg-light-tan"
           >
             {p.repoUrl ? "Change the repo link" : "I pushed it to GitHub"}
           </button>
         )}
-        <button type="button" onClick={props.onRemove} className="underline">
+        <button
+          type="button"
+          onClick={props.onRemove}
+          aria-label={`Remove ${p.repoName}`}
+          className="underline"
+        >
           Remove
         </button>
       </div>

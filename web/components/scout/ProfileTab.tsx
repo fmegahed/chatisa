@@ -470,7 +470,12 @@ function SuggestionCard(props: {
           &quot;{props.suggestion.evidence}&quot;
         </p>
       ) : null}
-      <div className="mt-2 flex flex-wrap gap-3">
+      {/* The level radios are one group, named for their skill (#37). */}
+      <fieldset className="mt-2 flex min-w-0 flex-wrap gap-3">
+        <legend className="sr-only">
+          Your level for{" "}
+          {getSkill(props.suggestion.skillId)?.label ?? props.suggestion.skillId}
+        </legend>
         {(Object.keys(LEVEL_HELP) as CourseSkillLevel[]).map((l) => (
           <label key={l} className="flex items-center gap-1">
             <input
@@ -482,16 +487,22 @@ function SuggestionCard(props: {
             <span>{LEVEL_HELP[l]}</span>
           </label>
         ))}
-      </div>
+      </fieldset>
       <div className="mt-2 flex gap-3">
         <button
           type="button"
           onClick={() => props.onAccept(level)}
+          aria-label={`Add to my skills: ${getSkill(props.suggestion.skillId)?.label ?? props.suggestion.skillId}`}
           className="rounded-card border-2 border-miami-red px-3 py-1 font-bold text-miami-red hover:bg-light-tan"
         >
           Add to my skills
         </button>
-        <button type="button" onClick={props.onDismiss} className="underline">
+        <button
+          type="button"
+          onClick={props.onDismiss}
+          aria-label={`Dismiss ${getSkill(props.suggestion.skillId)?.label ?? props.suggestion.skillId}`}
+          className="underline"
+        >
           Dismiss
         </button>
       </div>

@@ -196,12 +196,15 @@ export function clearProfile(): void {
   localStorage.removeItem(PROFILE_KEY);
 }
 
-const EMPTY_SAVED: SavedState = { v: 2, saved: [], hiddenIds: [] };
+// A fresh object each time: a shallow copy of one shared constant let
+// hidePosting push into the SAME hiddenIds array the previous snapshot held,
+// so the feed's memo saw no change and the hidden card stayed on screen.
+const emptySaved = (): SavedState => ({ v: 2, saved: [], hiddenIds: [] });
 
 export function loadSaved(): SavedState {
   try {
     const raw = localStorage.getItem(SAVED_KEY);
-    if (!raw) return { ...EMPTY_SAVED };
+    if (!raw) return emptySaved();
     const parsed = JSON.parse(raw) as
       | SavedState
       | { v: 1; savedIds?: string[]; hiddenIds?: string[] };
@@ -227,9 +230,9 @@ export function loadSaved(): SavedState {
         hiddenIds: parsed.hiddenIds ?? [],
       };
     }
-    return { ...EMPTY_SAVED };
+    return emptySaved();
   } catch {
-    return { ...EMPTY_SAVED };
+    return emptySaved();
   }
 }
 
@@ -249,8 +252,18 @@ export function toggleSaved(snapshot: Omit<SavedSnapshot, "savedAt">): SavedStat
 
 export function hidePosting(id: string): SavedState {
   const state = loadSaved();
-  if (!state.hiddenIds.includes(id)) state.hiddenIds.push(id);
+  if (!state.hiddenIds.includes(id)) state.hiddenIds = [...state.hiddenIds, id];
   state.saved = state.saved.filter((s) => s.id !== id);
+  return writeSaved(state);
+}
+
+/**
+ * Brings a hidden posting back into the feed (#39). A save that hiding
+ * dropped is not restored: the student can save it again in one click.
+ */
+export function unhidePosting(id: string): SavedState {
+  const state = loadSaved();
+  state.hiddenIds = state.hiddenIds.filter((h) => h !== id);
   return writeSaved(state);
 }
 

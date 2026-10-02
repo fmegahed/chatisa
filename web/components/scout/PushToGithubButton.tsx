@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import type { PushError, PushFile } from "@/lib/scout/github";
 import { pushToRepo } from "@/lib/scout/github";
 import { useGithubConnection } from "@/lib/scout/use-scout-store";
@@ -45,6 +45,7 @@ export function PushToGithubButton(props: {
   label?: string;
 }) {
   const { connection, clear } = useGithubConnection();
+  const describedId = useId();
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [suggestion, setSuggestion] = useState<string | null>(null);
@@ -85,9 +86,15 @@ export function PushToGithubButton(props: {
 
   return (
     <span className="inline-flex flex-wrap items-center gap-2">
+      {/* Every project card has this button, so it is described by the repo
+          it pushes (#34); the name stays "Push to GitHub" for voice control. */}
+      <span id={describedId} className="sr-only">
+        Pushes {props.repoName}
+      </span>
       <button
         type="button"
         disabled={busy}
+        aria-describedby={describedId}
         onClick={() => void push(props.repoName)}
         className="rounded-card bg-miami-red px-3 py-1 font-bold text-paper hover:bg-accent-red disabled:bg-medium-gray"
       >

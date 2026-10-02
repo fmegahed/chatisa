@@ -8,6 +8,7 @@ import {
   useScoutSaved,
 } from "@/lib/scout/use-scout-store";
 import { profileStrengths } from "@/lib/scout/matching";
+import { focusElement } from "@/lib/a11y/announce";
 import { projectExtras, publishedExtras } from "@/lib/scout/profile-store";
 import { usePublishedWork } from "@/lib/portfolio/published";
 import type { FeedIndex } from "@/lib/scout/feed-types";
@@ -47,7 +48,7 @@ export function JobScout(props: {
   githubEnabled: boolean;
 }) {
   const [profile, setProfile] = useScoutProfile();
-  const { saved, toggle, hide } = useScoutSaved();
+  const { saved, toggle, hide, unhide } = useScoutSaved();
   const projectsStore = useScoutProjects();
   // Sites published with the Portfolio Builder are real, built work, so
   // their skills feed matching exactly like a pushed project does.
@@ -62,6 +63,16 @@ export function JobScout(props: {
     "loading",
   );
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const panelRef = useRef<HTMLDivElement>(null);
+  // Set when a button inside a panel switches tabs: the button unmounts
+  // with its panel, so focus moves to the new panel's heading (#38).
+  const focusPanel = useRef(false);
+  useEffect(() => {
+    if (!focusPanel.current) return;
+    focusPanel.current = false;
+    const panel = panelRef.current;
+    focusElement(panel?.querySelector<HTMLElement>("h2") ?? panel);
+  });
 
   // Retriable without a page refresh (user hit a failed load, 2026-07-29).
   // reloadNonce bumps re-run the effect; all setState happens after awaits
@@ -110,11 +121,21 @@ export function JobScout(props: {
     window.history.replaceState(null, "", url);
   }
 
+  /** Tab switches started from inside a panel also move focus (#38). */
+  function goToTab(next: TabId) {
+    focusPanel.current = true;
+    switchTab(next);
+  }
+
+  // APG tabs keyboard: arrows wrap, Home/End jump; selection follows focus.
   function onTabKeyDown(e: React.KeyboardEvent, index: number) {
-    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    let next: number;
+    if (e.key === "ArrowRight") next = (index + 1) % TABS.length;
+    else if (e.key === "ArrowLeft") next = (index + TABS.length - 1) % TABS.length;
+    else if (e.key === "Home") next = 0;
+    else if (e.key === "End") next = TABS.length - 1;
+    else return;
     e.preventDefault();
-    const next =
-      (index + (e.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length;
     tabRefs.current[next]?.focus();
     switchTab(TABS[next].id);
   }
@@ -147,7 +168,9 @@ export function JobScout(props: {
               role="tab"
               id={`tab-${t.id}`}
               aria-selected={selected}
-              aria-controls={`panel-${t.id}`}
+              // Only the selected panel is rendered, so only its tab
+              // points at a panel that exists.
+              aria-controls={selected ? `panel-${t.id}` : undefined}
               tabIndex={selected ? 0 : -1}
               onClick={() => switchTab(t.id)}
               onKeyDown={(e) => onTabKeyDown(e, i)}
@@ -167,6 +190,7 @@ export function JobScout(props: {
       </div>
 
       <div
+        ref={panelRef}
         role="tabpanel"
         id={`panel-${activeTab}`}
         aria-labelledby={`tab-${activeTab}`}
@@ -180,7 +204,7 @@ export function JobScout(props: {
             onSave={(next) => {
               setProfile(next);
             }}
-            onSeeJobs={() => switchTab("jobs")}
+            onSeeJobs={() => goToTab("jobs")}
             strengths={strengths}
             projects={projectsStore.projects.projects}
             postings={postings}
@@ -189,7 +213,7 @@ export function JobScout(props: {
 
         {activeTab === "projects" ? (
           profile === false ? (
-            <EmptyState onGoProfile={() => switchTab("profile")} />
+            <EmptyState onGoProfile={() => goToTab("profile")} />
           ) : (
             <ProjectsTab
               key={seedSkills.join(",")}
@@ -205,7 +229,7 @@ export function JobScout(props: {
 
         {activeTab === "jobs" ? (
           profile === false ? (
-            <EmptyState onGoProfile={() => switchTab("profile")} />
+            <EmptyState onGoProfile={() => goToTab("profile")} />
           ) : (
             <JobFeed
               postings={postings}
@@ -220,9 +244,10 @@ export function JobScout(props: {
               saved={saved}
               onToggleSaved={toggle}
               onHide={hide}
+              onUnhide={unhide}
               onBuildSkills={(skillIds) => {
                 setSeedSkills(skillIds);
-                switchTab("projects");
+                goToTab("projects");
               }}
             />
           )
@@ -233,7 +258,7 @@ export function JobScout(props: {
             saved={saved}
             postings={postings}
             onToggleSaved={toggle}
-            onGoJobs={() => switchTab("jobs")}
+            onGoJobs={() => goToTab("jobs")}
           />
         ) : null}
       </div>

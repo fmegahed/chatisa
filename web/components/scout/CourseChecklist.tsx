@@ -115,9 +115,11 @@ export function CourseChecklist(props: {
       <fieldset className="min-w-0">
         <legend className="font-bold">What are you studying?</legend>
         <p className="text-dark-tan">Choose any that apply. The business core is always shown.</p>
+        {/* Each kind is its own group, so "Majors" is announced with its
+            checkboxes rather than being a visual heading only (#37). */}
         {(["major", "comajor", "minor"] as const).map((kind) => (
-          <div key={kind} className="mt-2">
-            <p className="font-bold">{KIND_LABEL[kind]}</p>
+          <fieldset key={kind} className="mt-2 min-w-0">
+            <legend className="font-bold">{KIND_LABEL[kind]}</legend>
             <div className="mt-1 grid gap-1 sm:grid-cols-2">
               {PROGRAMS.filter((p) => p.kind === kind).map((p) => (
                 <label key={p.key} className="flex items-start gap-2">
@@ -131,7 +133,7 @@ export function CourseChecklist(props: {
                 </label>
               ))}
             </div>
-          </div>
+          </fieldset>
         ))}
       </fieldset>
 

@@ -11,6 +11,7 @@ import {
   saveProfile,
   setProjectRepoUrl,
   toggleSaved,
+  unhidePosting,
 } from "@/lib/scout/profile-store";
 import { POPULAR_CODES, getCourse } from "@/lib/scout/courses";
 
@@ -85,6 +86,27 @@ describe("saved store (v2 snapshots)", () => {
     const after = hidePosting("a");
     expect(after.hiddenIds).toEqual(["a"]);
     expect(after.saved).toEqual([]);
+  });
+
+  it("unhiding brings a posting back and leaves other hides alone (#39)", () => {
+    hidePosting("a");
+    hidePosting("b");
+    const after = unhidePosting("a");
+    expect(after.hiddenIds).toEqual(["b"]);
+    expect(loadSaved().hiddenIds).toEqual(["b"]);
+    // Unhiding something never hidden is a no-op, not an error.
+    expect(unhidePosting("zzz").hiddenIds).toEqual(["b"]);
+  });
+
+  it("hiding first thing on a new device returns a new hiddenIds array", () => {
+    // Regression: the empty state was a shallow copy of one shared constant,
+    // so hidePosting mutated the array the previous snapshot held and the
+    // feed (memoized on hiddenIds) kept showing the hidden card.
+    const before = loadSaved();
+    const after = hidePosting("a");
+    expect(after.hiddenIds).not.toBe(before.hiddenIds);
+    expect(before.hiddenIds).toEqual([]);
+    expect(loadSaved().hiddenIds).toEqual(["a"]);
   });
 });
 
