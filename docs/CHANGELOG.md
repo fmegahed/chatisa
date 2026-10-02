@@ -4,6 +4,20 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.10.0 - October 2, 2026
+
+**Accessibility release: fixes 35 of the 36 findings from the accessibility
+office's September 2026 audit (issues #4-#39), plus the same problems found
+elsewhere in the app. Highlights: readable placeholders, announced outcomes,
+marked required fields, correct heading levels in chat, a keyboard-operable
+Coding Studio that reflows at 400% zoom, a line and column readout in the
+editor, descriptive plot alt text, focus that follows new content, and
+unhiding jobs in Job Scout. A site-wide accessibility test now guards all of
+it. #10 awaits a screen reader test; MAIDR plots (#40) come in a later 6.x.**
+Full notes: `docs/releases/v6.10.0.md`.
+
+---
+
 ## v6.9.3 - September 28, 2026
 
 **Job harvest fixes: a refused source now records RapidAPI's real reason
