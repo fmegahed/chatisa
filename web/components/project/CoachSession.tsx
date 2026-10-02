@@ -33,6 +33,7 @@ export function CoachSession(props: CoachSessionProps) {
   const [content, setContent] = useState<unknown>(props.initialContent);
   const [lastUpdatedBy, setLastUpdatedBy] = useState<string | null>(props.initialLastUpdatedBy);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [doneNote, setDoneNote] = useState("");
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [transport] = useState(() => new DefaultChatTransport({ api: base }));
@@ -40,6 +41,8 @@ export function CoachSession(props: CoachSessionProps) {
     messages: props.initialMessages,
     transport,
     onFinish() {
+      // Say the reply is complete, not only that it started (#5).
+      setDoneNote("The coach finished responding.");
       // The coach's tool calls changed the worksheet on the server; pull it
       // back so the panel reflects them, and persist the transcript.
       void refetchDeliverable();
@@ -94,6 +97,7 @@ export function CoachSession(props: CoachSessionProps) {
     const text = input.trim();
     if (!text || busy) return;
     clearError();
+    setDoneNote("");
     sendMessage({ text }, { body: { modelId } });
     setInput("");
   }
@@ -115,10 +119,12 @@ export function CoachSession(props: CoachSessionProps) {
             onChange={setModelId}
             help="Switching applies to your next message."
           />
+          {/* Message headings are h3, so the conversation needs its own h2. */}
+          <h2 className="sr-only">Conversation</h2>
           <div role="log" aria-label="Coach conversation" aria-busy={busy} className="flex flex-col gap-4">
             {messages.length === 0 ? (
               <div className="rounded-card border border-medium-tan bg-paper p-5">
-                <h2 className="text-xl">Start scoping</h2>
+                <h3 className="text-xl">Start scoping</h3>
                 <p className="mt-2">
                   Describe your project in a sentence or two. The coach will walk you
                   through the worksheet, one question at a time, and fill it as you go.
@@ -142,14 +148,14 @@ export function CoachSession(props: CoachSessionProps) {
                   }
                 >
                   <h3 className="mb-1 text-sm font-bold text-dark-tan">{isUser ? "You" : "Coach"}</h3>
-                  {isUser ? <p className="whitespace-pre-wrap">{text}</p> : <Markdown>{text}</Markdown>}
+                  {isUser ? <p className="whitespace-pre-wrap">{text}</p> : <Markdown headingLevel={3}>{text}</Markdown>}
                 </article>
               );
             })}
           </div>
 
           <p role="status" className="text-sm text-dark-tan">
-            {status === "submitted" ? "Sending." : status === "streaming" ? "The coach is responding." : ""}
+            {status === "submitted" ? "Sending." : status === "streaming" ? "The coach is responding." : doneNote}
           </p>
           {error ? (
             <div role="alert" className="rounded-card border-2 border-miami-red bg-paper p-4">

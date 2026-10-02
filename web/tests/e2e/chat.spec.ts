@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { auditDom } from "./support/a11y";
 
 /**
  * Chat flows run against the deterministic mock model (CHATISA_MOCK_LLM=1),
@@ -337,5 +338,60 @@ test.describe("package availability gates the Run button", () => {
     });
     // And nothing claims a problem.
     await expect(reply).not.toContainText("cannot run here");
+  });
+});
+
+test.describe("chat accessibility (2026-09 audit)", () => {
+  test("message headings nest under the page h1 and completion is announced (#4, #5)", async ({
+    page,
+  }) => {
+    await page.goto("/coding-tutor");
+    await page.getByLabel("Your message").fill("How do I read a CSV?");
+    await page.getByRole("button", { name: "Send message" }).click();
+    const reply = page.getByRole("article", { name: "ChatISA" });
+    await expect(reply).toContainText("What does your dataset look like?", {
+      timeout: 15_000,
+    });
+    await expect(page.getByRole("heading", { level: 2, name: "You" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: "ChatISA" })).toBeVisible();
+    // The status region says the reply is done, not just that it started.
+    await expect(page.getByRole("status").filter({ hasText: "ChatISA finished responding." })).toBeVisible();
+    // A new message clears it until that reply is done.
+    await page.getByLabel("Your message").fill("And in SQL?");
+    await page.getByRole("button", { name: "Send message" }).click();
+    await expect(page.getByRole("article", { name: "ChatISA" })).toHaveCount(2, { timeout: 15_000 });
+    await expect(page.getByText("ChatISA finished responding.")).toBeVisible({ timeout: 15_000 });
+  });
+
+  test("run output is a heading screen reader users can jump to (#9)", async ({
+    page,
+  }) => {
+    // The first run downloads the SQL runtime, slower under parallel load.
+    test.setTimeout(150_000);
+    await page.goto("/coding-tutor");
+    await page.getByLabel("Your message").fill("Show me some SQL");
+    await page.getByRole("button", { name: "Send message" }).click();
+    const reply = page.getByRole("article", { name: "ChatISA" });
+    await expect(reply).toContainText("What does your dataset look like?", {
+      timeout: 15_000,
+    });
+    await reply.getByRole("button", { name: "Run SQL" }).click();
+    await expect(reply.getByRole("heading", { level: 3, name: "Output" })).toBeVisible({
+      timeout: 120_000,
+    });
+  });
+
+  test("short code samples are not empty tab stops (#19)", async ({ page }) => {
+    await page.goto("/coding-tutor");
+    await page.getByLabel("Your message").fill("How do I read a CSV?");
+    await page.getByRole("button", { name: "Send message" }).click();
+    const reply = page.getByRole("article", { name: "ChatISA" });
+    await expect(reply).toContainText("What does your dataset look like?", {
+      timeout: 15_000,
+    });
+    // "SELECT 1 AS n;" fits, so its region is not focusable; nothing in the
+    // reply is a stop with nothing to operate or scroll.
+    const dom = await auditDom(page);
+    expect(dom.nonInteractiveTabStops).toEqual([]);
   });
 });

@@ -203,9 +203,10 @@ const ChatMessage = memo(function ChatMessage({
           : "rounded-card border border-medium-tan bg-paper p-4"
       }
     >
-      <h3 id={headingId} className="mb-1 text-sm font-bold text-dark-tan">
+      {/* h2 directly under the page h1; reply headings start at h3 (#4). */}
+      <h2 id={headingId} className="mb-1 text-sm font-bold text-dark-tan">
         {isUser ? "You" : "ChatISA"}
-      </h3>
+      </h2>
       {segments.map((s) => (
         <div key={s.key} className="[&+div]:mt-3">
           {s.node}
@@ -415,6 +416,31 @@ export function Chat({
 
   const busy = status === "submitted" || status === "streaming";
 
+  // Say when a reply is done, not only when it starts, so screen reader users
+  // know when to read it (#5). In the Ask Anything loop the stream ends and
+  // the next request fires right after a tool result, so "ready" must hold
+  // briefly, with no tool continuation pending, before it counts as finished.
+  const [doneNote, setDoneNote] = useState("");
+  const wasBusyRef = useRef(false);
+  const stoppedRef = useRef(false);
+  useEffect(() => {
+    // The note is cleared when the student sends (submit, retry).
+    if (busy) {
+      wasBusyRef.current = true;
+      return;
+    }
+    if (!wasBusyRef.current || status !== "ready") return;
+    if (onToolCall && lastAssistantMessageIsCompleteWithToolCalls({ messages })) return;
+    const timer = setTimeout(() => {
+      wasBusyRef.current = false;
+      setDoneNote(
+        stoppedRef.current ? "Response stopped." : "ChatISA finished responding.",
+      );
+      stoppedRef.current = false;
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [busy, status, messages, onToolCall]);
+
   // Move focus to the error so keyboard and screen-reader users find it.
   useEffect(() => {
     if (error) errorRef.current?.focus();
@@ -431,6 +457,7 @@ export function Chat({
     if ((!text && readyParts.length === 0) || busy || anyReading) return;
     clearError();
     setLastFailedInput(null);
+    setDoneNote("");
     if (readyParts.length > 0) {
       const parts = [
         ...readyParts,
@@ -449,6 +476,7 @@ export function Chat({
     clearError();
     if (text) {
       setLastFailedInput(null);
+      setDoneNote("");
       sendMessage({ text }, sendOptions());
     }
   }
@@ -510,7 +538,7 @@ export function Chat({
           ? "Sending your message."
           : status === "streaming"
             ? "ChatISA is responding."
-            : ""}
+            : doneNote}
       </p>
 
       {error ? (
@@ -606,15 +634,21 @@ export function Chat({
           </button>
           {attachments ? (
             <>
+              {/*
+                Not rendered for assistive tech or the tab order: the visible
+                Attach file button is the one control (#6). A visually hidden
+                input here was an invisible, duplicate tab stop.
+              */}
               <input
                 ref={fileInputRef}
                 type="file"
                 multiple
                 accept={attachments.accept}
                 onChange={(e) => onFilesChosen(e.target.files)}
-                className="sr-only"
+                hidden
+                tabIndex={-1}
+                aria-hidden="true"
                 id="chat-attach-input"
-                aria-label="Choose files to attach"
               />
               <button
                 type="button"
@@ -629,7 +663,10 @@ export function Chat({
           {busy ? (
             <button
               type="button"
-              onClick={stop}
+              onClick={() => {
+                stoppedRef.current = true;
+                void stop();
+              }}
               className="rounded-card border border-medium-tan bg-paper px-4 py-2 font-bold hover:border-miami-red hover:text-miami-red"
             >
               Stop generating
