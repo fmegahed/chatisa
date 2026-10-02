@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { DataPage } from "@/lib/run/manager";
 import { ExportMenu } from "@/components/sandbox/ExportMenu";
+import { ScrollRegion } from "@/components/a11y/ScrollRegion";
 import type { ExportFormat } from "@/lib/sandbox/export";
 
 export type GetData = (
@@ -87,21 +88,21 @@ export function DataView({
         </span>
       </div>
 
-      <div
-        tabIndex={0}
-        aria-label={`Data for ${name}`}
+      {/* A named region, in the tab order only while it scrolls (#11, #19). */}
+      <ScrollRegion
+        label={`Data for ${name}`}
         className="min-h-0 flex-1 overflow-auto"
       >
         {state.loading ? (
           <p className="p-3 text-sm text-[var(--sb-muted)]">Loading data...</p>
         ) : state.error ? (
-          <p role="alert" className="p-3 text-sm text-[var(--sb-accent)]">
+          <p role="alert" className="p-3 text-sm text-[var(--sb-accent-text)]">
             {state.error}
           </p>
         ) : data ? (
           <Grid data={data} startIndex={from} />
         ) : null}
-      </div>
+      </ScrollRegion>
 
       {data ? (
         <div className="flex items-center gap-2 border-t border-[var(--sb-border)] px-3 py-1.5 text-xs text-[var(--sb-muted)]">

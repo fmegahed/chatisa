@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useOverflows } from "@/components/sandbox/useOverflows";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { Markdown } from "@/components/chat/Markdown";
@@ -44,6 +45,8 @@ export function SandboxChat(props: {
     () => new DefaultChatTransport({ api: "/api/chat" }),
   );
   const endRef = useRef<HTMLDivElement | null>(null);
+  const logRef = useRef<HTMLDivElement | null>(null);
+  const overflows = useOverflows(logRef);
 
   const { messages, sendMessage, status, stop, error } = useChat({ transport });
   const busy = status === "submitted" || status === "streaming";
@@ -103,8 +106,10 @@ export function SandboxChat(props: {
             />
           </div>
 
+          {/* A tab stop only while the conversation overflows (#19). */}
           <div
-            tabIndex={0}
+            ref={logRef}
+            tabIndex={overflows ? 0 : undefined}
             role="log"
             aria-label="Conversation"
             className="min-h-0 flex-1 overflow-auto p-3"
@@ -126,19 +131,21 @@ export function SandboxChat(props: {
                   key={message.id}
                   className={`mb-3 rounded-card border border-[var(--sb-border)] p-2 ${isUser ? "bg-[var(--sb-header)]" : "bg-[var(--sb-bg)]"}`}
                 >
-                  <p className="mb-1 text-xs font-bold text-[var(--sb-muted)]">
+                  {/* h3 under the pane's h2 "Assistant", so each message is
+                      reachable by heading; reply headings start at h4. */}
+                  <h3 className="mb-1 text-xs font-bold text-[var(--sb-muted)]">
                     {isUser ? "You" : "Assistant"}
-                  </p>
+                  </h3>
                   {isUser ? (
                     <p className="whitespace-pre-wrap text-sm">{text}</p>
                   ) : (
-                    <Markdown>{text}</Markdown>
+                    <Markdown headingLevel={3}>{text}</Markdown>
                   )}
                 </div>
               );
             })}
             {error ? (
-              <p role="alert" className="text-sm text-[var(--sb-accent)]">
+              <p role="alert" className="text-sm text-[var(--sb-accent-text)]">
                 Something went wrong. Try again.
               </p>
             ) : null}
@@ -164,7 +171,7 @@ export function SandboxChat(props: {
               }}
               rows={2}
               placeholder="Ask about your code, an error, or your data."
-              className="w-full resize-none rounded-card border border-[var(--sb-border)] bg-[var(--sb-bg)] p-2 text-sm text-[var(--sb-text)] focus:border-[var(--sb-accent)] focus:outline-none"
+              className="w-full resize-none rounded-card border border-[var(--sb-border)] bg-[var(--sb-bg)] p-2 text-sm text-[var(--sb-text)] focus:border-[var(--sb-accent)]"
             />
             <div className="mt-1 flex items-center justify-between">
               <span className="text-xs text-[var(--sb-muted)]">

@@ -1,12 +1,36 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import type { Extension } from "@codemirror/state";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import type { EditorState, Extension } from "@codemirror/state";
 import type { EditorView } from "@codemirror/view";
 import type { CompletionSource } from "@/lib/sandbox/inline-completion";
 import type { CompletionResult } from "@/lib/run/manager";
 import type { HelpRequest } from "@/lib/sandbox/help-docs";
-import { buildPipeInsertion } from "@/lib/sandbox/editor-keys";
+import {
+  CARET_POSITION_KEY,
+  buildPipeInsertion,
+  caretAnnouncement,
+  caretPositionAt,
+  caretPositionKeysLabel,
+  caretStatusText,
+  type CaretPosition,
+} from "@/lib/sandbox/editor-keys";
+import { detectIsMac } from "@/lib/sandbox/shortcuts";
+import { announce } from "@/lib/a11y/announce";
+
+/** A store that never changes, so useSyncExternalStore reads its snapshot once. */
+function subscribeNever(): () => void {
+  return () => {};
+}
+
+/** The caret position of a CodeMirror state's main selection. */
+function caretOf(state: EditorState): CaretPosition {
+  return caretPositionAt(
+    (pos) => state.doc.lineAt(pos),
+    state.doc.lines,
+    state.selection.main.head,
+  );
+}
 
 /** Queries the runtime for autocomplete candidates for the text before the cursor. */
 export type RuntimeCompleteSource = (
@@ -47,8 +71,17 @@ export function CodeEditor(props: {
   /** Resolve the symbol under a Ctrl/Cmd+Click (or F1 at the cursor) and open it
    *  in the HELP tab. Does not move the caret. */
   onHelp?: (req: HelpRequest) => void;
+  /** Focus the editor once it loads (the student asked to edit). Otherwise it
+   *  takes focus only if focus was already inside it, so switching language
+   *  or theme leaves focus on the control the student used (#17). */
+  autoFocus?: boolean;
 }) {
   const host = useRef<HTMLDivElement | null>(null);
+  // Whether focus was inside the editor when it was torn down for a rebuild.
+  const hadFocusRef = useRef(false);
+  // The plain textarea shown while CodeMirror loads; text typed there carries
+  // over, and so should focus.
+  const fallbackRef = useRef<HTMLTextAreaElement | null>(null);
   const viewRef = useRef<EditorView | null>(null);
   // Keep the latest onChange without re-creating the editor on every keystroke.
   const onChangeRef = useRef(props.onChange);
@@ -70,6 +103,12 @@ export function CodeEditor(props: {
   const helpRef = useRef(props.onHelp);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  // The caret's line and column, shown in the status line under the editor
+  // (#21). Not a live region: the Alt+Shift+L shortcut announces it on demand.
+  const [caret, setCaret] = useState<CaretPosition>({ line: 1, column: 1, lines: 1 });
+  const hintId = useId();
+  // Client-only platform fact (Option vs Alt in the hint), hydration-safe.
+  const isMac = useSyncExternalStore(subscribeNever, detectIsMac, () => false);
   const { dark = false, fillHeight = false } = props;
   const hasCompletion = props.completionSource != null;
   const hasComplete = props.completeSource != null;
@@ -106,6 +145,7 @@ export function CodeEditor(props: {
 
   useEffect(() => {
     let cancelled = false;
+    const hostEl = host.current;
     loadCodeMirror(props.languageId)
       .then(({ view, cm, lang, state, autocomplete, tags, commands, langExt, inline, langStructure, helpDocs, lint }) => {
         if (cancelled || !host.current) return;
@@ -120,12 +160,25 @@ export function CodeEditor(props: {
               if (update.docChanged) {
                 onChangeRef.current(update.state.doc.toString());
               }
+              if (update.docChanged || update.selectionSet) {
+                setCaret(caretOf(update.state));
+              }
             }),
             // The contenteditable gets the accessible name; CodeMirror already
-            // gives it role="textbox" and aria-multiline.
-            view.EditorView.contentAttributes.of({ "aria-label": props.label }),
+            // gives it role="textbox" and aria-multiline. The description names
+            // the caret-position shortcut (#21). An explicit tabindex makes the
+            // scroller's focusable content visible to checkers (axe
+            // scrollable-region-focusable, #14) and keeps the content reachable
+            // if it is ever made read-only (contenteditable=false). It is the
+            // same single tab stop: a contenteditable is already in tab order.
+            view.EditorView.contentAttributes.of({
+              "aria-label": props.label,
+              "aria-describedby": hintId,
+              tabindex: "0",
+            }),
             ...themeExtensions(view, lang, tags, dark, fillHeight, props.languageId),
             editorKeymap(view, state, commands, props.languageId),
+            caretKeymap(view, state, lint),
             ...(hasRun
               ? [runKeymap(view, state, runRef, langStructure.statementRangeAt, props.languageId)]
               : []),
@@ -150,7 +203,17 @@ export function CodeEditor(props: {
           ],
         });
         viewRef.current = editor;
-        editor.focus();
+        setCaret(caretOf(editor.state));
+        if (
+          props.autoFocus ||
+          hadFocusRef.current ||
+          host.current?.contains(document.activeElement) ||
+          (fallbackRef.current !== null &&
+            fallbackRef.current === document.activeElement)
+        ) {
+          editor.focus();
+        }
+        hadFocusRef.current = false;
         setReady(true);
       })
       .catch(() => {
@@ -158,6 +221,7 @@ export function CodeEditor(props: {
       });
     return () => {
       cancelled = true;
+      hadFocusRef.current = !!hostEl?.contains(document.activeElement);
       viewRef.current?.destroy();
       viewRef.current = null;
     };
@@ -183,27 +247,53 @@ export function CodeEditor(props: {
   const usingCodeMirror = ready && !failed;
   const rows = Math.min(30, Math.max(6, props.value.split("\n").length + 1));
   const wrapBg = dark ? "bg-[#0a0a0a]" : "bg-light-tan";
+  // Status line colours match the gutter: >=5.7:1 on light tan, 7:1 on #0a0a0a.
+  const statusTone = dark
+    ? "border-[#2c2c2c] text-[#9a9a9a]"
+    : "border-medium-tan text-[#5f5a50]";
 
   return (
     <div className={fillHeight ? "h-full" : undefined}>
-      {/* CodeMirror mounts here; kept in the DOM but hidden until ready so the
-          editor has a parent to attach to. */}
+      {/* The editor box, kept in the DOM but hidden until ready so CodeMirror
+          has a parent to attach to. */}
       <div
-        ref={host}
         className={
           usingCodeMirror
-            ? `overflow-hidden rounded-card border border-medium-tan ${wrapBg} focus-within:border-miami-red ${fillHeight ? "h-full" : ""}`
+            ? `flex flex-col overflow-hidden rounded-card border border-medium-tan ${wrapBg} focus-within:border-miami-red ${fillHeight ? "h-full" : ""}`
             : "hidden"
         }
-      />
+      >
+        {/* CodeMirror mounts here. */}
+        <div ref={host} className={fillHeight ? "min-h-0 flex-1" : undefined} />
+        {/* Caret position, VS Code style (#21). Plain text, not a live region,
+            so it does not chatter on every keystroke; screen reader users hear
+            it on demand with the shortcut named in the hint below. */}
+        <div
+          className={`shrink-0 border-t px-2 py-0.5 text-right font-mono text-xs ${statusTone}`}
+          data-testid="editor-caret-status"
+        >
+          <span aria-hidden="true" data-testid="editor-caret-status-text">
+            {caretStatusText(caret)}
+          </span>
+          <span className="sr-only">
+            Line {caret.line}, column {caret.column}
+          </span>
+        </div>
+      </div>
+      {usingCodeMirror ? (
+        <p id={hintId} className="sr-only">
+          Press {caretPositionKeysLabel(isMac)} to hear the line and column.
+        </p>
+      ) : null}
       {!usingCodeMirror ? (
         <textarea
+          ref={fallbackRef}
           aria-label={props.label}
           value={props.value}
           onChange={(e) => props.onChange(e.target.value)}
           spellCheck={false}
           rows={fillHeight ? undefined : rows}
-          className={`w-full resize-y rounded-card border border-medium-tan p-3 font-mono text-sm focus:border-miami-red focus:outline-none ${dark ? "bg-[#0a0a0a] text-[#eaeaea]" : "bg-light-tan text-ink"} ${fillHeight ? "h-full resize-none" : ""}`}
+          className={`w-full resize-y rounded-card border border-medium-tan p-3 font-mono text-sm focus:border-miami-red ${dark ? "bg-[#0a0a0a] text-[#eaeaea]" : "bg-light-tan text-ink"} ${fillHeight ? "h-full resize-none" : ""}`}
         />
       ) : null}
     </div>
@@ -435,6 +525,40 @@ function editorKeymap(
   );
 }
 
+/**
+ * Alt+Shift+L (Option+Shift+L on macOS) announces "Line X of N, column Y"
+ * through the app's shared live region, plus any lint problems on that line,
+ * since the gutter's numbers and the hover-only lint tooltips are not
+ * available to screen readers (#21). Read-only: the caret does not move.
+ */
+function caretKeymap(
+  view: LoadedEditor["view"],
+  cmState: LoadedEditor["state"],
+  lintMod: LoadedEditor["lint"],
+): Extension {
+  return cmState.Prec.high(
+    view.keymap.of([
+      {
+        key: CARET_POSITION_KEY,
+        preventDefault: true,
+        run: (editor) => {
+          const state = editor.state;
+          const line = state.doc.lineAt(state.selection.main.head);
+          const problems: string[] = [];
+          lintMod.forEachDiagnostic(state, (d, from, to) => {
+            if (from <= line.to && to >= line.from) {
+              const kind = d.severity === "error" ? "Error" : "Warning";
+              problems.push(`${kind}: ${d.message}`);
+            }
+          });
+          announce(caretAnnouncement(caretOf(state), problems));
+          return true;
+        },
+      },
+    ]),
+  );
+}
+
 type HelpLang = "r" | "python" | "sql";
 type SymbolAt = LoadedEditor["helpDocs"]["symbolAt"];
 
@@ -549,8 +673,9 @@ function lintExtension(
   );
 }
 
-/** The editor's look: a light theme (CodeMirror's default highlight) or a dark
- * one approximating Tomorrow Night Bright. */
+/** The editor's look: a light theme (CodeMirror's default highlight, contrast
+ * adjusted) or a dark one approximating Tomorrow Night Bright. Every text colour
+ * is >=4.5:1 on its editor background, including the active-line band. */
 function themeExtensions(
   view: LoadedEditor["view"],
   lang: LoadedEditor["lang"],
@@ -583,21 +708,61 @@ function themeExtensions(
           ),
         ]
       : [];
+  const t = tags;
   if (!dark) {
+    // CodeMirror's default highlight colours, measured on the light-tan editor
+    // background (#edece2) and kept at >=4.5:1 (WCAG 1.4.3, #13): regexp
+    // (#e40, 3.2:1), type (#085, 3.8:1) and invalid (#f00, 3.4:1) are darkened.
+    // Registered as a full style rather than relying on the fallback, which
+    // CodeMirror drops as soon as any other style (R identifiers) is present,
+    // leaving R keywords, strings and comments uncoloured.
+    const lightHighlight = lang.HighlightStyle.define([
+      { tag: t.meta, color: "#404740" },
+      { tag: t.link, textDecoration: "underline" },
+      { tag: t.heading, textDecoration: "underline", fontWeight: "bold" },
+      { tag: t.emphasis, fontStyle: "italic" },
+      { tag: t.strong, fontWeight: "bold" },
+      { tag: t.strikethrough, textDecoration: "line-through" },
+      { tag: t.keyword, color: "#770088" },
+      { tag: [t.atom, t.bool, t.url, t.contentSeparator, t.labelName], color: "#221199" },
+      { tag: [t.literal, t.inserted], color: "#116644" },
+      { tag: [t.string, t.deleted], color: "#aa1111" },
+      { tag: [t.regexp, t.escape, t.special(t.string)], color: "#a63000" },
+      { tag: t.definition(t.variableName), color: "#0000ff" },
+      { tag: t.local(t.variableName), color: "#3300aa" },
+      { tag: [t.typeName, t.namespace], color: "#006b45" },
+      { tag: t.className, color: "#116677" },
+      { tag: [t.special(t.variableName), t.macroName], color: "#225566" },
+      { tag: t.definition(t.propertyName), color: "#0000cc" },
+      { tag: t.comment, color: "#994400" },
+      { tag: t.invalid, color: "#c41230" },
+    ]);
     return [
       view.EditorView.theme({
         "&": { backgroundColor: "transparent", fontSize: "0.875rem", height },
         "&.cm-focused": { outline: "none" },
         ".cm-content": { fontFamily: MONO },
-        ".cm-gutters": { backgroundColor: "transparent", border: "none" },
+        // Line numbers and fold markers: 5.8:1 on light tan (CodeMirror's
+        // #6c6c6c measured 4.4:1); the active line's number is ink on a tan
+        // band, 15:1 (#13).
+        ".cm-gutters": { backgroundColor: "transparent", color: "#5f5a50", border: "none" },
+        ".cm-activeLineGutter": { backgroundColor: "#e2e0d4", color: "#000000" },
+        ".cm-foldPlaceholder": {
+          backgroundColor: "transparent",
+          borderColor: "#ccc9b8",
+          color: "#5f5a50",
+        },
+        // Match highlights as outlines, so token text keeps its contrast.
+        ".cm-selectionMatch": { backgroundColor: "transparent", outline: "1px solid #6a8a5a" },
+        ".cm-searchMatch-selected": { backgroundColor: "#fde7b0", outline: "1px solid #9a6a00" },
         ".cm-scroller": { maxHeight, overflow: "auto" },
         // Ghost (AI suggestion) text: clearly visible on the light background.
         ".cm-ghost-text": { color: "#6f685c" },
       }),
+      lang.syntaxHighlighting(lightHighlight),
       ...rIdentifiers,
     ];
   }
-  const t = tags;
   const darkHighlight = lang.HighlightStyle.define([
     { tag: t.comment, color: "#969896", fontStyle: "italic" },
     { tag: [t.string, t.special(t.string), t.regexp], color: "#b9ca4a" },
@@ -609,7 +774,8 @@ function themeExtensions(
     },
     { tag: [t.typeName, t.className, t.namespace], color: "#e7c547" },
     { tag: [t.propertyName, t.attributeName], color: "#7aa6da" },
-    { tag: [t.variableName, t.tagName], color: "#d54e53" },
+    // Brightened from #d54e53 (4.4:1 on the active-line band) to 5.6:1 (#13).
+    { tag: [t.variableName, t.tagName], color: "#e0686c" },
     {
       tag: [t.operator, t.punctuation, t.separator, t.bracket, t.definition(t.variableName)],
       color: "#eaeaea",
@@ -624,13 +790,26 @@ function themeExtensions(
         ".cm-cursor, .cm-dropCursor": { borderLeftColor: "#eaeaea" },
         "&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection":
           { backgroundColor: "#3a3a3a" },
+        // Line numbers and fold markers: the workspace's muted grey, 7:1 on
+        // #0a0a0a and 6.4:1 on the active-line band (#5a5a5a measured 2.9:1);
+        // the active line's number is the body text colour (#13).
         ".cm-gutters": {
           backgroundColor: "transparent",
-          color: "#5a5a5a",
+          color: "#9a9a9a",
           border: "none",
         },
         ".cm-activeLine": { backgroundColor: "rgba(255,255,255,0.04)" },
-        ".cm-activeLineGutter": { backgroundColor: "rgba(255,255,255,0.05)" },
+        ".cm-activeLineGutter": { backgroundColor: "rgba(255,255,255,0.05)", color: "#eaeaea" },
+        ".cm-foldPlaceholder": {
+          backgroundColor: "transparent",
+          borderColor: "#2c2c2c",
+          color: "#9a9a9a",
+        },
+        // Match highlights as outlines: CodeMirror's bright fills (#99ff77,
+        // #00ffff) left light token text near 1.3:1.
+        ".cm-selectionMatch": { backgroundColor: "transparent", outline: "1px solid #6a8a5a" },
+        ".cm-searchMatch": { backgroundColor: "transparent", outline: "1px solid #7aa6da" },
+        ".cm-searchMatch-selected": { backgroundColor: "transparent", outline: "2px solid #e7c547" },
         ".cm-scroller": { maxHeight, overflow: "auto" },
         ".cm-ghost-text": { color: "#8a8a8a" },
       },

@@ -18,6 +18,10 @@ export interface RunResult {
   text?: string;
   table?: { columns: string[]; rows: Record<string, unknown>[] };
   imageDataUrl?: string;
+  /** Facts the Python worker read from the figure (title, axis labels, mark
+   * types), for the plot's alt text (#23). Untrusted shape: parse with
+   * parsePlotInfo. */
+  plotInfo?: unknown;
   /** Session introspection: the variables (or tables, for SQL) now defined. */
   variables?: SessionVariable[];
 }

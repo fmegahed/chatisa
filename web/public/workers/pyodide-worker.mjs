@@ -218,8 +218,48 @@ def __chatisa_vars():
 __chatisa_vars()
 `;
 
-/** Renders the current matplotlib figure, if any, to a PNG data URL. */
+/**
+ * Renders the current matplotlib figure, if any, to PNG and reads a few facts
+ * from it (title, axis labels, mark types, legend entries) for the plot's alt
+ * text (#23). Returns JSON {png, info}; the facts are best-effort and never
+ * stop the image from coming back.
+ */
 const CAPTURE_PLOT = `
+def __chatisa_plot_info(fig):
+    from matplotlib.container import BarContainer
+    from matplotlib.collections import PathCollection, PolyCollection
+    from matplotlib.patches import Wedge
+    axes = [a for a in fig.get_axes() if a.get_visible() and a.get_label() != "<colorbar>"]
+    kinds = []
+    def add(k):
+        if k not in kinds:
+            kinds.append(k)
+    st = getattr(fig, "_suptitle", None)
+    title = st.get_text() if st is not None else ""
+    xl = yl = ""
+    series = []
+    for ax in axes:
+        title = title or ax.get_title()
+        xl = xl or ax.get_xlabel()
+        yl = yl or ax.get_ylabel()
+        if any(isinstance(c, BarContainer) for c in ax.containers):
+            add("bars")
+        if ax.images:
+            add("heatmap")
+        for c in ax.collections:
+            if isinstance(c, PathCollection):
+                add("points")
+            elif isinstance(c, PolyCollection):
+                add("area")
+        if any(l.get_visible() and len(l.get_xdata()) > 1 and l.get_linestyle() not in ("None", "", " ") for l in ax.lines):
+            add("lines")
+        if any(isinstance(p, Wedge) for p in ax.patches):
+            add("pie")
+        leg = ax.get_legend()
+        if leg is not None:
+            series += [t.get_text() for t in leg.get_texts()]
+    return {"kinds": kinds, "title": title, "xLabel": xl, "yLabel": yl, "series": series[:12], "panels": len(axes)}
+
 def __chatisa_capture_plot():
     import sys
     if "matplotlib.pyplot" not in sys.modules:
@@ -227,11 +267,16 @@ def __chatisa_capture_plot():
     import matplotlib.pyplot as plt
     if not plt.get_fignums():
         return None
-    import io, base64
+    import io, base64, json
+    fig = plt.gcf()
+    try:
+        info = __chatisa_plot_info(fig)
+    except Exception:
+        info = None
     buf = io.BytesIO()
-    plt.gcf().savefig(buf, format="png", bbox_inches="tight", dpi=110)
+    fig.savefig(buf, format="png", bbox_inches="tight", dpi=110)
     plt.close("all")
-    return base64.b64encode(buf.getvalue()).decode("ascii")
+    return json.dumps({"png": base64.b64encode(buf.getvalue()).decode("ascii"), "info": info})
 __chatisa_capture_plot()
 `;
 
@@ -897,8 +942,13 @@ self.onmessage = async (event) => {
     }
 
     let imageDataUrl;
-    const b64 = pyodide.runPython(CAPTURE_PLOT);
-    if (b64) imageDataUrl = `data:image/png;base64,${b64}`;
+    let plotInfo;
+    const captured = pyodide.runPython(CAPTURE_PLOT);
+    if (captured) {
+      const { png, info } = JSON.parse(captured);
+      if (png) imageDataUrl = `data:image/png;base64,${png}`;
+      if (info) plotInfo = info;
+    }
 
     let variables;
     if (withVariables) {
@@ -918,7 +968,7 @@ self.onmessage = async (event) => {
     self.postMessage({
       id,
       ok: true,
-      result: { text: text || undefined, imageDataUrl, variables },
+      result: { text: text || undefined, imageDataUrl, plotInfo, variables },
     });
   } catch (error) {
     // Show whatever was printed before the failure, then the error itself.

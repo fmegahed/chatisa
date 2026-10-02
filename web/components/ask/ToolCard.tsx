@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import {
-  TOOL_LABELS,
   createdFileIds,
   openaiContainerId,
   toolSummary,
 } from "@/lib/ask/tool-card";
+import { plotAltText, plotInfoFromCode } from "@/lib/run/plot-alt";
 
 /**
  * One tool call in an Ask Anything reply: a collapsible card showing what ran
@@ -334,7 +334,6 @@ export function ToolCard({
     (typeof part.type === "string" && part.type.startsWith("tool-")
       ? (part.type as string).slice(5)
       : "tool");
-  const label = TOOL_LABELS[toolName] ?? toolName;
   const state = part.state as string | undefined;
   const toolCallId = (part.toolCallId as string | undefined) ?? "";
   // Provider-executed calls whose input streamed as deltas can surface the
@@ -398,11 +397,18 @@ export function ToolCard({
             </p>
           ) : null}
           {plot ? (
-            // The plot the code produced; alt text names the tool that made it.
+            // The plot the code produced. Alt text describes the chart from the
+            // code's titles, labels and chart calls (#23).
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={plot}
-              alt={`Plot produced by the ${label} run`}
+              alt={plotAltText({
+                language: toolName.replace(/^run_/, ""),
+                info: plotInfoFromCode(
+                  typeof input?.code === "string" ? input.code : "",
+                  toolName.replace(/^run_/, ""),
+                ),
+              })}
               className="max-w-full rounded-card border border-medium-tan"
             />
           ) : null}

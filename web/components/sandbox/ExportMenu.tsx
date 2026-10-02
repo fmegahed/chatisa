@@ -49,7 +49,7 @@ export function ExportMenu({
         onKeyDown={(e) => {
           if (e.key === "Escape") setOpen(false);
         }}
-        className="rounded border border-[var(--sb-border)] px-1.5 py-0.5 text-xs font-bold text-[var(--sb-muted)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent)]"
+        className="rounded border border-[var(--sb-border)] px-1.5 py-0.5 text-xs font-bold text-[var(--sb-muted)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent-text)]"
       >
         Export
       </button>
@@ -69,7 +69,7 @@ export function ExportMenu({
             type="button"
             role="menuitem"
             onClick={() => choose("csv")}
-            className="block w-full px-3 py-1 text-left text-xs font-bold text-[var(--sb-text)] hover:bg-[var(--sb-header)] hover:text-[var(--sb-accent)]"
+            className="block w-full px-3 py-1 text-left text-xs font-bold text-[var(--sb-text)] hover:bg-[var(--sb-header)] hover:text-[var(--sb-accent-text)]"
           >
             Export as CSV
           </button>
@@ -77,7 +77,7 @@ export function ExportMenu({
             type="button"
             role="menuitem"
             onClick={() => choose("tsv")}
-            className="block w-full px-3 py-1 text-left text-xs font-bold text-[var(--sb-text)] hover:bg-[var(--sb-header)] hover:text-[var(--sb-accent)]"
+            className="block w-full px-3 py-1 text-left text-xs font-bold text-[var(--sb-text)] hover:bg-[var(--sb-header)] hover:text-[var(--sb-accent-text)]"
           >
             Export as TSV
           </button>

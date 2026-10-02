@@ -44,7 +44,7 @@ function PythonPackageChecker() {
           : "";
   const tone =
     result?.status === "unavailable"
-      ? "text-[var(--sb-accent)]"
+      ? "text-[var(--sb-accent-text)]"
       : "text-[var(--sb-text)]";
 
   return (
@@ -229,7 +229,7 @@ export function LimitationsNotice({ languageId }: { languageId: string }) {
           aria-expanded={open === "packages"}
           // The main text colour (not the accent) so the link keeps AA contrast
           // in both themes; the underline still marks it as a control.
-          className="font-bold text-[var(--sb-text)] underline underline-offset-2 hover:text-[var(--sb-accent)]"
+          className="font-bold text-[var(--sb-text)] underline underline-offset-2 hover:text-[var(--sb-accent-text)]"
         >
           {open === "packages" ? "Hide package help" : "What can I install?"}
         </button>
@@ -238,7 +238,7 @@ export function LimitationsNotice({ languageId }: { languageId: string }) {
           type="button"
           onClick={() => setOpen((v) => (v === "runtimes" ? null : "runtimes"))}
           aria-expanded={open === "runtimes"}
-          className="font-bold text-[var(--sb-text)] underline underline-offset-2 hover:text-[var(--sb-accent)]"
+          className="font-bold text-[var(--sb-text)] underline underline-offset-2 hover:text-[var(--sb-accent-text)]"
         >
           {open === "runtimes" ? "Hide runtime info" : "About these runtimes"}
         </button>

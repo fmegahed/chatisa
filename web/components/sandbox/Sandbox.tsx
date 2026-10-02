@@ -3,11 +3,20 @@
 import {
   useCallback,
   useEffect,
+  useId,
   useMemo,
   useRef,
   useState,
   useSyncExternalStore,
 } from "react";
+import { ScrollRegion } from "@/components/a11y/ScrollRegion";
+import { rovingKeyDown, useOverflows } from "@/components/sandbox/useOverflows";
+import {
+  describePlot,
+  plotAltText,
+  plotDetails,
+  type PlotInfo,
+} from "@/lib/run/plot-alt";
 import { Group, Panel, Separator, type Layout } from "react-resizable-panels";
 import { CodeEditor } from "@/components/run/CodeEditor";
 import { RUNNABLE_LANGUAGES } from "@/lib/run/languages";
@@ -171,7 +180,31 @@ interface ConsoleEntry {
   /** Source runs are silent: show a note and errors only, not the echo/output. */
   silent?: boolean;
   label?: string;
+  /** The run's number, for its "Output of run N" heading (#22). Notes from
+   * exports and imports have none. */
+  run?: number;
 }
+
+/** One drawn plot and what is known about it, for its alt text (#23). */
+interface PlotEntry {
+  url: string;
+  info: PlotInfo;
+}
+
+/**
+ * Below this width (about 125% zoom on a 1280px screen, and down to 320 CSS px
+ * at 400%) the four panes stack in one column with no resizing, so the page
+ * only ever scrolls vertically (WCAG 1.4.10 Reflow, #15).
+ */
+const STACK_QUERY = "(max-width: 1023.98px)";
+
+function subscribeStacked(onChange: () => void) {
+  const media = window.matchMedia(STACK_QUERY);
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+}
+const getStacked = () => window.matchMedia(STACK_QUERY).matches;
+const getServerStacked = () => false;
 
 /**
  * Remembers a panel group's sizes across reloads. The Sandbox renders
@@ -309,6 +342,13 @@ export function Sandbox(props: {
     });
   }, []);
 
+  const stacked = useSyncExternalStore(
+    subscribeStacked,
+    getStacked,
+    getServerStacked,
+  );
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+
   const language =
     RUNNABLE_LANGUAGES.find((l) => l.id === languageId) ?? RUNNABLE_LANGUAGES[0];
 
@@ -324,24 +364,50 @@ export function Sandbox(props: {
     );
   }
 
+  // The toolbar and notice live here, outside the language-keyed Workspace, so
+  // choosing a language never unmounts the radio the student just pressed and
+  // focus stays on it (#17). Text accents use --sb-accent-text (globals.css),
+  // which stays readable on the dark skin.
   return (
-    <Workspace
-      key={languageId}
-      language={language}
-      draft={drafts[languageId] ?? ""}
-      onDraft={(next) => setDrafts((d) => ({ ...d, [languageId]: next }))}
-      languageId={languageId}
-      onLanguage={setLanguageId}
-      theme={theme}
-      onToggleTheme={toggleTheme}
-      models={props.models}
-      defaultModelId={props.defaultModelId}
-      chatOpen={chatOpen}
-      onToggleChat={toggleChat}
-      completionsOn={completionsOn}
-      onToggleCompletions={toggleCompletions}
-      userEmail={props.userEmail}
-    />
+    <div
+      className={`sb-root flex flex-col bg-[var(--sb-bg)] text-[var(--sb-text)] ${stacked ? "" : "h-[calc(100vh-8.5rem)] min-h-[32rem]"}`}
+      data-sb-theme={theme}
+    >
+      <Toolbar
+        languageId={languageId}
+        onLanguage={setLanguageId}
+        onShortcuts={() => setShortcutsOpen(true)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        chatOpen={chatOpen}
+        onToggleChat={toggleChat}
+      />
+
+      <LimitationsNotice languageId={languageId} />
+
+      {shortcutsOpen ? (
+        <ShortcutsDialog
+          dark={theme === "dark"}
+          onClose={() => setShortcutsOpen(false)}
+        />
+      ) : null}
+
+      <Workspace
+        key={languageId}
+        language={language}
+        draft={drafts[languageId] ?? ""}
+        onDraft={(next) => setDrafts((d) => ({ ...d, [languageId]: next }))}
+        theme={theme}
+        stacked={stacked}
+        models={props.models}
+        defaultModelId={props.defaultModelId}
+        chatOpen={chatOpen}
+        onToggleChat={toggleChat}
+        completionsOn={completionsOn}
+        onToggleCompletions={toggleCompletions}
+        userEmail={props.userEmail}
+      />
+    </div>
   );
 }
 
@@ -350,10 +416,9 @@ function Workspace(props: {
   language: RunnableLanguage;
   draft: string;
   onDraft: (next: string) => void;
-  languageId: string;
-  onLanguage: (id: string) => void;
   theme: SandboxTheme;
-  onToggleTheme: () => void;
+  /** One column, no resizing: narrow viewports and high zoom (#15). */
+  stacked: boolean;
   models: ModelOption[];
   defaultModelId: string;
   chatOpen: boolean;
@@ -364,7 +429,9 @@ function Workspace(props: {
 }) {
   const { language, draft, theme } = props;
   const [entries, setEntries] = useState<ConsoleEntry[]>([]);
-  const [plots, setPlots] = useState<string[]>([]);
+  const [plots, setPlots] = useState<PlotEntry[]>([]);
+  // Counts runs in this session for the per-run output headings (#22).
+  const runCountRef = useRef(0);
   const [plotIndex, setPlotIndex] = useState(0);
   // The single HELP tab's current target, and which of Plots/Help is showing in
   // the bottom-right pane. `helpTarget` holds the resolved doc entry (or the
@@ -388,7 +455,6 @@ function Workspace(props: {
   const helpTokenRef = useRef(0);
   const [variables, setVariables] = useState<SessionVariable[]>([]);
   const [running, setRunning] = useState(false);
-  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   // True while the runtime and its bundled packages load in the background. The
   // component is keyed by language, so this initial value is right per tab.
   const [preparing, setPreparing] = useState(
@@ -455,15 +521,19 @@ function Workspace(props: {
         const outcome = runCode.trim()
           ? await session.run(runCode)
           : { ok: true as const, result: {} };
+        const run = ++runCountRef.current;
         setEntries((prev) => [
           ...prev,
-          { code, outcome, silent: opts.silent, label: opts.label },
+          { code, outcome, silent: opts.silent, label: opts.label, run },
         ]);
         if (outcome.ok && outcome.result?.imageDataUrl) {
-          const url = outcome.result.imageDataUrl;
+          const plot: PlotEntry = {
+            url: outcome.result.imageDataUrl,
+            info: describePlot(code, language.id, outcome.result.plotInfo),
+          };
           setPlots((prev) => {
             setPlotIndex(prev.length);
-            return [...prev, url];
+            return [...prev, plot];
           });
         }
         if (outcome.ok && outcome.result?.variables) {
@@ -478,9 +548,10 @@ function Workspace(props: {
               const url = await renderSpecToImage(plot.spec as Record<string, unknown>, {
                 dark: theme === "dark",
               });
+              const entry: PlotEntry = { url, info: describePlot(code, "sql") };
               setPlots((prev) => {
                 setPlotIndex(prev.length);
-                return [...prev, url];
+                return [...prev, entry];
               });
             } catch {
               // Rendering failed: the result table above stands as the fallback.
@@ -790,29 +861,101 @@ function Workspace(props: {
     [language.label, entries, variables],
   );
 
-  return (
-    <div
-      className="sb-root flex h-[calc(100vh-8.5rem)] min-h-[32rem] flex-col bg-[var(--sb-bg)] text-[var(--sb-text)]"
-      data-sb-theme={theme}
+  const tablesTitle = language.id === "sql" ? "Tables" : "Environment";
+
+  // Each pane is built once and placed in either layout below.
+  const editorPane = (
+    <EditorPane
+      scriptTitle={`${language.label} script`}
+      dataTabs={dataTabs}
+      activeTab={activeTab}
+      onSelectTab={setActiveTab}
+      onCloseTab={closeDataView}
+      onRun={() => void runAll()}
+      onSource={() => void source()}
+      onInsertExample={insertExample}
+      onDownload={download}
+      running={running}
+      completionsOn={props.completionsOn}
+      onToggleCompletions={props.onToggleCompletions}
     >
-      <Toolbar
-        languageId={props.languageId}
-        onLanguage={props.onLanguage}
-        onShortcuts={() => setShortcutsOpen(true)}
-        theme={theme}
-        onToggleTheme={props.onToggleTheme}
-        chatOpen={props.chatOpen}
-        onToggleChat={props.onToggleChat}
-      />
+      {/* The editor stays mounted (just hidden) when a data tab is
+          active, so its cursor and state survive tab switches. */}
+      <div className={activeTab === "script" ? "h-full p-2" : "hidden"}>
+        <CodeEditor
+          value={draft}
+          onChange={props.onDraft}
+          languageId={language.id}
+          label={`${language.label} code`}
+          dark={theme === "dark"}
+          fillHeight
+          completionSource={props.completionsOn ? completionSource : undefined}
+          completeSource={props.completionsOn ? completeSource : undefined}
+          onRunLine={runLine}
+          onRunAll={runAll}
+          onSource={source}
+          onHelp={onHelp}
+        />
+      </div>
+      {activeTab !== "script" ? (
+        <DataView getData={getData} name={activeTab} onExport={exportObject} />
+      ) : null}
+    </EditorPane>
+  );
+  const consolePane = (
+    <ConsolePane
+      entries={entries}
+      running={running}
+      preparing={preparing}
+      label={language.label}
+      banner={language.banner}
+      onRun={(code) => void execute(code)}
+      onClear={clearConsole}
+    />
+  );
+  const variablesPane = (
+    <VariablesPane
+      variables={variables}
+      language={language}
+      onView={openDataView}
+      onExport={exportObject}
+      onExportWorkspace={exportWorkspace}
+      onUpload={() => fileInputRef.current?.click()}
+      onRestart={restart}
+    />
+  );
+  const plotsPane = (
+    <PlotsHelpPane
+      tab={rightLowerTab}
+      onTab={setRightLowerTab}
+      help={helpTarget}
+      helpDoc={helpDoc}
+      plots={plots}
+      language={language.id}
+      index={plotIndex}
+      onIndex={setPlotIndex}
+      onDelete={deletePlot}
+      onClear={clearPlots}
+    />
+  );
+  const chat = props.chatOpen ? (
+    <SandboxChat
+      models={props.models}
+      defaultModelId={props.defaultModelId}
+      getContext={getContext}
+      onClose={props.onToggleChat}
+    />
+  ) : null;
 
-      <LimitationsNotice languageId={props.languageId} />
-
+  return (
+    <>
       <input
         ref={fileInputRef}
         type="file"
         accept={acceptFor(language.id)}
         className="hidden"
         aria-hidden="true"
+        tabIndex={-1}
         onChange={(e) => {
           const f = e.target.files?.[0];
           if (f) void onFileChosen(f);
@@ -822,7 +965,7 @@ function Workspace(props: {
       {uploadError ? (
         <p
           role="alert"
-          className="border-b border-[var(--sb-border)] bg-[var(--sb-panel)] px-3 py-1.5 text-xs text-[var(--sb-accent)]"
+          className="border-b border-[var(--sb-border)] bg-[var(--sb-panel)] px-3 py-1.5 text-xs text-[var(--sb-accent-text)]"
         >
           {uploadError}
         </p>
@@ -842,141 +985,75 @@ function Workspace(props: {
           onClose={() => setUploadFile(null)}
         />
       ) : null}
-      {shortcutsOpen ? (
-        <ShortcutsDialog
-          dark={theme === "dark"}
-          onClose={() => setShortcutsOpen(false)}
-        />
-      ) : null}
 
-      <div className="flex min-h-0 flex-1">
-      <div className="min-h-0 flex-1 p-2">
-        <Group
-          orientation="horizontal"
-          id="sb-columns"
-          defaultLayout={columns.defaultLayout}
-          onLayoutChanged={columns.onLayoutChanged}
-          className="h-full"
-        >
-          <Panel id="left-col" defaultSize="55" minSize="30" className="min-h-0">
-            <Group
-              orientation="vertical"
-              id="sb-left"
-              defaultLayout={left.defaultLayout}
-              onLayoutChanged={left.onLayoutChanged}
-              className="h-full"
-            >
-              <Panel id="editor" defaultSize="62" minSize="20" className="min-h-0">
-                <EditorPane
-                  scriptTitle={`${language.label} script`}
-                  dataTabs={dataTabs}
-                  activeTab={activeTab}
-                  onSelectTab={setActiveTab}
-                  onCloseTab={closeDataView}
-                  onRun={() => void runAll()}
-                  onSource={() => void source()}
-                  onInsertExample={insertExample}
-                  onDownload={download}
-                  running={running}
-                  completionsOn={props.completionsOn}
-                  onToggleCompletions={props.onToggleCompletions}
-                >
-                  {/* The editor stays mounted (just hidden) when a data tab is
-                      active, so its cursor and state survive tab switches. */}
-                  <div
-                    className={activeTab === "script" ? "h-full p-2" : "hidden"}
-                  >
-                    <CodeEditor
-                      value={draft}
-                      onChange={props.onDraft}
-                      languageId={language.id}
-                      label={`${language.label} code`}
-                      dark={theme === "dark"}
-                      fillHeight
-                      completionSource={
-                        props.completionsOn ? completionSource : undefined
-                      }
-                      completeSource={
-                        props.completionsOn ? completeSource : undefined
-                      }
-                      onRunLine={runLine}
-                      onRunAll={runAll}
-                      onSource={source}
-                      onHelp={onHelp}
-                    />
-                  </div>
-                  {activeTab !== "script" ? (
-                    <DataView getData={getData} name={activeTab} onExport={exportObject} />
-                  ) : null}
-                </EditorPane>
-              </Panel>
-              <RowHandle />
-              <Panel id="console" defaultSize="38" minSize="12" className="min-h-0">
-                <ConsolePane
-                  entries={entries}
-                  running={running}
-                  preparing={preparing}
-                  label={language.label}
-                  banner={language.banner}
-                  onRun={(code) => void execute(code)}
-                  onClear={clearConsole}
-                />
-              </Panel>
-            </Group>
-          </Panel>
-
-          <ColHandle />
-
-          <Panel id="right-col" defaultSize="45" minSize="22" className="min-h-0">
-            <Group
-              orientation="vertical"
-              id="sb-right"
-              defaultLayout={right.defaultLayout}
-              onLayoutChanged={right.onLayoutChanged}
-              className="h-full"
-            >
-              <Panel id="variables" defaultSize="50" minSize="12" className="min-h-0">
-                <VariablesPane
-                  variables={variables}
-                  language={language}
-                  onView={openDataView}
-                  onExport={exportObject}
-                  onExportWorkspace={exportWorkspace}
-                  onUpload={() => fileInputRef.current?.click()}
-                  onRestart={restart}
-                />
-              </Panel>
-              <RowHandle />
-              <Panel id="plots" defaultSize="50" minSize="12" className="min-h-0">
-                <PlotsHelpPane
-                  tab={rightLowerTab}
-                  onTab={setRightLowerTab}
-                  help={helpTarget}
-                  helpDoc={helpDoc}
-                  plots={plots}
-                  index={plotIndex}
-                  onIndex={setPlotIndex}
-                  onDelete={deletePlot}
-                  onClear={clearPlots}
-                />
-              </Panel>
-            </Group>
-          </Panel>
-        </Group>
-      </div>
-
-      {props.chatOpen ? (
-        <div className="flex w-[360px] min-w-[300px] max-w-[42%] shrink-0 p-2 pl-0">
-          <SandboxChat
-            models={props.models}
-            defaultModelId={props.defaultModelId}
-            getContext={getContext}
-            onClose={props.onToggleChat}
-          />
+      {props.stacked ? (
+        // One column at narrow widths and high zoom: each pane gets a fixed,
+        // readable height and the page scrolls vertically only (#15).
+        <div className="flex flex-col gap-2 p-2">
+          <div className="h-[max(18rem,min(36rem,75vh))]">{editorPane}</div>
+          <div className="h-[max(16rem,min(28rem,60vh))]">{consolePane}</div>
+          <div className="h-[max(14rem,min(24rem,50vh))]">{variablesPane}</div>
+          <div className="h-[max(16rem,min(28rem,60vh))]">{plotsPane}</div>
+          {chat ? <div className="flex h-[max(20rem,min(36rem,75vh))]">{chat}</div> : null}
         </div>
-      ) : null}
-      </div>
-    </div>
+      ) : (
+        <div className="flex min-h-0 flex-1">
+          <div className="min-h-0 flex-1 p-2">
+            <Group
+              orientation="horizontal"
+              id="sb-columns"
+              defaultLayout={columns.defaultLayout}
+              onLayoutChanged={columns.onLayoutChanged}
+              className="h-full"
+            >
+              <Panel id="left-col" defaultSize="55" minSize="30" className="min-h-0">
+                <Group
+                  orientation="vertical"
+                  id="sb-left"
+                  defaultLayout={left.defaultLayout}
+                  onLayoutChanged={left.onLayoutChanged}
+                  className="h-full"
+                >
+                  <Panel id="editor" defaultSize="62" minSize="20" className="min-h-0">
+                    {editorPane}
+                  </Panel>
+                  <RowHandle label="Resize Script and Console" />
+                  <Panel id="console" defaultSize="38" minSize="12" className="min-h-0">
+                    {consolePane}
+                  </Panel>
+                </Group>
+              </Panel>
+
+              <ColHandle label="Resize the left and right columns" />
+
+              <Panel id="right-col" defaultSize="45" minSize="22" className="min-h-0">
+                <Group
+                  orientation="vertical"
+                  id="sb-right"
+                  defaultLayout={right.defaultLayout}
+                  onLayoutChanged={right.onLayoutChanged}
+                  className="h-full"
+                >
+                  <Panel id="variables" defaultSize="50" minSize="12" className="min-h-0">
+                    {variablesPane}
+                  </Panel>
+                  <RowHandle label={`Resize ${tablesTitle} and Plots`} />
+                  <Panel id="plots" defaultSize="50" minSize="12" className="min-h-0">
+                    {plotsPane}
+                  </Panel>
+                </Group>
+              </Panel>
+            </Group>
+          </div>
+
+          {chat ? (
+            <div className="flex w-[360px] min-w-[300px] max-w-[42%] shrink-0 p-2 pl-0">
+              {chat}
+            </div>
+          ) : null}
+        </div>
+      )}
+    </>
   );
 }
 
@@ -989,19 +1066,38 @@ function Toolbar(props: {
   chatOpen: boolean;
   onToggleChat: () => void;
 }) {
+  const radioIds = RUNNABLE_LANGUAGES.map((l) => `sb-lang-${l.id}`);
+  const checked = Math.max(
+    0,
+    RUNNABLE_LANGUAGES.findIndex((l) => l.id === props.languageId),
+  );
   return (
     <div className="flex flex-wrap items-center gap-3 border-b border-[var(--sb-border)] bg-[var(--sb-header)] px-3 py-2">
       <h1 className="text-lg font-bold">Coding Studio</h1>
 
-      <div role="radiogroup" aria-label="Language" className="flex gap-1">
-        {RUNNABLE_LANGUAGES.map((l) => {
+      {/* APG radio group (#18): only the checked radio is a tab stop, arrows
+          move and select, Home/End jump to the ends. Focus stays here; the
+          workspace below re-keys on the new language without touching it. */}
+      <div
+        role="radiogroup"
+        aria-label="Language"
+        className="flex gap-1"
+        onKeyDown={(e) =>
+          rovingKeyDown(e, radioIds, checked, (i) =>
+            props.onLanguage(RUNNABLE_LANGUAGES[i].id),
+          )
+        }
+      >
+        {RUNNABLE_LANGUAGES.map((l, i) => {
           const active = l.id === props.languageId;
           return (
             <button
               key={l.id}
+              id={radioIds[i]}
               type="button"
               role="radio"
               aria-checked={active}
+              tabIndex={active ? 0 : -1}
               onClick={() => props.onLanguage(l.id)}
               className={`rounded-card px-3 py-1 text-sm font-bold ${active ? "bg-[var(--sb-accent)] text-white" : "border border-[var(--sb-border)] bg-[var(--sb-panel)] text-[var(--sb-text)] hover:border-[var(--sb-accent)]"}`}
             >
@@ -1014,7 +1110,7 @@ function Toolbar(props: {
       {/* Global controls only: the assistant panel, a keyboard-shortcuts
           reference, and appearance. Everything that acts on the script or the
           session lives in the pane it affects (editor, environment, console). */}
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={props.onToggleChat}
@@ -1065,49 +1161,72 @@ function EditorPane(props: {
   onToggleCompletions: () => void;
   children: React.ReactNode;
 }) {
-  const tabClass = (active: boolean) =>
-    `flex items-center gap-1 border-r border-[var(--sb-border)] px-3 py-1 text-xs font-bold ${active ? "bg-[var(--sb-panel)] text-[var(--sb-text)]" : "text-[var(--sb-muted)] hover:text-[var(--sb-text)]"}`;
+  // APG tabs (#20): the tablist holds only tabs, the selected tab is the one
+  // tab stop, arrows and Home/End move and select. A close button cannot live
+  // inside a tablist, so the active data tab's close button sits just after
+  // it; Delete on a data tab closes it too.
+  const base = useId();
+  const tabs = ["script", ...props.dataTabs];
+  const tabIds = tabs.map((_, i) => `${base}-tab-${i}`);
+  const panelId = `${base}-panel`;
+  const current = Math.max(0, tabs.indexOf(props.activeTab));
+  const closeTab = (name: string) => {
+    props.onCloseTab(name);
+    // The closed tab's controls vanish; land on the script tab, not the body.
+    document.getElementById(tabIds[0])?.focus();
+  };
+  const tabClass = (active: boolean, mono: boolean) =>
+    `border-r border-[var(--sb-border)] px-3 py-1 text-xs font-bold ${mono ? "font-mono" : ""} ${active ? "bg-[var(--sb-panel)] text-[var(--sb-text)]" : "text-[var(--sb-muted)] hover:text-[var(--sb-text)]"}`;
 
   return (
-    <section className="flex h-full flex-col overflow-hidden rounded-card border border-[var(--sb-border)] bg-[var(--sb-panel)]">
-      <div
-        role="tablist"
-        aria-label="Editor tabs"
-        className="flex flex-wrap items-stretch border-b border-[var(--sb-border)] bg-[var(--sb-header)]"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={props.activeTab === "script"}
-          onClick={() => props.onSelectTab("script")}
-          className={tabClass(props.activeTab === "script")}
+    <section
+      aria-labelledby={tabIds[0]}
+      className="flex h-full flex-col overflow-hidden rounded-card border border-[var(--sb-border)] bg-[var(--sb-panel)]"
+    >
+      <div className="flex flex-wrap items-stretch border-b border-[var(--sb-border)] bg-[var(--sb-header)]">
+        <div
+          role="tablist"
+          aria-label="Editor tabs"
+          className="flex flex-wrap items-stretch"
+          onKeyDown={(e) => {
+            if (rovingKeyDown(e, tabIds, current, (i) => props.onSelectTab(tabs[i]))) return;
+            if (e.key === "Delete" && current > 0) {
+              e.preventDefault();
+              closeTab(tabs[current]);
+            }
+          }}
         >
-          {props.scriptTitle}
-        </button>
-        {props.dataTabs.map((name) => {
-          const active = props.activeTab === name;
-          return (
-            <span key={name} className={tabClass(active)}>
+          {tabs.map((name, i) => {
+            const active = i === current;
+            return (
               <button
+                key={name}
+                id={tabIds[i]}
                 type="button"
                 role="tab"
                 aria-selected={active}
+                aria-controls={active ? panelId : undefined}
+                tabIndex={active ? 0 : -1}
+                title={i > 0 ? "Press Delete to close this tab" : undefined}
                 onClick={() => props.onSelectTab(name)}
-                className="font-mono"
+                className={tabClass(active, i > 0)}
               >
-                {name}
+                {i === 0 ? props.scriptTitle : name}
               </button>
-              <button
-                type="button"
-                aria-label={`Close ${name}`}
-                onClick={() => props.onCloseTab(name)}
-                className="rounded px-1 text-[var(--sb-muted)] hover:text-[var(--sb-accent)]"
-              >
-                &times;
-              </button>
-            </span>
-          );
-        })}
+            );
+          })}
+        </div>
+        {current > 0 ? (
+          <button
+            type="button"
+            aria-label={`Close ${tabs[current]}`}
+            title={`Close ${tabs[current]}`}
+            onClick={() => closeTab(tabs[current])}
+            className="rounded px-2 text-[var(--sb-muted)] hover:text-[var(--sb-accent-text)]"
+          >
+            &times;
+          </button>
+        ) : null}
       </div>
       {/* Source toolbar: the actions that act on the script, next to the script
           itself (RStudio keeps Run/Source in the editor, not a global bar). Shown
@@ -1123,7 +1242,14 @@ function EditorPane(props: {
           onToggleCompletions={props.onToggleCompletions}
         />
       ) : null}
-      <div className="min-h-0 flex-1 overflow-hidden">{props.children}</div>
+      <div
+        id={panelId}
+        role="tabpanel"
+        aria-labelledby={tabIds[current]}
+        className="min-h-0 flex-1 overflow-hidden"
+      >
+        {props.children}
+      </div>
     </section>
   );
 }
@@ -1144,7 +1270,7 @@ function EditorToolbar(props: {
       ? "Cmd"
       : "Ctrl";
   const iconBtn =
-    "rounded border border-[var(--sb-border)] p-1 text-[var(--sb-muted)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent)]";
+    "rounded border border-[var(--sb-border)] p-1 text-[var(--sb-muted)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent-text)]";
   return (
     <div className="flex flex-wrap items-center gap-1.5 border-b border-[var(--sb-border)] bg-[var(--sb-header)] px-2 py-1">
       <button
@@ -1179,19 +1305,21 @@ function EditorToolbar(props: {
         </button>
         <button
           type="button"
-          onClick={props.onSource}
-          disabled={props.running}
+          // aria-disabled, not disabled: a disabled button drops keyboard
+          // focus to the page body mid-run. execute() ignores clicks while busy.
+          onClick={props.running ? undefined : props.onSource}
+          aria-disabled={props.running || undefined}
           title={`Source the whole script silently: updates the environment without printing to the console (${mod}+Shift+S).`}
-          className="rounded border border-[var(--sb-border)] bg-[var(--sb-panel)] px-2.5 py-0.5 text-xs font-bold hover:border-[var(--sb-accent)] disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded border border-[var(--sb-border)] bg-[var(--sb-panel)] px-2.5 py-0.5 text-xs font-bold hover:border-[var(--sb-accent)] aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
         >
           Source
         </button>
         <button
           type="button"
-          onClick={props.onRun}
-          disabled={props.running}
+          onClick={props.running ? undefined : props.onRun}
+          aria-disabled={props.running || undefined}
           title={`Run the whole script, output shown in the console (${mod}+Shift+Enter). In the editor, ${mod}+Enter runs the current statement.`}
-          className="rounded bg-[var(--sb-accent)] px-3 py-0.5 text-xs font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded bg-[var(--sb-accent)] px-3 py-0.5 text-xs font-bold text-white aria-disabled:cursor-not-allowed aria-disabled:opacity-60"
         >
           {props.running ? "Running..." : "Run"}
         </button>
@@ -1210,19 +1338,32 @@ function Pane({
   actions?: React.ReactNode;
   children: React.ReactNode;
 }) {
+  const headingId = useId();
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const overflows = useOverflows(bodyRef);
   return (
-    <section className="flex h-full flex-col overflow-hidden rounded-card border border-[var(--sb-border)] bg-[var(--sb-panel)]">
-      <header className="flex items-center justify-between border-b border-[var(--sb-border)] bg-[var(--sb-header)] px-3 py-1.5">
-        <h2 className="text-xs font-bold uppercase tracking-wide text-[var(--sb-muted)]">
+    // A region named by its heading, so screen reader users can jump between
+    // panes (#11).
+    <section
+      aria-labelledby={headingId}
+      className="flex h-full flex-col overflow-hidden rounded-card border border-[var(--sb-border)] bg-[var(--sb-panel)]"
+    >
+      <header className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-[var(--sb-border)] bg-[var(--sb-header)] px-3 py-1.5">
+        <h2
+          id={headingId}
+          className="text-xs font-bold uppercase tracking-wide text-[var(--sb-muted)]"
+        >
           {title}
         </h2>
         {actions}
       </header>
-      {/* Focusable so a keyboard user can scroll a pane whose content overflows
-          (WCAG 2.1.1); the heading names it. */}
+      {/* A tab stop only while the content overflows, so a keyboard user can
+          scroll it without an empty stop otherwise (WCAG 2.1.1, #19). */}
       <div
-        tabIndex={0}
-        aria-label={title}
+        ref={bodyRef}
+        tabIndex={overflows ? 0 : undefined}
+        role={overflows ? "group" : undefined}
+        aria-labelledby={overflows ? headingId : undefined}
         className="min-h-0 flex-1 overflow-auto"
       >
         {children}
@@ -1250,6 +1391,9 @@ function ConsolePane({
   onClear: () => void;
 }) {
   const endRef = useRef<HTMLDivElement | null>(null);
+  const logRef = useRef<HTMLDivElement | null>(null);
+  const overflows = useOverflows(logRef);
+  const headingId = useId();
   const [input, setInput] = useState("");
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
@@ -1263,16 +1407,22 @@ function ConsolePane({
   }
 
   return (
-    <section className="flex h-full flex-col overflow-hidden rounded-card border border-[var(--sb-border)] bg-[var(--sb-panel)]">
-      <header className="flex items-center justify-between border-b border-[var(--sb-border)] bg-[var(--sb-header)] px-3 py-1.5">
-        <h2 className="text-xs font-bold uppercase tracking-wide text-[var(--sb-muted)]">
+    <section
+      aria-labelledby={headingId}
+      className="flex h-full flex-col overflow-hidden rounded-card border border-[var(--sb-border)] bg-[var(--sb-panel)]"
+    >
+      <header className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 border-b border-[var(--sb-border)] bg-[var(--sb-header)] px-3 py-1.5">
+        <h2
+          id={headingId}
+          className="text-xs font-bold uppercase tracking-wide text-[var(--sb-muted)]"
+        >
           Console
         </h2>
         <div className="flex items-center gap-2">
           {running ? (
             <span
               role="status"
-              className="flex items-center gap-1.5 text-xs font-bold text-[var(--sb-accent)]"
+              className="flex items-center gap-1.5 text-xs font-bold text-[var(--sb-accent-text)]"
             >
               <Spinner />
               Running
@@ -1291,16 +1441,20 @@ function ConsolePane({
             onClick={onClear}
             aria-label="Clear console"
             title="Clear the console output. Your variables, plots, database, and session stay as they are."
-            className="rounded border border-[var(--sb-border)] px-1.5 py-0.5 text-xs font-bold text-[var(--sb-muted)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent)]"
+            className="rounded border border-[var(--sb-border)] px-1.5 py-0.5 text-xs font-bold text-[var(--sb-muted)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent-text)]"
           >
             Clear
           </button>
         </div>
       </header>
 
+      {/* A log (#12): new runs are appended and read out politely. A tab
+          stop only while it overflows (#19). */}
       <div
-        tabIndex={0}
+        ref={logRef}
+        role="log"
         aria-label="Console output"
+        tabIndex={overflows ? 0 : undefined}
         className="min-h-0 flex-1 overflow-auto p-3 font-mono text-sm"
       >
         {/* The version header stays put like a real REPL banner, surviving
@@ -1335,15 +1489,28 @@ function ConsolePane({
                   .join("\n")}
               </pre>
             )}
+            {/* Each run's result sits under its own heading, so screen
+                reader users can jump from output to output (#22). h3: the
+                pane headings are h2. Visually the console stays as it was. */}
             {!entry.outcome.ok ? (
-              <pre
-                role="alert"
-                className="mt-1 whitespace-pre-wrap text-[var(--sb-accent)]"
-              >
-                {entry.outcome.error}
-              </pre>
+              <>
+                <h3 className="sr-only">
+                  {entry.run ? `Error in run ${entry.run}` : "Error"}
+                </h3>
+                <pre
+                  role="alert"
+                  className="mt-1 whitespace-pre-wrap text-[var(--sb-accent-text)]"
+                >
+                  {entry.outcome.error}
+                </pre>
+              </>
             ) : entry.silent ? null : (
-              <ResultBody outcome={entry.outcome} />
+              <>
+                <h3 className="sr-only">
+                  {entry.run ? `Output of run ${entry.run}` : "Output"}
+                </h3>
+                <ResultBody outcome={entry.outcome} run={entry.run} />
+              </>
             )}
           </div>
         ))}
@@ -1358,7 +1525,7 @@ function ConsolePane({
         }}
         className="flex items-center gap-2 border-t border-[var(--sb-border)] px-3 py-1.5 font-mono text-sm"
       >
-        <span aria-hidden="true" className="text-[var(--sb-accent)]">
+        <span aria-hidden="true" className="text-[var(--sb-accent-text)]">
           &gt;
         </span>
         <label htmlFor="sb-console-input" className="sr-only">
@@ -1368,24 +1535,30 @@ function ConsolePane({
           id="sb-console-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          disabled={running}
+          // readOnly, not disabled, while a run is going: disabling the
+          // focused input would drop keyboard focus to the page body.
+          readOnly={running}
+          aria-busy={running || undefined}
           spellCheck={false}
           autoComplete="off"
           placeholder={`Try ${label} here`}
-          className="min-w-0 flex-1 bg-transparent text-[var(--sb-text)] placeholder:text-[var(--sb-muted)] focus:outline-none disabled:opacity-50"
+          className="min-w-0 flex-1 bg-transparent text-[var(--sb-text)] placeholder:text-[var(--sb-muted)]"
         />
       </form>
     </section>
   );
 }
 
-function ResultBody({ outcome }: { outcome: RunOutcome }) {
+function ResultBody({ outcome, run }: { outcome: RunOutcome; run?: number }) {
   const result = outcome.result;
   if (!result) return null;
   return (
     <div className="mt-1">
       {result.table ? (
-        <div className="overflow-x-auto">
+        <ScrollRegion
+          label={run ? `Result table of run ${run}` : "Result table"}
+          className="overflow-x-auto"
+        >
           <table className="border-collapse text-xs">
             <thead>
               <tr>
@@ -1416,7 +1589,7 @@ function ResultBody({ outcome }: { outcome: RunOutcome }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollRegion>
       ) : null}
       {result.text ? (
         <pre className="whitespace-pre-wrap text-[var(--sb-text)]">
@@ -1474,12 +1647,12 @@ function VariablesPane({
     <Pane
       title={title}
       actions={
-        <span className="flex items-center gap-1.5">
+        <span className="flex flex-wrap items-center gap-1.5">
           <button
             type="button"
             onClick={onUpload}
             title="Upload a data file (CSV, JSON, and more) into your session"
-            className="rounded border border-[var(--sb-border)] px-2 py-0.5 text-xs font-bold text-[var(--sb-text)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent)]"
+            className="rounded border border-[var(--sb-border)] px-2 py-0.5 text-xs font-bold text-[var(--sb-text)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent-text)]"
           >
             Upload Dataset
           </button>
@@ -1488,7 +1661,7 @@ function VariablesPane({
               type="button"
               onClick={() => onExportWorkspace(selectedExisting)}
               title={`Download only the ${selectedExisting.length} selected item${selectedExisting.length === 1 ? "" : "s"} as one file`}
-              className="rounded border border-[var(--sb-accent)] px-2 py-0.5 text-xs font-bold text-[var(--sb-accent)] hover:bg-[var(--sb-accent)] hover:text-white"
+              className="rounded border border-[var(--sb-accent)] px-2 py-0.5 text-xs font-bold text-[var(--sb-accent-text)] hover:bg-[var(--sb-accent)] hover:text-white"
             >
               Export selected ({selectedExisting.length})
             </button>
@@ -1498,7 +1671,7 @@ function VariablesPane({
             onClick={() => onExportWorkspace()}
             aria-label={wsLabel}
             title={wsTitle}
-            className="rounded border border-[var(--sb-border)] px-2 py-0.5 text-xs font-bold text-[var(--sb-text)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent)]"
+            className="rounded border border-[var(--sb-border)] px-2 py-0.5 text-xs font-bold text-[var(--sb-text)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent-text)]"
           >
             {wsLabel}
           </button>
@@ -1506,7 +1679,7 @@ function VariablesPane({
             type="button"
             onClick={onRestart}
             title={`Restart the session: clears all ${cleared} and starts a fresh runtime`}
-            className="rounded border border-[var(--sb-border)] px-2 py-0.5 text-xs font-bold text-[var(--sb-muted)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent)]"
+            className="rounded border border-[var(--sb-border)] px-2 py-0.5 text-xs font-bold text-[var(--sb-muted)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent-text)]"
           >
             Restart
           </button>
@@ -1562,7 +1735,7 @@ function VariablesPane({
                             onClick={() => onView(v.name)}
                             aria-label={`View ${v.name} in a table`}
                             title={`View ${v.name}`}
-                            className="rounded border border-[var(--sb-border)] px-1 text-[var(--sb-muted)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent)]"
+                            className="rounded border border-[var(--sb-border)] px-1 text-[var(--sb-muted)] hover:border-[var(--sb-accent)] hover:text-[var(--sb-accent-text)]"
                           >
                             <TableIcon />
                           </button>
@@ -1671,6 +1844,7 @@ function PlotsHelpPane({
   help,
   helpDoc,
   plots,
+  language,
   index,
   onIndex,
   onDelete,
@@ -1680,7 +1854,8 @@ function PlotsHelpPane({
   onTab: (tab: "plots" | "help") => void;
   help: { symbol: string; entry: DocEntry; req: HelpRequest } | null;
   helpDoc: { status: "idle" | "loading" | "loaded" | "none"; text?: string; signature?: string; truncated?: boolean };
-  plots: string[];
+  plots: PlotEntry[];
+  language: string;
   index: number;
   onIndex: (i: number) => void;
   onDelete: (index: number) => void;
@@ -1688,98 +1863,175 @@ function PlotsHelpPane({
 }) {
   const has = plots.length > 0;
   const safeIndex = Math.min(index, plots.length - 1);
+  const plot = has ? plots[safeIndex] : null;
   const btn =
-    "rounded border border-[var(--sb-border)] px-1.5 py-0.5 font-bold hover:border-[var(--sb-accent)] disabled:opacity-40";
+    "rounded border border-[var(--sb-border)] px-1.5 py-0.5 font-bold hover:border-[var(--sb-accent)] aria-disabled:opacity-40";
   const tabClass = (active: boolean) =>
     `px-3 py-1.5 text-xs font-bold uppercase tracking-wide ${active ? "text-[var(--sb-text)]" : "text-[var(--sb-muted)] hover:text-[var(--sb-text)]"}`;
 
+  // APG tabs, as in the editor (#20): one tab stop, arrows move and select.
+  const base = useId();
+  const tabs: ("plots" | "help")[] = ["plots", "help"];
+  const tabIds = [`${base}-plots`, `${base}-help`];
+  const panelId = `${base}-panel`;
+  const current = tabs.indexOf(tab);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const overflows = useOverflows(panelRef);
+
+  // Deleting the last plot, or clearing them all, removes the button that had
+  // focus; put focus on the Plots tab rather than losing it to the page.
+  const focusPlotsTab = () => document.getElementById(tabIds[0])?.focus();
+
   function exportCurrent() {
+    if (!plot) return;
     const a = document.createElement("a");
-    a.href = plots[safeIndex];
+    a.href = plot.url;
     a.download = `plot-${safeIndex + 1}.png`;
     a.click();
   }
 
   return (
-    <section className="flex h-full flex-col overflow-hidden rounded-card border border-[var(--sb-border)] bg-[var(--sb-panel)]">
-      <header className="flex items-center justify-between border-b border-[var(--sb-border)] bg-[var(--sb-header)]">
-        <div role="tablist" aria-label="Plots and Help" className="flex items-stretch">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={tab === "plots"}
-            onClick={() => onTab("plots")}
-            className={tabClass(tab === "plots")}
-          >
-            Plots
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={tab === "help"}
-            onClick={() => onTab("help")}
-            className={tabClass(tab === "help")}
-          >
-            Help
-          </button>
+    <section
+      aria-labelledby={tabIds[current]}
+      className="flex h-full flex-col overflow-hidden rounded-card border border-[var(--sb-border)] bg-[var(--sb-panel)]"
+    >
+      <header className="flex flex-wrap items-center justify-between gap-y-1 border-b border-[var(--sb-border)] bg-[var(--sb-header)]">
+        <div
+          role="tablist"
+          aria-label="Plots and Help"
+          className="flex items-stretch"
+          onKeyDown={(e) => rovingKeyDown(e, tabIds, current, (i) => onTab(tabs[i]))}
+        >
+          {tabs.map((t, i) => (
+            <button
+              key={t}
+              id={tabIds[i]}
+              type="button"
+              role="tab"
+              aria-selected={tab === t}
+              aria-controls={tab === t ? panelId : undefined}
+              tabIndex={tab === t ? 0 : -1}
+              onClick={() => onTab(t)}
+              className={tabClass(tab === t)}
+            >
+              {t === "plots" ? "Plots" : "Help"}
+            </button>
+          ))}
         </div>
         {tab === "plots" && has ? (
-          <span className="flex items-center gap-1.5 px-2 text-xs text-[var(--sb-muted)]">
+          <span className="flex flex-wrap items-center gap-1.5 px-2 text-xs text-[var(--sb-muted)]">
+            {/* aria-disabled, not disabled: reaching the first or last plot
+                must not drop focus from the button just pressed. */}
             <button
               type="button"
-              onClick={() => onIndex(Math.max(0, safeIndex - 1))}
-              disabled={safeIndex <= 0}
+              onClick={() => {
+                if (safeIndex > 0) onIndex(safeIndex - 1);
+              }}
+              aria-disabled={safeIndex <= 0 || undefined}
               className={btn}
               aria-label="Previous plot"
             >
               &#8249;
             </button>
-            <span className="tabular-nums">
+            <span className="tabular-nums" aria-hidden="true">
               {safeIndex + 1} / {plots.length}
+            </span>
+            <span className="sr-only">
+              Plot {safeIndex + 1} of {plots.length}
             </span>
             <button
               type="button"
-              onClick={() => onIndex(Math.min(plots.length - 1, safeIndex + 1))}
-              disabled={safeIndex >= plots.length - 1}
+              onClick={() => {
+                if (safeIndex < plots.length - 1) onIndex(safeIndex + 1);
+              }}
+              aria-disabled={safeIndex >= plots.length - 1 || undefined}
               className={btn}
               aria-label="Next plot"
             >
               &#8250;
             </button>
-            <button type="button" onClick={exportCurrent} className={btn}>
+            <button
+              type="button"
+              onClick={exportCurrent}
+              aria-label="Export plot as PNG"
+              className={btn}
+            >
               Export
             </button>
-            <button type="button" onClick={() => onDelete(safeIndex)} className={btn}>
+            <button
+              type="button"
+              onClick={() => {
+                if (plots.length === 1) focusPlotsTab();
+                onDelete(safeIndex);
+              }}
+              aria-label="Delete this plot"
+              className={btn}
+            >
               Delete
             </button>
-            <button type="button" onClick={onClear} className={btn}>
+            <button
+              type="button"
+              onClick={() => {
+                focusPlotsTab();
+                onClear();
+              }}
+              aria-label="Clear all plots"
+              className={btn}
+            >
               Clear all
             </button>
           </span>
         ) : null}
       </header>
 
+      {/* Named by the selected tab. A tab stop only while its content
+          overflows; otherwise the tab itself is the stop (#19). */}
       <div
-        tabIndex={0}
-        aria-label={tab === "plots" ? "Plots" : "Help"}
+        ref={panelRef}
+        id={panelId}
         role="tabpanel"
+        aria-labelledby={tabIds[current]}
+        tabIndex={overflows ? 0 : undefined}
         className="min-h-0 flex-1 overflow-auto"
       >
         {tab === "plots" ? (
-          <div className="flex h-full items-center justify-center p-2">
-            {has ? (
-              // eslint-disable-next-line @next/next/no-img-element
+          plot ? (
+            <figure className="flex h-full flex-col items-center justify-center gap-2 p-2">
+              {/* A runtime-generated data URL; next/image cannot optimise it. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={plots[safeIndex]}
-                alt={`Plot ${safeIndex + 1} of ${plots.length}`}
-                className="max-h-full max-w-full rounded bg-white"
+                src={plot.url}
+                // Described from the figure and the code (#23).
+                alt={plotAltText({
+                  language,
+                  info: plot.info,
+                  index: safeIndex,
+                  total: plots.length,
+                })}
+                className="min-h-0 max-w-full flex-1 rounded bg-white object-contain"
               />
-            ) : (
+              {/* A text alternative listing what is known about the chart. */}
+              <details className="w-full max-w-md text-xs text-[var(--sb-text)]">
+                <summary className="cursor-pointer font-bold text-[var(--sb-muted)]">
+                  Describe this plot
+                </summary>
+                <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
+                  {plotDetails(plot.info, language).map((row) => (
+                    <div key={row.label} className="contents">
+                      <dt className="font-bold">{row.label}</dt>
+                      <dd>{row.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </details>
+            </figure>
+          ) : (
+            <div className="flex h-full items-center justify-center p-2">
               <p className="text-sm text-[var(--sb-muted)]">
                 Charts you draw appear here.
               </p>
-            )}
-          </div>
+            </div>
+          )
         ) : (
           <HelpBody help={help} helpDoc={helpDoc} />
         )}
@@ -1847,18 +2099,17 @@ function HelpBody({
 
       {loaded ? (
         <>
-          {/* Labelled and keyboard-scrollable, so a keyboard user can read a long
-              doc (WCAG 2.1.1); the runtime produced this text with no network. */}
-          <div
-            role="region"
-            aria-label={`Documentation for ${symbol}`}
-            tabIndex={0}
+          {/* Labelled, and keyboard-scrollable while it overflows, so a
+              keyboard user can read a long doc (WCAG 2.1.1, #19); the runtime
+              produced this text with no network. */}
+          <ScrollRegion
+            label={`Documentation for ${symbol}`}
             className="max-h-[22rem] overflow-auto rounded-card border border-[var(--sb-border)] bg-[var(--sb-header)] p-2"
           >
             <pre className="whitespace-pre-wrap font-mono text-xs text-[var(--sb-text)]">
               {helpDoc.text}
             </pre>
-          </div>
+          </ScrollRegion>
           {helpDoc.truncated ? (
             <p className="text-xs text-[var(--sb-muted)]">
               Showing the first part of the documentation. The full page is one click
@@ -1901,19 +2152,36 @@ function HelpBody({
   );
 }
 
+/*
+ * Pane dividers are full window splitters (#16), not removed from the tab
+ * order: react-resizable-panels already gives each one role="separator",
+ * aria-orientation, aria-valuenow/min/max, aria-controls, and the keyboard
+ * (arrow keys resize by 5%, Home/End go to the limits, F6 jumps to the next
+ * divider). What was missing was a name saying which panes it resizes, and a
+ * visible state on keyboard focus.
+ */
+const handleFocus =
+  "data-[separator=focus]:bg-[var(--sb-accent)] focus-visible:bg-[var(--sb-accent)]";
+
 /** A draggable divider between two side-by-side columns (a thin vertical bar). */
-function ColHandle() {
+function ColHandle({ label }: { label: string }) {
   return (
-    <Separator className="group mx-0.5 flex w-1.5 items-stretch justify-center bg-transparent hover:bg-[var(--sb-accent)]">
+    <Separator
+      aria-label={label}
+      className={`group mx-0.5 flex w-1.5 items-stretch justify-center bg-transparent hover:bg-[var(--sb-accent)] ${handleFocus}`}
+    >
       <div className="w-px bg-[var(--sb-border)] group-hover:bg-transparent" />
     </Separator>
   );
 }
 
 /** A draggable divider between two stacked panes (a thin horizontal bar). */
-function RowHandle() {
+function RowHandle({ label }: { label: string }) {
   return (
-    <Separator className="group my-0.5 flex h-1.5 items-center justify-stretch bg-transparent hover:bg-[var(--sb-accent)]">
+    <Separator
+      aria-label={label}
+      className={`group my-0.5 flex h-1.5 items-center justify-stretch bg-transparent hover:bg-[var(--sb-accent)] ${handleFocus}`}
+    >
       <div className="h-px w-full bg-[var(--sb-border)] group-hover:bg-transparent" />
     </Separator>
   );

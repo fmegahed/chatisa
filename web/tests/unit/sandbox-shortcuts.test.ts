@@ -32,6 +32,10 @@ describe("shortcut list", () => {
     expect(byAction["Documentation for symbol"].keys).toBe(
       "Ctrl+Click or F1",
     );
+    expect(byAction["Read line and column"].keys).toBe("Alt+Shift+L");
+    expect(shortcutGroups(true).flatMap((g) => g.items).find(
+      (s) => s.action === "Read line and column",
+    )?.keys).toBe("Option+Shift+L");
     // Autocomplete is Ctrl on every platform, never Cmd.
     expect(byAction["Autocomplete"].keys).toBe("Ctrl+Space");
     expect(shortcutGroups(true).flatMap((g) => g.items).find(

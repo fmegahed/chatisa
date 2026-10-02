@@ -15,7 +15,9 @@ import {
   type RunResult,
 } from "@/lib/run/manager";
 import type { RunnableLanguage } from "@/lib/run/languages";
+import { describePlot, plotAltText } from "@/lib/run/plot-alt";
 import { CopyButton } from "@/components/chat/CopyButton";
+import { ScrollRegion } from "@/components/a11y/ScrollRegion";
 import { CodeEditor } from "@/components/run/CodeEditor";
 import { loadPythonIndex, loadRIndex } from "@/lib/sandbox/availability";
 import {
@@ -234,6 +236,7 @@ export function RunnableCode(props: {
             onChange={setDraft}
             languageId={props.language.id}
             label={`Editable ${props.language.label} code`}
+            autoFocus
           />
           <p className="mt-1 text-xs text-dark-tan">
             Edit freely, then Run. Your changes run only in your browser. Indent
@@ -243,23 +246,21 @@ export function RunnableCode(props: {
       ) : modified ? (
         // Collapsed after editing: show the edited code, not the original, so
         // the view matches what Run and Copy use.
-        <pre
-          tabIndex={0}
-          role="region"
-          aria-label="Edited code"
+        <ScrollRegion
+          as="pre"
+          label="Edited code"
           className="overflow-x-auto rounded-card border border-medium-tan bg-light-tan p-3 text-sm"
         >
           <code className="font-mono">{draft}</code>
-        </pre>
+        </ScrollRegion>
       ) : (
-        <pre
-          tabIndex={0}
-          role="region"
-          aria-label="Code sample"
+        <ScrollRegion
+          as="pre"
+          label="Code sample"
           className="overflow-x-auto rounded-card border border-medium-tan bg-light-tan p-3 text-sm"
         >
           {props.children}
-        </pre>
+        </ScrollRegion>
       )}
 
       {/* Why there is no Run button. This replaces the button rather than
@@ -303,19 +304,33 @@ export function RunnableCode(props: {
         </p>
       ) : null}
 
-      {outcome ? <RunOutputPanel outcome={outcome} /> : null}
+      {outcome ? (
+        <RunOutputPanel
+          outcome={outcome}
+          language={props.language.id}
+          code={draft}
+        />
+      ) : null}
     </figure>
   );
 }
 
-function RunOutputPanel({ outcome }: { outcome: RunOutcome }) {
+function RunOutputPanel({
+  outcome,
+  language,
+  code,
+}: {
+  outcome: RunOutcome;
+  language: string;
+  code: string;
+}) {
   if (!outcome.ok) {
     return (
       <div
         role="alert"
         className="mt-2 rounded-card border border-miami-red bg-paper p-3"
       >
-        <p className="text-xs font-bold text-miami-red">Error</p>
+        <h3 className="font-body text-xs font-bold text-miami-red">Error</h3>
         <pre className="mt-1 overflow-x-auto whitespace-pre-wrap text-sm text-ink">
           {outcome.error}
         </pre>
@@ -326,7 +341,9 @@ function RunOutputPanel({ outcome }: { outcome: RunOutcome }) {
   const result: RunResult = outcome.result ?? {};
   return (
     <div className="mt-2 rounded-card border border-medium-tan bg-paper p-3">
-      <p className="text-xs font-bold text-dark-tan">Output</p>
+      {/* A real heading so screen reader users can jump past long code to
+          the result (#9). h3: replies sit under the h2 message heading. */}
+      <h3 className="font-body text-xs font-bold text-dark-tan">Output</h3>
 
       {result.table ? <ResultTable table={result.table} /> : null}
 
@@ -346,7 +363,11 @@ function RunOutputPanel({ outcome }: { outcome: RunOutcome }) {
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={result.imageDataUrl}
-          alt="Plot produced by the code"
+          // Described from the figure and the code, not a generic label (#23).
+          alt={plotAltText({
+            language,
+            info: describePlot(code, language, result.plotInfo),
+          })}
           className="mt-2 max-w-full rounded-card border border-medium-tan"
         />
       ) : null}
@@ -366,10 +387,8 @@ function ResultTable({
   table: { columns: string[]; rows: Record<string, unknown>[] };
 }) {
   return (
-    <div
-      tabIndex={0}
-      role="region"
-      aria-label="Query result"
+    <ScrollRegion
+      label="Query result"
       className="mt-1 overflow-x-auto"
     >
       <table className="w-full border-collapse text-sm">
@@ -397,7 +416,7 @@ function ResultTable({
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollRegion>
   );
 }
 

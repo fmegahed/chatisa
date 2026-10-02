@@ -194,7 +194,7 @@ export function ImportDialog(props: {
                       >
                         <span className="font-mono">{m.name}</span>
                         {m.collides ? (
-                          <span className="rounded border border-[var(--sb-border)] px-1.5 text-xs font-bold text-[var(--sb-accent)]">
+                          <span className="rounded border border-[var(--sb-border)] px-1.5 text-xs font-bold text-[var(--sb-accent-text)]">
                             already exists
                           </span>
                         ) : null}
@@ -368,7 +368,7 @@ export function ImportDialog(props: {
               ) : null}
             </h3>
             {preview?.parseError ? (
-              <p className="rounded-card border border-[var(--sb-border)] bg-[var(--sb-panel)] p-2 text-sm text-[var(--sb-accent)]">
+              <p className="rounded-card border border-[var(--sb-border)] bg-[var(--sb-panel)] p-2 text-sm text-[var(--sb-accent-text)]">
                 Could not read the data with these settings. Look at the file
                 above and adjust the options (for example the number of rows to
                 skip, or the separator).
@@ -404,7 +404,7 @@ export function ImportDialog(props: {
           )}
 
           {error ? (
-            <p role="alert" className="text-sm text-[var(--sb-accent)]">
+            <p role="alert" className="text-sm text-[var(--sb-accent-text)]">
               {error}
             </p>
           ) : null}

@@ -1,3 +1,5 @@
+import { caretPositionKeysLabel } from "@/lib/sandbox/editor-keys";
+
 export type Shortcut = {
   /** What the shortcut does, in plain words (no em dashes). */
   action: string;
@@ -53,6 +55,7 @@ export function shortcutGroups(isMac: boolean): ShortcutGroup[] {
       items: [
         { action: "Documentation for symbol", keys: `${mod}+Click or F1` },
         { action: "Autocomplete", keys: "Ctrl+Space" },
+        { action: "Read line and column", keys: caretPositionKeysLabel(isMac) },
       ],
     },
   ];

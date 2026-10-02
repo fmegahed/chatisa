@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { readFileSync } from "node:fs";
+import { auditDom } from "./support/a11y";
 
 /**
  * The Sandbox UI, without running code (executing a runtime loads WASM, which
@@ -1039,10 +1040,16 @@ test.describe("AI Sandbox", () => {
         )
         .toBeGreaterThan(100);
 
-      // The editor does not expand past the visible layout.
+      // The editor does not expand past the visible layout. Below 1024px the
+      // panes stack and the page scrolls vertically (#15), so there the editor
+      // must simply stay within one screen's height.
       const box = await page.locator(".cm-editor").boundingBox();
       const vp = page.viewportSize()!;
-      expect(box!.y + box!.height).toBeLessThanOrEqual(vp.height + 1);
+      if (vp.width >= 1024) {
+        expect(box!.y + box!.height).toBeLessThanOrEqual(vp.height + 1);
+      } else {
+        expect(box!.height).toBeLessThanOrEqual(vp.height);
+      }
 
       // Moving to the end keeps the cursor within the visible viewport.
       await page.keyboard.press("ControlOrMeta+End");
@@ -1544,6 +1551,8 @@ test.describe("AI Sandbox", () => {
     await expect(dialog.getByText("Autocomplete", { exact: true })).toBeVisible();
     // Autocomplete is Ctrl on every platform.
     await expect(dialog.getByText("Ctrl+Space", { exact: true })).toBeVisible();
+    // The caret-position shortcut (#21).
+    await expect(dialog.getByText("Read line and column")).toBeVisible();
 
     // No WCAG A/AA violations with the dialog open.
     const axe = await new AxeBuilder({ page })
@@ -1654,5 +1663,272 @@ test.describe("AI Sandbox", () => {
 
     expect(await editorLineText(page, 0)).toContain("# a = 1");
     expect(await editorLineText(page, 1)).toContain("# b = 2");
+  });
+});
+
+/**
+ * Coding Studio accessibility (2026-09 audit): keyboard patterns for the
+ * language radios, tabs and pane dividers, no empty tab stops, reflow at
+ * 320px, per-run output headings and real plot descriptions.
+ */
+test.describe("Coding Studio accessibility", () => {
+  test("language radios: arrows move and select, and focus stays on the radio (#17, #18)", async ({
+    page,
+  }) => {
+    await page.goto("/coding-studio");
+    const group = page.getByRole("radiogroup", { name: "Language" });
+    await page.getByRole("radio", { name: "Python" }).click();
+    await expect(page.locator(".cm-content")).toBeVisible();
+
+    // Roving tabindex: only the checked radio is a tab stop.
+    const stops = group.locator('[role="radio"][tabindex="0"]');
+    await expect(stops).toHaveCount(1);
+    await expect(stops).toHaveAccessibleName("Python");
+
+    const python = page.getByRole("radio", { name: "Python" });
+    const r = page.getByRole("radio", { name: "R", exact: true });
+    const sql = page.getByRole("radio", { name: "SQL" });
+    await python.focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(r).toHaveAttribute("aria-checked", "true");
+    await expect(r).toBeFocused();
+    // The new workspace and its editor mount without taking focus away.
+    await expect(page.getByRole("textbox", { name: /R code/i })).toBeVisible();
+    await expect(page.locator(".cm-content")).toBeVisible();
+    await page.waitForTimeout(500);
+    await expect(r).toBeFocused();
+    await expect(page.locator("#sb-console-input")).not.toBeFocused();
+
+    // Wraps from the last radio to the first; Home/End jump; Up goes back.
+    await page.keyboard.press("ArrowDown");
+    await expect(sql).toBeFocused();
+    await expect(sql).toHaveAttribute("aria-checked", "true");
+    await page.keyboard.press("End");
+    await expect(r).toBeFocused();
+    await page.keyboard.press("Home");
+    await expect(sql).toBeFocused();
+    await page.keyboard.press("ArrowUp");
+    await expect(r).toBeFocused();
+    await expect(r).toHaveAttribute("aria-checked", "true");
+  });
+
+  test("the workspace has no empty tab stops or labels on generic elements (#8, #11, #12, #19)", async ({
+    page,
+  }) => {
+    await page.goto("/coding-studio");
+    await expect(page.locator(".cm-content")).toBeVisible();
+
+    let dom = await auditDom(page);
+    expect(dom.nonInteractiveTabStops, "non-interactive tab stops").toEqual([]);
+    expect(dom.roleNameOnGeneric, "aria-label on a generic element").toEqual([]);
+    expect(dom.placeholderContrast, "placeholder contrast").toEqual([]);
+
+    // The console is a named log; the panes are regions named by their headings.
+    await expect(page.getByRole("log", { name: "Console output" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Console" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Environment" })).toBeVisible();
+
+    // The Help tab's empty-state hint is text, not a tab stop.
+    await page.getByRole("tab", { name: "Help" }).click();
+    dom = await auditDom(page);
+    expect(dom.nonInteractiveTabStops, "with Help open").toEqual([]);
+
+    // Dark skin with the assistant open: placeholders still meet 4.5:1.
+    await page.getByRole("button", { name: "Dark theme" }).click();
+    await page.getByRole("button", { name: "Ask AI" }).click();
+    await expect(page.getByRole("textbox", { name: "Your message" })).toBeVisible();
+    dom = await auditDom(page);
+    expect(dom.placeholderContrast, "dark placeholders").toEqual([]);
+    expect(dom.nonInteractiveTabStops, "with the assistant open").toEqual([]);
+    expect(dom.roleNameOnGeneric).toEqual([]);
+  });
+
+  test("editor and plot tabs follow the tabs pattern: one stop, arrows move (#20)", async ({
+    page,
+  }) => {
+    await page.goto("/coding-studio");
+    await expect(page.locator(".cm-content")).toBeVisible();
+
+    const editorTabs = page.getByRole("tablist", { name: "Editor tabs" });
+    // Only tabs inside the tablist, and the selected one is the single stop.
+    expect(
+      await editorTabs.evaluate((el) =>
+        Array.from(el.children).every((c) => c.getAttribute("role") === "tab"),
+      ),
+    ).toBe(true);
+    const scriptTab = editorTabs.getByRole("tab");
+    await expect(scriptTab).toHaveCount(1);
+    await expect(scriptTab).toHaveAttribute("tabindex", "0");
+    await expect(scriptTab).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tabpanel", { name: /script/ })).toBeVisible();
+
+    // Tab from the script tab leaves the tablist (no extra empty stop).
+    await scriptTab.focus();
+    await page.keyboard.press("Tab");
+    expect(
+      await page.evaluate(
+        () =>
+          document.activeElement
+            ?.closest('[role="tablist"]')
+            ?.getAttribute("aria-label") ?? null,
+      ),
+    ).not.toBe("Editor tabs");
+
+    // Plots and Help: arrows move focus and selection.
+    const plots = page.getByRole("tab", { name: "Plots" });
+    const help = page.getByRole("tab", { name: "Help" });
+    await expect(help).toHaveAttribute("tabindex", "-1");
+    await plots.focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(help).toBeFocused();
+    await expect(help).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("tabpanel", { name: "Help" })).toBeVisible();
+    await page.keyboard.press("Home");
+    await expect(plots).toBeFocused();
+    await expect(page.getByRole("tabpanel", { name: "Plots" })).toBeVisible();
+  });
+
+  test("pane dividers are named window splitters that resize from the keyboard (#16)", async ({
+    page,
+  }) => {
+    await page.goto("/coding-studio");
+    await expect(page.locator(".cm-content")).toBeVisible();
+    if (page.viewportSize()!.width < 1024) {
+      // Stacked layout (#15): there are no dividers at all.
+      await expect(page.getByRole("separator")).toHaveCount(0);
+      return;
+    }
+
+    const separators = page.getByRole("separator");
+    await expect(separators).toHaveCount(3);
+    for (const sep of await separators.all()) {
+      await expect(sep).toHaveAttribute("aria-label", /^Resize /);
+      await expect(sep).toHaveAttribute("aria-valuenow", /\d/);
+    }
+
+    const rows = page.getByRole("separator", { name: "Resize Script and Console" });
+    await expect(rows).toHaveAttribute("aria-orientation", "horizontal");
+    const before = Number(await rows.getAttribute("aria-valuenow"));
+    await rows.focus();
+    await page.keyboard.press("ArrowDown");
+    await expect
+      .poll(async () => Number(await rows.getAttribute("aria-valuenow")))
+      .toBeGreaterThan(before);
+
+    const cols = page.getByRole("separator", {
+      name: "Resize the left and right columns",
+    });
+    await expect(cols).toHaveAttribute("aria-orientation", "vertical");
+    const colBefore = Number(await cols.getAttribute("aria-valuenow"));
+    await cols.focus();
+    await page.keyboard.press("ArrowLeft");
+    await expect
+      .poll(async () => Number(await cols.getAttribute("aria-valuenow")))
+      .toBeLessThan(colBefore);
+  });
+
+  test("at 320px the panes stack in one column with no horizontal scroll (#15)", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 320, height: 720 });
+    await page.goto("/coding-studio");
+    await expect(page.locator(".cm-content")).toBeVisible();
+
+    await expect(page.getByRole("separator")).toHaveCount(0);
+    for (const name of ["Console", "Environment"]) {
+      await expect(page.getByRole("heading", { name })).toBeVisible();
+    }
+    await expect(page.getByRole("tab", { name: "Plots" })).toBeVisible();
+    const overflow = await page.evaluate(
+      () =>
+        document.documentElement.scrollWidth - document.documentElement.clientWidth,
+    );
+    expect(overflow).toBeLessThanOrEqual(0);
+
+    // The panes sit one below another.
+    const editorBox = await page
+      .getByRole("tablist", { name: "Editor tabs" })
+      .boundingBox();
+    const consoleBox = await page
+      .getByRole("heading", { name: "Console" })
+      .boundingBox();
+    expect(consoleBox!.y).toBeGreaterThan(editorBox!.y);
+  });
+
+  test("each run's output sits under a heading; data tabs open and close by keyboard (#20, #22)", async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await page.goto("/coding-studio");
+    await page.getByRole("radio", { name: "SQL" }).click();
+    const editor = page.getByRole("textbox", { name: /SQL code/i });
+    await expect(page.locator(".cm-content")).toBeVisible();
+    await editor.click();
+    await page.keyboard.press("ControlOrMeta+A");
+    await page.keyboard.press("Delete");
+    await page.keyboard.insertText(
+      "CREATE TABLE grades(student TEXT, grade REAL);\n" +
+        "INSERT INTO grades VALUES ('Amanda',91);\n" +
+        "SELECT * FROM grades;",
+    );
+    const run = page.getByRole("button", { name: "Run", exact: true });
+    await run.focus();
+    await page.keyboard.press("Enter");
+
+    const log = page.getByRole("log", { name: "Console output" });
+    await expect(log).toContainText("Amanda", { timeout: 60_000 });
+    await expect(
+      log.getByRole("heading", { level: 3, name: "Output of run 1" }),
+    ).toHaveCount(1);
+    // Running from the keyboard did not drop focus to the page body.
+    await expect(run).toBeFocused();
+
+    // Open the table as a data tab; it becomes the selected, single tab stop.
+    await page.getByRole("button", { name: "View grades in a table" }).click();
+    const tablist = page.getByRole("tablist", { name: "Editor tabs" });
+    const dataTab = tablist.getByRole("tab", { name: "grades" });
+    await expect(dataTab).toHaveAttribute("aria-selected", "true");
+    await expect(tablist.locator('[tabindex="0"]')).toHaveCount(1);
+    await expect(page.getByRole("button", { name: "Close grades" })).toBeVisible();
+
+    // Arrow back to the script, forward again, then Delete closes the data tab.
+    await dataTab.focus();
+    await page.keyboard.press("ArrowLeft");
+    await expect(tablist.getByRole("tab", { name: /SQL script/ })).toBeFocused();
+    await page.keyboard.press("ArrowRight");
+    await expect(dataTab).toBeFocused();
+    await page.keyboard.press("Delete");
+    await expect(tablist.getByRole("tab")).toHaveCount(1);
+    await expect(tablist.getByRole("tab", { name: /SQL script/ })).toBeFocused();
+  });
+
+  test("a SQL plot gets a description, not a generic label (#23)", async ({
+    page,
+  }) => {
+    test.setTimeout(120_000);
+    await page.goto("/coding-studio");
+    await page.getByRole("radio", { name: "SQL" }).click();
+    const editor = page.getByRole("textbox", { name: /SQL code/i });
+    await expect(page.locator(".cm-content")).toBeVisible();
+    await editor.click();
+    await page.keyboard.press("ControlOrMeta+A");
+    await page.keyboard.press("Delete");
+    await page.getByRole("button", { name: "Insert example" }).click();
+    await expect(editor).toContainText("VISUALISE");
+    await page.getByRole("button", { name: "Run", exact: true }).click();
+
+    const panel = page.getByRole("tabpanel", { name: "Plots" });
+    const img = panel.getByRole("img");
+    await expect(img).toBeVisible({ timeout: 90_000 });
+    const alt = (await img.getAttribute("alt")) ?? "";
+    expect(alt).not.toMatch(/^Plot( \d+ of \d+)?$/);
+    expect(alt).toContain("x axis Grade");
+    expect(alt).toContain("y axis Student");
+    expect(alt).toMatch(/points/);
+
+    // The text alternative lists the same facts.
+    await panel.getByText("Describe this plot").click();
+    await expect(panel.getByText("Chart type")).toBeVisible();
+    await expect(panel.getByText("Grade", { exact: true })).toBeVisible();
   });
 });
