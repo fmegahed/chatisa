@@ -15,6 +15,7 @@ import { originOf } from "@/lib/portfolio/origin";
 import { resolveSkillId } from "@/lib/scout/taxonomy";
 import type { Draft } from "@/lib/portfolio/draft";
 import type { CareerContent } from "@/lib/portfolio/content";
+import { RequiredMark, RequiredNote } from "@/components/a11y/Required";
 
 /**
  * Publishing (2026-08-20). The push runs in the browser with the student's
@@ -81,7 +82,9 @@ export function Publish(props: {
   const nameOk = SLUG.test(repoName);
 
   async function publish() {
-    if (!connection || !props.draft.content) return;
+    // The button stays focusable while publishing (aria-disabled), so a second
+    // press is refused here (#27).
+    if (busy || !connection || !props.draft.content) return;
     setBusy(true); setError(null); setNote(null); setProgress(null);
     const controller = new AbortController();
     abortRef.current = controller;
@@ -223,9 +226,13 @@ export function Publish(props: {
         </p>
       ) : null}
       {!props.site?.repoUrl ? (
-        <label className="mt-2 block font-bold">
+        <>
+        <RequiredNote className="mt-2" />
+        <label className="mt-1 block font-bold">
           Repository name
+          <RequiredMark />
           <input
+            required
             value={repoName}
             onChange={(e) => setRepoName(e.target.value.toLowerCase())}
             className="mt-1 w-full rounded-card border border-medium-tan p-2 font-normal"
@@ -241,15 +248,17 @@ export function Publish(props: {
             </span>
           ) : null}
         </label>
+        </>
       ) : null}
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <GithubConnect returnPath="/portfolio" />
         {connection ? (
           <button
             type="button"
-            disabled={busy || !nameOk}
+            disabled={!nameOk}
+            aria-disabled={busy || undefined}
             onClick={() => void publish()}
-            className="rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:bg-medium-gray"
+            className="rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:bg-medium-gray aria-disabled:bg-medium-gray"
           >
             {busy ? progressText(progress) : props.site?.publishedAt ? "Publish the update" : "Publish to GitHub Pages"}
           </button>

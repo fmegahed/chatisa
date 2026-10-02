@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { COACHES, type CoachType } from "@/lib/project/coaches";
+import { announce } from "@/lib/a11y/announce";
 
 export function CoachSelector({
   projectId,
@@ -24,6 +25,8 @@ export function CoachSelector({
   }
 
   async function save() {
+    // Kept focusable while saving (aria-disabled), so guard here (#27).
+    if (busy) return;
     setBusy(true);
     setError(null);
     try {
@@ -36,6 +39,7 @@ export function CoachSelector({
         setError("Could not save the coaches. Try again.");
         return;
       }
+      announce("Coaches saved.");
       router.refresh();
     } catch {
       setError("Could not reach the server. Try again.");
@@ -45,8 +49,8 @@ export function CoachSelector({
   }
 
   return (
-    <div className="mt-3 rounded-card border border-medium-tan p-4">
-      <p className="font-bold">Choose coaches (lead only)</p>
+    <fieldset className="mt-3 rounded-card border border-medium-tan p-4">
+      <legend className="px-1 font-bold">Choose coaches (lead only)</legend>
       <div className="mt-2 grid gap-2">
         {COACHES.map((c) => (
           <label key={c.type} className="flex items-start gap-2">
@@ -65,16 +69,16 @@ export function CoachSelector({
       <button
         type="button"
         onClick={save}
-        disabled={busy}
-        className="mt-3 rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:bg-medium-gray"
+        aria-disabled={busy || undefined}
+        className="mt-3 rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red aria-disabled:bg-medium-gray"
       >
-        {busy ? "Saving..." : "Save coaches"}
+        Save coaches
       </button>
       {error ? (
         <p role="alert" className="mt-2 text-miami-red">
           {error}
         </p>
       ) : null}
-    </div>
+    </fieldset>
   );
 }

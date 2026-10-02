@@ -12,6 +12,7 @@ import { SizeMeter } from "../SizeMeter";
 import { StepNav } from "../StepNav";
 import { GithubImport } from "../GithubImport";
 import { githubRepoUrl } from "@/lib/portfolio/github-import";
+import { announce } from "@/lib/a11y/announce";
 
 /**
  * Step 2 of the showcase wizard. Each file gets a guessed role, which is
@@ -31,6 +32,7 @@ export function FilesStep({ draft, patch, nav }: StepProps) {
   });
   const [error, setError] = useState<string | null>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   /**
    * A file the browser cannot read must not strand the step: the reader is
@@ -51,6 +53,9 @@ export function FilesStep({ draft, patch, nav }: StepProps) {
         accepted.slice(0, room).map((f) => prepareFile(f, guessRole(f.name))),
       );
       patch({ files: [...draft.files, ...prepared] });
+      if (prepared.length > 0) {
+        announce(`Added ${prepared.length} ${prepared.length === 1 ? "file" : "files"}.`);
+      }
       if (refused) {
         setError(refused);
         setTimeout(() => errorRef.current?.focus(), 0);
@@ -70,6 +75,7 @@ export function FilesStep({ draft, patch, nav }: StepProps) {
     html: "", readme: "", gitignore: DEFAULT_GITIGNORE, files: draft.files,
   });
   const hasData = draft.files.some((f) => f.role === "data");
+  const fileBlocked = busy || draft.files.length >= MAX_SHOWCASE_FILES;
 
   return (
     <section className="rounded-card border border-medium-tan bg-paper p-5">
@@ -93,14 +99,21 @@ export function FilesStep({ draft, patch, nav }: StepProps) {
           {error}
         </p>
       ) : null}
-      <label className="mt-4 inline-block cursor-pointer rounded-card border-2 border-miami-red px-4 py-2 font-bold text-miami-red hover:bg-light-tan">
+      {/* The ring shows focus on the visually hidden input (#31). While
+          reading or full, the input stays focusable (aria-disabled) and the
+          click is refused, so focus is not dropped mid-upload (#27). */}
+      <label className="mt-4 inline-block cursor-pointer rounded-card border-2 border-miami-red px-4 py-2 font-bold text-miami-red hover:bg-light-tan has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-miami-red has-[:focus-visible]:outline-offset-2">
         <input
           type="file"
           multiple
           className="sr-only"
+          ref={fileInputRef}
           aria-label="Add project files"
           onChange={(e) => void addFiles(e.target)}
-          disabled={busy || draft.files.length >= MAX_SHOWCASE_FILES}
+          aria-disabled={fileBlocked || undefined}
+          onClick={(e) => {
+            if (fileBlocked) e.preventDefault();
+          }}
         />
         {busy ? "Reading files..." : `Add files (${draft.files.length}/${MAX_SHOWCASE_FILES})`}
       </label>
@@ -136,8 +149,10 @@ export function FilesStep({ draft, patch, nav }: StepProps) {
               <th className="pr-3">Publish</th>
               <th className="pr-3">File</th>
               <th className="pr-3">Role</th>
-              <th>Goes to</th>
-              <th></th>
+              <th className="pr-3">Goes to</th>
+              <th>
+                <span className="sr-only">Remove</span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -173,7 +188,13 @@ export function FilesStep({ draft, patch, nav }: StepProps) {
                   <button
                     type="button"
                     className="underline"
-                    onClick={() => patch({ files: draft.files.filter((_, j) => j !== i) })}
+                    aria-label={`Remove ${f.name}`}
+                    onClick={() => {
+                      patch({ files: draft.files.filter((_, j) => j !== i) });
+                      announce(`Removed ${f.name}.`);
+                      // The pressed button leaves with its row.
+                      fileInputRef.current?.focus();
+                    }}
                   >
                     Remove
                   </button>
@@ -187,6 +208,7 @@ export function FilesStep({ draft, patch, nav }: StepProps) {
       <StepNav
         {...nav}
         canContinue={!busy && draft.files.some((f) => f.publish && pushable(f))}
+        requirement={busy ? undefined : "Add at least one file to publish to continue."}
       />
     </section>
   );

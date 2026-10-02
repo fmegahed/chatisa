@@ -1,6 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useRef, type ReactNode } from "react";
+import { announce, focusElement } from "@/lib/a11y/announce";
 import type { CareerContent, ShowcaseContent, SiteContent } from "@/lib/portfolio/content";
 
 /**
@@ -47,28 +48,77 @@ function List<T>(props: {
   render: (item: T, set: (next: T) => void) => ReactNode;
   max: number;
 }) {
+  const groupRef = useRef<HTMLFieldSetElement>(null);
+  const n = props.items.length;
+  // The item a button acts on is named in its accessible name, and focus
+  // follows a moved item so the next press keeps moving the same one.
   const move = (i: number, d: number) => {
     const j = i + d;
-    if (j < 0 || j >= props.items.length) return;
+    if (j < 0 || j >= n) return;
     const next = [...props.items];
     [next[i], next[j]] = [next[j], next[i]];
     props.onChange(next);
+    announce(`Moved to position ${j + 1} of ${n}.`);
+    setTimeout(() => {
+      groupRef.current
+        ?.querySelector<HTMLButtonElement>(`[data-move="${j}:${d}"]`)
+        ?.focus();
+    }, 0);
+  };
+  const remove = (i: number) => {
+    props.onChange(props.items.filter((_, j) => j !== i));
+    announce(`Removed ${props.title} ${i + 1}.`);
+    // The pressed button left with its item; the group itself takes focus.
+    focusElement(groupRef.current);
   };
   return (
-    <fieldset className="mt-4 rounded-card border border-medium-tan p-3">
+    <fieldset ref={groupRef} className="mt-4 rounded-card border border-medium-tan p-3">
       <legend className="font-bold">{props.title}</legend>
       {props.items.map((item, i) => (
         <div key={i} className="mt-2 border-t border-medium-tan pt-2 first:border-0">
           {props.render(item, (next) => props.onChange(props.items.map((x, j) => (j === i ? next : x))))}
           <div className="mt-1 flex gap-3 text-sm">
-            <button type="button" className="underline" onClick={() => move(i, -1)}>Move up</button>
-            <button type="button" className="underline" onClick={() => move(i, 1)}>Move down</button>
-            <button type="button" className="underline" onClick={() => props.onChange(props.items.filter((_, j) => j !== i))}>Remove</button>
+            <button
+              type="button"
+              className="underline"
+              data-move={`${i}:-1`}
+              aria-label={`Move up, ${props.title} ${i + 1} of ${n}`}
+              onClick={() => move(i, -1)}
+            >
+              Move up
+            </button>
+            <button
+              type="button"
+              className="underline"
+              data-move={`${i}:1`}
+              aria-label={`Move down, ${props.title} ${i + 1} of ${n}`}
+              onClick={() => move(i, 1)}
+            >
+              Move down
+            </button>
+            <button
+              type="button"
+              className="underline"
+              aria-label={`Remove ${props.title} ${i + 1}`}
+              onClick={() => remove(i)}
+            >
+              Remove
+            </button>
           </div>
         </div>
       ))}
       {props.items.length < props.max ? (
-        <button type="button" className="mt-2 underline" onClick={() => props.onChange([...props.items, props.blank()])}>Add</button>
+        <button
+          type="button"
+          className="mt-2 underline"
+          aria-label={`Add to ${props.title}`}
+          onClick={() => {
+            props.onChange([...props.items, props.blank()]);
+            announce(`Added ${props.title} ${n + 1}.`);
+          }}
+        >
+          Add
+        </button>
       ) : null}
     </fieldset>
   );

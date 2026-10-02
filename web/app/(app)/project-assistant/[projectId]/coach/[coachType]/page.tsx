@@ -1,4 +1,5 @@
 // app/(app)/project-assistant/[projectId]/coach/[coachType]/page.tsx
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import type { UIMessage } from "ai";
 import { auth } from "@/lib/auth";
@@ -10,6 +11,20 @@ import { CoachSession } from "@/components/project/CoachSession";
 import { getCoachEngine } from "@/lib/project/coach-engine";
 import { getCoachSpec } from "@/lib/project/coach-specs";
 import { coachLabel, isCoachType } from "@/lib/project/coaches";
+import { coachPageTitle } from "@/lib/project/page-titles";
+
+// Coach type plus project, and the project only for a member (#28).
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ projectId: string; coachType: string }>;
+}): Promise<Metadata> {
+  const session = await auth();
+  const email = session?.user?.email;
+  const { projectId, coachType } = await params;
+  const project = email ? getAccessibleProject(projectId, email) : undefined;
+  return { title: coachPageTitle(coachType, project) };
+}
 
 export default async function CoachSessionPage({
   params,

@@ -93,6 +93,30 @@ test.describe("Exam Ally quiz", () => {
     expect(focused).toBe("question-heading");
   });
 
+  test("moves focus to feedback, the next question and results (#24)", async ({
+    page,
+  }) => {
+    await setUpExam(page, { type: "multiple_choice", count: 2 });
+    const focusedId = () => page.evaluate(() => document.activeElement?.id);
+
+    await page.getByRole("radio").first().check();
+    await page.getByRole("button", { name: "Submit answer" }).click();
+    await expect(page.getByText(/From page \d+ of your document/)).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect.poll(focusedId).toBe("feedback-heading");
+
+    await page.getByRole("button", { name: "Next question" }).click();
+    await expect(page.getByText("Question 2 of 2")).toBeVisible();
+    await expect.poll(focusedId).toBe("question-heading");
+
+    await page.getByRole("radio").first().check();
+    await page.getByRole("button", { name: "Submit answer" }).click();
+    await expect.poll(focusedId, { timeout: 30_000 }).toBe("feedback-heading");
+    await page.getByRole("button", { name: "See results" }).click();
+    await expect.poll(focusedId, { timeout: 30_000 }).toBe("results-heading");
+  });
+
   test("uses a real radio group so arrow keys work", async ({ page }) => {
     await setUpExam(page, { type: "multiple_choice", count: 2 });
     const first = page.getByRole("radio").first();
@@ -111,7 +135,8 @@ test.describe("Exam Ally quiz", () => {
       .fill("Normalization removes transitive dependencies between attributes.");
     await page.getByRole("button", { name: "Submit answer" }).click();
 
-    const panel = page.getByRole("status").filter({ hasText: "Your answer looks" });
+    // Feedback is a labelled region that receives focus, not a live region (#24).
+    const panel = page.getByRole("region", { name: /Your answer looks/ });
     await expect(panel).toBeVisible({ timeout: 30_000 });
     // ADR-016: no percentage for prose.
     await expect(panel).not.toContainText("%");

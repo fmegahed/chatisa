@@ -111,7 +111,8 @@ export function GithubImport(props: {
   }
 
   async function doImport() {
-    if (!connection || !repo || ticked.length === 0 || ticked.length > room) return;
+    // Import stays focusable while busy (aria-disabled), so refuse here (#27).
+    if (busy || !connection || !repo || ticked.length === 0 || ticked.length > room) return;
     setBusy(true);
     setError(null);
     const files: PreparedFile[] = [];
@@ -239,8 +240,9 @@ export function GithubImport(props: {
                   <p className="mt-2">Untick {ticked.length - room}: there is room for {room} more {room === 1 ? "file" : "files"}.</p>
                 ) : null}
                 <button
-                  type="button" disabled={busy || ticked.length === 0 || ticked.length > room} onClick={() => void doImport()}
-                  className="mt-3 rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:bg-medium-gray"
+                  type="button" disabled={ticked.length === 0 || ticked.length > room} onClick={() => void doImport()}
+                  aria-disabled={busy || undefined}
+                  className="mt-3 rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:bg-medium-gray aria-disabled:bg-medium-gray"
                 >
                   {busy ? "Importing..." : `Import ${ticked.length} ${ticked.length === 1 ? "file" : "files"}`}
                 </button>

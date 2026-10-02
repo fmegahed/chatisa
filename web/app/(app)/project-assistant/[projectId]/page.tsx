@@ -1,4 +1,5 @@
 // app/(app)/project-assistant/[projectId]/page.tsx
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
@@ -11,6 +12,21 @@ import { courseLabel, findCourse } from "@/lib/project/courses";
 import { COACHES } from "@/lib/project/coaches";
 import { TeamManager } from "@/components/project/TeamManager";
 import { CoachSelector } from "@/components/project/CoachSelector";
+import { projectPageTitle } from "@/lib/project/page-titles";
+
+// The title names the project only for a signed-in member; anyone else gets
+// the generic title, the same way the page gives them a not-found (#28).
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ projectId: string }>;
+}): Promise<Metadata> {
+  const session = await auth();
+  const email = session?.user?.email;
+  const { projectId } = await params;
+  const project = email ? getAccessibleProject(projectId, email) : undefined;
+  return { title: projectPageTitle(project) };
+}
 
 export default async function ProjectWorkspacePage({
   params,

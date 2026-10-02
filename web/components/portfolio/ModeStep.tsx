@@ -23,6 +23,7 @@ export function ModeStep(props: {
       <p className="mt-2">{body}</p>
     </button>
   );
+  const wipKind = props.wip?.mode === "career" ? "portfolio" : "showcase";
   return (
     <div>
       {props.wip ? (
@@ -30,21 +31,28 @@ export function ModeStep(props: {
           aria-label="Unfinished site"
           className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-card border-2 border-miami-red bg-paper p-4"
         >
-          <p>
-            <strong>You have an unfinished {props.wip.mode === "career" ? "portfolio" : "showcase"}</strong> saved
+          <p id="wip-summary">
+            <strong>You have an unfinished {wipKind}</strong> saved
             in this browser{" "}
             {new Date(props.wip.savedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.
           </p>
           <div className="flex gap-2">
+            {/* Each button names what it acts on (#32). */}
             <button
               type="button"
               onClick={props.onResume}
+              aria-describedby="wip-summary"
               className="rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:opacity-90"
             >
-              Continue
+              Continue unfinished {wipKind}
             </button>
-            <button type="button" onClick={props.onDiscard} className="rounded-card px-3 py-2 underline">
-              Discard
+            <button
+              type="button"
+              onClick={props.onDiscard}
+              aria-describedby="wip-summary"
+              className="rounded-card px-3 py-2 underline"
+            >
+              Discard unfinished {wipKind}
             </button>
           </div>
         </section>
@@ -62,8 +70,10 @@ export function ModeStep(props: {
         )}
       </div>
       {props.sites.length > 0 ? (
-        <section className="mt-8">
-          <h2 className="text-xl">Your sites</h2>
+        <section className="mt-8" aria-labelledby="your-sites-heading">
+          <h2 id="your-sites-heading" className="text-xl">
+            Your sites
+          </h2>
           <ul className="mt-2 space-y-2">
             {props.sites.map((s) => (
               <li
@@ -77,7 +87,13 @@ export function ModeStep(props: {
                     <>
                       {" "}
                       &middot;{" "}
-                      <a href={s.pagesUrl} target="_blank" rel="noopener noreferrer" className="underline">
+                      <a
+                        href={s.pagesUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`View ${s.title} (opens in a new tab)`}
+                        className="underline"
+                      >
                         View
                       </a>
                     </>
@@ -87,6 +103,7 @@ export function ModeStep(props: {
                   <button
                     type="button"
                     onClick={() => props.onOpen(s)}
+                    aria-label={`Update ${s.title}`}
                     className="rounded-card border-2 border-miami-red px-3 py-1 font-bold text-miami-red hover:bg-light-tan"
                   >
                     Update
@@ -94,6 +111,7 @@ export function ModeStep(props: {
                   <button
                     type="button"
                     onClick={() => props.onRemove(s)}
+                    aria-label={`Forget ${s.title}`}
                     className="rounded-card px-3 py-1 underline"
                   >
                     Forget

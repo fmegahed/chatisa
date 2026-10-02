@@ -2,6 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { makeTextPdf } from "../helpers/make-pdf";
 import { fakeGithubApi } from "./support/fake-github";
+import { auditDom } from "./support/a11y";
 
 /**
  * Portfolio Builder end to end (2026-08-20). Both wizards run against the
@@ -97,8 +98,9 @@ test.describe("Portfolio Builder", () => {
       { name: "train.csv", mimeType: "text/csv", buffer: Buffer.from("a,b\n1,2") },
     ]);
     // Data is unpublished by default; code is not.
-    await expect(page.getByLabel("model.R")).toBeChecked();
-    await expect(page.getByLabel("train.csv")).not.toBeChecked();
+    // By role: each file's Remove button also names the file (#31 sweep).
+    await expect(page.getByRole("checkbox", { name: "model.R" })).toBeChecked();
+    await expect(page.getByRole("checkbox", { name: "train.csv" })).not.toBeChecked();
     await page.getByRole("button", { name: "Next", exact: true }).click();
 
     await page.getByLabel("Your name").fill("Ada Lovelace");
@@ -207,12 +209,12 @@ test.describe("Portfolio Builder", () => {
     await page.waitForTimeout(1_000); // past the autosave debounce
     await page.reload();
     await expect(page.getByText("You have an unfinished showcase")).toBeVisible();
-    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByRole("button", { name: "Continue unfinished showcase" }).click();
     await expect(page.getByRole("heading", { name: "Project files" })).toBeVisible();
     await expect(page.getByText("analysis.ipynb").first()).toBeVisible();
     // Discarding from the front door clears it.
     await page.goto("/portfolio");
-    await page.getByRole("button", { name: "Discard" }).click();
+    await page.getByRole("button", { name: "Discard unfinished showcase" }).click();
     await expect(page.getByText("You have an unfinished showcase")).toHaveCount(0);
     await page.reload();
     await expect(page.getByRole("heading", { name: "Portfolio Builder" })).toBeVisible();
@@ -295,6 +297,51 @@ test.describe("Portfolio Builder", () => {
     await page.getByRole("radio", { name: "A Miami course" }).focus();
     await page.keyboard.press("ArrowDown");
     await expect(page.getByLabel("Course and school")).toHaveValue("STAT 4520, Ohio State");
+  });
+
+  test("focus moves to each new step's heading, but not on page load (#33)", async ({ page }) => {
+    await page.goto("/portfolio?mode=project");
+    const origin = page.getByRole("heading", { level: 2, name: "Where did this project come from?" });
+    await expect(origin).toBeVisible();
+    await expect(origin).not.toBeFocused();
+
+    await page.getByTitle("Principles of Business Analytics").click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    await expect(page.getByRole("heading", { level: 2, name: "Project files" })).toBeFocused();
+
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await expect(origin).toBeFocused();
+  });
+
+  test("required fields are marked and Next says what it is waiting for (#31)", async ({ page }) => {
+    await page.goto("/portfolio?mode=project");
+    await page.getByRole("radio", { name: "A course at another school" }).check();
+    const course = page.getByLabel("Course and school");
+    await expect(course).toHaveAttribute("required", "");
+    await expect(page.getByText(/Fields marked \* are required/)).toBeVisible();
+    const next = page.getByRole("button", { name: "Next", exact: true });
+    await expect(next).toHaveAccessibleDescription("Enter the course and school to continue.");
+    expect((await auditDom(page)).unmarkedRequired).toEqual([]);
+
+    await course.fill("STAT 4520, Ohio State");
+    await next.click();
+    // The visually hidden file input shows its focus on the visible label.
+    await page.getByLabel("Add project files").focus();
+    const dom = await auditDom(page);
+    expect(dom.hiddenTabStops).toEqual([]);
+    expect(dom.unmarkedRequired).toEqual([]);
+  });
+
+  test("the unfinished-draft buttons say what they act on (#32)", async ({ page }) => {
+    await page.goto("/portfolio?mode=project");
+    await page.getByTitle("Principles of Business Analytics").click();
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    await page.waitForTimeout(1_000); // past the autosave debounce
+    await page.goto("/portfolio");
+    await expect(page.getByRole("button", { name: "Continue unfinished showcase" })).toBeVisible();
+    await page.getByRole("button", { name: "Discard unfinished showcase" }).click();
+    await expect(page.getByTestId("announcer-polite")).toHaveText("Unfinished showcase discarded.");
+    await expect(page.getByRole("heading", { level: 1, name: "Portfolio Builder" })).toBeFocused();
   });
 
   test("meets WCAG A and AA on the mode step and the review step", async ({ page }) => {

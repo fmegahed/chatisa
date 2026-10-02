@@ -19,9 +19,13 @@ export function GenericDeliverable({
   lastUpdatedBy: string | null;
 }) {
   return (
-    <section aria-label={`${spec.title} worksheet`} className="flex flex-col gap-6">
+    // Section headings mirror the Word download (lib/documents/coach-docx.ts),
+    // inside each legend so the fieldset keeps its group name (#30).
+    <section aria-labelledby="worksheet-heading" className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl">{spec.title} worksheet</h2>
+        <h2 id="worksheet-heading" className="text-2xl">
+          {spec.title} worksheet
+        </h2>
         {lastUpdatedBy ? (
           <p className="text-sm text-dark-tan">Last updated by {lastUpdatedBy}</p>
         ) : null}
@@ -29,7 +33,9 @@ export function GenericDeliverable({
 
       {spec.fields.length > 0 ? (
         <fieldset className="flex flex-col gap-3">
-          <legend className="text-lg font-bold">Details</legend>
+          <legend>
+            <h3 className="text-lg font-bold">Details</h3>
+          </legend>
           {spec.fields.map((f) => {
             const id = `gf-${f.key}`;
             const value = content.fields[f.key] ?? "";
@@ -66,10 +72,14 @@ export function GenericDeliverable({
         const rows = content.tables[table.key] ?? [];
         return (
           <fieldset key={table.key} className="flex flex-col gap-3">
-            <legend className="text-lg font-bold">{table.label}</legend>
+            <legend>
+              <h3 className="text-lg font-bold">{table.label}</h3>
+            </legend>
             {rows.map((row, index) => (
               <div
                 key={index}
+                role="group"
+                aria-label={`${table.label}, row ${index + 1}`}
                 className="grid gap-2 rounded-card border border-medium-tan bg-light-tan p-3 sm:grid-cols-2"
               >
                 {table.columns.map((col) => {
@@ -102,6 +112,7 @@ export function GenericDeliverable({
             <div>
               <button
                 type="button"
+                aria-label={`Add row to ${table.label}`}
                 onClick={() => onChange(applyGenericOp(spec, content, { kind: "addRow", table: table.key }))}
                 className="rounded-card border border-medium-tan bg-paper px-3 py-1.5 text-sm font-bold hover:border-miami-red hover:text-miami-red"
               >

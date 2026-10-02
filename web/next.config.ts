@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
   // no npm install, no build step there. Dev and e2e (which run `next dev`)
   // are unaffected.
   output: "standalone",
+  // Page titles are in the first HTML for every browser, not streamed in
+  // after it (WCAG 2.4.2): a project page's title comes from generateMetadata,
+  // and streamed it left the document briefly untitled, which is when a
+  // screen reader announces the page. The lookup is one local SQLite read.
+  htmlLimitedBots: /.*/,
   async headers() {
     // Which routes are isolated, and the full reasoning, live in
     // lib/run/isolation.ts beside the test that checks no page rendering

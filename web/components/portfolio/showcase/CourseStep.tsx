@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { StepProps } from "@/lib/portfolio/draft";
 import { guestOriginPatch, originOf, type ProjectOrigin } from "@/lib/portfolio/origin";
+import { RequiredMark, RequiredNote } from "@/components/a11y/Required";
 import { CoursePicker } from "../CoursePicker";
 import { StepNav } from "../StepNav";
 
@@ -90,9 +91,13 @@ export function CourseStep({ draft, patch, nav, isGuest }: StepProps & { isGuest
         </div>
       ) : null}
       {origin === "other" ? (
-        <label className="mt-4 block font-bold">
+        <>
+        <RequiredNote className="mt-4" />
+        <label className="mt-2 block font-bold">
           Course and school
+          <RequiredMark />
           <input
+            required
             value={draft.course}
             maxLength={MAX_COURSE}
             onChange={(e) => patch({ course: e.target.value })}
@@ -100,6 +105,7 @@ export function CourseStep({ draft, patch, nav, isGuest }: StepProps & { isGuest
             className="mt-1 w-full rounded-card border border-medium-tan p-2 font-normal"
           />
         </label>
+        </>
       ) : null}
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         <label className="block">
@@ -126,7 +132,15 @@ export function CourseStep({ draft, patch, nav, isGuest }: StepProps & { isGuest
           />
         </label>
       </div>
-      <StepNav {...nav} canContinue={canContinue} />
+      <StepNav
+        {...nav}
+        canContinue={canContinue}
+        requirement={
+          origin === "miami"
+            ? "Pick the course this project came from to continue."
+            : "Enter the course and school to continue."
+        }
+      />
     </section>
   );
 }

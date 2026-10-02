@@ -33,9 +33,14 @@ export function ScopingDeliverable({
   lastUpdatedBy: string | null;
 }) {
   return (
-    <section aria-label="Project scoping worksheet" className="flex flex-col gap-6">
+    // Section headings mirror the Word download (lib/documents/coach-docx.ts),
+    // one level below the worksheet heading, inside each legend so the
+    // fieldset keeps its group name (#30).
+    <section aria-labelledby="worksheet-heading" className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl">Scoping worksheet</h2>
+        <h2 id="worksheet-heading" className="text-2xl">
+          Scoping worksheet
+        </h2>
         {lastUpdatedBy ? (
           <p className="text-sm text-dark-tan">Last updated by {lastUpdatedBy}</p>
         ) : null}
@@ -43,7 +48,9 @@ export function ScopingDeliverable({
 
       {FIELD_SECTIONS.map((section) => (
         <fieldset key={section.heading} className="flex flex-col gap-3">
-          <legend className="text-lg font-bold">{section.heading}</legend>
+          <legend>
+            <h3 className="text-lg font-bold">{section.heading}</h3>
+          </legend>
           {section.fields.map((f) => {
             const id = `sf-${f.path}`;
             const value = readField(content, f.path);
@@ -81,10 +88,14 @@ export function ScopingDeliverable({
         const atCap = section.capped && rows.length >= 3;
         return (
           <fieldset key={section.heading} className="flex flex-col gap-3">
-            <legend className="text-lg font-bold">{section.heading}</legend>
+            <legend>
+              <h3 className="text-lg font-bold">{section.heading}</h3>
+            </legend>
             {rows.map((row, index) => (
               <div
                 key={index}
+                role="group"
+                aria-label={`${section.heading}, row ${index + 1}`}
                 className="grid gap-2 rounded-card border border-medium-tan bg-light-tan p-3 sm:grid-cols-2"
               >
                 {section.columns.map((col) => {
@@ -118,6 +129,7 @@ export function ScopingDeliverable({
               <button
                 type="button"
                 disabled={atCap}
+                aria-label={`Add row to ${section.heading}`}
                 onClick={() => onChange(applyScopingOp(content, { kind: "addRow", table: section.table }))}
                 className="rounded-card border border-medium-tan bg-paper px-3 py-1.5 text-sm font-bold hover:border-miami-red hover:text-miami-red disabled:cursor-not-allowed disabled:opacity-60"
               >

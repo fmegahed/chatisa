@@ -13,6 +13,7 @@ import {
 } from "@/lib/portfolio/store";
 import { clearWip, loadWip, saveWip, type Wip } from "@/lib/portfolio/wip";
 import { originOf } from "@/lib/portfolio/origin";
+import { announce, focusElement } from "@/lib/a11y/announce";
 import { ModeStep } from "./ModeStep";
 import { ResumeStep } from "./career/ResumeStep";
 import { ClassesStep } from "./career/ClassesStep";
@@ -66,6 +67,29 @@ export function PortfolioBuilder(props: {
   const [hydrated, setHydrated] = useState(false);
   const patch = (p: Partial<Draft>) => dispatch({ type: "patch", patch: p });
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stepRef = useRef<HTMLDivElement>(null);
+  // Focus follows a step change to the new step's heading (#33), except the
+  // first step shown on page load (including the ?mode= shortcut), where
+  // focus stays at the top of the page.
+  const lastStep = useRef<Step | null>(null);
+  const skipStepFocus = useRef(false);
+
+  useEffect(() => {
+    const previous = lastStep.current;
+    lastStep.current = draft.step;
+    if (previous === null || previous === draft.step) return;
+    if (skipStepFocus.current) {
+      skipStepFocus.current = false;
+      return;
+    }
+    // The front door's h2s sit inside its choice buttons, so going back
+    // there lands on the page heading instead.
+    focusElement(
+      draft.step === "mode"
+        ? document.querySelector<HTMLElement>("main h1")
+        : stepRef.current?.querySelector<HTMLElement>("h2"),
+    );
+  }, [draft.step]);
 
   // Autosave (2026-08-23): the draft goes to IndexedDB shortly after each
   // change, so a reload or a closed tab no longer costs the student their
@@ -95,6 +119,7 @@ export function PortfolioBuilder(props: {
       // A saved draft outranks the ?mode= shortcut: the student sees the
       // front door with the offer to continue rather than a blank step one.
       if (props.initialMode && !stored) {
+        skipStepFocus.current = true;
         patch({
           mode: props.initialMode,
           step: props.initialMode === "career" ? "resume" : "course",
@@ -152,14 +177,28 @@ export function PortfolioBuilder(props: {
           dispatch({ type: "reset", draft: rest });
         }}
         onDiscard={() => {
+          announce(`Unfinished ${wip?.mode === "career" ? "portfolio" : "showcase"} discarded.`);
           setWip(null);
           void clearWip();
+          // The banner and its buttons are gone; land on the page heading.
+          focusElement(document.querySelector<HTMLElement>("main h1"));
         }}
         onPick={(mode) =>
           patch({ mode, step: mode === "career" ? "resume" : "course", ...pickMode(mode) })
         }
         onOpen={(site) => void openSite(site)}
-        onRemove={(site) => setSites(removeSite(site.id))}
+        onRemove={(site) => {
+          const left = removeSite(site.id);
+          setSites(left);
+          announce(`${site.title} removed from your sites.`);
+          // The pressed button left with its row.
+          setTimeout(() => {
+            focusElement(
+              document.getElementById("your-sites-heading") ??
+                document.querySelector<HTMLElement>("main h1"),
+            );
+          }, 0);
+        }}
       />
     );
   }
@@ -195,7 +234,7 @@ export function PortfolioBuilder(props: {
   return (
     <>
       <SaveWarning failed={saveFailed} />
-      {step}
+      <div ref={stepRef}>{step}</div>
     </>
   );
 }

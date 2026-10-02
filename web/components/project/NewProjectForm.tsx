@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ISA_COURSES, courseLabel } from "@/lib/project/courses";
 import { COACHES, type CoachType } from "@/lib/project/coaches";
+import { RequiredMark, RequiredNote } from "@/components/a11y/Required";
 
 export function NewProjectForm() {
   const router = useRouter();
@@ -14,6 +15,9 @@ export function NewProjectForm() {
   const [coaches, setCoaches] = useState<CoachType[]>(["scoping"]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Which field the client-side error is about, so it can be marked invalid
+  // and described by the message.
+  const [errorField, setErrorField] = useState<"course" | "name" | null>(null);
 
   function toggleCoach(type: CoachType) {
     setCoaches((prev) =>
@@ -23,13 +27,20 @@ export function NewProjectForm() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Kept focusable while submitting (aria-disabled), so guard here (#27).
+    if (submitting) return;
     setError(null);
+    setErrorField(null);
     if (!courseCode) {
       setError("Pick a course.");
+      setErrorField("course");
+      document.getElementById("course")?.focus();
       return;
     }
     if (!name.trim()) {
       setError("Give the project a name.");
+      setErrorField("name");
+      document.getElementById("name")?.focus();
       return;
     }
     setSubmitting(true);
@@ -54,10 +65,12 @@ export function NewProjectForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 max-w-2xl">
+    <form onSubmit={onSubmit} noValidate className="mt-6 max-w-2xl">
+      <RequiredNote className="mb-4" />
       <div className="mb-5">
         <label htmlFor="course" className="block font-bold">
           Course
+          <RequiredMark />
         </label>
         <select
           id="course"
@@ -65,6 +78,8 @@ export function NewProjectForm() {
           onChange={(e) => setCourseCode(e.target.value)}
           className="mt-1 w-full rounded border border-medium-tan p-2"
           required
+          aria-invalid={errorField === "course" || undefined}
+          aria-describedby={errorField === "course" ? "new-project-error" : undefined}
         >
           <option value="">Select a course</option>
           {ISA_COURSES.map((c) => (
@@ -78,6 +93,7 @@ export function NewProjectForm() {
       <div className="mb-5">
         <label htmlFor="name" className="block font-bold">
           Project name
+          <RequiredMark />
         </label>
         <input
           id="name"
@@ -86,6 +102,8 @@ export function NewProjectForm() {
           className="mt-1 w-full rounded border border-medium-tan p-2"
           maxLength={160}
           required
+          aria-invalid={errorField === "name" || undefined}
+          aria-describedby={errorField === "name" ? "new-project-error" : undefined}
         />
       </div>
 
@@ -125,15 +143,15 @@ export function NewProjectForm() {
       </fieldset>
 
       {error ? (
-        <p role="alert" className="mb-4 text-miami-red">
+        <p id="new-project-error" role="alert" className="mb-4 text-miami-red">
           {error}
         </p>
       ) : null}
 
       <button
         type="submit"
-        disabled={submitting}
-        className="rounded-card bg-miami-red px-5 py-2.5 font-bold text-white disabled:opacity-60"
+        aria-disabled={submitting || undefined}
+        className="rounded-card bg-miami-red px-5 py-2.5 font-bold text-white aria-disabled:opacity-60"
       >
         {submitting ? "Creating..." : "Create project"}
       </button>

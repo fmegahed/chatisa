@@ -118,7 +118,7 @@ test.describe("resuming an exam", () => {
     // the test id, so it persists across runs in tests/e2e/.data, and a run
     // interrupted after generation (an OOM-killed run on 2026-08-21 did this)
     // leaves an extra unfinished exam that would keep the offer on screen.
-    const discard = page.getByRole("button", { name: "Discard" });
+    const discard = page.getByRole("button", { name: "Discard this exam" });
     await expect(discard.first()).toBeVisible();
     for (let n = await discard.count(); n > 0; n = await discard.count()) {
       await discard.first().click();

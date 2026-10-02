@@ -39,7 +39,11 @@ export function ResumeStep({ draft, patch, nav }: StepProps) {
           onChange={(f) => patch({ resume: f })}
         />
       </div>
-      <StepNav {...nav} canContinue={draft.resume !== null} />
+      <StepNav
+        {...nav}
+        canContinue={draft.resume !== null}
+        requirement="Choose your resume PDF to continue."
+      />
     </section>
   );
 }

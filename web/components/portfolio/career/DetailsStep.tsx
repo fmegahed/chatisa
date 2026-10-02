@@ -13,6 +13,7 @@ import { normalizeUrl } from "@/lib/portfolio/links";
 import type { StepProps } from "@/lib/portfolio/draft";
 import { SizeMeter } from "../SizeMeter";
 import { StepNav } from "../StepNav";
+import { RequiredMark, RequiredNote } from "@/components/a11y/Required";
 
 /**
  * The last input step of the career wizard, and the one that generates. The
@@ -146,9 +147,13 @@ export function DetailsStep({
           {error}
         </p>
       ) : null}
-      <label className="mt-4 block font-bold">
+      <RequiredNote className="mt-4" />
+      <label className="mt-2 block font-bold">
         Your name
+        <RequiredMark />
         <input
+          required
+          autoComplete="name"
           value={draft.name}
           onChange={(e) => patch({ name: e.target.value })}
           className="mt-1 w-full rounded-card border border-medium-tan p-2 font-normal"
@@ -235,6 +240,7 @@ export function DetailsStep({
       <StepNav
         {...nav}
         canContinue={draft.name.trim().length > 0 && measured.ok}
+        requirement={draft.name.trim() ? undefined : "Enter your name to continue."}
         busy={busy}
         nextLabel="Generate my site"
         onNext={() => void generate()}

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type Ref } from "react";
 import { PdfPicker } from "@/components/exam/PdfPicker";
 import { ModelChooser } from "@/components/ModelChooser";
+import { announce, focusElement } from "@/lib/a11y/announce";
 import type { ModelOption } from "@/lib/config/models";
 
 /**
@@ -12,8 +13,9 @@ import type { ModelOption } from "@/lib/config/models";
  * and radio group, so arrow-key navigation and high contrast work without any
  * custom code. Advancing moves focus to the question heading rather than the
  * first option, so a screen reader reads the question instead of implying a
- * pre-selection. Feedback is announced politely because it is an expected
- * result; only errors interrupt.
+ * pre-selection. Feedback, results and every new question move focus to
+ * their heading so a screen reader starts reading the new content (#24); only
+ * errors interrupt.
  */
 
 
@@ -92,7 +94,12 @@ export function ExamAlly({
   >([]);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const feedbackRef = useRef<HTMLHeadingElement>(null);
+  const resultsRef = useRef<HTMLHeadingElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
+  // After a resume offer is discarded its buttons are gone, so focus lands on
+  // the next sensible heading instead of the page body.
+  const focusAfterDiscard = useRef(false);
 
   useEffect(() => {
     if (error) errorRef.current?.focus();
@@ -122,11 +129,33 @@ export function ExamAlly({
     };
   }, []);
 
-  useEffect(() => {
-    if (phase === "quiz" && !feedback) headingRef.current?.focus();
-  }, [index, phase, feedback]);
-
   const current = questions[index];
+  const currentId = current?.id;
+
+  // The next question can arrive after the index moves (it is fetched on
+  // advance), so the question id is part of the trigger (#24).
+  useEffect(() => {
+    if (phase === "quiz" && !feedback && currentId) {
+      focusElement(headingRef.current);
+    }
+  }, [currentId, phase, feedback]);
+
+  useEffect(() => {
+    if (feedback) focusElement(feedbackRef.current);
+  }, [feedback]);
+
+  useEffect(() => {
+    if (phase === "results") focusElement(resultsRef.current);
+  }, [phase]);
+
+  useEffect(() => {
+    if (!focusAfterDiscard.current) return;
+    focusAfterDiscard.current = false;
+    focusElement(
+      document.getElementById("resume-heading") ??
+        document.getElementById("exam-upload-heading"),
+    );
+  }, [resumable]);
   const isMcq = current?.type === "multiple_choice";
 
   async function call(url: string, init?: RequestInit) {
@@ -270,7 +299,9 @@ export function ExamAlly({
     setError(null);
     try {
       await call(`/api/exam-prep/exams/${id}`, { method: "DELETE" });
+      focusAfterDiscard.current = true;
       setResumable((current) => current.filter((e) => e.id !== id));
+      announce("Exam discarded.");
     } catch (err) {
       setError((err as Error).message);
     }
@@ -312,6 +343,8 @@ export function ExamAlly({
     setFeedback(null);
     setIndex(0);
     setDocumentInfo(null);
+    // The results and their buttons are gone; start again at step one.
+    setTimeout(() => focusElement(document.getElementById("exam-upload-heading")), 0);
   }
 
   return (
@@ -343,12 +376,13 @@ export function ExamAlly({
           <ul className="mt-2 space-y-2">
             {resumable.map((e) => (
               <li key={e.id} className="flex flex-wrap items-center gap-3">
-                <span>
+                <span id={`resume-${e.id}`}>
                   An exam of {e.deliveredCount} questions, up to question{" "}
                   {Math.min(e.currentPosition + 1, e.deliveredCount)}.
                 </span>
                 <button
                   type="button"
+                  aria-describedby={`resume-${e.id}`}
                   onClick={() => void resume(e.id)}
                   className="rounded-card bg-miami-red px-3 py-1.5 text-sm font-bold text-paper hover:bg-accent-red"
                 >
@@ -356,10 +390,11 @@ export function ExamAlly({
                 </button>
                 <button
                   type="button"
+                  aria-describedby={`resume-${e.id}`}
                   onClick={() => void discard(e.id)}
                   className="rounded-card border border-medium-tan px-3 py-1.5 text-sm font-bold hover:bg-paper"
                 >
-                  Discard
+                  Discard this exam
                 </button>
               </li>
             ))}
@@ -408,7 +443,11 @@ export function ExamAlly({
           <p className="mt-1 text-sm text-dark-tan">Topic: {current.topic}</p>
 
           {feedback ? (
-            <FeedbackPanel feedback={feedback} question={current} />
+            <FeedbackPanel
+              feedback={feedback}
+              question={current}
+              headingRef={feedbackRef}
+            />
           ) : (
             <AnswerForm
               question={current}
@@ -438,6 +477,7 @@ export function ExamAlly({
       {phase === "results" && results ? (
         <ResultsPanel
           results={results}
+          headingRef={resultsRef}
           onRestart={restart}
           onRetryTopics={retryTopics}
         />
@@ -486,7 +526,9 @@ function SetupPanel(props: {
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-card border border-medium-tan bg-paper p-5">
-        <h2 className="text-xl">1. Upload your course material</h2>
+        <h2 id="exam-upload-heading" className="text-xl">
+          1. Upload your course material
+        </h2>
         <p className="mt-1 text-sm">
           A PDF of your notes, slides or textbook chapter. Scanned pages are
           read as images, which takes a little longer.
@@ -574,14 +616,25 @@ function SetupPanel(props: {
           </fieldset>
         </div>
 
+        {/* Busy keeps the button focusable (aria-disabled) so focus is not
+            dropped while the exam is written (#27). */}
         <button
           type="button"
-          onClick={props.onGenerate}
-          disabled={!props.documentInfo || props.busy}
-          className="mt-5 rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:cursor-not-allowed disabled:bg-medium-gray"
+          onClick={() => {
+            if (!props.busy) props.onGenerate();
+          }}
+          disabled={!props.documentInfo}
+          aria-disabled={props.busy || undefined}
+          aria-describedby={props.documentInfo ? undefined : "exam-generate-hint"}
+          className="mt-5 rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:cursor-not-allowed disabled:bg-medium-gray aria-disabled:cursor-not-allowed aria-disabled:bg-medium-gray"
         >
           Build my practice exam
         </button>
+        {props.documentInfo ? null : (
+          <p id="exam-generate-hint" className="mt-2 text-sm text-dark-tan">
+            Upload a PDF first.
+          </p>
+        )}
       </div>
     </div>
   );
@@ -606,6 +659,7 @@ function AnswerForm(props: {
       className="mt-4 flex flex-col gap-4"
       onSubmit={(e) => {
         e.preventDefault();
+        if (props.busy || !ready) return;
         props.onSubmit();
       }}
     >
@@ -668,8 +722,9 @@ function AnswerForm(props: {
       <div>
         <button
           type="submit"
-          disabled={!ready || props.busy}
-          className="rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:cursor-not-allowed disabled:bg-medium-gray"
+          disabled={!ready}
+          aria-disabled={props.busy || undefined}
+          className="rounded-card bg-miami-red px-4 py-2 font-bold text-paper hover:bg-accent-red disabled:cursor-not-allowed disabled:bg-medium-gray aria-disabled:cursor-not-allowed aria-disabled:bg-medium-gray"
         >
           Submit answer
         </button>
@@ -681,9 +736,11 @@ function AnswerForm(props: {
 function FeedbackPanel({
   feedback,
   question,
+  headingRef,
 }: {
   feedback: Feedback;
   question: Question;
+  headingRef: Ref<HTMLHeadingElement>;
 }) {
   const correct = feedback.isCorrect === true;
   const heading =
@@ -696,12 +753,18 @@ function FeedbackPanel({
           : "Not quite";
 
   return (
-    <div
-      role="status"
+    <section
+      aria-labelledby="feedback-heading"
       className="mt-4 rounded-card border border-medium-tan bg-light-tan p-4"
     >
-      {/* Text, never colour alone, carries the result. */}
-      <h3 className="text-lg font-bold">
+      {/* Text, never colour alone, carries the result. Focus moves to this
+          heading, so the panel is not also a live region (#24). */}
+      <h3
+        id="feedback-heading"
+        ref={headingRef}
+        tabIndex={-1}
+        className="text-lg font-bold"
+      >
         <span aria-hidden="true">{correct ? "✓ " : "• "}</span>
         {heading}
       </h3>
@@ -741,7 +804,7 @@ function FeedbackPanel({
         From page {feedback.sourcePage} of your document:{" "}
         <q>{feedback.sourceQuote}</q>
       </p>
-    </div>
+    </section>
   );
 }
 
@@ -764,10 +827,12 @@ interface ExamResults {
 
 function ResultsPanel({
   results,
+  headingRef,
   onRestart,
   onRetryTopics,
 }: {
   results: ExamResults;
+  headingRef: Ref<HTMLHeadingElement>;
   onRestart: () => void;
   onRetryTopics: (topics: string[]) => void;
 }) {
@@ -778,7 +843,12 @@ function ResultsPanel({
   return (
     <section aria-labelledby="results-heading" className="flex flex-col gap-5">
       <div>
-        <h2 id="results-heading" className="text-3xl">
+        <h2
+          id="results-heading"
+          ref={headingRef}
+          tabIndex={-1}
+          className="text-3xl"
+        >
           Your results
         </h2>
         {results.exactScore ? (

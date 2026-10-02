@@ -68,7 +68,11 @@ function MiamiClassesStep({ draft, patch, nav }: StepProps) {
           <CourseChecklist value={draft.coursePlan} onChange={(next) => patch(fromPlan(next))} />
         ) : null}
       </div>
-      <StepNav {...nav} canContinue={draft.courses.length > 0} />
+      <StepNav
+        {...nav}
+        canContinue={draft.courses.length > 0}
+        requirement="Mark at least one course to continue."
+      />
     </section>
   );
 }

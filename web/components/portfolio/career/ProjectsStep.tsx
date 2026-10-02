@@ -11,6 +11,7 @@ import type { CareerProject, StepProps } from "@/lib/portfolio/draft";
 import { SizeMeter } from "../SizeMeter";
 import { StepNav } from "../StepNav";
 import { GithubImport } from "../GithubImport";
+import { announce, focusElement } from "@/lib/a11y/announce";
 
 /**
  * Step 3 of the career wizard: one to five projects, each a set of files
@@ -34,13 +35,25 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
   });
   const [error, setError] = useState<string | null>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  // A project added or removed moves focus: to the new project's heading,
+  // or back to the step heading when the pressed button left with its card.
+  const focusSlug = useRef<string | null>(null);
+  useEffect(() => {
+    if (!focusSlug.current) return;
+    const slug = focusSlug.current;
+    focusSlug.current = null;
+    focusElement(document.getElementById(`project-${slug}-heading`));
+  }, [draft.projects]);
   const published = usePublishedWork().filter((w) => w.kind === "showcase");
   const scoutProjects = loadProjects().projects.filter((p) => p.repoUrl);
 
   const update = (i: number, p: Partial<CareerProject>) =>
     patch({ projects: draft.projects.map((x, j) => (j === i ? { ...x, ...p } : x)) });
   const add = (p: CareerProject) => {
-    if (draft.projects.length < MAX_PROJECTS) patch({ projects: [...draft.projects, p] });
+    if (draft.projects.length >= MAX_PROJECTS) return;
+    focusSlug.current = p.slug;
+    patch({ projects: [...draft.projects, p] });
   };
   const uniqueSlug = (base: string) => {
     let s = slugify(base);
@@ -69,6 +82,11 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
         accepted.slice(0, room).map((f) => prepareFile(f, guessRole(f.name))),
       );
       update(i, { files: [...draft.projects[i].files, ...prepared] });
+      if (prepared.length > 0) {
+        announce(
+          `Added ${prepared.length} ${prepared.length === 1 ? "file" : "files"} to project ${i + 1}.`,
+        );
+      }
       if (refused) {
         setError(refused);
         setTimeout(() => errorRef.current?.focus(), 0);
@@ -123,7 +141,9 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
 
   return (
     <section className="rounded-card border border-medium-tan bg-paper p-5">
-      <h2 className="text-2xl">Projects (1 to 5)</h2>
+      <h2 ref={headingRef} className="text-2xl">
+        Projects (1 to 5)
+      </h2>
       <p className="mt-1 text-dark-tan">
         Add the files from each project (code, notebooks, report, figures) and, if it already
         lives somewhere, its link. Files you add are published in your portfolio repository under
@@ -145,6 +165,9 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
       <ul className="mt-4 space-y-4">
         {draft.projects.map((p, i) => (
           <li key={p.slug} className="rounded-card border border-medium-tan p-4">
+            <h3 id={`project-${p.slug}-heading`} className="mb-2 font-bold">
+              Project {i + 1}
+            </h3>
             <div className="grid gap-3 md:grid-cols-2">
               <label className="block">
                 Title (optional)
@@ -164,14 +187,19 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
                 />
               </label>
             </div>
-            <label className="mt-3 inline-block cursor-pointer rounded-card border-2 border-miami-red px-4 py-2 font-bold text-miami-red hover:bg-light-tan">
+            {/* Focus ring for the visually hidden input (#31); the input stays
+                focusable while busy or full and refuses the click (#27). */}
+            <label className="mt-3 inline-block cursor-pointer rounded-card border-2 border-miami-red px-4 py-2 font-bold text-miami-red hover:bg-light-tan has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-miami-red has-[:focus-visible]:outline-offset-2">
               <input
                 type="file"
                 multiple
                 className="sr-only"
                 aria-label={`Add files to project ${i + 1}`}
                 onChange={(e) => void addFiles(i, e.target)}
-                disabled={busy !== null || p.files.length >= MAX_PROJECT_FILES}
+                aria-disabled={busy !== null || p.files.length >= MAX_PROJECT_FILES || undefined}
+                onClick={(e) => {
+                  if (busy !== null || p.files.length >= MAX_PROJECT_FILES) e.preventDefault();
+                }}
               />
               {busy === p.slug ? "Reading files..." : `Add files (${p.files.length}/${MAX_PROJECT_FILES})`}
             </label>
@@ -224,7 +252,12 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
                     <button
                       type="button"
                       className="underline"
-                      onClick={() => update(i, { files: p.files.filter((_, m) => m !== k) })}
+                      aria-label={`Remove ${f.name} from project ${i + 1}`}
+                      onClick={() => {
+                        update(i, { files: p.files.filter((_, m) => m !== k) });
+                        announce(`Removed ${f.name}.`);
+                        focusElement(document.getElementById(`project-${p.slug}-heading`));
+                      }}
                     >
                       Remove
                     </button>
@@ -235,9 +268,13 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
             <button
               type="button"
               className="mt-3 underline"
-              onClick={() => patch({ projects: draft.projects.filter((_, j) => j !== i) })}
+              onClick={() => {
+                patch({ projects: draft.projects.filter((_, j) => j !== i) });
+                announce(`Removed project ${i + 1}.`);
+                focusElement(headingRef.current);
+              }}
             >
-              Remove this project
+              Remove project {i + 1}
             </button>
           </li>
         ))}
@@ -295,7 +332,14 @@ export function ProjectsStep({ draft, patch, nav }: StepProps) {
         </div>
       ) : null}
       <SizeMeter files={measured} />
-      <StepNav {...nav} onNext={onNext} canContinue={valid && busy === null} />
+      <StepNav
+        {...nav}
+        onNext={onNext}
+        canContinue={valid && busy === null}
+        requirement={
+          busy === null ? "Add at least one project, and give each one a file or a link." : undefined
+        }
+      />
     </section>
   );
 }
