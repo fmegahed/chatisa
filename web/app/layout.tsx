@@ -4,6 +4,7 @@ import "@fontsource-variable/source-serif-4";
 import "katex/dist/katex.min.css";
 import "./globals.css";
 import { MockModeBanner } from "@/components/MockModeBanner";
+import { Announcer } from "@/components/a11y/Announcer";
 
 export const metadata: Metadata = {
   title: {
@@ -35,6 +36,7 @@ export default function RootLayout({
         </a>
         <MockModeBanner />
         {children}
+        <Announcer />
       </body>
     </html>
   );

@@ -6,20 +6,36 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { RunnableCode } from "@/components/run/RunnableCode";
 import { CopyButton } from "@/components/chat/CopyButton";
+import { ScrollRegion } from "@/components/a11y/ScrollRegion";
 import { languageFromClassName, runnerFor } from "@/lib/run/languages";
 import { normalizeMathDelimiters } from "@/lib/chat/math";
+import { remarkDemoteHeadings } from "@/lib/chat/headings";
 
 /**
  * Model output renderer. react-markdown does not render raw HTML, so model
  * text cannot inject markup. Links are treated as untrusted. TeX between
  * $ / $$ (or the \( \) and \[ \] forms, normalized first) renders via KaTeX;
  * malformed TeX shows as-is rather than crashing the reply.
+ *
+ * `headingLevel` is the level of the message heading the reply sits under
+ * ("ChatISA" is an h2 in the chat log), so the reply's own headings start one
+ * level below it (#4).
  */
-export function Markdown({ children }: { children: string }) {
+export function Markdown({
+  children,
+  headingLevel = 2,
+}: {
+  children: string;
+  headingLevel?: number;
+}) {
   return (
     <div className="chat-prose">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkMath]}
+        remarkPlugins={[
+          remarkGfm,
+          remarkMath,
+          [remarkDemoteHeadings, { parentLevel: headingLevel }],
+        ]}
         rehypePlugins={[[rehypeKatex, { throwOnError: false, strict: false }]]}
         components={{
           a: ({ href, children }) => (
@@ -53,31 +69,28 @@ export function Markdown({ children }: { children: string }) {
                   <CopyButton text={code} />
                 </figcaption>
                 {/*
-                  Focusable so keyboard users can scroll long lines
-                  (WCAG 2.1.1). Labelled so the region is announced.
+                  Focusable while long lines overflow, so keyboard users can
+                  scroll them (WCAG 2.1.1). Labelled so the region is announced.
                 */}
-                <pre
-                  tabIndex={0}
-                  role="region"
-                  aria-label="Code sample"
+                <ScrollRegion
+                  as="pre"
+                  label="Code sample"
                   className="overflow-x-auto rounded-card border border-medium-tan bg-light-tan p-3 text-sm"
                 >
                   {children}
-                </pre>
+                </ScrollRegion>
               </figure>
             );
           },
           table: ({ children }) => (
-            <div
-              tabIndex={0}
-              role="region"
-              aria-label="Table"
+            <ScrollRegion
+              label="Table"
               className="my-3 overflow-x-auto"
             >
               <table className="w-full border-collapse text-sm">
                 {children}
               </table>
-            </div>
+            </ScrollRegion>
           ),
           th: ({ children }) => (
             <th className="border border-medium-tan bg-light-tan p-2 text-left">

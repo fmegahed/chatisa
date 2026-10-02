@@ -49,6 +49,14 @@
     text-wrap: balance;
   }
 
+  /* Placeholder text at >=4.5:1 on every light surface (WCAG 1.4.3).
+   * Tailwind's default is half-opacity currentColor, which measured 3.7:1.
+   * Dark tan on paper 5.5:1, warm white 5.2:1, light tan 4.6:1. */
+  ::placeholder {
+    color: var(--color-dark-tan);
+    opacity: 1;
+  }
+
   /* Strong, brand-red focus indicator (>=3:1 on all app surfaces) */
   :focus-visible {
     outline: 3px solid var(--color-miami-red);
@@ -103,14 +111,23 @@
     font-weight: 600;
     line-height: 1.25;
   }
-  .chat-prose h1 {
+  /* Sized by the model's markdown level (md-hN), not the demoted element
+   * level, so replies look the same while their outline nests under the
+   * message heading (see lib/chat/headings.ts). */
+  .chat-prose .md-h1 {
     font-size: 1.5rem;
   }
-  .chat-prose h2 {
+  .chat-prose .md-h2 {
     font-size: 1.3rem;
   }
-  .chat-prose h3 {
+  .chat-prose .md-h3 {
     font-size: 1.15rem;
+  }
+  .chat-prose h5,
+  .chat-prose h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.25;
   }
   .chat-prose ul,
   .chat-prose ol {
@@ -158,6 +175,8 @@
     --sb-border: var(--color-medium-tan);
     --sb-header: var(--color-light-tan);
     --sb-accent: var(--color-miami-red);
+    /* Accent for TEXT (and the focus ring): Miami Red on light. */
+    --sb-accent-text: var(--color-miami-red);
   }
   .sb-root[data-sb-theme="dark"] {
     --sb-bg: #0a0a0a;
@@ -168,6 +187,18 @@
     --sb-header: #1c1c1c;
     /* Reads white text at >=4.5:1 (buttons use white on this). */
     --sb-accent: #d02040;
+    /* #d02040 text read 3.2-3.5:1 on the dark panels; this reads >=6.2:1 on
+     * every dark surface, and the focus ring was 2.8:1 on #1c1c1c. */
+    --sb-accent-text: #ff6b7f;
+  }
+  .sb-root[data-sb-theme="dark"] :focus-visible {
+    outline-color: var(--sb-accent-text);
+  }
+  /* Placeholders follow the workspace skin: dark tan >=4.6:1 on the light
+   * surfaces, #9a9a9a >=6:1 on the dark ones (WCAG 1.4.3). */
+  .sb-root ::placeholder {
+    color: var(--sb-muted);
+    opacity: 1;
   }
 
   .skip-link {
