@@ -204,7 +204,7 @@ test.describe("JobApp Assistant", () => {
       {
         data: {
           kind: "resume",
-          modelId: "gpt-6-sol",
+          modelId: "gpt-6.1-sol",
           template: 1,
           studentName: "Kaitlin Jones",
         },

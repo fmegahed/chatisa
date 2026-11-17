@@ -8,16 +8,19 @@ import { CHAT_MODULES } from "@/lib/chat/config";
 import { getModule } from "@/lib/modules";
 
 // Anthropic + OpenAI only (2026-07-24): both providers accept the same native
-// file parts, so chats with attachments stay model-switchable.
+// file parts, so chats with attachments stay model-switchable. v6.10.1 added
+// GPT-6.1 Terra and Claude Haiku 5.5.
 const ROSTER = [
-  "gpt-6-sol",
+  "gpt-6.1-sol",
+  "gpt-6.1-terra",
   "gpt-6-luna",
   "claude-opus-5-5",
-  "claude-sonnet-5",
+  "claude-sonnet-5-5",
+  "claude-haiku-5-5",
 ];
 
 describe("Ask Anything roster", () => {
-  it("offers exactly the curated Anthropic + OpenAI five", () => {
+  it("offers exactly the curated Anthropic + OpenAI six", () => {
     expect(getPageModels("ask_anything").sort()).toEqual([...ROSTER].sort());
   });
 
@@ -36,9 +39,9 @@ describe("Ask Anything roster", () => {
     }
   });
 
-  it("defaults to Claude Sonnet 5", () => {
+  it("defaults to Claude Sonnet 5.5", () => {
     const { defaultModelId } = buildModelOptions("ask_anything");
-    expect(defaultModelId).toBe("claude-sonnet-5");
+    expect(defaultModelId).toBe("claude-sonnet-5-5");
   });
 
   it("registers the chat module under the ask-anything slug", () => {

@@ -4,6 +4,20 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.10.1 - November 17, 2026
+
+**Model refresh: GPT-6.1 Sol and Claude Sonnet 5.5 take over the module
+defaults at unchanged prices; GPT-6.1 Terra, Claude Haiku 5.5, Gemini 4
+(Carbon, Argon, Hydrogen), Muse Spark Open, Mistral Large 4, Nemotron 3.5
+Super VL, MiniMax M3.1 Flash and Kimi K3.1 Pro added or swapped in. Repairs:
+four models that were failing in the structured-output modules, Ternary Bonsai
+removed (no longer served). The weekly tagger moves to Gemini 4 Hydrogen at
+low thinking with a $20 default run cap. Security: Next.js 16.4.6 (critical
+cache advisories), zod 4.6.7, sharp 0.35.5.** Full notes:
+`docs/releases/v6.10.1.md`.
+
+---
+
 ## v6.10.0 - October 2, 2026
 
 **Accessibility release: fixes 35 of the 36 findings from the accessibility

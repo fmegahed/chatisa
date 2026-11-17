@@ -252,7 +252,8 @@ async function main() {
     existsSync(path.join(dir, f)) ? (JSON.parse(readFileSync(path.join(dir, f), "utf8")) as T) : fallback;
   const write = (f: string, data: unknown) => writeFileSync(path.join(dir, f), JSON.stringify(data, null, 2) + "\n");
 
-  const models = { a: "claude-sonnet-5", b: "gpt-6-sol" } as const;
+  // v6.10.1: the same two model lines, moved to their current versions.
+  const models = { a: "claude-sonnet-5-5", b: "gpt-6.1-sol" } as const;
   const vocab = SKILLS.map((s) => `${s.id} (${s.label})`).join(", ");
   const schema = z.object({
     links: z.array(z.object({ skillId: z.string(), level: z.enum(["anchor", "applied", "exposure"]), evidence: z.string() })),

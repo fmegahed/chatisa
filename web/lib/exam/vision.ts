@@ -48,16 +48,20 @@ async function mapWithConcurrency<T, R>(
  * callers an id that is not in MODELS, which fails confusingly deep inside a
  * request instead of here.
  */
+// v6.10.1: each replaced id keeps its position (Gemini 4 Hydrogen for 3.8
+// Flash, Sonnet 5.5 for Sonnet 5, GPT-6.1 Sol for GPT-6 Sol, Gemini 4 Argon
+// for 3.1 Pro), so the order of preference is unchanged. Hydrogen costs twice
+// 3.8 Flash's promotional price, the same as 3.8 Flash from 2027-01-01.
 const VISION_PREFERENCE: string[] = [
-  "gemini-3.8-flash",
+  "gemini-4-hydrogen",
   "gpt-6-luna",
-  "claude-sonnet-5",
-  "gpt-6-sol",
+  "claude-sonnet-5-5",
+  "gpt-6.1-sol",
   // Muse Glimmer replaced Qwen3.6-35B here in v6.3.0: cheaper and its route's
   // vision was verified live. Qwen3.8-27B was considered and rejected for this
   // slot: transcription runs per page and its only route answered in 10-17s.
   "meta-models/Muse-Glimmer-30B:together",
-  "gemini-3.1-pro-preview-customtools",
+  "gemini-4-argon",
 ].filter((id) => MODELS[id]?.supportsVision);
 
 const transcriptionSchema = z.object({

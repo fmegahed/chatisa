@@ -79,7 +79,7 @@ test.describe("guest magic passes", () => {
     }
     // Direct API calls: JSON 401, never a redirect that could leak content.
     const post = await request.post("/api/ask-anything", {
-      data: { modelId: "claude-sonnet-5", messages: [] },
+      data: { modelId: "claude-sonnet-5-5", messages: [] },
     });
     expect(post.status()).toBe(401);
     const files = await request.get(

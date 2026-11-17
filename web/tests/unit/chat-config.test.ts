@@ -53,7 +53,7 @@ describe("coding companion prompt parity", () => {
 describe("chatRequestSchema", () => {
   const valid = {
     module: "coding_companion",
-    modelId: "claude-sonnet-5",
+    modelId: "claude-sonnet-5-5",
     messages: [{ role: "user", parts: [{ type: "text", text: "hello" }] }],
   };
 

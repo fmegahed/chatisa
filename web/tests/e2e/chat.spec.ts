@@ -239,7 +239,7 @@ test.describe("Coding Companion chat", () => {
 test.describe("chat API contract", () => {
   const validBody = {
     module: "coding_companion",
-    modelId: "claude-sonnet-5",
+    modelId: "claude-sonnet-5-5",
     messages: [{ role: "user", parts: [{ type: "text", text: "hi" }] }],
   };
 

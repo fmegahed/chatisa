@@ -9,18 +9,30 @@ import type { RawPosting } from "./sources/types";
 
 /**
  * Per-posting skill tagging for the weekly harvest.
- * Model: gemini-3.8-flash (v6.5.0 catalog refresh 2026-09-22; before that
- * 3.7 Flash from v6.3.0, and gemini-3.6-flash per the user decision of
- * 2026-07-28, revising the earlier frontier-everywhere choice — the quality
- * delta on skill-listing does not justify a weekly frontier bill. Each Flash
- * step has kept the same price and limits).
+ * Model: gemini-4-hydrogen (v6.10.1, 2026-11-16, when Gemini 4 replaced the
+ * Gemini 3.x catalog entries). Before that gemini-3.8-flash (v6.5.0), 3.7
+ * Flash (v6.3.0), and gemini-3.6-flash per the user decision of 2026-07-28,
+ * revising the earlier frontier-everywhere choice: the quality delta on
+ * skill-listing does not justify a weekly frontier bill. Hydrogen is Google's
+ * fast tier, not a frontier model. It costs $1.50/$7.50 per million, twice 3.8
+ * Flash's promotional price and equal to 3.8 Flash's own price from
+ * 2027-01-01, so the default run cap below doubled with it. Before the switch
+ * it was compared with 3.8 Flash on 60 fresh USAJobs postings with
+ * scripts/scout/tagger-model-eval.ts, which is why it runs at low thinking
+ * (see providerOptions in tagPosting).
  */
-export const TAG_MODEL_ID = "gemini-3.8-flash";
+export const TAG_MODEL_ID = "gemini-4-hydrogen";
 
-/** Cap per design §4.3; CHATISA_SCOUT_MAX_RUN_USD overrides. */
+/**
+ * Cap per design §4.3; CHATISA_SCOUT_MAX_RUN_USD overrides. $20 since v6.10.1
+ * (was $10): a full week is up to about 1,100 postings at about $0.011 each
+ * on Hydrogen at low thinking (measured 2026-11-16), about $12, so a $10 cap
+ * would have left the last postings of a full week untagged and off the
+ * board. $20 leaves room for longer postings and for retries.
+ */
 export function maxRunUsd(): number {
   const raw = Number(process.env.CHATISA_SCOUT_MAX_RUN_USD);
-  return Number.isFinite(raw) && raw > 0 ? raw : 10;
+  return Number.isFinite(raw) && raw > 0 ? raw : 20;
 }
 
 // skillId is a plain string ON THE WIRE because Gemini rejects a 104-value
@@ -131,6 +143,14 @@ export async function tagPosting(
     // instructions, each one a posting silently missing from that week.
     maxOutputTokens: 3_000,
     abortSignal,
+    // Hydrogen at its default thinking level failed the 2026-11-16 check
+    // (docs/development/2026-11-16-tagger-model-eval.md): 3 of 60 postings
+    // failed, two of them empty responses, it added generic soft skills, and
+    // it cost 3.3 times 3.8 Flash per posting. At "low" (the lowest level it
+    // accepts; "minimal" is refused) it failed none of 60, stayed close to 3.8
+    // Flash's own run-to-run agreement, and cost 2.1 times
+    // (2026-11-16-tagger-model-eval-thinking-low.md).
+    providerOptions: { google: { thinkingConfig: { thinkingLevel: "low" } } },
   });
   const cost = calculateCost(
     TAG_MODEL_ID,

@@ -21,12 +21,12 @@ describe("describeProviderAvailability", () => {
     expect(result.availableModelCount).toBe(TOTAL - openWeight.length);
     expect(new Set(result.hiddenModels)).toEqual(new Set(openWeight));
     // Commercial models stay available.
-    expect(result.hiddenModels).not.toContain("claude-sonnet-5");
+    expect(result.hiddenModels).not.toContain("claude-sonnet-5-5");
   });
 
   it("hides the OpenAI models when OPENAI_API_KEY is absent", () => {
     const result = describeProviderAvailability(["OPENAI_API_KEY"]);
-    expect(result.hiddenModels).toContain("gpt-6-sol");
+    expect(result.hiddenModels).toContain("gpt-6.1-sol");
     expect(result.hiddenModels).toContain("gpt-6-luna");
     // OpenAI's open-weight models served through the HuggingFace router are a
     // different provider and a different credential.

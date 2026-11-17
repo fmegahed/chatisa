@@ -26,31 +26,38 @@ type Proposed = {
   outputPerM: number;
 };
 
-// v6.5.0 list (2026-09-22). Prices are the providers' published rates that
+// v6.10.1 list (2026-11-16). Prices are the providers' published rates that
 // day; where a route publishes none through the router the stored figure
 // comes from the provider's own docs or is zero, and the price check simply
 // has nothing to compare against.
 const PROPOSED: Proposed[] = [
-  { id: "gpt-6-sol", provider: "openai", inputPerM: 2, outputPerM: 10 },
+  { id: "gpt-6.1-sol", provider: "openai", inputPerM: 2, outputPerM: 10 },
+  { id: "gpt-6.1-terra", provider: "openai", inputPerM: 1, outputPerM: 5 },
   { id: "gpt-6-luna", provider: "openai", inputPerM: 0.1, outputPerM: 0.5 },
-  { id: "claude-sonnet-5", provider: "anthropic", inputPerM: 2, outputPerM: 10 },
+  { id: "claude-sonnet-5-5", provider: "anthropic", inputPerM: 2, outputPerM: 10 },
+  // Up to 100K-token prompts; $0.5/$2.5 above.
+  { id: "claude-haiku-5-5", provider: "anthropic", inputPerM: 0.1, outputPerM: 0.5 },
   { id: "claude-opus-5-5", provider: "anthropic", inputPerM: 4, outputPerM: 20 },
-  { id: "zai-org/GLM-5.3:novita", provider: "huggingface", inputPerM: 1.4, outputPerM: 4.4 },
-  { id: "thinkingmachines/Inkling:together", provider: "huggingface", inputPerM: 1.0, outputPerM: 4.05 },
-  { id: "deepseek-ai/DeepSeek-V4-Pro-0813:baseten", provider: "huggingface", inputPerM: 1.32, outputPerM: 3.96 },
+  { id: "zai-org/GLM-5.3:novita", provider: "huggingface", inputPerM: 0.63, outputPerM: 1.98 },
+  { id: "thinkingmachines/Inkling:deepinfra", provider: "huggingface", inputPerM: 0.95, outputPerM: 4.05 },
+  { id: "deepseek-ai/DeepSeek-V4-Pro-0813:deepinfra", provider: "huggingface", inputPerM: 1.3, outputPerM: 2.6 },
   { id: "deepseek-ai/DeepSeek-V4.1-Flash:baseten", provider: "huggingface", inputPerM: 0.3, outputPerM: 1.2 },
-  { id: "prism-ml/Ternary-Bonsai-27B-gguf:together", provider: "huggingface", inputPerM: 0, outputPerM: 0 },
-  { id: "moonshotai/Kimi-K3:baseten", provider: "huggingface", inputPerM: 3, outputPerM: 15 },
+  { id: "moonshotai/Kimi-K3.1-Pro:inference-net", provider: "huggingface", inputPerM: 1.8, outputPerM: 9 },
+  { id: "meta-models/Muse-Spark-Open-816B-A42B:together", provider: "huggingface", inputPerM: 1.25, outputPerM: 4.25 },
+  { id: "mistralai/Mistral-Large-4-1T-A52B:mistral", provider: "huggingface", inputPerM: 0.7, outputPerM: 2.1 },
   { id: "Qwen/Qwen3.8-2.4T-A95B:deepinfra", provider: "huggingface", inputPerM: 2, outputPerM: 6 },
   { id: "Qwen/Qwen3.8-27B:ovhcloud", provider: "huggingface", inputPerM: 0.47, outputPerM: 3.19 },
   { id: "meta-models/Muse-Glimmer-30B:together", provider: "huggingface", inputPerM: 0.35, outputPerM: 1.5 },
-  { id: "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16:deepinfra", provider: "huggingface", inputPerM: 1, outputPerM: 5 },
+  { id: "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16:deepinfra", provider: "huggingface", inputPerM: 0.5, outputPerM: 2.2 },
+  { id: "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-BF16:deepinfra", provider: "huggingface", inputPerM: 0.15, outputPerM: 0.5 },
+  { id: "MiniMaxAI/MiniMax-M3.1-Flash:wafer", provider: "huggingface", inputPerM: 0.135, outputPerM: 0.54 },
   { id: "openai/gpt-oss-120b:cerebras", provider: "huggingface", inputPerM: 0.35, outputPerM: 0.75 },
-  { id: "openai/gpt-oss-20b:groq", provider: "huggingface", inputPerM: 0.1, outputPerM: 0.5 },
+  { id: "openai/gpt-oss-20b:groq", provider: "huggingface", inputPerM: 0.075, outputPerM: 0.3 },
   { id: "microsoft/phi-4:deepinfra", provider: "huggingface", inputPerM: 0.07, outputPerM: 0.14 },
-  { id: "gemini-3.1-pro-preview-customtools", provider: "google", inputPerM: 2, outputPerM: 12 },
-  // Promotional price through 2026-12-31; $1.5/$7.5 from 2027-01-01.
-  { id: "gemini-3.8-flash", provider: "google", inputPerM: 0.75, outputPerM: 3.75 },
+  // Promotional $2/$10 through 2026-11-30; the standard $4/$20 is recorded.
+  { id: "gemini-4-carbon", provider: "google", inputPerM: 4, outputPerM: 20 },
+  { id: "gemini-4-argon", provider: "google", inputPerM: 4, outputPerM: 20 },
+  { id: "gemini-4-hydrogen", provider: "google", inputPerM: 1.5, outputPerM: 7.5 },
 ];
 
 type HfProvider = {

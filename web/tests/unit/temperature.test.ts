@@ -23,13 +23,21 @@ const ROOT = resolve(__dirname, "..", "..");
 describe("temperatureFor", () => {
   it("omits the parameter for models that reject it", () => {
     expect(temperatureFor("claude-opus-5-5", 0.7)).toBeUndefined();
-    expect(temperatureFor("claude-sonnet-5", 0)).toBeUndefined();
+    expect(temperatureFor("claude-sonnet-5-5", 0)).toBeUndefined();
+    // Haiku 5.5 joins the other 5.5 models in rejecting sampling parameters.
+    expect(temperatureFor("claude-haiku-5-5", 0.7)).toBeUndefined();
+    // GPT-6.x: the SDK drops it for reasoning models (measured v6.10.1), so the
+    // catalog says so rather than sending a setting with no effect.
+    expect(temperatureFor("gpt-6.1-sol", 0.7)).toBeUndefined();
+    expect(temperatureFor("gpt-6.1-terra", 0.7)).toBeUndefined();
+    expect(temperatureFor("gpt-6-luna", 0)).toBeUndefined();
   });
 
   it("passes it through for models that accept it", () => {
-    expect(temperatureFor("gpt-6-sol", 0.7)).toBe(0.7);
-    expect(temperatureFor("gpt-6-luna", 0)).toBe(0);
-    expect(temperatureFor("gemini-3.8-flash", 0.25)).toBe(0.25);
+    // Gemini 4 accepted temperature without a warning (measured v6.10.1).
+    expect(temperatureFor("gemini-4-hydrogen", 0.25)).toBe(0.25);
+    expect(temperatureFor("gemini-4-carbon", 0.7)).toBe(0.7);
+    expect(temperatureFor("openai/gpt-oss-120b:cerebras", 0)).toBe(0);
   });
 
   it("treats an unknown model id as accepting it", () => {

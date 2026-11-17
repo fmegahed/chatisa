@@ -110,7 +110,7 @@ describe("POST /api/scout/project", () => {
 
   it("rejects unknown skill ids before any model call", async () => {
     const res = await project.POST(
-      request({ modelId: "gpt-6-sol", skillIds: ["not_a_skill"] }),
+      request({ modelId: "gpt-6.1-sol", skillIds: ["not_a_skill"] }),
     );
     expect(res.status).toBe(400);
   });
@@ -118,7 +118,7 @@ describe("POST /api/scout/project", () => {
   it("generates a scaffold under mock mode", async () => {
     const res = await project.POST(
       request({
-        modelId: "gpt-6-sol",
+        modelId: "gpt-6.1-sol",
         skillIds: ["sql", "data_visualization"],
         evidence: ["wrote SQL to manage structured data"],
       }),

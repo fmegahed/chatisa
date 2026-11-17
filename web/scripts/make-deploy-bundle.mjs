@@ -546,7 +546,7 @@ USAJOBS_EMAIL=
 # Comma-separated emails allowed to trigger a manual harvest via
 # POST /api/scout/refresh (progress lands in the scout_runs table).
 CHATISA_SCOUT_ADMINS=
-# Per-run tagging cost ceiling in USD (default 10 when unset).
+# Per-run tagging cost ceiling in USD (default 20 when unset).
 CHATISA_SCOUT_MAX_RUN_USD=
 
 # --- GitHub publishing: Portfolio Builder and Job Scout (optional) -----------

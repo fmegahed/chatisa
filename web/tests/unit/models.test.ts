@@ -110,13 +110,23 @@ describe("how models are presented to students", () => {
   });
 
   it("derives badges from fields rather than from the name", () => {
-    // Gemma stopped being free on the 2026-08-20 audit, so the free-badge
-    // example is now Ternary Bonsai, the catalog's remaining $0 model.
-    const free = badgesFor("prism-ml/Ternary-Bonsai-27B-gguf:together");
-    expect(free).toContain("open weight");
-    expect(free).toContain("free");
+    // Gemma stopped being free on the 2026-08-20 audit, and Ternary Bonsai,
+    // the last $0 model, left the catalog in v6.10.1 when its weights stopped
+    // being served. With no single free example left, the rule is checked
+    // over the whole catalog instead: a badge appears exactly when its field
+    // says so, so a future $0 model gets "free" without a test change.
+    for (const [id, cfg] of Object.entries(MODELS)) {
+      const badges = badgesFor(id);
+      expect(badges.includes("free"), `${id} free`).toBe(cfg.costPer1kInput === 0);
+      expect(badges.includes("open weight"), `${id} open weight`).toBe(cfg.openWeight);
+      expect(badges.includes("reads images"), `${id} vision`).toBe(cfg.supportsVision);
+    }
 
-    const commercial = badgesFor("claude-sonnet-5");
+    const open = badgesFor("openai/gpt-oss-120b:cerebras");
+    expect(open).toContain("open weight");
+    expect(open).not.toContain("free");
+
+    const commercial = badgesFor("claude-sonnet-5-5");
     expect(commercial).not.toContain("open weight");
     expect(commercial).not.toContain("free");
   });
@@ -157,10 +167,10 @@ describe("how models are presented to students", () => {
   });
 
   it("honours the available-model filter", () => {
-    const only = ["claude-sonnet-5"];
+    const only = ["claude-sonnet-5-5"];
     const { options, defaultModelId } = buildModelOptions("coding_companion", only);
     expect(options.map((o) => o.id)).toEqual(only);
-    expect(defaultModelId).toBe("claude-sonnet-5");
+    expect(defaultModelId).toBe("claude-sonnet-5-5");
   });
 
   it("offers the interview module a real set including open weight models", () => {
@@ -285,8 +295,8 @@ describe("calculateCost arithmetic, unchanged from legacy config.py", () => {
   });
 
   it("computes cost for a current model", () => {
-    // gpt-6-sol: $2.00 per million in, $10.00 per million out (2026-09-22).
-    const result = calculateCost("gpt-6-sol", 10_000, 2_000);
+    // gpt-6.1-sol: $2.00 per million in, $10.00 per million out (2026-11-16).
+    const result = calculateCost("gpt-6.1-sol", 10_000, 2_000);
     expect(result).not.toHaveProperty("error");
     if ("error" in result) throw new Error("unreachable");
     expect(result.inputCost).toBeCloseTo(0.02, 6);
@@ -295,10 +305,19 @@ describe("calculateCost arithmetic, unchanged from legacy config.py", () => {
     expect(result.currency).toBe("USD");
   });
 
-  it("charges nothing for the free models", () => {
-    const result = calculateCost("prism-ml/Ternary-Bonsai-27B-gguf:together", 50_000, 5_000);
+  it("computes cost for an open weight route at sub-cent rates", () => {
+    // Replaces the free-model check (no $0 model since v6.10.1). Nemotron 3.5
+    // Super VL on deepinfra: $0.15 per million in, $0.50 per million out, the
+    // kind of small rate where a misplaced decimal is easiest to miss.
+    const result = calculateCost(
+      "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-BF16:deepinfra",
+      50_000,
+      5_000,
+    );
     if ("error" in result) throw new Error("unreachable");
-    expect(result.totalCost).toBe(0);
+    expect(result.inputCost).toBeCloseTo(0.0075, 6);
+    expect(result.outputCost).toBeCloseTo(0.0025, 6);
+    expect(result.totalCost).toBeCloseTo(0.01, 6);
   });
 
   it("reports an error for an unknown model rather than throwing", () => {

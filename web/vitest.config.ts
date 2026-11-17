@@ -1,4 +1,5 @@
 import { defineConfig } from "vitest/config";
+import { normalizePath } from "vite";
 import path from "node:path";
 
 export default defineConfig({
@@ -12,7 +13,13 @@ export default defineConfig({
       // Point at the package's own no-op entry, which is what Next resolves to
       // on the server. This keeps the client-import guard intact in the app
       // while letting these Node tests exercise the modules it protects.
-      "server-only": path.resolve(__dirname, "node_modules/server-only/empty.js"),
+      //
+      // normalizePath (v6.10.1): on Windows path.resolve returns backslashes,
+      // and Vite's resolver turned that replacement into null, so the import
+      // fell through to "Cannot find package 'server-only'" and 41 test files
+      // failed to load. Seen 2026-11-16 after the repository moved folders;
+      // the forward-slash form resolves.
+      "server-only": normalizePath(path.resolve(__dirname, "node_modules/server-only/empty.js")),
     },
   },
   test: {

@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "6.10.0",
+  "version": "6.10.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -22,13 +22,13 @@
     "catalog:map": "tsx scripts/catalog/map.ts"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^4.0.60",
-    "@ai-sdk/cohere": "^4.0.46",
-    "@ai-sdk/google": "^4.0.77",
-    "@ai-sdk/groq": "^4.0.46",
-    "@ai-sdk/openai": "^4.0.72",
-    "@ai-sdk/openai-compatible": "^3.0.53",
-    "@ai-sdk/react": "^4.0.114",
+    "@ai-sdk/anthropic": "^4.0.105",
+    "@ai-sdk/cohere": "^4.0.84",
+    "@ai-sdk/google": "^4.0.121",
+    "@ai-sdk/groq": "^4.0.84",
+    "@ai-sdk/openai": "^4.0.118",
+    "@ai-sdk/openai-compatible": "^3.0.92",
+    "@ai-sdk/react": "^4.0.177",
     "@codemirror/autocomplete": "^6.20.3",
     "@codemirror/commands": "^6.10.4",
     "@codemirror/lang-python": "^6.2.1",
@@ -43,7 +43,7 @@
     "@lezer/highlight": "^1.2.3",
     "@napi-rs/canvas": "^0.1.100",
     "@sqlite.org/sqlite-wasm": "^3.53.0-build1",
-    "ai": "^7.0.111",
+    "ai": "^7.0.173",
     "better-sqlite3": "^12.11.1",
     "codemirror": "^6.0.2",
     "docx": "^9.7.1",
@@ -51,7 +51,7 @@
     "ggsql-wasm": "^0.4.1",
     "jszip": "^3.10.1",
     "katex": "^0.18.1",
-    "next": "^16.3.6",
+    "next": "^16.4.6",
     "next-auth": "^5.0.0-beta.32",
     "pino": "^10.3.1",
     "pyodide": "^314.0.2",
@@ -66,7 +66,7 @@
     "unpdf": "^1.6.2",
     "vega-embed": "^7.1.0",
     "webr": "^0.6.0",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
@@ -79,7 +79,7 @@
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.11",
     "eslint": "^9",
-    "eslint-config-next": "^16.3.6",
+    "eslint-config-next": "^16.4.6",
     "fake-indexeddb": "^6.2.5",
     "fflate": "^0.8.3",
     "tailwindcss": "^4",

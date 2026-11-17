@@ -423,7 +423,7 @@ test.describe("Job Scout access control", () => {
       expect(res.status(), path).toBe(401);
     }
     const post = await request.post("/api/scout/project", {
-      data: { modelId: "gpt-6-sol", skillIds: ["sql"] },
+      data: { modelId: "gpt-6.1-sol", skillIds: ["sql"] },
     });
     expect(post.status()).toBe(401);
     const refresh = await request.post("/api/scout/refresh");

@@ -13,7 +13,7 @@ import { getSkill } from "../../lib/scout/taxonomy";
 
 loadEnv({ path: ".env.local", quiet: true });
 // Candidate first, reference second; override with EVAL_MODELS=a,b.
-const MODELS = (process.env.EVAL_MODELS ?? "gpt-6-luna,gpt-6-sol").split(",") as [string, string];
+const MODELS = (process.env.EVAL_MODELS ?? "gpt-6-luna,gpt-6.1-sol").split(",") as [string, string];
 const [CANDIDATE, REFERENCE] = MODELS;
 
 async function main() {

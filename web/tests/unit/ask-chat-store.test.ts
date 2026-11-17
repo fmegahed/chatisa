@@ -27,7 +27,7 @@ function chat(id: string, updatedAt: number, text = "Hello"): StoredChat {
   return {
     id,
     title: text,
-    modelId: "claude-sonnet-5",
+    modelId: "claude-sonnet-5-5",
     createdAt: updatedAt,
     updatedAt,
     messages: [{ id: "m1", role: "user", parts: [{ type: "text", text }] }],
