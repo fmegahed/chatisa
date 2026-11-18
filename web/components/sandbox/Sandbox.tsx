@@ -17,6 +17,8 @@ import {
   plotDetails,
   type PlotInfo,
 } from "@/lib/run/plot-alt";
+import { parsePlotData, type PlotData } from "@/lib/run/maidr-schema";
+import { AccessiblePlot } from "@/components/run/AccessiblePlot";
 import { Group, Panel, Separator, type Layout } from "react-resizable-panels";
 import { CodeEditor } from "@/components/run/CodeEditor";
 import { RUNNABLE_LANGUAGES } from "@/lib/run/languages";
@@ -50,6 +52,7 @@ import {
   extractVisualiseQuery,
   hasVisualise,
   renderSpecToImage,
+  plotDataFromSpec,
   stripVisualise,
 } from "@/lib/sandbox/ggsql-plot";
 import { SandboxChat } from "@/components/sandbox/SandboxChat";
@@ -185,11 +188,17 @@ interface ConsoleEntry {
   run?: number;
 }
 
-/** One drawn plot and what is known about it, for its alt text (#23). */
+/** One drawn plot and what is known about it: its alt text (#23) and, when
+ * the runtime could read them, its data for keyboard and sound (#40). */
 interface PlotEntry {
+  /** Stable per plot, so switching plots remounts the MAIDR chart cleanly. */
+  id: number;
   url: string;
   info: PlotInfo;
+  data?: PlotData;
 }
+
+let plotSeq = 0;
 
 /**
  * Below this width (about 125% zoom on a 1280px screen, and down to 320 CSS px
@@ -528,8 +537,10 @@ function Workspace(props: {
         ]);
         if (outcome.ok && outcome.result?.imageDataUrl) {
           const plot: PlotEntry = {
+            id: ++plotSeq,
             url: outcome.result.imageDataUrl,
             info: describePlot(code, language.id, outcome.result.plotInfo),
+            data: parsePlotData(outcome.result.plotData),
           };
           setPlots((prev) => {
             setPlotIndex(prev.length);
@@ -548,7 +559,13 @@ function Workspace(props: {
               const url = await renderSpecToImage(plot.spec as Record<string, unknown>, {
                 dark: theme === "dark",
               });
-              const entry: PlotEntry = { url, info: describePlot(code, "sql") };
+              const entry: PlotEntry = {
+                id: ++plotSeq,
+                url,
+                info: describePlot(code, "sql"),
+                // ggsql's Vega-Lite spec already holds the plotted rows (#40).
+                data: plotDataFromSpec(plot.spec),
+              };
               setPlots((prev) => {
                 setPlotIndex(prev.length);
                 return [...prev, entry];
@@ -1997,9 +2014,8 @@ function PlotsHelpPane({
         {tab === "plots" ? (
           plot ? (
             <figure className="flex h-full flex-col items-center justify-center gap-2 p-2">
-              {/* A runtime-generated data URL; next/image cannot optimise it. */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <AccessiblePlot
+                key={plot.id}
                 src={plot.url}
                 // Described from the figure and the code (#23).
                 alt={plotAltText({
@@ -2008,7 +2024,11 @@ function PlotsHelpPane({
                   index: safeIndex,
                   total: plots.length,
                 })}
-                className="min-h-0 max-w-full flex-1 rounded bg-white object-contain"
+                title={plot.info.title}
+                // Keyboard and sound exploration when its data is known (#40).
+                data={plot.data}
+                imgClassName="min-h-0 max-w-full flex-1 rounded bg-white object-contain"
+                hostClassName="flex min-h-0 max-w-full flex-1 items-center justify-center"
               />
               {/* A text alternative listing what is known about the chart. */}
               <details className="w-full max-w-md text-xs text-[var(--sb-text)]">

@@ -1553,6 +1553,9 @@ test.describe("AI Sandbox", () => {
     await expect(dialog.getByText("Ctrl+Space", { exact: true })).toBeVisible();
     // The caret-position shortcut (#21).
     await expect(dialog.getByText("Read line and column")).toBeVisible();
+    // The chart keys (#40), active while a plot has focus.
+    await expect(dialog.getByText("Plots (when a chart has focus)")).toBeAttached();
+    await expect(dialog.getByText("Move between data points")).toBeAttached();
 
     // No WCAG A/AA violations with the dialog open.
     const axe = await new AxeBuilder({ page })
@@ -1918,7 +1921,9 @@ test.describe("Coding Studio accessibility", () => {
     await page.getByRole("button", { name: "Run", exact: true }).click();
 
     const panel = page.getByRole("tabpanel", { name: "Plots" });
-    const img = panel.getByRole("img");
+    // The <img> itself: since #40, MAIDR wraps it in its own role="img" chart,
+    // so the role alone would match two elements.
+    const img = panel.locator("img").first();
     await expect(img).toBeVisible({ timeout: 90_000 });
     const alt = (await img.getAttribute("alt")) ?? "";
     expect(alt).not.toMatch(/^Plot( \d+ of \d+)?$/);

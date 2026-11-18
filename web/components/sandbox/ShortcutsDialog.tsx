@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollRegion } from "@/components/a11y/ScrollRegion";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { detectIsMac, shortcutGroups } from "@/lib/sandbox/shortcuts";
 
@@ -88,7 +89,12 @@ export function ShortcutsDialog(props: { dark: boolean; onClose: () => void }) {
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
+        {/* Scrolls when the list outgrows the dialog (the Plots group made it
+            tall enough on short screens), so it must be keyboard reachable. */}
+        <ScrollRegion
+          label="Shortcut list"
+          className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4"
+        >
           {groups.map((group) => (
             <section key={group.title}>
               <h3 className="mb-1 text-xs font-bold uppercase tracking-wide text-[var(--sb-muted)]">
@@ -119,10 +125,11 @@ export function ShortcutsDialog(props: { dark: boolean; onClose: () => void }) {
             </section>
           ))}
           <p className="text-xs text-[var(--sb-muted)]">
-            Shortcuts work while the editor has focus. On macOS, Cmd replaces Ctrl,
-            except Autocomplete which stays Ctrl+Space.
+            Editor shortcuts work while the editor has focus, and plot keys while
+            a chart has focus. On macOS, Cmd replaces Ctrl, except Autocomplete
+            (Ctrl+Space) and the chart key list (Ctrl+/).
           </p>
-        </div>
+        </ScrollRegion>
       </div>
     </div>
   );

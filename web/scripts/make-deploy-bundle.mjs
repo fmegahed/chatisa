@@ -223,6 +223,29 @@ if (forbiddenPaths.length > 0) {
 }
 console.log("  no development data: no .db files, no nested deploy/");
 
+// MAIDR (#40) is GPL-3.0-or-later and ships as a separate, unmodified file with
+// its licence and notice beside it (THIRD_PARTY_NOTICES.md). A bundle without
+// them, or with a maidr.js that is not the pinned, verified one, must not ship:
+// the plots would silently lose keyboard and sound, or the notice would be
+// missing. public/runtimes is filled by `npm run setup:runtimes`.
+{
+  const pin = JSON.parse(await readFile(join(web, "lib", "run", "maidr-pin.json"), "utf8"));
+  const dir = join(bundle, "public", "runtimes", "maidr", pin.version);
+  const missing = ["maidr.js", "LICENSE", "NOTICE.txt"].filter((f) => !existsSync(join(dir, f)));
+  if (missing.length > 0) {
+    console.error(`FATAL: MAIDR ${pin.version} files missing from the bundle: ${missing.join(", ")}.`);
+    console.error("  Run `npm run setup:runtimes` (phase maidr) and build again.");
+    process.exit(1);
+  }
+  const { createHash } = await import("node:crypto");
+  const sha = createHash("sha256").update(await readFile(join(dir, "maidr.js"))).digest("hex");
+  if (sha !== pin.maidrJsSha256) {
+    console.error(`FATAL: bundled maidr.js does not match the pin (sha256 ${sha}).`);
+    process.exit(1);
+  }
+  console.log(`  MAIDR ${pin.version}: maidr.js matches the pin; LICENSE and NOTICE.txt present`);
+}
+
 // Worker child processes (workers/*.mjs) are spawned at runtime, so Next's
 // dependency tracing never sees their imports; unpdf was missing from the
 // first production deploy (2026-07-25) and PDF features failed only there.

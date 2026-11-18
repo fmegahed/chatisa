@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { proxyCapText } from "@/lib/net/proxy-limits";
+import { MAIDR_VERSION } from "@/lib/run/maidr-schema";
+import pin from "@/lib/run/maidr-pin.json";
 import {
   buildPyodideIndex,
   classifyPythonPackage,
@@ -164,7 +166,7 @@ function PackageHelp({ languageId }: { languageId: string }) {
 }
 
 /** The WebAssembly explainer: what these runtimes are, the exact bundled
- * versions, and where each project lives. */
+ * versions, where each project lives, and the chart explorer (#40). */
 function RuntimeInfo() {
   const link = (href: string, text: string) => (
     <a
@@ -199,6 +201,14 @@ function RuntimeInfo() {
           <strong>SQLite 3.53.0</strong> via{" "}
           {link("https://sqlite.org/wasm/doc/trunk/index.md", "SQLite Wasm")},
           the database&apos;s official browser build.
+        </li>
+        <li>
+          <strong>Chart explorer: MAIDR {MAIDR_VERSION}</strong> (
+          {link("https://maidr.ai/", "maidr.ai")}) lets you explore a plot
+          from the keyboard and hear it. It is a separate program under the{" "}
+          {link(`/runtimes/maidr/${MAIDR_VERSION}/LICENSE`, "GPL 3.0 or later")}{" "}
+          licence, loaded unmodified; its{" "}
+          {link(pin.source, "source code")} is public.
         </li>
       </ul>
       <p className="text-[var(--sb-muted)]">

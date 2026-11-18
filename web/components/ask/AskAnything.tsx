@@ -7,7 +7,7 @@ import {
   type ChatToolCall,
   type PreparedAttachment,
 } from "@/components/chat/Chat";
-import { ToolCard } from "@/components/ask/ToolCard";
+import { ToolCard, type ToolPlot } from "@/components/ask/ToolCard";
 import type { ModelOption } from "@/lib/config/models";
 import { CHAT_MODULES } from "@/lib/chat/config";
 import {
@@ -171,7 +171,9 @@ export function AskAnything({
   const sessionsRef = useRef(
     new Map<string, Partial<Record<"python" | "r" | "sql", RunSession>>>(),
   );
-  const plotsRef = useRef(new Map<string, string>());
+  // Per tool call: the plot image, and what the runtime read from it (its
+  // description facts for #23 and its data for keyboard and sound, #40).
+  const plotsRef = useRef(new Map<string, ToolPlot>());
   const stepsRef = useRef(0);
   const runSupported = useRef(isRunSupported());
   // The Pyodide package index enriches import failures with the checker's
@@ -263,7 +265,11 @@ export function AskAnything({
       }
       let plots = 0;
       if (outcome.result?.imageDataUrl) {
-        plotsRef.current.set(toolCallId, outcome.result.imageDataUrl);
+        plotsRef.current.set(toolCallId, {
+          url: outcome.result.imageDataUrl,
+          info: outcome.result.plotInfo,
+          data: outcome.result.plotData,
+        });
         plots = 1;
       }
       const { text: output, truncated } = truncateToolOutput(text);

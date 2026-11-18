@@ -45,7 +45,7 @@ test.describe("chart exemplars render", () => {
     test.setTimeout(420_000);
     await runInStudio(page, "R", R_CHART_EXAMPLE);
 
-    await expect(page.getByRole("img", { name: /^Plot 1 of/ })).toBeVisible({
+    await expect(page.locator('img[alt^="Plot 1 of"]')).toBeVisible({
       timeout: 400_000,
     });
     // A ggplot error surfaces in the console rather than failing the run.
@@ -63,7 +63,7 @@ test.describe("chart exemplars render", () => {
     test.setTimeout(420_000);
     await runInStudio(page, "Python", PYTHON_CHART_EXAMPLE);
 
-    await expect(page.getByRole("img", { name: /^Plot 1 of/ })).toBeVisible({
+    await expect(page.locator('img[alt^="Plot 1 of"]')).toBeVisible({
       timeout: 400_000,
     });
     const output = await page.getByLabel("Console output").innerText();

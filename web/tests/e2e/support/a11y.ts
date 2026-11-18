@@ -53,7 +53,14 @@ export async function auditDom(page: Page) {
       const editable = el.isContentEditable && el.getAttribute("contenteditable") !== null;
       // Only elements that are actually in the tab order.
       if (!native && !el.hasAttribute("tabindex") && !editable) continue;
-      if (!native && !editable && !(role && INTERACTIVE_ROLES.has(role)) && !scrollable(el)) {
+      // A MAIDR chart (#40) is an operable widget: arrow keys move through its
+      // data. maidr.js exposes it as role="img" at rest and role="application"
+      // while focused, so it is exempt here by its exact place, not by adding
+      // img to the interactive roles everywhere.
+      const maidrChart =
+        (role === "img" || role === "application") &&
+        el.matches('[data-maidr-plot] figure[id^="maidr-figure-"] [tabindex="0"]');
+      if (!native && !editable && !maidrChart && !(role && INTERACTIVE_ROLES.has(role)) && !scrollable(el)) {
         nonInteractiveTabStops.push(desc(el));
       }
       const r = el.getBoundingClientRect();

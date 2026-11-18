@@ -1,0 +1,11 @@
+{
+  "name": "maidr",
+  "version": "4.16.0",
+  "license": "GPL-3.0-or-later",
+  "published": "2026-10-19",
+  "tarball": "https://registry.npmjs.org/maidr/-/maidr-4.16.0.tgz",
+  "integrity": "sha512-aIGy56JWpiWqY35dqAzNmkhfTZPAQsVaaZzv4p3H4wb/tyCaIPIcQjgGeox2nX3qE8gwZXd0Kxy9pla2XOVrZQ==",
+  "gitHead": "21cb21908b774d95222544d580387bf5aa2dd2da",
+  "source": "https://github.com/xability/maidr/tree/21cb21908b774d95222544d580387bf5aa2dd2da",
+  "maidrJsSha256": "f81f5d5a9f736bc6238ff93b2d54207aaff765c4e88eec7c63cb1fdc608dd523"
+}

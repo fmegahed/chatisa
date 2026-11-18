@@ -7,9 +7,12 @@
  * not committed. Re-run after changing a runtime version.
  *
  * Phase 1 handles SQLite (SQL), phase 2 Pyodide (Python), phase 3 WebR (R).
+ * The last phase fetches MAIDR, the keyboard and sound chart explorer (#40).
  */
 import { cp, mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { gunzipSync } from "node:zlib";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -554,6 +557,98 @@ async function setupGgsql() {
   console.log(`  ${join(out, "snippets").replace(root, ".")}  (wasm-bindgen snippets)`);
 }
 
+/**
+ * The files of a .tgz, read straight from the ustar stream: no shell `tar`, so
+ * the same code runs on Windows and the deploy machine. Only regular files are
+ * returned; long names use the ustar prefix field, which npm writes.
+ */
+function readTarball(gz) {
+  const tar = gunzipSync(gz);
+  const files = new Map();
+  const text = (from, len) =>
+    tar.subarray(from, from + len).toString("utf8").replace(/\0.*$/s, "");
+  for (let at = 0; at + 512 <= tar.length; ) {
+    const name = text(at, 100);
+    if (!name) break; // two zero blocks end the archive
+    const size = parseInt(text(at + 124, 12).trim() || "0", 8);
+    const type = String.fromCharCode(tar[at + 156] || 48);
+    const prefix = text(at + 345, 155);
+    const path = prefix ? `${prefix}/${name}` : name;
+    if (type === "0") files.set(path, tar.subarray(at + 512, at + 512 + size));
+    at += 512 + Math.ceil(size / 512) * 512;
+  }
+  return files;
+}
+
+/**
+ * MAIDR (#40): the keyboard, sound and braille chart explorer the September
+ * 2026 accessibility audit recommended. maidr.js is GPL-3.0-or-later and
+ * ChatISA is MIT, so it is shipped as a SEPARATE, UNMODIFIED file, served from
+ * our own origin and loaded at runtime by components/run/AccessiblePlot.tsx.
+ * It is never an npm dependency and never imported into ChatISA's code (a unit
+ * test guards that boundary).
+ *
+ * This is the first phase here that verifies what it downloads: the tarball's
+ * sha512 must equal the npm registry's published integrity recorded in
+ * lib/run/maidr-pin.json, and maidr.js's own sha256 must match too. A library
+ * that releases weekly is pinned exactly, so an upgrade is a deliberate edit of
+ * that file (see docs/operations.md).
+ */
+async function setupMaidr() {
+  const pin = JSON.parse(
+    await readFile(join(root, "lib", "run", "maidr-pin.json"), "utf8"),
+  );
+  const out = join(outRoot, "maidr", pin.version);
+  console.log(`MAIDR ${pin.version} (${pin.license}, separate unmodified file):`);
+  const res = await fetch(pin.tarball);
+  if (!res.ok) {
+    throw new Error(`fetch ${pin.tarball} failed: ${res.status} ${res.statusText}`);
+  }
+  const gz = Buffer.from(await res.arrayBuffer());
+  const integrity = `sha512-${createHash("sha512").update(gz).digest("base64")}`;
+  if (integrity !== pin.integrity) {
+    throw new Error(
+      `maidr ${pin.version} tarball integrity mismatch: got ${integrity}, pinned ${pin.integrity}`,
+    );
+  }
+  const files = readTarball(gz);
+  // Only what the browser loads, plus the licence and the package metadata.
+  const wanted = [...files.keys()].filter((p) =>
+    /^package\/(dist\/(maidr\.js|maidr\.css|maidr-math\.css|locale-[a-z]{2}\.js)|LICENSE|package\.json)$/.test(p),
+  );
+  for (const path of wanted.sort()) {
+    const to = join(out, path.replace(/^package\/(dist\/)?/, ""));
+    await mkdir(dirname(to), { recursive: true });
+    await writeFile(to, files.get(path));
+    console.log(`  ${to.replace(root, ".")}  (${(files.get(path).length / 1024).toFixed(0)} KB)`);
+  }
+  const js = await readFile(join(out, "maidr.js"));
+  const sha256 = createHash("sha256").update(js).digest("hex");
+  if (sha256 !== pin.maidrJsSha256) {
+    throw new Error(
+      `maidr.js sha256 mismatch: got ${sha256}, pinned ${pin.maidrJsSha256}`,
+    );
+  }
+  await writeFile(
+    join(out, "NOTICE.txt"),
+    [
+      `MAIDR ${pin.version} (Multimodal Access and Interactive Data Representation)`,
+      `Licence: ${pin.license} (see LICENSE in this folder).`,
+      "",
+      "maidr.js, the locale packs and the CSS in this folder are UNMODIFIED copies",
+      `of the files in the npm package maidr@${pin.version}. ChatISA loads them at`,
+      "runtime as a separate program; they are not part of ChatISA's MIT-licensed",
+      "source code.",
+      "",
+      `Package: ${pin.tarball}`,
+      `Integrity: ${pin.integrity}`,
+      `Corresponding source: ${pin.source}`,
+      "",
+    ].join("\n"),
+  );
+  console.log(`  verified: tarball sha512 and maidr.js sha256 match the pin`);
+}
+
 /** Total size of a directory tree, for the one-line report. */
 async function directorySize(dir) {
   const { readdir } = await import("node:fs/promises");
@@ -576,6 +671,7 @@ const PHASES = {
   webr: setupWebR,
   "webr-packages": setupWebRPackages,
   ggsql: setupGgsql,
+  maidr: setupMaidr,
 };
 
 async function main() {
@@ -603,6 +699,8 @@ async function main() {
   await setupWebRPackages();
   console.log("");
   await setupGgsql();
+  console.log("");
+  await setupMaidr();
   console.log("\nDone. These assets are gitignored; re-run after a version bump.");
 }
 

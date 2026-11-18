@@ -6,7 +6,18 @@ import {
   openaiContainerId,
   toolSummary,
 } from "@/lib/ask/tool-card";
-import { plotAltText, plotInfoFromCode } from "@/lib/run/plot-alt";
+import { describePlot, plotAltText } from "@/lib/run/plot-alt";
+import { parsePlotData } from "@/lib/run/maidr-schema";
+import { AccessiblePlot } from "@/components/run/AccessiblePlot";
+
+/** A plot a run_python / run_r tool call drew, as the runtime returned it. */
+export interface ToolPlot {
+  url: string;
+  /** Description facts from the figure (#23); untrusted until parsed. */
+  info?: unknown;
+  /** The plot's data, for keyboard and sound (#40); untrusted until parsed. */
+  data?: unknown;
+}
 
 /**
  * One tool call in an Ask Anything reply: a collapsible card showing what ran
@@ -320,6 +331,24 @@ function serverToolBody(
   return null;
 }
 
+/** The plot a tool call drew. Its alt text describes the chart from the
+ * figure and the code (#23); with its data it can be explored from the
+ * keyboard and heard (#40). */
+function ToolCardPlot({ plot, code, language }: { plot: ToolPlot; code: string; language: string }) {
+  const info = describePlot(code, language, plot.info);
+  return (
+    <div className="flex flex-col gap-1">
+      <AccessiblePlot
+        src={plot.url}
+        alt={plotAltText({ language, info })}
+        title={info.title}
+        data={parsePlotData(plot.data)}
+        imgClassName="max-w-full rounded-card border border-medium-tan"
+      />
+    </div>
+  );
+}
+
 export function ToolCard({
   part,
   plotFor,
@@ -327,7 +356,7 @@ export function ToolCard({
   part: Record<string, unknown>;
   /** Looks up a captured plot for a tool call; images stay client-side (they
    * are shown to the student, and the model is told a plot was produced). */
-  plotFor: (toolCallId: string) => string | undefined;
+  plotFor: (toolCallId: string) => ToolPlot | undefined;
 }) {
   const toolName =
     (part.toolName as string | undefined) ??
@@ -397,19 +426,10 @@ export function ToolCard({
             </p>
           ) : null}
           {plot ? (
-            // The plot the code produced. Alt text describes the chart from the
-            // code's titles, labels and chart calls (#23).
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={plot}
-              alt={plotAltText({
-                language: toolName.replace(/^run_/, ""),
-                info: plotInfoFromCode(
-                  typeof input?.code === "string" ? input.code : "",
-                  toolName.replace(/^run_/, ""),
-                ),
-              })}
-              className="max-w-full rounded-card border border-medium-tan"
+            <ToolCardPlot
+              plot={plot}
+              code={typeof input?.code === "string" ? input.code : ""}
+              language={toolName.replace(/^run_/, "")}
             />
           ) : null}
         </div>

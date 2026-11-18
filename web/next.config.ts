@@ -17,6 +17,15 @@ const nextConfig: NextConfig = {
   // and streamed it left the document briefly untitled, which is when a
   // screen reader announces the page. The lookup is one local SQLite read.
   htmlLimitedBots: /.*/,
+  experimental: {
+    // The e2e server (playwright.config.ts) runs without Turbopack's on-disk
+    // dev cache. With it, the first e2e run after a batch of source edits
+    // looped (seen five times, 2026-11-17): the restored cache served a stale
+    // entry chunk list, the dev server kept sending "restart" for it, and the
+    // sign-in page reloaded until the 10-minute timeout. Everyday `next dev`
+    // keeps the cache for fast restarts.
+    turbopackFileSystemCacheForDev: process.env.CHATISA_E2E_NO_DEV_CACHE !== "1",
+  },
   async headers() {
     // Which routes are isolated, and the full reasoning, live in
     // lib/run/isolation.ts beside the test that checks no page rendering

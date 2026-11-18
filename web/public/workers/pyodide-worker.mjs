@@ -260,6 +260,239 @@ def __chatisa_plot_info(fig):
             series += [t.get_text() for t in leg.get_texts()]
     return {"kinds": kinds, "title": title, "xLabel": xl, "yLabel": yl, "series": series[:12], "panels": len(axes)}
 
+def __chatisa_plot_data(fig):
+    # The plotted values, for keyboard and sound exploration (#40). Neutral
+    # shape, validated and capped again in lib/run/maidr-schema.ts. Anything
+    # unrecognised is skipped rather than guessed: the picture and its
+    # description stay either way.
+    import math
+    import numpy as np
+    from matplotlib.container import BarContainer
+    from matplotlib.collections import PathCollection, QuadMesh
+    from matplotlib import dates as mdates
+    axes = [a for a in fig.get_axes() if a.get_visible() and a.get_label() != "<colorbar>"]
+    if len(axes) != 1:
+        return {"panels": len(axes), "layers": []}
+    ax = axes[0]
+    counted = [0]
+    def fin(v):
+        try:
+            f = float(v)
+        except Exception:
+            return None
+        return f if math.isfinite(f) else None
+    def cap(items, n):
+        counted[0] += len(items)
+        if len(items) <= n:
+            return list(items)
+        step = len(items) / n
+        return [items[int(i * step)] for i in range(n)]
+    def name_of(artist):
+        lab = artist.get_label() if hasattr(artist, "get_label") else ""
+        return lab if isinstance(lab, str) and lab and not lab.startswith("_") else None
+    def tick_text(axis, pos, lo=None, hi=None):
+        # The category label drawn at (or within) a position.
+        best = None
+        for loc, t in zip(axis.get_ticklocs(), axis.get_ticklabels()):
+            text = t.get_text()
+            if not text:
+                continue
+            if lo is not None and lo - 1e-9 <= loc <= hi + 1e-9:
+                return text
+            if abs(loc - pos) < 1e-6:
+                best = text
+        return best
+    def grid_labels(axis, n, offset):
+        # Category names when the ticks carry them (seaborn heatmap); plain
+        # 1-based positions when they are only numbers.
+        labels = [tick_text(axis, i + offset) for i in range(n)]
+        def numeric(t):
+            try:
+                float(t.replace(",", "").replace(chr(8722), "-"))
+                return True
+            except Exception:
+                return False
+        if any(t is None or numeric(t) for t in labels):
+            return [str(i + 1) for i in range(n)]
+        return labels
+    def is_date(axis):
+        return isinstance(axis.get_major_formatter(), (mdates.DateFormatter, mdates.AutoDateFormatter, mdates.ConciseDateFormatter))
+    def categories(axis):
+        # Names plotted as strings (ax.scatter(grades, ["Amanda", ...]),
+        # plt.plot(["Jan", "Feb"], ...)): matplotlib keeps their positions in
+        # the axis units. None for a numeric or date axis.
+        try:
+            from matplotlib import category as mcat
+            u = axis.get_units() if hasattr(axis, "get_units") else getattr(axis, "units", None)
+            if isinstance(u, mcat.UnitData) and u._mapping:
+                return {int(v): str(k) for k, v in u._mapping.items()}
+        except Exception:
+            pass
+        return None
+    x_cats, y_cats = categories(ax.xaxis), categories(ax.yaxis)
+    def cat_at(cats, v):
+        f = fin(v)
+        return cats.get(int(round(f))) if f is not None else None
+    def x_value(v):
+        if x_cats is not None:
+            name = cat_at(x_cats, v)
+            return name if name is not None else fin(v)
+        if is_date(ax.xaxis):
+            try:
+                return mdates.num2date(v).date().isoformat()
+            except Exception:
+                return fin(v)
+        return fin(v)
+
+    layers = []
+    point_bars = []
+    def add_points(name, xy):
+        if x_cats is not None and y_cats is not None:
+            return  # both axes are categories: nothing to measure
+        if x_cats is None and y_cats is None:
+            layers.append({"kind": "point", "name": name, "points": cap([{"x": fin(x), "y": fin(y)} for x, y in xy], 4000)})
+            return
+        # Dots along one category axis (the Coding Studio's dumbbell, a dot
+        # plot) are read as bars, one series per dot layer, as the R and SQL
+        # extraction do: "Student is Amanda, Grade is 91".
+        cats, ci, vi = (y_cats, 1, 0) if y_cats is not None else (x_cats, 0, 1)
+        pts = []
+        for p in xy:
+            c, v = cat_at(cats, p[ci]), fin(p[vi])
+            if c is not None and v is not None:
+                pts.append({"x": c, "y": v})
+        if pts:
+            point_bars.append({"name": name, "points": cap(pts, 400)})
+    hist_ids = set()
+    for rec in ax.__dict__.get("_chatisa_hists", []):
+        try:
+            n, bins, patches = rec
+            n = np.asarray(n, dtype=float)
+            if n.ndim != 1:
+                continue
+            for p in (patches if isinstance(patches, (list, BarContainer)) else []):
+                hist_ids.add(id(p))
+            layers.append({"kind": "hist", "bins": cap([{"xMin": fin(bins[i]), "xMax": fin(bins[i + 1]), "y": fin(n[i])} for i in range(len(n))], 400)})
+        except Exception:
+            pass
+
+    bars = []
+    for c in ax.containers:
+        if not isinstance(c, BarContainer) or any(id(p) in hist_ids for p in c.patches):
+            continue
+        rects = list(c.patches)
+        if not rects:
+            continue
+        horizontal = getattr(c, "orientation", None) == "horizontal"
+        widths = [r.get_height() if horizontal else r.get_width() for r in rects]
+        starts = [r.get_y() if horizontal else r.get_x() for r in rects]
+        # seaborn histplot draws bins with ax.bar: equal widths that touch.
+        touching = len(rects) >= 3 and all(abs(w - widths[0]) <= 1e-9 * max(1.0, abs(widths[0])) for w in widths) and all(abs(starts[i] + widths[i] - starts[i + 1]) <= 1e-6 * max(1.0, abs(widths[0])) for i in range(len(rects) - 1))
+        if touching and not horizontal:
+            layers.append({"kind": "hist", "bins": cap([{"xMin": fin(r.get_x()), "xMax": fin(r.get_x() + r.get_width()), "y": fin(r.get_height())} for r in rects], 400)})
+            continue
+        values = getattr(c, "datavalues", None)
+        if values is None:
+            values = [r.get_width() if horizontal else r.get_height() for r in rects]
+        axis = ax.yaxis if horizontal else ax.xaxis
+        points = []
+        for r, v in zip(rects, values):
+            lo = r.get_y() if horizontal else r.get_x()
+            hi = lo + (r.get_height() if horizontal else r.get_width())
+            label = tick_text(axis, (lo + hi) / 2, lo, hi)
+            points.append({"x": label if label is not None else str(round((lo + hi) / 2, 6)), "y": fin(v)})
+        stacked_here = any(abs(r.get_x() if horizontal else r.get_y()) > 1e-12 for r in rects)
+        bars.append(({"name": name_of(c), "points": cap(points, 400)}, horizontal, stacked_here))
+    if bars:
+        layers.append({"kind": "bar", "horizontal": bars[0][1], "stacked": len(bars) > 1 and any(b[2] for b in bars), "series": [b[0] for b in bars[:10]]})
+
+    has_bars = bool(bars)
+    box_artists = ax.__dict__.get("_chatisa_box_artists", set())
+    line_series = []
+    for l in ax.lines:
+        if not l.get_visible() or id(l) in box_artists:
+            continue
+        xy = np.asarray(l.get_xydata(), dtype=float)
+        if xy.ndim != 2 or len(xy) < 2:
+            continue
+        no_line = l.get_linestyle() in ("None", "", " ")
+        if has_bars and len(xy) == 2 and abs(xy[0][0] - xy[1][0]) < 1e-12:
+            continue  # an error bar on a bar chart
+        if no_line:
+            if l.get_marker() not in (None, "None", "", " "):
+                add_points(name_of(l), xy)
+            continue
+        if y_cats is not None:
+            continue  # runs along a category axis (a dumbbell's connector); R and SQL skip these too
+        pts = [{"x": x_value(x), "y": fin(y)} for x, y in xy]
+        line_series.append({"name": name_of(l), "points": cap(pts, 4000)})
+    if line_series:
+        layers.append({"kind": "line", "series": line_series[:10]})
+
+    for c in ax.collections:
+        if isinstance(c, PathCollection):
+            off = np.ma.getdata(c.get_offsets())
+            if off.ndim == 2 and len(off) > 0:
+                add_points(name_of(c), off)
+        elif isinstance(c, QuadMesh):
+            z = np.ma.filled(np.ma.asarray(c.get_array(), dtype=float), np.nan)
+            coords = c.get_coordinates()
+            if z.ndim == 1 and coords.ndim == 3:
+                z = z.reshape(coords.shape[0] - 1, coords.shape[1] - 1)
+            if z.ndim == 2 and 0 < z.shape[0] <= 60 and 0 < z.shape[1] <= 60:
+                rows, cols = z.shape
+                xs = grid_labels(ax.xaxis, cols, 0.5)
+                ys = grid_labels(ax.yaxis, rows, 0.5)
+                grid = [[fin(v) for v in row] for row in z]
+                if not ax.yaxis_inverted():
+                    ys, grid = ys[::-1], grid[::-1]
+                counted[0] += rows * cols
+                layers.append({"kind": "heat", "x": xs, "y": ys, "z": grid})
+    for im in ax.images:
+        z = np.ma.filled(np.ma.asarray(im.get_array(), dtype=float), np.nan)
+        if z.ndim == 2 and 0 < z.shape[0] <= 60 and 0 < z.shape[1] <= 60:
+            rows, cols = z.shape
+            xs = grid_labels(ax.xaxis, cols, 0)
+            ys = grid_labels(ax.yaxis, rows, 0)
+            grid = [[fin(v) for v in row] for row in z]
+            if im.origin == "lower":
+                ys, grid = ys[::-1], grid[::-1]
+            counted[0] += rows * cols
+            layers.append({"kind": "heat", "x": xs, "y": ys, "z": grid})
+    if point_bars:
+        layers.append({"kind": "bar", "horizontal": y_cats is not None, "stacked": False, "series": point_bars[:10]})
+
+    for stats, horizontal, positions in ax.__dict__.get("_chatisa_boxes", []):
+        boxes = []
+        axis = ax.yaxis if horizontal else ax.xaxis
+        for i, s in enumerate(stats[:100]):
+            pos = positions[i] if positions is not None and i < len(positions) else i + 1
+            label = s.get("label") or tick_text(axis, pos) or "Group %d" % (i + 1)
+            lo, hi = fin(s.get("whislo")), fin(s.get("whishi"))
+            fliers = [fin(v) for v in np.ravel(s.get("fliers", []))]
+            fliers = [v for v in fliers if v is not None]
+            boxes.append({"label": str(label), "min": lo, "q1": fin(s.get("q1")), "q2": fin(s.get("med")), "q3": fin(s.get("q3")), "max": hi, "lowerOutliers": [v for v in fliers if lo is not None and v < lo][:200], "upperOutliers": [v for v in fliers if hi is not None and v > hi][:200]})
+        counted[0] += len(boxes)
+        if boxes:
+            layers.append({"kind": "box", "horizontal": bool(horizontal), "boxes": boxes})
+
+    # What the colours mean, so MAIDR says "Course is ISA 401" rather than its
+    # default "Level is": the legend's title, else a colour bar's label.
+    z_label = ""
+    try:
+        lg = ax.get_legend()
+        if lg is not None:
+            z_label = lg.get_title().get_text()
+        if not z_label:
+            for a in fig.get_axes():
+                if a.get_label() == "<colorbar>":
+                    z_label = a.get_ylabel() or a.get_xlabel()
+                    break
+    except Exception:
+        z_label = ""
+    st = getattr(fig, "_suptitle", None)
+    return {"title": (st.get_text() if st is not None else "") or ax.get_title(), "xLabel": ax.get_xlabel(), "yLabel": ax.get_ylabel(), "zLabel": z_label, "panels": 1, "layers": layers[:6], "total": counted[0]}
+
 def __chatisa_capture_plot():
     import sys
     if "matplotlib.pyplot" not in sys.modules:
@@ -269,15 +502,78 @@ def __chatisa_capture_plot():
         return None
     import io, base64, json
     fig = plt.gcf()
+    buf = io.BytesIO()
+    # Saving draws the figure, which fills in the tick labels that seaborn and
+    # pandas set lazily, so the facts are read after it (#40).
+    fig.savefig(buf, format="png", bbox_inches="tight", dpi=110)
     try:
         info = __chatisa_plot_info(fig)
     except Exception:
         info = None
-    buf = io.BytesIO()
-    fig.savefig(buf, format="png", bbox_inches="tight", dpi=110)
+    try:
+        data = __chatisa_plot_data(fig)
+    except Exception:
+        data = None
     plt.close("all")
-    return json.dumps({"png": base64.b64encode(buf.getvalue()).decode("ascii"), "info": info})
+    return __chatisa_dump(buf, info, data)
+
+def __chatisa_dump(buf, info, data):
+    import base64, json
+    try:
+        return json.dumps({"png": base64.b64encode(buf.getvalue()).decode("ascii"), "info": info, "data": data}, allow_nan=False)
+    except (TypeError, ValueError):
+        # Data that cannot be sent as plain JSON never costs the plot.
+        return json.dumps({"png": base64.b64encode(buf.getvalue()).decode("ascii"), "info": info, "data": None})
 __chatisa_capture_plot()
+`;
+
+/**
+ * Records what matplotlib's own hist() and bxp() computed (bin edges and
+ * counts; box statistics), so a histogram or box plot can be explored with its
+ * exact values (#40). Reading them back from the drawn rectangles and lines
+ * would mean guessing. bxp() is what Axes.boxplot, pandas' box plots and
+ * seaborn 0.13's boxplot all call. Wrapped with functools.wraps so help()
+ * and the HELP pane still show matplotlib's own docstrings. Idempotent, and a
+ * no-op when matplotlib is not installed.
+ */
+const MPL_PATCH = `
+def __chatisa_patch_mpl():
+    try:
+        import functools
+        import matplotlib.axes as _ma
+    except Exception:
+        return
+    if getattr(_ma.Axes, "_chatisa_patched", False):
+        return
+    _bxp = _ma.Axes.bxp
+    @functools.wraps(_bxp)
+    def bxp(self, bxpstats, *args, **kwargs):
+        out = _bxp(self, bxpstats, *args, **kwargs)
+        try:
+            horizontal = kwargs.get("orientation") == "horizontal" or kwargs.get("vert") is False
+            self.__dict__.setdefault("_chatisa_boxes", []).append((list(bxpstats), horizontal, kwargs.get("positions")))
+            # The box outlines, whiskers, caps, medians and fliers are Line2D
+            # objects; they belong to the box layer, not to a line chart.
+            drawn = self.__dict__.setdefault("_chatisa_box_artists", set())
+            for group in (out or {}).values():
+                for a in group:
+                    drawn.add(id(a))
+        except Exception:
+            pass
+        return out
+    _hist = _ma.Axes.hist
+    @functools.wraps(_hist)
+    def hist(self, *args, **kwargs):
+        out = _hist(self, *args, **kwargs)
+        try:
+            self.__dict__.setdefault("_chatisa_hists", []).append(out)
+        except Exception:
+            pass
+        return out
+    _ma.Axes.bxp = bxp
+    _ma.Axes.hist = hist
+    _ma.Axes._chatisa_patched = True
+__chatisa_patch_mpl()
 `;
 
 /**
@@ -928,6 +1224,11 @@ self.onmessage = async (event) => {
     } else {
       pyodide.runPython("__import__('_chatisa_net').patch()");
     }
+    // Record histogram bins and box statistics as matplotlib computes them
+    // (#40), only when the code can plot: importing matplotlib costs time.
+    if (/\b(matplotlib|seaborn|pyplot|plt|sns)\b|\.(plot|hist|boxplot)\s*\(/.test(code)) {
+      pyodide.runPython(MPL_PATCH);
+    }
 
     // Capture stdout and stderr only around the user's own code, in order.
     pyodide.setStdout({ batched: (s) => chunks.push(s) });
@@ -943,11 +1244,13 @@ self.onmessage = async (event) => {
 
     let imageDataUrl;
     let plotInfo;
+    let plotData;
     const captured = pyodide.runPython(CAPTURE_PLOT);
     if (captured) {
-      const { png, info } = JSON.parse(captured);
+      const { png, info, data } = JSON.parse(captured);
       if (png) imageDataUrl = `data:image/png;base64,${png}`;
       if (info) plotInfo = info;
+      if (data) plotData = data;
     }
 
     let variables;
@@ -968,7 +1271,7 @@ self.onmessage = async (event) => {
     self.postMessage({
       id,
       ok: true,
-      result: { text: text || undefined, imageDataUrl, plotInfo, variables },
+      result: { text: text || undefined, imageDataUrl, plotInfo, plotData, variables },
     });
   } catch (error) {
     // Show whatever was printed before the failure, then the error itself.

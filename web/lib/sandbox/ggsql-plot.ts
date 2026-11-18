@@ -8,6 +8,8 @@
  * (uses the DOM and a lazily imported Vega renderer).
  */
 
+import { parsePlotData, type PlotData } from "@/lib/run/maidr-schema";
+
 // A small Miami-leaning categorical palette: red and corn-gold first, so a
 // two-category plot (like the ISA course example) reads on-brand, then a few
 // distinct supporting hues for plots with more categories.
@@ -191,4 +193,237 @@ export function extractVisualiseQuery(code: string): string {
   if (at < 0) return code.trim();
   const lastSemicolon = masked.slice(0, at).lastIndexOf(";");
   return code.slice(lastSemicolon + 1).trim();
+}
+
+// ---------------------------------------------------------------------------
+// The plotted data, for keyboard and sound exploration (#40).
+
+type Row = Record<string, unknown>;
+
+function field(enc: Record<string, AnySpec>, channel: string): string | undefined {
+  const f = enc[channel]?.field;
+  return typeof f === "string" ? f : undefined;
+}
+
+function isNominal(enc: Record<string, AnySpec>, channel: string): boolean {
+  const t = enc[channel]?.type;
+  return t === "nominal" || t === "ordinal";
+}
+
+function numberOf(v: unknown): number | undefined {
+  return typeof v === "number" && Number.isFinite(v) ? v : undefined;
+}
+
+/** Distinct values in first-seen order. */
+function distinct(values: unknown[]): string[] {
+  return [...new Set(values.filter((v) => v != null).map(String))];
+}
+
+/**
+ * The data behind a ggsql chart, in the neutral shape MAIDR's builder reads
+ * (lib/run/maidr-schema.ts). Verified against ggsql-wasm 0.4.1's output
+ * (tests/unit/ggsql-plot-data.test.ts runs it live):
+ *  - all layers share one inline `data.values` array; each layer picks its rows
+ *    with a filter on `__ggsql_source__`;
+ *  - field names are generated (`__ggsql_aes_pos1__`...), so every name is read
+ *    from the layer's `encoding`, never assumed;
+ *  - a bar's height is y - y2 (ggsql stacks repeated x values itself);
+ *  - a boxplot is four layers whose sources end in `box` (q1 to q3),
+ *    `lower_whisker`, `upper_whisker` and `median`.
+ * A point layer with one category axis (the Coding Studio's dumbbell example)
+ * is read as bars, one series per layer, so "Student is Amanda, Grade is 91"
+ * can be announced. Faceted charts return undefined: picture and description
+ * only, as before.
+ */
+export function plotDataFromSpec(spec: unknown): PlotData | undefined {
+  try {
+    const s = (spec ?? {}) as AnySpec;
+    if (s.facet || s.spec || s.repeat || s.concat || s.hconcat || s.vconcat) return undefined;
+    const values = (((s.data as AnySpec | undefined)?.values ?? []) as Row[]).filter(
+      (r) => r && typeof r === "object",
+    );
+    const layers = ((s.layer as AnySpec[] | undefined) ?? [s]).filter(Boolean);
+    const bySource = new Map<string, Row[]>();
+    for (const row of values) {
+      const key = String(row.__ggsql_source__ ?? "");
+      bySource.set(key, [...(bySource.get(key) ?? []), row]);
+    }
+    const sourceOf = (layer: AnySpec): string | undefined => {
+      for (const t of (layer.transform as AnySpec[] | undefined) ?? []) {
+        const eq = (t.filter as AnySpec | undefined)?.equal;
+        if (typeof eq === "string") return eq;
+      }
+      return undefined;
+    };
+    const rowsOf = (layer: AnySpec) => {
+      const src = sourceOf(layer);
+      return src ? (bySource.get(src) ?? []) : values;
+    };
+    const rawTitle = s.title;
+    const title =
+      typeof rawTitle === "string"
+        ? rawTitle
+        : typeof (rawTitle as AnySpec | undefined)?.text === "string"
+          ? ((rawTitle as AnySpec).text as string)
+          : undefined;
+    const label = (channel: string) => {
+      const t = sharedTitle(layers, channel);
+      return typeof t === "string" ? t : undefined;
+    };
+
+    const out: unknown[] = [];
+    const boxes = new Map<string, Map<string, Record<string, number>>>();
+    // Point layers with one category axis become one bar layer, a series each.
+    const pointBars: {
+      horizontal: boolean;
+      series: { name?: string; points: { x: string; y: number }[] }[];
+    } = { horizontal: false, series: [] };
+
+    for (const layer of layers) {
+      const markRaw = layer.mark;
+      const mark = typeof markRaw === "object" ? (markRaw as AnySpec)?.type : markRaw;
+      const enc = (layer.encoding ?? {}) as Record<string, AnySpec>;
+      const rows = rowsOf(layer);
+      const xf = field(enc, "x");
+      const yf = field(enc, "y");
+      const source = sourceOf(layer) ?? "";
+
+      const boxPart = /^(__ggsql_layer_\d+__)(box|lower_whisker|upper_whisker|median)$/.exec(source);
+      if (boxPart && xf && yf) {
+        const group = boxes.get(boxPart[1]) ?? new Map<string, Record<string, number>>();
+        boxes.set(boxPart[1], group);
+        const y2f = field(enc, "y2");
+        for (const row of rows) {
+          const key = String(row[xf]);
+          const stats = group.get(key) ?? {};
+          group.set(key, stats);
+          const a = numberOf(row[yf]);
+          const b = y2f ? numberOf(row[y2f]) : undefined;
+          if (a === undefined) continue;
+          const lo = b === undefined ? a : Math.min(a, b);
+          const hi = b === undefined ? a : Math.max(a, b);
+          if (boxPart[2] === "box") Object.assign(stats, { q1: lo, q3: hi });
+          else if (boxPart[2] === "lower_whisker") stats.min = lo;
+          else if (boxPart[2] === "upper_whisker") stats.max = hi;
+          else stats.q2 = a;
+        }
+        continue;
+      }
+      if (!xf || !yf) continue;
+      // The field that splits rows into series: a colour, stroke or detail.
+      const groupField = ["fill", "stroke", "color", "detail"]
+        .map((c) => (isNominal(enc, c) ? field(enc, c) : undefined))
+        .find(Boolean);
+      const inGroup = (g: string | undefined) => (r: Row) =>
+        g === undefined || String(r[groupField!]) === g;
+
+      if (mark === "bar") {
+        const x2f = field(enc, "x2");
+        const y2f = field(enc, "y2");
+        if (x2f) {
+          out.push({
+            kind: "hist",
+            bins: rows.map((r) => ({
+              xMin: numberOf(r[xf]),
+              xMax: numberOf(r[x2f]),
+              y: (numberOf(r[yf]) ?? 0) - (y2f ? (numberOf(r[y2f]) ?? 0) : 0),
+            })),
+          });
+          continue;
+        }
+        const horizontal = isNominal(enc, "y") && !isNominal(enc, "x");
+        const [cat, val, val2] = horizontal ? [yf, xf, field(enc, "x2")] : [xf, yf, y2f];
+        const point = (r: Row) => ({
+          x: String(r[cat]),
+          y: (numberOf(r[val]) ?? Number.NaN) - (val2 ? (numberOf(r[val2]) ?? 0) : 0),
+        });
+        const groups = groupField ? distinct(rows.map((r) => r[groupField])) : [undefined];
+        out.push({
+          kind: "bar",
+          horizontal,
+          stacked: !!groupField,
+          series: groups.map((g) => ({ name: g, points: rows.filter(inGroup(g)).map(point) })),
+        });
+      } else if (mark === "line") {
+        const groups = groupField ? distinct(rows.map((r) => r[groupField])) : [undefined];
+        out.push({
+          kind: "line",
+          series: groups.map((g) => {
+            const pts = rows
+              .filter(inGroup(g))
+              .map((r) => ({ x: numberOf(r[xf]) ?? r[xf], y: numberOf(r[yf]) }));
+            // Lines are announced left to right.
+            if (pts.every((p) => typeof p.x === "number")) {
+              pts.sort((a, b) => (a.x as number) - (b.x as number));
+            }
+            return { name: g, points: pts };
+          }),
+        });
+      } else if (mark === "point" || mark === "circle") {
+        const xCat = isNominal(enc, "x");
+        const yCat = isNominal(enc, "y");
+        // A constant colour ('ISA 401' AS fill) names the whole layer.
+        const fillField = field(enc, "fill");
+        const constant =
+          fillField && rows.length > 0 && distinct(rows.map((r) => r[fillField])).length === 1
+            ? String(rows[0][fillField])
+            : undefined;
+        if (xCat !== yCat) {
+          const [cat, val] = yCat ? [yf, xf] : [xf, yf];
+          pointBars.horizontal = yCat;
+          pointBars.series.push({
+            name: constant,
+            points: rows.map((r) => ({ x: String(r[cat]), y: numberOf(r[val]) ?? Number.NaN })),
+          });
+          continue;
+        }
+        if (xCat) continue; // both axes categorical: nothing to measure
+        const groups = groupField ? distinct(rows.map((r) => r[groupField])) : [undefined];
+        for (const g of groups) {
+          out.push({
+            kind: "point",
+            name: g ?? constant,
+            points: rows.filter(inGroup(g)).map((r) => ({ x: numberOf(r[xf]), y: numberOf(r[yf]) })),
+          });
+        }
+      } else if (mark === "rect") {
+        const ff = field(enc, "fill");
+        if (!ff || isNominal(enc, "fill")) continue;
+        const domain = (channel: string, f: string) => {
+          const d = (enc[channel]?.scale as AnySpec | undefined)?.domain;
+          return Array.isArray(d) ? d.map(String) : distinct(rows.map((r) => r[f]));
+        };
+        const xs = domain("x", xf);
+        const ys = domain("y", yf);
+        const z: (number | null)[][] = ys.map(() => xs.map(() => null));
+        for (const r of rows) {
+          const xi = xs.indexOf(String(r[xf]));
+          const yi = ys.indexOf(String(r[yf]));
+          if (xi >= 0 && yi >= 0) z[yi][xi] = numberOf(r[ff]) ?? null;
+        }
+        out.push({ kind: "heat", x: xs, y: ys, z });
+      }
+      // rule, area, text and other marks have no navigable values here.
+    }
+
+    if (pointBars.series.length > 0) {
+      out.push({ kind: "bar", horizontal: pointBars.horizontal, stacked: false, series: pointBars.series });
+    }
+    for (const group of boxes.values()) {
+      out.push({
+        kind: "box",
+        boxes: [...group.entries()].map(([lab, st]) => ({
+          label: lab,
+          ...st,
+          lowerOutliers: [],
+          upperOutliers: [],
+        })),
+      });
+    }
+    // The colour legend's title names the groups ("Course is ISA 401").
+    const zLabel = label("fill") ?? label("stroke") ?? label("color");
+    return parsePlotData({ title, xLabel: label("x"), yLabel: label("y"), zLabel, layers: out });
+  } catch {
+    return undefined;
+  }
 }

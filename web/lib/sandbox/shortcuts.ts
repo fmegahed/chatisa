@@ -58,5 +58,18 @@ export function shortcutGroups(isMac: boolean): ShortcutGroup[] {
         { action: "Read line and column", keys: caretPositionKeysLabel(isMac) },
       ],
     },
+    {
+      // MAIDR's keys (#40), active only while a chart has keyboard focus, so
+      // they never collide with the editor's. Ctrl on every platform: MAIDR's
+      // own prompt reads "Press Control Slash for keyboard help".
+      title: "Plots (when a chart has focus)",
+      items: [
+        { action: "Move between data points", keys: "Arrow keys" },
+        { action: "Sound on or off", keys: "S" },
+        { action: "More or less text", keys: "T" },
+        { action: "Braille on or off", keys: "B" },
+        { action: "List every chart key", keys: "Ctrl+/" },
+      ],
+    },
   ];
 }

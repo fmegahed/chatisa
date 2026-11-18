@@ -16,6 +16,8 @@ import {
 } from "@/lib/run/manager";
 import type { RunnableLanguage } from "@/lib/run/languages";
 import { describePlot, plotAltText } from "@/lib/run/plot-alt";
+import { parsePlotData } from "@/lib/run/maidr-schema";
+import { AccessiblePlot } from "@/components/run/AccessiblePlot";
 import { CopyButton } from "@/components/chat/CopyButton";
 import { ScrollRegion } from "@/components/a11y/ScrollRegion";
 import { CodeEditor } from "@/components/run/CodeEditor";
@@ -358,17 +360,12 @@ function RunOutputPanel({
       ) : null}
 
       {result.imageDataUrl ? (
-        // A runtime-generated data URL (matplotlib or R plot); next/image
-        // cannot optimise a client-produced data URL, so a plain img is right.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <RunPlot
           src={result.imageDataUrl}
-          // Described from the figure and the code, not a generic label (#23).
-          alt={plotAltText({
-            language,
-            info: describePlot(code, language, result.plotInfo),
-          })}
-          className="mt-2 max-w-full rounded-card border border-medium-tan"
+          code={code}
+          language={language}
+          plotInfo={result.plotInfo}
+          plotData={result.plotData}
         />
       ) : null}
 
@@ -377,6 +374,36 @@ function RunOutputPanel({
           It ran, and produced no output.
         </p>
       ) : null}
+    </div>
+  );
+}
+
+/** A run's plot: described (#23) and, with its data, explorable (#40). */
+function RunPlot({
+  src,
+  code,
+  language,
+  plotInfo,
+  plotData,
+}: {
+  src: string;
+  code: string;
+  language: string;
+  plotInfo: unknown;
+  plotData: unknown;
+}) {
+  const info = useMemo(() => describePlot(code, language, plotInfo), [code, language, plotInfo]);
+  const data = useMemo(() => parsePlotData(plotData), [plotData]);
+  return (
+    <div className="mt-2 flex flex-col gap-1">
+      <AccessiblePlot
+        src={src}
+        // Described from the figure and the code, not a generic label (#23).
+        alt={plotAltText({ language, info })}
+        title={info.title}
+        data={data}
+        imgClassName="max-w-full rounded-card border border-medium-tan"
+      />
     </div>
   );
 }

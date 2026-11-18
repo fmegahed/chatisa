@@ -48,6 +48,8 @@ async function getWebR() {
       // student pull in their own packages (for example tidymodels), which are
       // not bundled and so come from the WebR repository on demand.
       await webR.evalRVoid("webr::shim_install()");
+      // Keep a snapshot of the ggplot each drawn page comes from (#40).
+      await webR.evalRVoid(GGPLOT_HOOKS_R);
       return webR;
     })();
   }
@@ -669,6 +671,9 @@ self.onmessage = async (event) => {
   await ensurePackages(webR);
   await ensureNetworking(webR, wsProxy);
 
+  // A plot snapshot from an earlier run must not describe this run's image.
+  await webR.evalRVoid(GGPLOT_RESET_R);
+
   // A shelter scopes every R object this run allocates; purging it frees them
   // so one run does not leak into the next.
   const shelter = await new webR.Shelter();
@@ -720,9 +725,15 @@ self.onmessage = async (event) => {
     const text = lines.join("\n");
 
     let imageDataUrl;
+    let plotInfo;
+    let plotData;
     if (images && images.length > 0) {
       // The last plot is the final state a student drew.
       imageDataUrl = await bitmapToPngDataUrl(images[images.length - 1]);
+      // Its description (#23) and data (#40), when it was a ggplot.
+      const ggplot = await ggplotFacts(shelter);
+      plotInfo = ggplot?.info;
+      plotData = ggplot?.data;
     }
 
     let variables;
@@ -731,7 +742,7 @@ self.onmessage = async (event) => {
     self.postMessage({
       id,
       ok: true,
-      result: { text: text || undefined, imageDataUrl, variables },
+      result: { text: text || undefined, imageDataUrl, plotInfo, plotData, variables },
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -778,6 +789,240 @@ local({
   }, character(1))
 })
 `;
+
+/**
+ * Navigable, audible plots (#40): the data behind the last ggplot drawn.
+ *
+ * webR hands back only a bitmap, so the plot's values are read from the ggplot
+ * object itself. Which object? last_plot() alone cannot say: ggplot() and +
+ * set it without drawing anything. So two R hooks keep a snapshot instead:
+ *  - grid.newpage: print.ggplot sets the last plot and then starts a new page,
+ *    so at that moment last_plot() is exactly the plot being drawn;
+ *  - plot.new: a base-graphics page after it means the newest image is not a
+ *    ggplot, so the snapshot is cleared.
+ * The snapshot is reset before every run, and read only when the run produced
+ * an image, so the data always belongs to the picture shown (the worker keeps
+ * the last image). Measured with ggplot2 4.0.3, the version mirrored for webR.
+ * A lattice plot drawn after a ggplot in the same run is the known gap.
+ */
+const GGPLOT_HOOKS_R = `local({
+  e <- new.env(parent = emptyenv())
+  options(chatisa.plotenv = e)
+  setHook("grid.newpage", function() {
+    e$plot <- if (isNamespaceLoaded("ggplot2")) tryCatch(ggplot2::last_plot(), error = function(err) NULL) else NULL
+  })
+  setHook("plot.new", function() e$plot <- NULL)
+})`;
+
+const GGPLOT_RESET_R = `local({ e <- getOption("chatisa.plotenv"); if (is.environment(e)) e$plot <- NULL })`;
+
+/**
+ * Reads the snapshot ggplot with ggplot_build() and returns one JSON string:
+ * { info, data }. info is the #23 description in plot-alt's vocabulary (kinds,
+ * title, axis labels, legend entries, panels); data is the neutral shape that
+ * lib/run/maidr-schema.ts validates. Series are legend entries (fill, else
+ * colour), not ggplot's internal groups. Any failure returns "" and the plot
+ * shows as before. Kept free of backticks so it can live in this template.
+ */
+const GGPLOT_EXTRACT_R = `local({
+  e <- getOption("chatisa.plotenv")
+  p <- if (is.environment(e)) e$plot else NULL
+  if (is.null(p) || !requireNamespace("jsonlite", quietly = TRUE)) return("")
+  tryCatch({
+    LIMIT <- 4000L
+    total <- 0L
+    pick <- function(n, max = LIMIT) {
+      total <<- total + n
+      if (n <= max) seq_len(n) else unique(floor(seq(1, n, length.out = max)))
+    }
+    b <- ggplot2::ggplot_build(p)
+    labs <- tryCatch(ggplot2::get_labs(p), error = function(err) p$labels)
+    lab <- function(k) {
+      v <- labs[[k]]
+      if (is.character(v) && length(v) == 1 && !is.na(v) && nzchar(v)) v else NULL
+    }
+    panels <- tryCatch(nrow(b$layout$layout), error = function(err) 1L)
+    kind_of <- function(geom, stat) {
+      if (geom %in% c("GeomBar", "GeomCol", "GeomRect") && stat == "StatBin") return("histogram")
+      switch(geom,
+        GeomBar = "bars", GeomCol = "bars", GeomPoint = "points", GeomJitter = "points",
+        GeomLine = "lines", GeomPath = "lines", GeomStep = "lines", GeomSmooth = "lines",
+        GeomBoxplot = "box", GeomViolin = "violin", GeomDensity = "density",
+        GeomTile = "heatmap", GeomRaster = "heatmap", GeomArea = "area", GeomRibbon = "area",
+        GeomSegment = "segments", GeomText = "text", GeomLabel = "text", NULL)
+    }
+    kinds <- unique(unlist(lapply(p$layers, function(L) kind_of(class(L$geom)[1], class(L$stat)[1]))))
+    # Legend labels: the colour and fill scales' limits.
+    legend_map <- function(aes) {
+      sc <- tryCatch(b$plot$scales$get_scales(aes), error = function(err) NULL)
+      if (is.null(sc) || !sc$is_discrete()) return(NULL)
+      lim <- sc$get_limits()
+      cols <- tryCatch(sc$map(lim), error = function(err) NULL)
+      if (is.null(cols) || length(cols) != length(lim)) return(NULL)
+      stats::setNames(as.character(lim), as.character(cols))
+    }
+    fill_names <- legend_map("fill")
+    colour_names <- legend_map("colour")
+    series <- unique(c(unname(fill_names), unname(colour_names)))
+    info <- list(kinds = as.list(kinds), title = lab("title"), xLabel = lab("x"), yLabel = lab("y"),
+                 series = as.list(utils::head(series, 12)), panels = panels)
+    out <- function(data) {
+      as.character(jsonlite::toJSON(list(info = info, data = data), auto_unbox = TRUE,
+                                    null = "null", na = "null", digits = NA))
+    }
+    if (panels > 1) return(out(list(panels = panels, layers = list())))
+
+    pp <- b$layout$panel_params[[1]]
+    discrete <- function(s) isTRUE(tryCatch(s$is_discrete(), error = function(err) FALSE))
+    limits_of <- function(s) as.character(tryCatch(s$get_limits(), error = function(err) character()))
+    xs <- pp$x
+    ys <- pp$y
+    x_disc <- discrete(xs)
+    y_disc <- discrete(ys)
+    x_lim <- limits_of(xs)
+    y_lim <- limits_of(ys)
+    cat_at <- function(v, lim) {
+      i <- round(as.numeric(v))
+      ifelse(i >= 1 & i <= length(lim), lim[pmax(1, pmin(length(lim), i))], as.character(v))
+    }
+    is_date_x <- inherits(tryCatch(xs$scale, error = function(err) NULL), "ScaleContinuousDate")
+    xval <- function(v) if (is_date_x) format(as.Date(v, origin = "1970-01-01")) else as.numeric(v)
+    name_for <- function(d, i) {
+      key <- NULL
+      if (!is.null(d$fill) && !is.null(fill_names)) key <- fill_names[as.character(d$fill[i])]
+      if ((is.null(key) || is.na(key)) && !is.null(d$colour) && !is.null(colour_names)) key <- colour_names[as.character(d$colour[i])]
+      if (is.null(key) || is.na(key)) NULL else unname(key)
+    }
+
+    layers <- list()
+    for (li in seq_along(p$layers)) {
+      L <- p$layers[[li]]
+      geom <- class(L$geom)[1]
+      stat <- class(L$stat)[1]
+      d <- b$data[[li]]
+      if (!is.null(d$PANEL)) d <- d[as.integer(d$PANEL) == 1, , drop = FALSE]
+      if (nrow(d) == 0) next
+      flipped <- isTRUE(d$flipped_aes[1]) || inherits(p$coordinates, "CoordFlip")
+      if (geom %in% c("GeomBar", "GeomCol") && stat == "StatBin" && !flipped) {
+        idx <- pick(nrow(d), 400L)
+        layers[[length(layers) + 1]] <- list(kind = "hist", bins = lapply(idx, function(i)
+          list(xMin = d$xmin[i], xMax = d$xmax[i], y = d$ymax[i] - d$ymin[i])))
+      } else if (geom %in% c("GeomBar", "GeomCol")) {
+        horizontal <- isTRUE(d$flipped_aes[1])
+        cats <- if (horizontal) cat_at(d$y, y_lim) else cat_at(d$x, x_lim)
+        vals <- if (horizontal) d$xmax - d$xmin else d$ymax - d$ymin
+        # A series is a legend entry (fill, else colour), not ggplot's group,
+        # which splits every category of a stacked or dodged chart.
+        key <- if (!is.null(fill_names) && !is.null(d$fill)) as.character(d$fill)
+          else if (!is.null(colour_names) && !is.null(d$colour)) as.character(d$colour)
+          else as.character(d$group)
+        keys <- unique(key)
+        series_list <- lapply(keys, function(k) {
+          rows <- which(key == k)
+          list(name = name_for(d, rows[1]),
+               points = lapply(rows, function(i) list(x = cats[i], y = vals[i])))
+        })
+        total <- total + nrow(d)
+        stacked <- inherits(L$position, "PositionStack") || inherits(L$position, "PositionFill")
+        # One series per category (aes(fill = category)) is one series, not many.
+        if (length(keys) > 1 && length(unique(cats)) == length(keys) && all(lengths(lapply(series_list, function(s) s$points)) == 1)) {
+          series_list <- list(list(name = NULL, points = unlist(lapply(series_list, function(s) s$points), recursive = FALSE)))
+        }
+        layers[[length(layers) + 1]] <- list(kind = "bar", horizontal = horizontal || inherits(p$coordinates, "CoordFlip"),
+          stacked = stacked && length(series_list) > 1, series = utils::head(series_list, 10))
+      } else if (geom %in% c("GeomLine", "GeomPath", "GeomStep", "GeomSmooth")) {
+        if (y_disc) next
+        groups <- unique(d$group)
+        layers[[length(layers) + 1]] <- list(kind = "line", series = utils::head(lapply(seq_along(groups), function(gi) {
+          rows <- which(d$group == groups[gi])
+          rows <- rows[order(as.numeric(d$x[rows]))]
+          idx <- rows[pick(length(rows))]
+          list(name = name_for(d, rows[1]),
+               points = lapply(idx, function(i) list(x = if (x_disc) cat_at(d$x[i], x_lim) else xval(d$x[i]), y = d$y[i])))
+        }), 10))
+      } else if (geom %in% c("GeomPoint", "GeomJitter")) {
+        key <- if (!is.null(d$colour)) as.character(d$colour) else rep("", nrow(d))
+        lvls <- unique(key)
+        if (x_disc != y_disc) {
+          # One category axis (a dumbbell): bars, one series per colour.
+          cats <- if (y_disc) cat_at(d$y, y_lim) else cat_at(d$x, x_lim)
+          vals <- if (y_disc) as.numeric(d$x) else as.numeric(d$y)
+          total <- total + nrow(d)
+          layers[[length(layers) + 1]] <- list(kind = "bar", horizontal = y_disc, stacked = FALSE,
+            series = utils::head(lapply(lvls, function(k) {
+              rows <- which(key == k)
+              list(name = name_for(d, rows[1]), points = lapply(rows, function(i) list(x = cats[i], y = vals[i])))
+            }), 10))
+        } else if (!x_disc) {
+          for (k in utils::head(lvls, 10)) {
+            rows <- which(key == k)
+            idx <- rows[pick(length(rows))]
+            layers[[length(layers) + 1]] <- list(kind = "point", name = name_for(d, rows[1]),
+              points = lapply(idx, function(i) list(x = as.numeric(d$x[i]), y = as.numeric(d$y[i]))))
+          }
+        }
+      } else if (geom == "GeomBoxplot") {
+        horizontal <- isTRUE(d$flipped_aes[1])
+        cats <- if (horizontal) cat_at(d$y, y_lim) else cat_at(d$x, x_lim)
+        total <- total + nrow(d)
+        layers[[length(layers) + 1]] <- list(kind = "box", horizontal = horizontal,
+          boxes = lapply(utils::head(seq_len(nrow(d)), 100), function(i) {
+            if (horizontal) {
+              lo <- d$xmin[i]; q1 <- d$xlower[i]; q2 <- d$xmiddle[i]; q3 <- d$xupper[i]; hi <- d$xmax[i]
+            } else {
+              lo <- d$ymin[i]; q1 <- d$lower[i]; q2 <- d$middle[i]; q3 <- d$upper[i]; hi <- d$ymax[i]
+            }
+            out_v <- if (!is.null(d$outliers)) as.numeric(d$outliers[[i]]) else numeric()
+            list(label = cats[i], min = lo, q1 = q1, q2 = q2, q3 = q3, max = hi,
+                 lowerOutliers = as.list(utils::head(out_v[out_v < lo], 200)),
+                 upperOutliers = as.list(utils::head(out_v[out_v > hi], 200)))
+          }))
+      } else if (geom %in% c("GeomTile", "GeomRaster") && x_disc && y_disc) {
+        # The built data holds only colours; the values come from evaluating
+        # the layer's fill mapping on its own data.
+        m <- L$mapping$fill
+        if (is.null(m)) m <- p$mapping$fill
+        src <- if (is.data.frame(L$data)) L$data else p$data
+        vals <- tryCatch(as.numeric(rlang::eval_tidy(m, data = src)), error = function(err) NULL)
+        if (is.null(vals) || length(vals) != nrow(d) || length(x_lim) > 60 || length(y_lim) > 60) next
+        grid <- matrix(NA_real_, nrow = length(y_lim), ncol = length(x_lim))
+        xi <- round(as.numeric(d$x))
+        yi <- round(as.numeric(d$y))
+        for (i in seq_len(nrow(d))) grid[yi[i], xi[i]] <- vals[i]
+        total <- total + length(grid)
+        # Rows top to bottom as drawn: the last y level is at the top.
+        rows_top <- rev(seq_along(y_lim))
+        layers[[length(layers) + 1]] <- list(kind = "heat", x = as.list(x_lim), y = as.list(y_lim[rows_top]),
+          z = lapply(rows_top, function(r) as.list(grid[r, ])))
+      }
+    }
+    # What the colours mean ("Course is ISA 401" rather than MAIDR's "Level
+    # is"): the legend of the scale that splits the data, fill first; a
+    # continuous fill (a heatmap) names the cell values.
+    z_label <- if (!is.null(fill_names)) lab("fill") else if (!is.null(colour_names)) lab("colour") else NULL
+    if (is.null(z_label)) z_label <- lab("fill")
+    out(list(title = lab("title"), xLabel = lab("x"), yLabel = lab("y"), zLabel = z_label, panels = 1,
+             layers = utils::head(layers, 6), total = total))
+  }, error = function(err) "")
+})`;
+
+/** Runs GGPLOT_EXTRACT_R in the run's shelter; undefined when the image was
+ * not a ggplot or anything about it could not be read. */
+async function ggplotFacts(shelter) {
+  try {
+    const obj = await shelter.captureR(GGPLOT_EXTRACT_R, {
+      withAutoprint: false,
+      captureStreams: false,
+      captureConditions: false,
+      captureGraphics: false,
+    });
+    const [json] = await obj.result.toArray();
+    if (typeof json !== "string" || !json) return undefined;
+    return JSON.parse(json);
+  } catch {
+    return undefined;
+  }
+}
 
 async function inspectR(webR, shelter) {
   try {

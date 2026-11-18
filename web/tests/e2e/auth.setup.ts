@@ -19,10 +19,39 @@ setup("authenticate as test student", async ({ page }) => {
   // work here finishes when it finishes; it only decides how long a cold one is
   // allowed to take before the suite gives up.
   setup.setTimeout(600_000);
-  await page.goto("/login");
-  await page.getByLabel("Email address").fill("student@miamioh.edu");
-  await page.getByRole("button", { name: "Sign in as test user" }).click();
-  await page.waitForURL("**/");
+  // A dev-server failure seen five times on 2026-11-17, always on the first run
+  // after a batch of source edits: Turbopack's restored on-disk dev cache kept
+  // sending "restart" for a stale entry chunk list, the page reloaded itself in
+  // a loop, and the suite burned the full 10 minutes in waitForURL. The test
+  // server now runs without that cache (playwright.config.ts,
+  // CHATISA_E2E_NO_DEV_CACHE), which fixed it in repeated trials. This guard
+  // stays as a safety net: real sign-in is two or three navigations, dozens
+  // mean a loop, so fail in seconds with a message that says what happened.
+  let navigations = 0;
+  let looping: () => void = () => {};
+  const loop = new Promise<never>((_, reject) => {
+    looping = () =>
+      reject(
+        new Error(
+          "The dev server is reloading /login in a loop (seen on the first run after source edits). Re-run the suite.",
+        ),
+      );
+  });
+  const countNavigation = (frame: import("@playwright/test").Frame) => {
+    if (frame === page.mainFrame() && ++navigations > 40) looping();
+  };
+  page.on("framenavigated", countNavigation);
+  // The loop starts on the first page load, so the whole sign-in races it.
+  await Promise.race([
+    (async () => {
+      await page.goto("/login");
+      await page.getByLabel("Email address").fill("student@miamioh.edu");
+      await page.getByRole("button", { name: "Sign in as test user" }).click();
+      await page.waitForURL("**/");
+    })(),
+    loop,
+  ]);
+  page.off("framenavigated", countNavigation);
   await expect(
     page.getByRole("heading", { level: 1, name: /AI tools for your coursework/ }),
   ).toBeVisible();

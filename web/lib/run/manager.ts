@@ -18,10 +18,14 @@ export interface RunResult {
   text?: string;
   table?: { columns: string[]; rows: Record<string, unknown>[] };
   imageDataUrl?: string;
-  /** Facts the Python worker read from the figure (title, axis labels, mark
-   * types), for the plot's alt text (#23). Untrusted shape: parse with
+  /** Facts the Python and R workers read from the figure (title, axis labels,
+   * mark types), for the plot's alt text (#23). Untrusted shape: parse with
    * parsePlotInfo. */
   plotInfo?: unknown;
+  /** The plot's data (bar heights, points, bins, box statistics...), so the
+   * plot can be explored from the keyboard and heard (#40). Untrusted shape:
+   * parse with parsePlotData (lib/run/maidr-schema.ts). */
+  plotData?: unknown;
   /** Session introspection: the variables (or tables, for SQL) now defined. */
   variables?: SessionVariable[];
 }

@@ -153,6 +153,15 @@ function toolCall(
  *    PDF_ACK and IMAGE_ACK confirm native file parts arrived.
  * 4. Anything else: the canned CSV answer the chat tests rely on.
  */
+/** A small matplotlib bar chart for the navigable-plot tests (#40). */
+const MOCK_BAR_PLOT = [
+  "import matplotlib.pyplot as plt",
+  'plt.bar(["ISA 401", "ISA 444", "ISA 491"], [3.2, 3.6, 2.9])',
+  'plt.title("Average grade by course")',
+  'plt.xlabel("Course")',
+  'plt.ylabel("Average grade")',
+].join("\n");
+
 function mockStreamParts(
   options: LanguageModelV4CallOptions,
 ): LanguageModelV4StreamPart[] {
@@ -267,6 +276,17 @@ function mockStreamParts(
   }
   if (hasTools && /use python/i.test(userText)) {
     return toolCall("run_python", { code: "print(6 * 7)" });
+  }
+  // Navigable plots (#40): a plot drawn by a tool call (Ask Anything) and one
+  // drawn from a runnable block in a reply (Coding Tutor and the rest).
+  if (hasTools && /plot the grades in python/i.test(userText)) {
+    return toolCall("run_python", { code: MOCK_BAR_PLOT });
+  }
+  if (/draw a bar chart/i.test(userText)) {
+    return textParts([
+      "Here is a bar chart of the average grades.\n\n",
+      `\`\`\`python\n${MOCK_BAR_PLOT}\n\`\`\`\n`,
+    ]);
   }
   if (/show me math|quadratic formula/i.test(userText)) {
     // TeX in both delimiter styles models actually emit, so the KaTeX

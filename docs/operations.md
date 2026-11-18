@@ -115,3 +115,29 @@ large.
 
 Rebuild the bundle, End the task, swap the folder (keep `chatisa.env`),
 Run the task, check `https://chatisa.fsb.miamioh.edu/api/health`.
+
+### MAIDR, the chart explorer (#40)
+
+Plots can be explored from the keyboard and heard through MAIDR
+(`maidr.js`), which is GPL-3.0-or-later. ChatISA ships it as a separate,
+unmodified file (see `THIRD_PARTY_NOTICES.md`), so it is never an npm
+dependency. `npm run setup:runtimes` (phase `maidr`) downloads the pinned
+npm tarball, checks its sha512 against the registry's published integrity
+and `maidr.js`'s sha256, and writes `public/runtimes/maidr/<version>/` with
+the licence and a `NOTICE.txt`. The bundle refuses to build if those files
+are missing or `maidr.js` does not match the pin.
+
+To move to a newer MAIDR (it releases about weekly; prefer a release at
+least two weeks old):
+
+1. `npm view maidr@<v> dist.integrity dist.tarball gitHead` and copy the
+   values into `web/lib/run/maidr-pin.json` (version, published date,
+   tarball, integrity, gitHead, source link at that commit).
+2. `node scripts/setup-runtimes.mjs maidr` fails on the `maidr.js` hash;
+   put the reported sha256 into the pin only after reading the release notes
+   (look for telemetry or new network calls; a default-on telemetry proposal
+   was open in November 2026).
+3. Run `npx vitest run tests/unit/maidr-schema.test.ts` and
+   `npx playwright test tests/e2e/plots-maidr.spec.ts`. The e2e tests assert
+   MAIDR's announcement wording and that no request leaves our origin.
+4. Update the version in `THIRD_PARTY_NOTICES.md`.

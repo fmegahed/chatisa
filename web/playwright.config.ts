@@ -93,6 +93,8 @@ export default defineConfig({
       // proxy (127.0.0.1 target vs localhost origin), keeping the test
       // offline. Never honored in production (see proxyAllowsLocal).
       CHATISA_PROXY_ALLOW_LOCAL: "1",
+      // No on-disk Turbopack dev cache for the test server: see next.config.ts.
+      CHATISA_E2E_NO_DEV_CACHE: "1",
     },
   },
   projects: [

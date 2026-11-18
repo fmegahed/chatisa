@@ -218,3 +218,52 @@
     outline-color: var(--color-ink);
   }
 }
+
+/* Navigable plots (#40). MAIDR wraps the plot image in its own article >
+   figure > div, plain blocks that drew the image at full size and clipped it
+   in the Coding Studio's Plots pane (seen Nov 17: 429px of plot in 242px).
+   Hand the pane's size down as flex columns so the image shrinks to fit, as
+   it does without MAIDR; where the host has no set height (chat replies,
+   tool cards) max-height: 100% resolves to none and nothing changes. Also
+   keeps it within 320px, and gives the focused chart the app's focus colour. */
+[data-maidr-plot] :is(article[id^="maidr-article-"], figure[id^="maidr-figure-"], figure[id^="maidr-figure-"] > [tabindex]) {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 100%;
+  max-width: 100%;
+}
+[data-maidr-plot] figure[id^="maidr-figure-"] > [tabindex] img {
+  min-height: 0;
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  object-fit: contain;
+}
+/* The "Explore this chart from the keyboard" hint: always read by screen
+   readers, on screen only while the chart (or MAIDR's braille field) has
+   keyboard focus, so students who never Tab to a plot see no change. */
+[data-maidr-hint] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+[data-maidr-plot]:has(:focus-visible) + [data-maidr-hint] {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
+}
+[data-maidr-plot] [tabindex="0"]:focus-visible {
+  outline: 2px solid var(--sb-accent, var(--color-miami-red));
+  outline-offset: 2px;
+}

@@ -4,6 +4,21 @@ All notable changes to ChatISA are documented in this file.
 
 ---
 
+## v6.11.0 - November 17, 2026
+
+**Navigable, audible plots (#40): Tab to a plot, then the arrow keys
+announce each value ("Course is ISA 401, Average grade is 3.2"); S plays the
+values as tones, T changes the text, B shows braille. Python, R (ggplot2) and
+SQL plots; bar, histogram, line, scatter, box and heatmap charts; in the
+Coding Studio, runnable code in chat replies, and Ask Anything. Built on MAIDR
+(maidr.ai), shipped as a separate, unmodified, pinned and hash-checked file
+under its own GPL licence (see `THIRD_PARTY_NOTICES.md`). Keyboard only: a
+student who clicks or never Tabs to a plot sees the same picture as before.
+R plots also get real descriptions from the plot itself.** Full notes:
+`docs/releases/v6.11.0.md`.
+
+---
+
 ## v6.10.1 - November 17, 2026
 
 **Model refresh: GPT-6.1 Sol and Claude Sonnet 5.5 take over the module
